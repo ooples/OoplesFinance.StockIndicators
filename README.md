@@ -1,0 +1,1 @@
+OoplesFinance.StockIndicators
