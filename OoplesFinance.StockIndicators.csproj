@@ -10,6 +10,15 @@
     <Version>0.0.1-alpha1</Version>
     <Authors>ooples</Authors>
     <Company>Ooples Finance</Company>
+    <RepositoryUrl>https://github.com/ooples/OoplesFinance.StockIndicators</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageLicenseFile></PackageLicenseFile>
+    <PackageReleaseNotes>https://github.com/ooples/OoplesFinance.StockIndicators/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/ooples/OoplesFinance.StockIndicators</PackageProjectUrl>
+    <PackageTags>stock; stocks; technical; indicators; market; markets; analysis; library; finance; financial; indicator; moving average; algorithm; algorithms; trading; trades; algorithmic; ai; trade</PackageTags>
+    <Copyright>Ooples Finance LLC 2021</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
