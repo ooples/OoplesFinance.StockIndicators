@@ -5,6 +5,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Description>Open source C# library of stock indicators with over 700 indicators available</Description>
+    <Version>0.0.1-alpha1</Version>
+    <Authors>ooples</Authors>
+    <Company>Ooples Finance</Company>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
