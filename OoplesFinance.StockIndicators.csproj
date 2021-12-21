@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="CalculationsCopy.cs" />
+    <Compile Remove="Enums\IndicatorName_Full.cs" />
+    <Compile Remove="Enums\MovingAvgType_Full.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LinqOptimizer.CSharp" Version="0.7.0" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0-alpha03" />
+  </ItemGroup>
+
+</Project>
