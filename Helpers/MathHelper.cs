@@ -74,7 +74,7 @@
 
         public static decimal Pow(decimal value, double power)
         {
-            decimal result = 0;
+            decimal result;
 
             try
             {
@@ -90,7 +90,8 @@
 
         public static double Power(double value, double power)
         {
-            double valueToPower = 0;
+            double valueToPower;
+
             if (value == 0 && power < 0)
             {
                 valueToPower = 0;
@@ -122,7 +123,7 @@
 
         public static decimal Exp(double value)
         {
-            decimal exp = 0;
+            decimal exp;
 
             if (IsValueNullOrInfinity(value))
             {
@@ -138,7 +139,7 @@
 
         public static decimal Exp(decimal value)
         {
-            decimal result = 0;
+            decimal result;
 
             try
             {

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>Open source C# library of stock indicators with over 700 indicators available</Description>
-    <Version>0.0.1-alpha1</Version>
+    <Version>0.0.1-alpha2</Version>
     <Authors>ooples</Authors>
     <Company>Ooples Finance</Company>
     <RepositoryUrl>https://github.com/ooples/OoplesFinance.StockIndicators</RepositoryUrl>
@@ -30,10 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="docfx.console" Version="2.58.9">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Alpaca.Markets" Version="6.0.2-alpha4" />
     <PackageReference Include="LinqOptimizer.CSharp" Version="0.7.0" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0-alpha08" />
   </ItemGroup>

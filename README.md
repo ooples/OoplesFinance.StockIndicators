@@ -23,8 +23,11 @@ const string paperApiSecret = "REPLACEME";
 const string symbol = "AAPL";
 var secretKey = new SecretKey(paperApiKey, paperApiSecret);
 var alpacaDataClient = Environments.Paper.GetAlpacaDataClient(secretKey);
-var bars = (await alpacaDataClient.GetHistoricalBarsAsync(new HistoricalBarsRequest(symbol, new DateTime(2021, 1, 1), 
-    new DateTime(2021, 12, 15), BarTimeFrame.Day)).ConfigureAwait(false)).Items.SelectMany(x => x.Value);
+
+var startDate = new DateTime(2021, 1, 1);
+var endDate = new DateTime(2021, 12, 15);
+var bars = (await alpacaDataClient.GetHistoricalBarsAsync(new HistoricalBarsRequest(symbol, startDate, endDate, BarTimeFrame.Day)).
+ConfigureAwait(false)).Items.SelectMany(x => x.Value);
 
 var closePrices = bars.Select(x => x.Close);
 var openPrices = bars.Select(x => x.Open);
