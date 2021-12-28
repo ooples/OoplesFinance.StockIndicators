@@ -26,7 +26,8 @@ var alpacaDataClient = Environments.Paper.GetAlpacaDataClient(secretKey);
 
 var startDate = new DateTime(2021, 1, 1);
 var endDate = new DateTime(2021, 12, 15);
-var bars = (await alpacaDataClient.GetHistoricalBarsAsync(new HistoricalBarsRequest(symbol, startDate, endDate, BarTimeFrame.Day)).
+var bars = (await alpacaDataClient.GetHistoricalBarsAsync(
+	new HistoricalBarsRequest(symbol, startDate, endDate, BarTimeFrame.Day)).
 ConfigureAwait(false)).Items.SelectMany(x => x.Value);
 
 var closePrices = bars.Select(x => x.Close);

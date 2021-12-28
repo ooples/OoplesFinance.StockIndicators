@@ -1,10 +1,11 @@
 ﻿using OoplesFinance.StockIndicators.Enums;
+using OoplesFinance.StockIndicators.Interfaces;
 using static OoplesFinance.StockIndicators.Enums.SignalsClass;
-using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
 
 namespace OoplesFinance.StockIndicators.Models
 {
-    public class StockData
+    [Serializable]
+    public class StockData : IStockData
     {
         public InputName InputName { get; set; }
         public IndicatorName IndicatorName { get; set; }
