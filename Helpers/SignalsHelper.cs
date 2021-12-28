@@ -2,7 +2,7 @@
 
 namespace OoplesFinance.StockIndicators.Helpers
 {
-    public class SignalHelper
+    public static class SignalHelper
     {
         public static Signal GetRsiSignal(decimal currentSlope, decimal prevSlope, decimal currentRsi, decimal prevRsi, decimal overBoughtNumber, decimal overSoldNumber, bool isReversed = false)
         {

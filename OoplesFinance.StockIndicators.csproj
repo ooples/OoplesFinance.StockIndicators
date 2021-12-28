@@ -30,14 +30,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="CalculationsCopy.cs" />
-    <Compile Remove="Enums\IndicatorName_Full.cs" />
-    <Compile Remove="Enums\MovingAvgType_Full.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="docfx.console" Version="2.58.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="LinqOptimizer.CSharp" Version="0.7.0" />
-    <PackageReference Include="MathNet.Numerics" Version="5.0.0-alpha03" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0-alpha08" />
   </ItemGroup>
 
 </Project>

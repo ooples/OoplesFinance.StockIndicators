@@ -10,16 +10,25 @@ namespace OoplesFinance.StockIndicators
 {
     public static class Calculations
     {
+        /// <summary>
+        /// Calculates the moving average convergence divergence.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <param name="movingAvgType">Average type of the moving.</param>
+        /// <param name="fastLength">Length of the fast.</param>
+        /// <param name="slowLength">Length of the slow.</param>
+        /// <param name="signalLength">Length of the signal.</param>
+        /// <returns></returns>
         public static StockData CalculateMovingAverageConvergenceDivergence(this StockData stockData, MovingAvgType movingAvgType = MovingAvgType.ExponentialMovingAverage,
             int fastLength = 12, int slowLength = 26, int signalLength = 9)
         {
             List<decimal> macdList = new();
             List<decimal> macdHistogramList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-            var fastEmaList = GetMovingAverageList(stockData, movingAvgType, fastLength, inputs.inputList);
-            var slowEmaList = GetMovingAverageList(stockData, movingAvgType, slowLength, inputs.inputList);
+            var fastEmaList = GetMovingAverageList(stockData, movingAvgType, fastLength, inputList);
+            var slowEmaList = GetMovingAverageList(stockData, movingAvgType, slowLength, inputList);
 
             for (int i = 0; i < stockData.Count; i++)
             {
@@ -57,16 +66,22 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the exponential moving average.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
         public static StockData CalculateExponentialMovingAverage(this StockData stockData, int length = 14)
         {
             List<decimal> emaList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
-                decimal currentValue = inputs.inputList.ElementAtOrDefault(i);
-                decimal prevValue = i >= 1 ? inputs.inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
 
                 decimal prevEma = emaList.LastOrDefault();
                 decimal ema = CalculateEMA(currentValue, prevEma, length);
@@ -87,6 +102,14 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the index of the relative strength.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <param name="movingAvgType">Average type of the moving.</param>
+        /// <param name="length">The length.</param>
+        /// <param name="signalLength">Length of the signal.</param>
+        /// <returns></returns>
         public static StockData CalculateRelativeStrengthIndex(this StockData stockData, MovingAvgType movingAvgType = MovingAvgType.ExponentialMovingAverage,
             int length = 14, int signalLength = 3)
         {
@@ -96,12 +119,12 @@ namespace OoplesFinance.StockIndicators
             List<decimal> gainList = new();
             List<decimal> rsiHistogramList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
-                decimal currentValue = inputs.inputList.ElementAtOrDefault(i);
-                decimal prevValue = i >= 1 ? inputs.inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
                 decimal priceChg = currentValue - prevValue;
 
                 decimal loss = priceChg < 0 ? Math.Abs(priceChg) : 0;
@@ -153,17 +176,23 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the simple moving average.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
         public static StockData CalculateSimpleMovingAverage(this StockData stockData, int length = 14)
         {
             List<decimal> smaList = new();
             List<decimal> tempList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
                 decimal prevValue = tempList.LastOrDefault();
-                decimal currentValue = inputs.inputList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
                 tempList.AddRounded(currentValue);
 
                 decimal prevSma = smaList.LastOrDefault();
@@ -185,17 +214,22 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the typical price.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <returns></returns>
         public static StockData CalculateTypicalPrice(this StockData stockData)
         {
             List<decimal> tpList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
-                decimal currentHigh = inputs.highList.ElementAtOrDefault(i);
-                decimal currentLow = inputs.lowList.ElementAtOrDefault(i);
-                decimal currentClose = inputs.inputList.ElementAtOrDefault(i);
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentClose = inputList.ElementAtOrDefault(i);
                 decimal prevTypicalPrice1 = i >= 1 ? tpList.ElementAtOrDefault(i - 1) : 0;
                 decimal prevTypicalPrice2 = i >= 2 ? tpList.ElementAtOrDefault(i - 2) : 0;
 
@@ -217,16 +251,21 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the median price.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <returns></returns>
         public static StockData CalculateMedianPrice(this StockData stockData)
         {
             List<decimal> medianPriceList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
+            var (_, highList, lowList, _, _) = GetInputValuesList(stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
-                decimal currentLow = inputs.lowList.ElementAtOrDefault(i);
-                decimal currentHigh = inputs.highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentHigh = highList.ElementAtOrDefault(i);
                 decimal prevMedianPrice1 = i >= 1 ? medianPriceList.ElementAtOrDefault(i - 1) : 0;
                 decimal prevMedianPrice2 = i >= 2 ? medianPriceList.ElementAtOrDefault(i - 2) : 0;
 
@@ -248,18 +287,23 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the full typical price.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <returns></returns>
         public static StockData CalculateFullTypicalPrice(this StockData stockData)
         {
             List<decimal> fullTpList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
+            var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
-                decimal currentHigh = inputs.highList.ElementAtOrDefault(i);
-                decimal currentLow = inputs.lowList.ElementAtOrDefault(i);
-                decimal currentClose = inputs.inputList.ElementAtOrDefault(i);
-                decimal currentOpen = inputs.openList.ElementAtOrDefault(i);
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentClose = inputList.ElementAtOrDefault(i);
+                decimal currentOpen = openList.ElementAtOrDefault(i);
                 decimal prevTypicalPrice1 = i >= 1 ? fullTpList.ElementAtOrDefault(i - 1) : 0;
                 decimal prevTypicalPrice2 = i >= 2 ? fullTpList.ElementAtOrDefault(i - 2) : 0;
 
@@ -281,18 +325,23 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the weighted close.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <returns></returns>
         public static StockData CalculateWeightedClose(this StockData stockData)
         {
             List<decimal> weightedCloseList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
-                decimal currentHigh = inputs.inputList.ElementAtOrDefault(i);
-                decimal currentLow = inputs.lowList.ElementAtOrDefault(i);
-                decimal currentClose = inputs.inputList.ElementAtOrDefault(i);
-                decimal prevClose = i >= 1 ? inputs.inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentClose = inputList.ElementAtOrDefault(i);
+                decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
 
                 decimal prevWeightedClose = weightedCloseList.LastOrDefault();
                 decimal weightedClose = (currentHigh + currentLow + (currentClose * 2)) / 4;
@@ -313,22 +362,28 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
-        public static StockData CalculateWeightedMovingAverage(this StockData stockData, int days = 14)
+        /// <summary>
+        /// Calculates the weighted moving average.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
+        public static StockData CalculateWeightedMovingAverage(this StockData stockData, int length = 14)
         {
             List<decimal> wmaList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
-                decimal currentValue = inputs.inputList.ElementAtOrDefault(i);
-                decimal prevVal = i >= 1 ? inputs.inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
 
                 decimal sum = 0, weightedSum = 0;
-                for (int j = 0; j < days; j++)
+                for (int j = 0; j < length; j++)
                 {
-                    decimal weight = days - j;
-                    decimal prevValue = i >= j ? inputs.inputList.ElementAtOrDefault(i - j) : 0;
+                    decimal weight = length - j;
+                    decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
 
                     sum += prevValue * weight;
                     weightedSum += weight;
@@ -353,6 +408,12 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the standard deviation volatility.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
         public static StockData CalculateStandardDeviationVolatility(this StockData stockData, int length = 20)
         {
             List<decimal> stdDevVolatilityList = new();
@@ -361,16 +422,16 @@ namespace OoplesFinance.StockIndicators
             List<decimal> stdDevEmaList = new();
             List<Signal> signalsList = new();
 
-            var inputs = GetInputValuesList(stockData);
-            var smaList = GetMovingAverageList(stockData, MovingAvgType.SimpleMovingAverage, length, inputs.inputList);
-            var emaList = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, length, inputs.inputList);
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+            var smaList = GetMovingAverageList(stockData, MovingAvgType.SimpleMovingAverage, length, inputList);
+            var emaList = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, length, inputList);
 
             for (int i = 0; i < stockData.Count; i++)
             {
                 decimal currentEma = emaList.ElementAtOrDefault(i);
-                decimal currentValue = inputs.inputList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
                 decimal avgPrice = smaList.ElementAtOrDefault(i);
-                decimal prevValue = i >= 1 ? inputs.inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
                 decimal prevEma = i >= 1 ? emaList.ElementAtOrDefault(i - 1) : 0;
                 decimal currentDeviation = currentValue - avgPrice;
 
@@ -402,21 +463,29 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the bollinger bands.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <param name="stdDevMult">The standard dev mult.</param>
+        /// <param name="movingAvgType">Average type of the moving.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
         public static StockData CalculateBollingerBands(this StockData stockData, decimal stdDevMult = 2, MovingAvgType movingAvgType = MovingAvgType.SimpleMovingAverage, int length = 20)
         {
             List<decimal> upperBandList = new();
             List<decimal> lowerBandList = new();
             List<Signal> signalsList = new();
-            var inputs = GetInputValuesList(stockData);
-            var smaList = GetMovingAverageList(stockData, movingAvgType, length, inputs.inputList);
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+            var smaList = GetMovingAverageList(stockData, movingAvgType, length, inputList);
             var stdDeviationList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
 
             for (int i = 0; i < stockData.Count; i++)
             {
                 decimal middleBand = smaList.ElementAtOrDefault(i);
-                decimal currentValue = inputs.inputList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
                 decimal currentStdDeviation = stdDeviationList.ElementAtOrDefault(i);
-                decimal prevValue = i >= 1 ? inputs.inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
                 decimal prevMiddleBand = i >= 1 ? smaList.ElementAtOrDefault(i - 1) : 0;
 
                 decimal prevUpperBand = upperBandList.LastOrDefault();

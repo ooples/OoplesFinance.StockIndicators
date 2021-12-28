@@ -1,0 +1,366 @@
+{
+  "homepages": [],
+  "source_base_path": "C:/Users/cheat/source/repos/OoplesFinance.StockIndicators",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Conceptual",
+      "source_relative_path": "README.md",
+      "output": {
+        ".html": {
+          "relative_path": "README.html",
+          "hash": "h/zFNMj4oaDxsmX7seMCVUFKYN5/rIQiJYiq0Wm8DfI="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Calculations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Calculations.html",
+          "hash": "pPjj2IatmYIpR6XiimHh6BGTdjUj2ri+oIGvDEhtcpk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Enums.IndicatorName.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Enums.IndicatorName.html",
+          "hash": "EuPTwqmVGShJU6ONrmNnL0RW/p/s4K6zsxDAcig6EyE="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Enums.IndicatorType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Enums.IndicatorType.html",
+          "hash": "/xofhiujhT6Dv2eL4gLfH7ctzndZI4/xKG0FiLC1LEY="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Enums.InputName.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Enums.InputName.html",
+          "hash": "xu2cjzB7pZH8JaImP3c14IEJ9KWlYqtb/rZDMqCiMEo="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Enums.MovingAvgType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Enums.MovingAvgType.html",
+          "hash": "0p+gxoP9Iy84NmHG7JpSYYHUwS1gUABHMFz6BAnUC44="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Enums.SignalsClass.Signal.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Enums.SignalsClass.Signal.html",
+          "hash": "8sk3Kbj/Mq5hILUr+aGPwBeSRIL35FxScJ/IzbDgY4U="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Enums.SignalsClass.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Enums.SignalsClass.html",
+          "hash": "ol2kF4wubULmRUn38CMwiDxMwIb6SIk5s/kNKCJnemc="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Enums.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Enums.html",
+          "hash": "KNzELFMv8Uuk6ZduEVhYkm8KvaYI2fVZ+KEj8dZu/lY="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Exceptions.CalculationException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Exceptions.CalculationException.html",
+          "hash": "HInEBXyhs9vsVwYZR2j+vo7Xshfn5x450Ec7IKpjIHU="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Exceptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Exceptions.html",
+          "hash": "tLZaOOVJ5v5biRvtsCm7k5qfCWuTkRR/+4TmGSSXF/Q="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Helpers.AttributeExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Helpers.AttributeExtensions.html",
+          "hash": "YNFe5XDQwa/vxwQG2Hetq3TEVB9a7MpsJrfLIF0NtFE="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Helpers.CalculationsHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Helpers.CalculationsHelper.html",
+          "hash": "W1UoMrlv/YISEB6DTwsHxidNuY38KUU+GcIJYkUL48w="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Helpers.CategoryAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Helpers.CategoryAttribute.html",
+          "hash": "+IMknso0gVRRr349BbjsGZwL/KL0QQfGHApnKC6SxXA="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Helpers.MathHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Helpers.MathHelper.html",
+          "hash": "gU4fDZTjqzf3WNDStsAeaJgr3D2VzXeqdBQbfKV9yQM="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Helpers.SignalHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Helpers.SignalHelper.html",
+          "hash": "TokStFF7gpqXG62/K2w5dotN8Hejpf6nwWmfiBXVr/Q="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Helpers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Helpers.html",
+          "hash": "vN0hyabp1WKYBX9mOaODtA9RGNnT84eJ1R3FgJ/JIBs="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Models.StockData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Models.StockData.html",
+          "hash": "tc3zLgbZ4tlsGXLJCiWsvVF1ln2AMF0LxhwnKR5kq0w="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.Models.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.Models.html",
+          "hash": "JGejcusb0Q1h7VQ357oKRwT0ifLwdl60sORR7+oOlOA="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/OoplesFinance.StockIndicators.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/OoplesFinance.StockIndicators.html",
+          "hash": "uwMJhrZxmgGKXiKvLe4hqc+w4jouIkHf7LTydTvd628="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "ng42RWWVT40ctqhM1y74OKzuraw895mw8IuyCJav6/k="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "wye2XPZPECCsIXGzry7Q1vZKg+UBEkQw4mDvHo9oUo0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html",
+          "hash": "8pHcU1V5802D49h5bc3Sz5HPYvD/cm37gNEC7ihSKn8="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "BlPxk5mtl2kgfcZUgkEguqiSAR/EUyUTT4EdebwkQvs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "SNGXuLvomcEuptgqMARx9Cs5/e9/RYPSm7EzhSfeFTI="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "WSuRrYiGwKKMbtdG9z8W9fXmLoCyTnGg9AxbPKLXm2Y="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 4,
+          "skipped_file_count": 4
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 19,
+          "skipped_file_count": 18
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": true,
+        "details": "Can support incremental post processing.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

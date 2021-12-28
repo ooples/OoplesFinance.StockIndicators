@@ -24,7 +24,7 @@ namespace OoplesFinance.StockIndicators.Helpers
             return attr?.Type ?? default;
         }
 
-        public static string ToString(this IndicatorName iName)
+        public static string ToFormattedString(this IndicatorName iName)
         {
             var result = iName.ToString();
             return result[0] == '_' ? result.Replace('_', ' ').Trim() : result;

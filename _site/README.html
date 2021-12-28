@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>.Net Stock Indicator Library </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content=".Net Stock Indicator Library ">
+    <meta name="generator" content="docfx 2.58.9.0">
+    
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h2 id="net-stock-indicator-library">.Net Stock Indicator Library</h2>
+
+<p>This is a stock indicator library that is completely open source and I have written code for over 700 indicators. For my alpha version I published around 15 indicators with many more to be released in the next few weeks.</p>
+<h3 id="how-to-use-this-library">How to use this library</h3>
+<p>Calculate an indicator of your choice or go crazy and create an indicator of an indicator of an indicator. I have created this library will full customization in mind so feel free to change any settings, change the moving average used for different indicators, or come up with a crazy combo like getting the RSI of a MACD and wrap that up in a Bollinger Band of the result. Here is an easy example to get you started using the <a href="https://github.com/alpacahq/alpaca-trade-api-csharp">Alpaca C# Api</a></p>
+<pre><code class="lang-cs">using Alpaca.Markets;
+using OoplesFinance.StockIndicators.Models;
+using static OoplesFinance.StockIndicators.Calculations;
+
+const string paperApiKey = &quot;REPLACEME&quot;;
+const string paperApiSecret = &quot;REPLACEME&quot;;
+const string symbol = &quot;AAPL&quot;;
+var secretKey = new SecretKey(paperApiKey, paperApiSecret);
+var alpacaDataClient = Environments.Paper.GetAlpacaDataClient(secretKey);
+var bars = (await alpacaDataClient.GetHistoricalBarsAsync(new HistoricalBarsRequest(symbol, new DateTime(2021, 1, 1), 
+    new DateTime(2021, 12, 15), BarTimeFrame.Day)).ConfigureAwait(false)).Items.SelectMany(x =&gt; x.Value);
+
+var closePrices = bars.Select(x =&gt; x.Close);
+var openPrices = bars.Select(x =&gt; x.Open);
+var highPrices = bars.Select(x =&gt; x.High);
+var lowPrices = bars.Select(x =&gt; x.Low);
+var volumes = bars.Select(x =&gt; x.Volume);
+
+var stockData = new StockData(openPrices, highPrices, lowPrices, closePrices, volumes);
+var results = stockData.CalculateRelativeStrengthIndex().CalculateMovingAverageConvergenceDivergence().CalculateBollingerBands();
+</code></pre>
+<h3 id="support-or-contact">Support or Contact</h3>
+<p>Email me at cheatcountry@gmail.com for any help or support.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/ooples/OoplesFinance.StockIndicators/blob/master/README.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>

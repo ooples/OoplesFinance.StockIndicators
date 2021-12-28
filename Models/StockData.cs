@@ -35,18 +35,5 @@ namespace OoplesFinance.StockIndicators.Models
             IndicatorName = IndicatorName.None;
             Count = (OpenPrices.Count + HighPrices.Count + LowPrices.Count + ClosePrices.Count + Volumes.Count) / 5 == ClosePrices.Count ? ClosePrices.Count : 0;
         }
-
-        /*
-        public StockData(InputName inputName, IEnumerable<decimal> openPrices, IEnumerable<decimal> highPrices, IEnumerable<decimal> lowPrices, 
-            IEnumerable<decimal> closePrices, IEnumerable<decimal> volumes)
-        {
-            OpenPrices = openPrices;
-            HighPrices = highPrices;
-            LowPrices = lowPrices;
-            ClosePrices = closePrices;
-            Volumes = volumes;
-            InputValues = GetInputValuesList(inputName, new StockData(openPrices, highPrices, lowPrices, closePrices, volumes));
-        }
-        */
     }
 }
