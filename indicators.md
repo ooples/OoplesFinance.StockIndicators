@@ -12,7 +12,7 @@
 ## Trend
 [Exponential Moving Average](https://www.investopedia.com/terms/e/ema.asp)
 
-Full Typical Price
+[Full Typical Price](https://tlc.thinkorswim.com/center/reference/thinkScript/Functions/Fundamentals/ohlc4)
 
 [Median Price](https://www.metastock.com/customer/resources/taaz/?p=70)
 
