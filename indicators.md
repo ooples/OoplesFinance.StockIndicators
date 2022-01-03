@@ -9,7 +9,7 @@
 
 [Balance Of Power](https://school.stockcharts.com/doku.php?id=technical_indicators:balance_of_power)
 
-[Choppiness Index](https://www.tradingview.com/support/solutions/43000501980-choppiness-index-chop/#:~:text=Definition,a%20trend%20in%20either%20direction).&text=CHOP%20is%20not%20meant%20to,defining%20the%20market's%20trendiness%20only.)
+[Choppiness Index](https://www.incrediblecharts.com/indicators/choppiness-index.php)
 
 [Commodity Channel Index](https://www.investopedia.com/terms/c/commoditychannelindex.asp)
 
