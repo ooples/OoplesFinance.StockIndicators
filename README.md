@@ -1,6 +1,6 @@
 ## .Net Stock Indicator Library
 
-This is a stock indicator library that is completely open source and very easy to use. Current version contains [15 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) with over 700 planned for future releases.
+This is a stock indicator library that is completely open source and very easy to use. Current version contains [103 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) with over 700 planned for future releases.
 
 ### How to use this library
 
@@ -23,12 +23,8 @@ const string paperApiSecret = "REPLACEME";
 const string symbol = "AAPL";
 var secretKey = new SecretKey(paperApiKey, paperApiSecret);
 var alpacaDataClient = Environments.Paper.GetAlpacaDataClient(secretKey);
-
-var startDate = new DateTime(2021, 1, 1);
-var endDate = new DateTime(2021, 12, 15);
-var bars = (await alpacaDataClient.GetHistoricalBarsAsync(
-	new HistoricalBarsRequest(symbol, startDate, endDate, BarTimeFrame.Day)).
-ConfigureAwait(false)).Items.SelectMany(x => x.Value);
+var bars = (await alpacaDataClient.GetHistoricalBarsAsync(new HistoricalBarsRequest(symbol, new DateTime(2021, 1, 1), 
+    new DateTime(2021, 12, 15), BarTimeFrame.Day)).ConfigureAwait(false)).Items.SelectMany(x => x.Value);
 
 var closePrices = bars.Select(x => x.Close);
 var openPrices = bars.Select(x => x.Open);

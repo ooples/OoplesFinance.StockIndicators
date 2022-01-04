@@ -2,76 +2,102 @@
 {
     public static class MathHelper
     {
-        public static decimal Log(double value)
-        {
-            return (decimal)Math.Log(value);
-        }
-
+        /// <summary>
+        /// Logs the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Log(decimal value)
         {
             return (decimal)Math.Log((double)value);
         }
 
+        /// <summary>
+        /// Log10s the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Log10(double value)
         {
             return (decimal)Math.Log10(value);
         }
 
+        /// <summary>
+        /// Log10s the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Log10(decimal value)
         {
             return (decimal)Math.Log10((double)value);
         }
 
+        /// <summary>
+        /// SQRTs the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Sqrt(double value)
         {
             return (decimal)Math.Sqrt(value);
         }
 
+        /// <summary>
+        /// SQRTs the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Sqrt(decimal value)
         {
             return (decimal)Math.Sqrt((double)value);
         }
 
-        public static decimal Sin(double value)
-        {
-            return (decimal)Math.Sin(value);
-        }
-
+        /// <summary>
+        /// Sins the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Sin(decimal value)
         {
             return (decimal)Math.Sin((double)value);
         }
 
+        /// <summary>
+        /// Coses the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Cos(double value)
         {
             return (decimal)Math.Cos(value);
         }
 
+        /// <summary>
+        /// Coses the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Cos(decimal value)
         {
             return (decimal)Math.Cos((double)value);
         }
 
-        public static decimal Asin(double value)
-        {
-            return (decimal)Math.Asin(value);
-        }
-
-        public static decimal Asin(decimal value)
-        {
-            return (decimal)Math.Asin((double)value);
-        }
-
-        public static decimal Atan(double value)
-        {
-            return (decimal)Math.Atan(value);
-        }
-
+        /// <summary>
+        /// Atans the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Atan(decimal value)
         {
             return (decimal)Math.Atan((double)value);
         }
 
+        /// <summary>
+        /// Pows the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="power">The power.</param>
+        /// <returns></returns>
         public static decimal Pow(decimal value, double power)
         {
             decimal result;
@@ -88,39 +114,11 @@
             return result;
         }
 
-        public static double Power(double value, double power)
-        {
-            double valueToPower;
-
-            if (value == 0 && power < 0)
-            {
-                valueToPower = 0;
-            }
-            else if (value == 0 && power == 0)
-            {
-                valueToPower = 0;
-            }
-            else if (IsValueNullOrInfinity(value))
-            {
-                valueToPower = 0;
-            }
-            else if (IsValueNullOrInfinity(power))
-            {
-                valueToPower = 0;
-            }
-            else
-            {
-                valueToPower = Math.Pow(value, power);
-
-                if (IsValueNullOrInfinity(valueToPower))
-                {
-                    valueToPower = double.MaxValue;
-                }
-            }
-
-            return valueToPower;
-        }
-
+        /// <summary>
+        /// Exps the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Exp(double value)
         {
             decimal exp;
@@ -137,6 +135,11 @@
             return exp;
         }
 
+        /// <summary>
+        /// Exps the specified value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static decimal Exp(decimal value)
         {
             decimal result;
@@ -157,41 +160,39 @@
             return result;
         }
 
+        /// <summary>
+        /// Determines whether [is value null or infinity] [the specified value].
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>
+        ///   <c>true</c> if [is value null or infinity] [the specified value]; otherwise, <c>false</c>.
+        /// </returns>
         public static bool IsValueNullOrInfinity(double value)
         {
             return double.IsNaN(value) || double.IsInfinity(value);
         }
 
-        public static double MinOrMax(double value, double maxValue, double minValue)
-        {
-            double result = double.IsNaN(value) ? 0 : double.IsPositiveInfinity(value) ? double.MaxValue : double.IsNegativeInfinity(value) ? double.MinValue : value;
-            return Math.Min(Math.Max(result, minValue), maxValue);
-        }
-
+        /// <summary>
+        /// Minimums the or maximum.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="maxValue">The maximum value.</param>
+        /// <param name="minValue">The minimum value.</param>
+        /// <returns></returns>
         public static decimal MinOrMax(decimal value, decimal maxValue, decimal minValue)
         {
             return Math.Min(Math.Max(value, minValue), maxValue);
         }
 
+        /// <summary>
+        /// Minimums the or maximum.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static int MinOrMax(int value)
         {
             int result = double.IsNaN(value) ? 0 : double.IsPositiveInfinity(value) ? int.MaxValue : double.IsNegativeInfinity(value) ? int.MinValue : value;
             return Math.Min(Math.Max(result, 2), 530);
-        }
-
-        public static decimal ToRadians(this decimal val)
-        {
-            return (decimal)Math.PI / 180 * val;
-        }
-
-        public static decimal ToRadians(this double val)
-        {
-            return (decimal)(Math.PI / 180 * val);
-        }
-
-        public static decimal ToDegrees(this decimal radianValue)
-        {
-            return 180 / (decimal)Math.PI * radianValue;
         }
     }
 }

@@ -16,7 +16,9 @@ namespace OoplesFinance.StockIndicators
         /// <returns></returns>
         public static StockData CalculateMovingAverageConvergenceDivergence(this StockData stockData)
         {
-            return CalculateMovingAverageConvergenceDivergence(stockData, MovingAvgType.ExponentialMovingAverage, 12, 26, 9);
+            int fastLength = 12, slowLength = 26, signalLength = 9;
+
+            return CalculateMovingAverageConvergenceDivergence(stockData, MovingAvgType.ExponentialMovingAverage, fastLength, slowLength, signalLength);
         }
 
         /// <summary>

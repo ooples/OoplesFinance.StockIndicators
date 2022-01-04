@@ -4,6 +4,17 @@ namespace OoplesFinance.StockIndicators.Helpers
 {
     public static class SignalHelper
     {
+        /// <summary>
+        /// Gets the rsi signal.
+        /// </summary>
+        /// <param name="currentSlope">The current slope.</param>
+        /// <param name="prevSlope">The previous slope.</param>
+        /// <param name="currentRsi">The current rsi.</param>
+        /// <param name="prevRsi">The previous rsi.</param>
+        /// <param name="overBoughtNumber">The over bought number.</param>
+        /// <param name="overSoldNumber">The over sold number.</param>
+        /// <param name="isReversed">if set to <c>true</c> [is reversed].</param>
+        /// <returns></returns>
         public static Signal GetRsiSignal(decimal currentSlope, decimal prevSlope, decimal currentRsi, decimal prevRsi, decimal overBoughtNumber, decimal overSoldNumber, bool isReversed = false)
         {
             Signal signal;
@@ -32,6 +43,15 @@ namespace OoplesFinance.StockIndicators.Helpers
             return signal;
         }
 
+        /// <summary>
+        /// Gets the bullish bearish signal.
+        /// </summary>
+        /// <param name="bullishSlope">The bullish slope.</param>
+        /// <param name="prevBullishSlope">The previous bullish slope.</param>
+        /// <param name="bearishSlope">The bearish slope.</param>
+        /// <param name="prevBearishSlope">The previous bearish slope.</param>
+        /// <param name="isReversed">if set to <c>true</c> [is reversed].</param>
+        /// <returns></returns>
         public static Signal GetBullishBearishSignal(decimal bullishSlope, decimal prevBullishSlope, decimal bearishSlope, decimal prevBearishSlope, bool isReversed = false)
         {
             Signal signal;
@@ -60,6 +80,12 @@ namespace OoplesFinance.StockIndicators.Helpers
             return signal;
         }
 
+        /// <summary>
+        /// Gets the condition signal.
+        /// </summary>
+        /// <param name="bullishCond">if set to <c>true</c> [bullish cond].</param>
+        /// <param name="bearishCond">if set to <c>true</c> [bearish cond].</param>
+        /// <returns></returns>
         public static Signal GetConditionSignal(bool bullishCond, bool bearishCond)
         {
             Signal signal;
@@ -80,6 +106,13 @@ namespace OoplesFinance.StockIndicators.Helpers
             return signal;
         }
 
+        /// <summary>
+        /// Gets the compare signal.
+        /// </summary>
+        /// <param name="currentSlope">The current slope.</param>
+        /// <param name="prevSlope">The previous slope.</param>
+        /// <param name="isReversed">if set to <c>true</c> [is reversed].</param>
+        /// <returns></returns>
         public static Signal GetCompareSignal(decimal currentSlope, decimal prevSlope, bool isReversed = false)
         {
             Signal signal;
@@ -108,6 +141,18 @@ namespace OoplesFinance.StockIndicators.Helpers
             return signal;
         }
 
+        /// <summary>
+        /// Gets the bollinger bands signal.
+        /// </summary>
+        /// <param name="currentSlope">The current slope.</param>
+        /// <param name="prevSlope">The previous slope.</param>
+        /// <param name="currentValue">The current value.</param>
+        /// <param name="prevValue">The previous value.</param>
+        /// <param name="upperBand">The upper band.</param>
+        /// <param name="prevUpperBand">The previous upper band.</param>
+        /// <param name="lowerBand">The lower band.</param>
+        /// <param name="prevLowerBand">The previous lower band.</param>
+        /// <returns></returns>
         public static Signal GetBollingerBandsSignal(decimal currentSlope, decimal prevSlope, decimal currentValue, decimal prevValue, decimal upperBand, decimal prevUpperBand, decimal lowerBand, decimal prevLowerBand)
         {
             Signal signal;
@@ -136,6 +181,14 @@ namespace OoplesFinance.StockIndicators.Helpers
             return signal;
         }
 
+        /// <summary>
+        /// Gets the volatility signal.
+        /// </summary>
+        /// <param name="currentSlope">The current slope.</param>
+        /// <param name="prevSlope">The previous slope.</param>
+        /// <param name="currentVolatility">The current volatility.</param>
+        /// <param name="thresholdValue">The threshold value.</param>
+        /// <returns></returns>
         public static Signal GetVolatilitySignal(decimal currentSlope, decimal prevSlope, decimal currentVolatility, decimal thresholdValue)
         {
             Signal signal;

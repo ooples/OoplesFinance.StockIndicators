@@ -7,7 +7,16 @@ namespace OoplesFinance.StockIndicators.Helpers
 {
     public static class CalculationsHelper
     {
-        public static List<decimal> GetMovingAverageList(StockData stockData, MovingAvgType movingAvgType, int length, List<decimal>? customValuesList = null)
+        /// <summary>
+        /// Gets the moving average list.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <param name="movingAvgType">Average type of the moving.</param>
+        /// <param name="length">The length.</param>
+        /// <param name="customValuesList">The custom values list.</param>
+        /// <returns></returns>
+        public static List<decimal> GetMovingAverageList(StockData stockData, MovingAvgType movingAvgType, int length, 
+            List<decimal>? customValuesList = null)
         {
             List<decimal> movingAvgList = new();
 
@@ -18,14 +27,89 @@ namespace OoplesFinance.StockIndicators.Helpers
 
             switch (movingAvgType)
             {
+                case MovingAvgType.AdaptiveAutonomousRecursiveMovingAverage:
+                    movingAvgList = stockData.CalculateAdaptiveAutonomousRecursiveMovingAverage(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.AdaptiveExponentialMovingAverage:
+                    movingAvgList = stockData.CalculateAdaptiveExponentialMovingAverage(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                    break;
+                case MovingAvgType.AdaptiveLeastSquares:
+                    movingAvgList = stockData.CalculateAdaptiveLeastSquares(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.AdaptiveMovingAverage:
+                    movingAvgList = stockData.CalculateAdaptiveMovingAverage(slowLength: length, length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.AhrensMovingAverage:
+                    movingAvgList = stockData.CalculateAhrensMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.AlphaDecreasingExponentialMovingAverage:
+                    movingAvgList = stockData.CalculateAlphaDecreasingExponentialMovingAverage().CustomValuesList;
+                    break;
+                case MovingAvgType.ArnaudLegouxMovingAverage:
+                    movingAvgList = stockData.CalculateArnaudLegouxMovingAverage(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.AtrFilteredExponentialMovingAverage:
+                    movingAvgList = stockData.CalculateAtrFilteredExponentialMovingAverage(MovingAvgType.SimpleMovingAverage, length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.AutoFilter:
+                    movingAvgList = stockData.CalculateAutoFilter(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                    break;
+                case MovingAvgType.AutonomousRecursiveMovingAverage:
+                    movingAvgList = stockData.CalculateAutonomousRecursiveMovingAverage(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.EndPointWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateEndPointMovingAverage(length: length).CustomValuesList;
+                    break;
                 case MovingAvgType.ExponentialMovingAverage:
                     movingAvgList = stockData.CalculateExponentialMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.HullMovingAverage:
+                    movingAvgList = stockData.CalculateHullMovingAverage(MovingAvgType.WeightedMovingAverage, length).CustomValuesList;
+                    break;
+                case MovingAvgType.KaufmanAdaptiveMovingAverage:
+                    movingAvgList = stockData.CalculateKaufmanAdaptiveMovingAverage(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.LeastSquaresMovingAverage:
+                    movingAvgList = stockData.CalculateLeastSquaresMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.LinearRegression:
+                    movingAvgList = stockData.CalculateLinearRegression(length).CustomValuesList;
+                    break;
+                case MovingAvgType.MesaAdaptiveMovingAverage:
+                    movingAvgList = stockData.CalculateEhlersMotherOfAdaptiveMovingAverages().CustomValuesList;
+                    break;
+                case MovingAvgType.PoweredKaufmanAdaptiveMovingAverage:
+                    movingAvgList = stockData.CalculatePoweredKaufmanAdaptiveMovingAverage(length: length).CustomValuesList;
                     break;
                 case MovingAvgType.SimpleMovingAverage:
                     movingAvgList = stockData.CalculateSimpleMovingAverage(length).CustomValuesList;
                     break;
+                case MovingAvgType.T3MovingAverage:
+                    movingAvgList = stockData.CalculateT3MovingAverage(MovingAvgType.ExponentialMovingAverage, length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.TriangularMovingAverage:
+                    movingAvgList = stockData.CalculateTriangularMovingAverage(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                    break;
+                case MovingAvgType.TripleExponentialMovingAverage:
+                    movingAvgList = stockData.CalculateTripleExponentialMovingAverage(MovingAvgType.ExponentialMovingAverage, length).CustomValuesList;
+                    break;
+                case MovingAvgType.UltimateMovingAverage:
+                    movingAvgList = stockData.CalculateUltimateMovingAverage(MovingAvgType.SimpleMovingAverage).CustomValuesList;
+                    break;
+                case MovingAvgType.VariableLengthMovingAverage:
+                    movingAvgList = stockData.CalculateVariableLengthMovingAverage(MovingAvgType.SimpleMovingAverage).CustomValuesList;
+                    break;
+                case MovingAvgType.VolumeWeightedAveragePrice:
+                    movingAvgList = stockData.CalculateVolumeWeightedAveragePrice().CustomValuesList;
+                    break;
+                case MovingAvgType.VolumeWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateVolumeWeightedMovingAverage(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                    break;
                 case MovingAvgType.WeightedMovingAverage:
                     movingAvgList = stockData.CalculateWeightedMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.WildersSmoothingMethod:
+                    movingAvgList = stockData.CalculateWellesWilderMovingAverage(length).CustomValuesList;
                     break;
                 default:
                     Console.WriteLine($"Moving Avg Name: {movingAvgType} not supported!");
@@ -35,23 +119,68 @@ namespace OoplesFinance.StockIndicators.Helpers
             return movingAvgList;
         }
 
-        public static List<decimal> GetInputValuesList(InputName inputName, StockData stockData)
+        /// <summary>
+        /// Gets the input values list.
+        /// </summary>
+        /// <param name="inputName">Name of the input.</param>
+        /// <param name="stockData">The stock data.</param>
+        /// <returns></returns>
+        public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> volumeList) 
+            GetInputValuesList(InputName inputName, StockData stockData)
         {
-            return inputName switch
+            List<decimal> highList;
+            List<decimal> lowList;
+            List<decimal> openList;
+            List<decimal> volumeList;
+            List<decimal> inputList = inputName switch
             {
-                InputName.Open => stockData.OpenPrices,
                 InputName.Close => stockData.ClosePrices,
-                InputName.High => stockData.HighPrices,
                 InputName.Low => stockData.LowPrices,
+                InputName.High => stockData.HighPrices,
                 InputName.Volume => stockData.Volumes,
-                InputName.MedianPrice => stockData.CalculateMedianPrice().CustomValuesList,
                 InputName.TypicalPrice => stockData.CalculateTypicalPrice().CustomValuesList,
                 InputName.FullTypicalPrice => stockData.CalculateFullTypicalPrice().CustomValuesList,
+                InputName.MedianPrice => stockData.CalculateMedianPrice().CustomValuesList,
                 InputName.WeightedClose => stockData.CalculateWeightedClose().CustomValuesList,
+                InputName.Open => stockData.OpenPrices,
+                InputName.AdjustedClose => stockData.ClosePrices,
                 _ => stockData.ClosePrices,
             };
+
+            if (inputList.Count > 0)
+            {
+                decimal sum = inputList.Sum();
+
+                if (inputList.SequenceEqual(stockData.Volumes) || sum < stockData.LowPrices.Sum() || sum > stockData.HighPrices.Sum())
+                {
+                    var minMaxList = GetMaxAndMinValuesList(inputList, 0);
+                    highList = minMaxList.Item1;
+                    lowList = minMaxList.Item2;
+                }
+                else
+                {
+                    highList = stockData.HighPrices;
+                    lowList = stockData.LowPrices;
+                }
+            }
+            else
+            {
+                highList = stockData.HighPrices;
+                lowList = stockData.LowPrices;
+            }
+
+            openList = stockData.OpenPrices;
+            volumeList = stockData.Volumes;
+
+            return (inputList, highList, lowList, openList, volumeList);
         }
 
+        /// <summary>
+        /// Gets the input values list.
+        /// </summary>
+        /// <param name="stockData">The stock data.</param>
+        /// <returns></returns>
+        /// <exception cref="OoplesFinance.StockIndicators.Exceptions.CalculationException">Calculations based off of {stockData.IndicatorName} can't be completed because this indicator doesn't have a single output.</exception>
         public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> volumeList) GetInputValuesList(StockData stockData)
         {
             List<decimal> inputList;
@@ -102,6 +231,13 @@ namespace OoplesFinance.StockIndicators.Helpers
             return (inputList, highList, lowList, openList, volumeList);
         }
 
+        /// <summary>
+        /// Calculates the ema.
+        /// </summary>
+        /// <param name="currentValue">The current value.</param>
+        /// <param name="prevEma">The previous ema.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
         public static decimal CalculateEMA(decimal currentValue, decimal prevEma, int length = 14)
         {
             decimal k = MinOrMax((decimal)2 / (length + 1), 0.99m, 0.01m);
@@ -110,7 +246,36 @@ namespace OoplesFinance.StockIndicators.Helpers
             return ema;
         }
 
-        public static (List<decimal>, List<decimal>) GetMaxAndMinValuesList(List<decimal> inputs, int days)
+        /// <summary>
+        /// Calculates the true range.
+        /// </summary>
+        /// <param name="currentHigh">The current high.</param>
+        /// <param name="currentLow">The current low.</param>
+        /// <param name="prevClose">The previous close.</param>
+        /// <returns></returns>
+        public static decimal CalculateTrueRange(decimal currentHigh, decimal currentLow, decimal prevClose)
+        {
+            return Math.Max(currentHigh - currentLow, Math.Max(Math.Abs(currentHigh - prevClose), Math.Abs(currentLow - prevClose)));
+        }
+
+        /// <summary>
+        /// Calculates the percent change.
+        /// </summary>
+        /// <param name="currentValue">The current value.</param>
+        /// <param name="previousValue">The previous value.</param>
+        /// <returns></returns>
+        public static decimal CalculatePercentChange(decimal currentValue, decimal previousValue)
+        {
+            return previousValue != 0 ? (currentValue - previousValue) / Math.Abs(previousValue) * 100 : 0;
+        }
+
+        /// <summary>
+        /// Gets the maximum and minimum values list.
+        /// </summary>
+        /// <param name="inputs">The inputs.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
+        public static (List<decimal>, List<decimal>) GetMaxAndMinValuesList(List<decimal> inputs, int length)
         {
             List<decimal> highestValuesList = new();
             List<decimal> lowestValuesList = new();
@@ -121,7 +286,7 @@ namespace OoplesFinance.StockIndicators.Helpers
                 decimal input = inputs.ElementAt(i);
                 inputList.Add(input);
 
-                var list = inputList.TakeLast(Math.Max(days, 2)).ToList();
+                var list = inputList.TakeLast(Math.Max(length, 2)).ToList();
 
                 decimal highestValue = list.Max();
                 highestValuesList.Add(highestValue);
@@ -133,6 +298,44 @@ namespace OoplesFinance.StockIndicators.Helpers
             return (highestValuesList, lowestValuesList);
         }
 
+        /// <summary>
+        /// Gets the maximum and minimum values list.
+        /// </summary>
+        /// <param name="highList">The high list.</param>
+        /// <param name="lowList">The low list.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
+        public static (List<decimal>, List<decimal>) GetMaxAndMinValuesList(List<decimal> highList, List<decimal> lowList, int length)
+        {
+            List<decimal> highestList = new();
+            List<decimal> lowestList = new();
+            List<decimal> tempHighList = new();
+            List<decimal> tempLowList = new();
+            var count = highList.Count == lowList.Count ? highList.Count : 0;
+
+            for (int i = 0; i < count; i++)
+            {
+                decimal high = highList.ElementAt(i);
+                tempHighList.Add(high);
+
+                decimal low = lowList.ElementAt(i);
+                tempLowList.Add(low);
+
+                decimal highest = tempHighList.TakeLast(length).Max();
+                highestList.AddRounded(highest);
+
+                decimal lowest = tempLowList.TakeLast(length).Min();
+                lowestList.AddRounded(lowest);
+            }
+
+            return (highestList, lowestList);
+        }
+
+        /// <summary>
+        /// Adds the rounded.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="value">The value.</param>
         public static void AddRounded(this List<decimal> list, decimal value)
         {
             list.Add(Math.Round(value, 4));

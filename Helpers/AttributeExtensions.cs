@@ -15,6 +15,11 @@ namespace OoplesFinance.StockIndicators.Helpers
 
     public static class AttributeExtensions
     {
+        /// <summary>
+        /// Gets the type of the indicator.
+        /// </summary>
+        /// <param name="e">The e.</param>
+        /// <returns></returns>
         public static IndicatorType GetIndicatorType(this IndicatorName e)
         {
             var name = Enum.GetName(typeof(IndicatorName), e);
@@ -24,12 +29,22 @@ namespace OoplesFinance.StockIndicators.Helpers
             return attr?.Type ?? default;
         }
 
+        /// <summary>
+        /// Converts to formattedstring.
+        /// </summary>
+        /// <param name="iName">Name of the i.</param>
+        /// <returns></returns>
         public static string ToFormattedString(this IndicatorName iName)
         {
             var result = iName.ToString();
             return result[0] == '_' ? result.Replace('_', ' ').Trim() : result;
         }
 
+        /// <summary>
+        /// Gets the indicator names.
+        /// </summary>
+        /// <param name="iType">Type of the i.</param>
+        /// <returns></returns>
         public static IEnumerable<IndicatorName> GetIndicatorNames(IndicatorType iType)
         {
             //Find all Members of Name Enum Type that have a categoryAttribute with the Category property assigned to the category parameter.

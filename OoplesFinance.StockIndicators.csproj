@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Description>Open source C# library of stock indicators with over 700 indicators available</Description>
-    <Version>0.0.1-alpha3</Version>
+    <Description>Open source C# library of stock indicators with over 700 indicators planned</Description>
+    <Version>0.0.2</Version>
     <Authors>ooples</Authors>
     <Company>Ooples Finance</Company>
     <RepositoryUrl>https://github.com/ooples/OoplesFinance.StockIndicators</RepositoryUrl>
@@ -30,7 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alpaca.Markets" Version="6.0.2-alpha4" />
+    <PackageReference Include="Alpaca.Markets" Version="6.0.2-beta1" />
     <PackageReference Include="LinqOptimizer.CSharp" Version="0.7.0" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0-alpha08" />
   </ItemGroup>
