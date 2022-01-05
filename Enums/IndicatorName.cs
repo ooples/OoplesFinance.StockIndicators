@@ -5,6 +5,14 @@ namespace OoplesFinance.StockIndicators.Enums
     public enum IndicatorName
     {
         None,
+        [Category(IndicatorType.Trend)]
+        _1LCLeastSquaresMovingAverage,
+        [Category(IndicatorType.Trend)]
+        _3HMA,
+        [Category(IndicatorType.Momentum)]
+        _4MovingAverageConvergenceDivergence,
+        [Category(IndicatorType.Momentum)]
+        _4PercentagePriceOscillator,
         [Category(IndicatorType.Momentum)]
         AbsolutePriceOscillator,
         [Category(IndicatorType.Momentum)]
@@ -121,6 +129,16 @@ namespace OoplesFinance.StockIndicators.Enums
         HullMovingAverage,
         [Category(IndicatorType.Trend)]
         IchimokuCloud,
+        [Category(IndicatorType.Momentum)]
+        JapaneseCorrelationCoefficient,
+        [Category(IndicatorType.Momentum)]
+        JmaRsxClone,
+        [Category(IndicatorType.Volatility)]
+        JrcFractalDimension,
+        [Category(IndicatorType.Trend)]
+        JsaMovingAverage,
+        [Category(IndicatorType.Trend)]
+        JurikMovingAverage,
         [Category(IndicatorType.Trend)]
         KaufmanAdaptiveMovingAverage,
         [Category(IndicatorType.Volume)]

@@ -27,6 +27,12 @@ namespace OoplesFinance.StockIndicators.Helpers
 
             switch (movingAvgType)
             {
+                case MovingAvgType._1LCLeastSquaresMovingAverage:
+                    movingAvgList = stockData.Calculate1LCLeastSquaresMovingAverage(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                    break;
+                case MovingAvgType._3HMA:
+                    movingAvgList = stockData.Calculate3HMA(MovingAvgType.WeightedMovingAverage, length).CustomValuesList;
+                    break;
                 case MovingAvgType.AdaptiveAutonomousRecursiveMovingAverage:
                     movingAvgList = stockData.CalculateAdaptiveAutonomousRecursiveMovingAverage(length: length).CustomValuesList;
                     break;
@@ -65,6 +71,12 @@ namespace OoplesFinance.StockIndicators.Helpers
                     break;
                 case MovingAvgType.HullMovingAverage:
                     movingAvgList = stockData.CalculateHullMovingAverage(MovingAvgType.WeightedMovingAverage, length).CustomValuesList;
+                    break;
+                case MovingAvgType.JsaMovingAverage:
+                    movingAvgList = stockData.CalculateJsaMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.JurikMovingAverage:
+                    movingAvgList = stockData.CalculateJurikMovingAverage(length: length).CustomValuesList;
                     break;
                 case MovingAvgType.KaufmanAdaptiveMovingAverage:
                     movingAvgList = stockData.CalculateKaufmanAdaptiveMovingAverage(length: length).CustomValuesList;

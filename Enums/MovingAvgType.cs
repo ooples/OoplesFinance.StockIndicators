@@ -2,6 +2,8 @@
 {
     public enum MovingAvgType
     {
+        _1LCLeastSquaresMovingAverage,
+        _3HMA,
         AdaptiveAutonomousRecursiveMovingAverage,
         AdaptiveExponentialMovingAverage,
         AdaptiveLeastSquares,
@@ -15,6 +17,8 @@
         EndPointWeightedMovingAverage,
         ExponentialMovingAverage,
         HullMovingAverage,
+        JsaMovingAverage,
+        JurikMovingAverage,
         KaufmanAdaptiveMovingAverage,
         LeastSquaresMovingAverage,
         LinearRegression,

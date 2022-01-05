@@ -2303,5 +2303,332 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        public static StockData Calculate4PercentagePriceOscillator(this StockData stockData,
+            MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 5, int length2 = 8, int length3 = 10, int length4 = 17,
+            int length5 = 14, int length6 = 16, decimal blueMult = 4.3m, decimal yellowMult = 1.4m)
+        {
+            List<decimal> ppo1List = new();
+            List<decimal> ppo2List = new();
+            List<decimal> ppo3List = new();
+            List<decimal> ppo4List = new();
+            List<decimal> ppo2HistogramList = new();
+            List<decimal> ppo4HistogramList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var ema5List = GetMovingAverageList(stockData, maType, length1, inputList);
+            var ema8List = GetMovingAverageList(stockData, maType, length2, inputList);
+            var ema10List = GetMovingAverageList(stockData, maType, length3, inputList);
+            var ema17List = GetMovingAverageList(stockData, maType, length4, inputList);
+            var ema14List = GetMovingAverageList(stockData, maType, length5, inputList);
+            var ema16List = GetMovingAverageList(stockData, maType, length6, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ema5 = ema5List.ElementAtOrDefault(i);
+                decimal ema8 = ema8List.ElementAtOrDefault(i);
+                decimal ema10 = ema10List.ElementAtOrDefault(i);
+                decimal ema14 = ema14List.ElementAtOrDefault(i);
+                decimal ema16 = ema16List.ElementAtOrDefault(i);
+                decimal ema17 = ema17List.ElementAtOrDefault(i);
+                decimal macd1 = ema17 - ema14;
+                decimal macd2 = ema17 - ema8;
+                decimal macd3 = ema10 - ema16;
+                decimal macd4 = ema5 - ema10;
+
+                decimal ppo1 = ema14 != 0 ? macd1 / ema14 * 100 : 0;
+                ppo1List.Add(ppo1);
+
+                decimal ppo2 = ema8 != 0 ? macd2 / ema8 * 100 : 0;
+                ppo2List.Add(ppo2);
+
+                decimal ppo3 = ema16 != 0 ? macd3 / ema16 * 100 : 0;
+                ppo3List.Add(ppo3);
+
+                decimal ppo4 = ema10 != 0 ? macd4 / ema10 * 100 : 0;
+                ppo4List.Add(ppo4);
+            }
+
+            var ppo1SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo1List);
+            var ppo2SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo2List);
+            var ppo3SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo3List);
+            var ppo4SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo4List);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ppo1 = ppo1List.ElementAtOrDefault(i);
+                decimal ppo1SignalLine = ppo1SignalLineList.ElementAtOrDefault(i);
+                decimal ppo2 = ppo2List.ElementAtOrDefault(i);
+                decimal ppo2SignalLine = ppo2SignalLineList.ElementAtOrDefault(i);
+                decimal ppo3 = ppo3List.ElementAtOrDefault(i);
+                decimal ppo3SignalLine = ppo3SignalLineList.ElementAtOrDefault(i);
+                decimal ppo4 = ppo4List.ElementAtOrDefault(i);
+                decimal ppo4SignalLine = ppo4SignalLineList.ElementAtOrDefault(i);
+                decimal ppo1Histogram = ppo1 - ppo1SignalLine;
+                decimal ppoBlue = blueMult * ppo1Histogram;
+
+                decimal prevPpo2Histogram = ppo2HistogramList.LastOrDefault();
+                decimal ppo2Histogram = ppo2 - ppo2SignalLine;
+                ppo2HistogramList.Add(ppo2Histogram);
+
+                decimal ppo3Histogram = ppo3 - ppo3SignalLine;
+                decimal ppoYellow = yellowMult * ppo3Histogram;
+
+                decimal prevPpo4Histogram = ppo4HistogramList.LastOrDefault();
+                decimal ppo4Histogram = ppo4 - ppo4SignalLine;
+                ppo4HistogramList.Add(ppo4Histogram);
+
+                decimal maxPpo = Math.Max(ppoBlue, Math.Max(ppoYellow, Math.Max(ppo2Histogram, ppo4Histogram)));
+                decimal minPpo = Math.Min(ppoBlue, Math.Min(ppoYellow, Math.Min(ppo2Histogram, ppo4Histogram)));
+                decimal currentPpo = (ppoBlue + ppoYellow + ppo2Histogram + ppo4Histogram) / 4;
+                decimal ppoStochastic = maxPpo - minPpo != 0 ? MinOrMax((currentPpo - minPpo) / (maxPpo - minPpo) * 100, 100, 0) : 0;
+
+                var signal = GetCompareSignal(ppo4Histogram - ppo2Histogram, prevPpo4Histogram - prevPpo2Histogram);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ppo1", ppo4List },
+                { "Signal1", ppo4SignalLineList },
+                { "Histogram1", ppo4HistogramList },
+                { "Ppo2", ppo2List },
+                { "Signal2", ppo2SignalLineList },
+                { "Histogram2", ppo2HistogramList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName._4PercentagePriceOscillator;
+
+            return stockData;
+        }
+
+        public static StockData CalculateJapaneseCorrelationCoefficient(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 50)
+        {
+            List<decimal> joList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            int length1 = MinOrMax((int)Math.Ceiling((decimal)length / 2));
+
+            var hList = GetMovingAverageList(stockData, maType, length1, highList);
+            var lList = GetMovingAverageList(stockData, maType, length1, lowList);
+            var cList = GetMovingAverageList(stockData, maType, length1, inputList);
+            var highestList = GetMaxAndMinValuesList(hList, length1).Item1;
+            var lowestList = GetMaxAndMinValuesList(lList, length1).Item2;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal c = cList.ElementAtOrDefault(i);
+                decimal prevC = i >= length ? cList.ElementAtOrDefault(i - length) : 0;
+                decimal highest = highestList.ElementAtOrDefault(i);
+                decimal lowest = lowestList.ElementAtOrDefault(i);
+                decimal prevJo1 = i >= 1 ? joList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevJo2 = i >= 2 ? joList.ElementAtOrDefault(i - 2) : 0;
+                decimal cChg = c - prevC;
+
+                decimal jo = highest - lowest != 0 ? cChg / (highest - lowest) : 0;
+                joList.Add(jo);
+
+                var signal = GetCompareSignal(jo - prevJo1, prevJo1 - prevJo2);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Jo", joList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = joList;
+            stockData.IndicatorName = IndicatorName.JapaneseCorrelationCoefficient;
+
+            return stockData;
+        }
+
+        public static StockData CalculateJmaRsxClone(this StockData stockData, int length = 14)
+        {
+            List<decimal> rsxList = new();
+            List<decimal> f8List = new();
+            List<decimal> f28List = new();
+            List<decimal> f30List = new();
+            List<decimal> f38List = new();
+            List<decimal> f40List = new();
+            List<decimal> f48List = new();
+            List<decimal> f50List = new();
+            List<decimal> f58List = new();
+            List<decimal> f60List = new();
+            List<decimal> f68List = new();
+            List<decimal> f70List = new();
+            List<decimal> f78List = new();
+            List<decimal> f80List = new();
+            List<decimal> f88List = new();
+            List<decimal> f90_List = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal f18 = (decimal)3 / (length + 2);
+            decimal f20 = 1 - f18;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevRsx1 = i >= 1 ? rsxList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevRsx2 = i >= 2 ? rsxList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal prevF8 = f8List.LastOrDefault();
+                decimal f8 = 100 * currentValue;
+                f8List.Add(f8);
+
+                decimal f10 = prevF8;
+                decimal v8 = f8 - f10;
+
+                decimal prevF28 = f28List.LastOrDefault();
+                decimal f28 = (f20 * prevF28) + (f18 * v8);
+                f28List.Add(f28);
+
+                decimal prevF30 = f30List.LastOrDefault();
+                decimal f30 = (f18 * f28) + (f20 * prevF30);
+                f30List.Add(f30);
+
+                decimal vC = (f28 * 1.5m) - (f30 * 0.5m);
+                decimal prevF38 = f38List.LastOrDefault();
+                decimal f38 = (f20 * prevF38) + (f18 * vC);
+                f38List.Add(f38);
+
+                decimal prevF40 = f40List.LastOrDefault();
+                decimal f40 = (f18 * f38) + (f20 * prevF40);
+                f40List.Add(f40);
+
+                decimal v10 = (f38 * 1.5m) - (f40 * 0.5m);
+                decimal prevF48 = f48List.LastOrDefault();
+                decimal f48 = (f20 * prevF48) + (f18 * v10);
+                f48List.Add(f48);
+
+                decimal prevF50 = f50List.LastOrDefault();
+                decimal f50 = (f18 * f48) + (f20 * prevF50);
+                f50List.Add(f50);
+
+                decimal v14 = (f48 * 1.5m) - (f50 * 0.5m);
+                decimal prevF58 = f58List.LastOrDefault();
+                decimal f58 = (f20 * prevF58) + (f18 * Math.Abs(v8));
+                f58List.Add(f58);
+
+                decimal prevF60 = f60List.LastOrDefault();
+                decimal f60 = (f18 * f58) + (f20 * prevF60);
+                f60List.Add(f60);
+
+                decimal v18 = (f58 * 1.5m) - (f60 * 0.5m);
+                decimal prevF68 = f68List.LastOrDefault();
+                decimal f68 = (f20 * prevF68) + (f18 * v18);
+                f68List.Add(f68);
+
+                decimal prevF70 = f70List.LastOrDefault();
+                decimal f70 = (f18 * f68) + (f20 * prevF70);
+                f70List.Add(f70);
+
+                decimal v1C = (f68 * 1.5m) - (f70 * 0.5m);
+                decimal prevF78 = f78List.LastOrDefault();
+                decimal f78 = (f20 * prevF78) + (f18 * v1C);
+                f78List.Add(f78);
+
+                decimal prevF80 = f80List.LastOrDefault();
+                decimal f80 = (f18 * f78) + (f20 * prevF80);
+                f80List.Add(f80);
+
+                decimal v20 = (f78 * 1.5m) - (f80 * 0.5m);
+                decimal prevF88 = f88List.LastOrDefault();
+                decimal prevF90_ = f90_List.LastOrDefault();
+                decimal f90_ = prevF90_ == 0 ? 1 : prevF88 <= prevF90_ ? prevF88 + 1 : prevF90_ + 1;
+                f90_List.Add(f90_);
+
+                decimal f88 = prevF90_ == 0 && length - 1 >= 5 ? length - 1 : 5;
+                decimal f0 = f88 >= f90_ && f8 != f10 ? 1 : 0;
+                decimal f90 = f88 == f90_ && f0 == 0 ? 0 : f90_;
+                decimal v4_ = f88 < f90 && v20 > 0 ? MinOrMax(((v14 / v20) + 1) * 50, 100, 0) : 50;
+                decimal rsx = v4_ > 100 ? 100 : v4_ < 0 ? 0 : v4_;
+                rsxList.Add(rsx);
+
+                var signal = GetRsiSignal(rsx - prevRsx1, prevRsx1 - prevRsx2, rsx, prevRsx1, 70, 30);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Rsx", rsxList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = rsxList;
+            stockData.IndicatorName = IndicatorName.JmaRsxClone;
+
+            return stockData;
+        }
+
+        public static StockData CalculateJrcFractalDimension(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length1 = 20, int length2 = 5, int smoothLength = 5)
+        {
+            List<decimal> smallSumList = new();
+            List<decimal> smallRangeList = new();
+            List<decimal> fdList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            int wind1 = MinOrMax((length2 - 1) * length1);
+            int wind2 = MinOrMax(length2 * length1);
+            decimal nLog = Log(length2);
+
+            var (highest1List, lowest1List) = GetMaxAndMinValuesList(highList, lowList, length1);
+            var (highest2List, lowest2List) = GetMaxAndMinValuesList(highList, lowList, wind2);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal highest1 = highest1List.ElementAtOrDefault(i);
+                decimal lowest1 = lowest1List.ElementAtOrDefault(i);
+                decimal prevValue1 = i >= length1 ? inputList.ElementAtOrDefault(i - length1) : 0;
+                decimal highest2 = highest2List.ElementAtOrDefault(i);
+                decimal lowest2 = lowest2List.ElementAtOrDefault(i);
+                decimal prevValue2 = i >= wind2 ? inputList.ElementAtOrDefault(i - wind2) : 0;
+                decimal bigRange = Math.Max(prevValue2, highest2) - Math.Min(prevValue2, lowest2);
+
+                decimal prevSmallRange = i >= wind1 ? smallRangeList.ElementAtOrDefault(i - wind1) : 0;
+                decimal smallRange = Math.Max(prevValue1, highest1) - Math.Min(prevValue1, lowest1);
+                smallRangeList.AddRounded(smallRange);
+
+                decimal prevSmallSum = i >= 1 ? smallSumList.LastOrDefault() : smallRange;
+                decimal smallSum = prevSmallSum + smallRange - prevSmallRange;
+                smallSumList.AddRounded(smallSum);
+
+                decimal value1 = wind1 != 0 ? smallSum / wind1 : 0;
+                decimal value2 = value1 != 0 ? bigRange / value1 : 0;
+                decimal temp = value2 > 0 ? Log(value2) : 0;
+
+                decimal fd = nLog != 0 ? 2 - (temp / nLog) : 0;
+                fdList.AddRounded(fd);
+            }
+
+            var jrcfdList = GetMovingAverageList(stockData, maType, smoothLength, fdList);
+            var jrcfdSignalList = GetMovingAverageList(stockData, maType, smoothLength, jrcfdList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                var jrcfd = jrcfdList.ElementAtOrDefault(i);
+                var jrcfdSignal = jrcfdSignalList.ElementAtOrDefault(i);
+                var prevJrcfd = i >= 1 ? jrcfdList.ElementAtOrDefault(i - 1) : 0;
+                var prevJrcfdSignal = i >= 1 ? jrcfdSignalList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetCompareSignal(jrcfd - jrcfdSignal, prevJrcfd - prevJrcfdSignal, true);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Jrcfd", jrcfdList },
+                { "Signal", jrcfdSignalList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = jrcfdList;
+            stockData.IndicatorName = IndicatorName.JrcFractalDimension;
+
+            return stockData;
+        }
     }
 }

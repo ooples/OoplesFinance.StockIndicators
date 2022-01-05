@@ -1624,5 +1624,185 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        public static StockData Calculate1LCLeastSquaresMovingAverage(this StockData stockData, MovingAvgType maType, int length = 14)
+        {
+            List<decimal> yList = new();
+            List<decimal> tempList = new();
+            List<decimal> corrList = new();
+            List<decimal> indexList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+            var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                tempList.Add(currentValue);
+
+                decimal index = i;
+                indexList.Add(index);
+
+                var corr = GoodnessOfFit.R(indexList.TakeLast(length).Select(x => (double)x), tempList.TakeLast(length).Select(x => (double)x));
+                corr = IsValueNullOrInfinity(corr) ? 0 : corr;
+                corrList.Add((decimal)corr);
+            }
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal sma = smaList.ElementAtOrDefault(i);
+                decimal corr = corrList.ElementAtOrDefault(i);
+                decimal stdDev = stdDevList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevY = yList.LastOrDefault();
+                decimal y = sma + (corr * stdDev * 1.7m);
+                yList.Add(y);
+
+                var signal = GetCompareSignal(currentValue - y, prevValue - prevY);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "1lsma", yList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = yList;
+            stockData.IndicatorName = IndicatorName._1LCLeastSquaresMovingAverage;
+
+            return stockData;
+        }
+
+        public static StockData Calculate3HMA(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, int length = 50)
+        {
+            List<decimal> midList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int p = MinOrMax((int)Math.Ceiling((decimal)length / 2));
+            int p1 = MinOrMax((int)Math.Ceiling((decimal)p / 3));
+            int p2 = MinOrMax((int)Math.Ceiling((decimal)p / 2));
+
+            var wma1List = GetMovingAverageList(stockData, maType, p1, inputList);
+            var wma2List = GetMovingAverageList(stockData, maType, p2, inputList);
+            var wma3List = GetMovingAverageList(stockData, maType, p, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal wma1 = wma1List.ElementAtOrDefault(i);
+                decimal wma2 = wma2List.ElementAtOrDefault(i);
+                decimal wma3 = wma3List.ElementAtOrDefault(i);
+
+                decimal mid = (wma1 * 3) - wma2 - wma3;
+                midList.Add(mid);
+            }
+
+            var aList = GetMovingAverageList(stockData, maType, p, midList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal a = aList.ElementAtOrDefault(i);
+                decimal prevA = i >= 1 ? aList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetCompareSignal(currentValue - a, prevValue - prevA);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "3hma", aList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = aList;
+            stockData.IndicatorName = IndicatorName._3HMA;
+
+            return stockData;
+        }
+
+        public static StockData CalculateJsaMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> jmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal priorValue = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevJma = jmaList.LastOrDefault();
+                decimal jma = (currentValue + priorValue) / 2;
+                jmaList.Add(jma);
+
+                var signal = GetCompareSignal(currentValue - jma, prevValue - prevJma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Jma", jmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = jmaList;
+            stockData.IndicatorName = IndicatorName.JsaMovingAverage;
+
+            return stockData;
+        }
+
+        public static StockData CalculateJurikMovingAverage(this StockData stockData, int length = 7, decimal phase = 50, decimal power = 2)
+        {
+            List<decimal> e0List = new();
+            List<decimal> e1List = new();
+            List<decimal> e2List = new();
+            List<decimal> jmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal phaseRatio = phase < -100 ? 0.5m : phase > 100 ? 2.5m : ((decimal)phase / 100) + 1.5m;
+            decimal ratio = 0.45m * (length - 1);
+            decimal beta = ratio / (ratio + 2);
+            decimal alpha = Pow(beta, (double)power);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevJma = jmaList.LastOrDefault();
+
+                decimal prevE0 = e0List.LastOrDefault();
+                decimal e0 = ((1 - alpha) * currentValue) + (alpha * prevE0);
+                e0List.AddRounded(e0);
+
+                decimal prevE1 = e1List.LastOrDefault();
+                decimal e1 = ((currentValue - e0) * (1 - beta)) + (beta * prevE1);
+                e1List.AddRounded(e1);
+
+                decimal prevE2 = e2List.LastOrDefault();
+                decimal e2 = ((e0 + (phaseRatio * e1) - prevJma) * Pow(1 - alpha, 2)) + (Pow(alpha, 2) * prevE2);
+                e2List.AddRounded(e2);
+
+                decimal jma = e2 + prevJma;
+                jmaList.AddRounded(jma);
+
+                Signal signal = GetCompareSignal(currentValue - jma, prevValue - prevJma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Jma", jmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = jmaList;
+            stockData.IndicatorName = IndicatorName.JurikMovingAverage;
+
+            return stockData;
+        }
     }
 }
