@@ -3,7 +3,29 @@
 ## Cycle
         
 ## Momentum
+[Absolute Price Oscillator](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/apo)
+
+[Absolute Strength Index](https://www.tradingview.com/script/E6xccTf1-Absolute-Strength-Index-Oscillator-LazyBear/)
+
 [Accelerator Oscillator](https://www.metatrader5.com/en/terminal/help/indicators/bw_indicators/ao)
+
+[Accumulative Swing Index](https://www.investopedia.com/terms/a/asi.asp)
+
+[Adaptive Ergodic Candlestick Oscillator](https://www.tradingview.com/script/vWzBujcZ-Adaptive-Ergodic-Candlestick-Oscillator-LazyBear/)
+
+[Adaptive Relative Strength Index](https://www.fxcorporate.com/help/MS/NOTFIFO/i_ARSI.html)
+
+[Adaptive Stochastic](https://www.tradingview.com/script/3BiFGQIw-Adaptive-Stochastic/)
+
+[Anchored Momentum](https://www.tradingview.com/script/TBTFDWDq-Anchored-Momentum-LazyBear/)
+
+[Apirine Slow Relative Strength Index](https://www.tradingview.com/script/3VDdQZei-Apirine-Slow-RSI-LazyBear/)
+
+[Asymmetrical Relative Strength Index](https://www.tradingview.com/script/WBAk8j4q-Asymmetrical-RSI/)
+
+[Average Absolute Error Normalization](https://www.tradingview.com/script/wd8Lcrdb-Average-Absolute-Error-Normalization/)
+
+[Average Money Flow Oscillator](https://www.tradingview.com/script/qL7XSuJn-RedK-AvgMoneyFlow-Oscillator-v1/)
 
 [Awesome Oscillator](https://www.warriortrading.com/awesome-oscillator/)
 
@@ -53,11 +75,43 @@
 [Standard Pivot Points](https://school.stockcharts.com/doku.php?id=technical_indicators:pivot_points)
 
 ## Trend
+[Absolute Strength MTF Indicator](https://www.tradingview.com/script/WbkLdhzL-Absolute-Strength-MTF-Indicator/)
+
+[Adaptive Autonomous Recursive Moving Average](https://www.tradingview.com/script/4bI1zjc6-Adaptive-Autonomous-Recursive-Moving-Average/)
+
+[Adaptive Autonomous Recursive Trailing Stop](https://www.tradingview.com/script/5vfphtm7-Adaptive-Autonomous-Recursive-Trailing-Stop/)
+
+[Adaptive Exponential Moving Average](https://www.tradingview.com/script/HSKM74sl-Adaptive-Exponential-Moving-Average/)
+
+[Adaptive Least Squares](https://www.tradingview.com/script/9P5AUAMl-Adaptive-Least-Squares/)
+
+[Adaptive Moving Average](https://www.tradingview.com/script/urJFGIcv-Adaptive-Moving-Average/)
+
+[Adaptive Trailing Stop](https://www.tradingview.com/script/KAiVcTLn-Adaptive-Trailing-Stop/)
+
+[Ahrens Moving Average](https://www.tradingview.com/script/lcKLkfa4-Ahrens-Moving-Average/)
+
 [Alligator Index](https://www.investopedia.com/articles/trading/072115/exploring-williams-alligator-indicator.asp)
+
+[Alpha Decreasing Exponential Moving Average](https://www.tradingview.com/script/gI9kyUcP-Alpha-Decreasing-Exponential-Moving-Average/)
 
 [Arnaud Legoux Moving Average](https://patternswizard.com/alma-indicator/)
 
+[Aroon Oscillator](https://www.investopedia.com/terms/a/aroonoscillator.asp)
+
+Atr Filtered Exponential Moving Average
+
+[Auto Filter](https://www.tradingview.com/script/TRSRhAbX-Auto-Filter/)
+
+[Auto Line](https://www.tradingview.com/script/8WBkc14m-Auto-Line/)
+
+[Auto Line With Drift](https://www.tradingview.com/script/o9P8nmGL-Auto-Line-With-Drift/)
+
+[Autonomous Recursive Moving Average](https://www.tradingview.com/script/AnmTY0Q3-Autonomous-Recursive-Moving-Average/)
+
 [Average Directional Index](https://www.investopedia.com/terms/a/adx.asp)
+
+[Average True Range Trailing Stops](https://www.motivewave.com/studies/atr_trailing_stops.htm)
 
 [Chandelier Exit](https://school.stockcharts.com/doku.php?id=technical_indicators:chandelier_exit)
 
@@ -110,7 +164,13 @@
 [Welles Wilder Moving Average](https://www.incrediblecharts.com/indicators/wilder_moving_average.php)
 
 ## Volatility
+[Adaptive Price Zone Indicator](https://www.investopedia.com/articles/trading/10/adaptive-price-zone-indicator-explained.asp)
+
+[Auto Dispersion Bands](https://www.tradingview.com/script/vZkFzgfP-Auto-Dispersion-Bands/)
+
 [Average True Range](https://www.investopedia.com/terms/a/atr.asp)
+
+[Average True Range Channel](https://www.motivewave.com/studies/atr_channel.htm)
 
 [Bollinger Bands](https://www.investopedia.com/terms/b/bollingerbands.asp)
 
