@@ -40,6 +40,21 @@ var stockData = new StockData(openPrices, highPrices, lowPrices, closePrices, vo
 var results = stockData.CalculateBollingerBands();
 ```
 
+### Support This Project
+
+BTC: 36DRmZefJNW82q9pHY1kWYSZhLUWQkpgGq
+
+ETH: 0x7D6e58754476189ffF736B63b6159D2647f74f34
+
+DOGE: DF1nsK1nLASzmwHNAfNengBGS4w7bNyJ1e
+
+SHIB: 0xCDe2355212764218355c9393FbE121Ae49B43382
+
+Paypal: [https://www.paypal.me/cheatcountry](https://www.paypal.me/cheatcountry)
+
+Patreon: [https://patreon.com/cheatcountry](https://patreon.com/cheatcountry)
+
+
 ### Support or Contact
 
 Email me at cheatcountry@gmail.com for any help or support.
