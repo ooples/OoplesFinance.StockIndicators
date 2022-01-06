@@ -70,6 +70,12 @@
 [Ultimate Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:ultimate_oscillator)
 
 [Williams %R](https://www.investopedia.com/terms/w/williamsr.asp)
+
+[Z Score](https://www.tradingview.com/script/gRy0oaSB-Z-Score/)
+
+[Zero Lag Smoothed Cycle](https://www.tradingview.com/script/8CZDBPfe-Zero-Lag-Smoothed-Cycle/)
+
+[Zweig Market Breadth Indicator](https://www.tradingview.com/script/NcNA4SUf-Zweig-Market-Breadth-Thrust-Indicator-LazyBear/)
         
 ## Support And Resistance
 [Donchian Channels](https://www.investopedia.com/terms/d/donchianchannels.asp)
@@ -179,6 +185,12 @@ Atr Filtered Exponential Moving Average
 
 [Welles Wilder Moving Average](https://www.incrediblecharts.com/indicators/wilder_moving_average.php)
 
+[Zero Lag Exponential Moving Average](https://en.wikipedia.org/wiki/Zero_lag_exponential_moving_average)
+
+[Zero Lag Triple Exponential Moving Average](https://en.wikipedia.org/wiki/Zero_lag_exponential_moving_average)
+
+[Zero Low Lag Moving Average](https://www.tradingview.com/script/sDVDpTAH-ZLMA-Low-Lag-Moving-Average-Based-On-An-Alternative-SMA-Design/)
+
 ## Volatility
 [Adaptive Price Zone Indicator](https://www.investopedia.com/articles/trading/10/adaptive-price-zone-indicator-explained.asp)
 
@@ -228,3 +240,5 @@ Atr Filtered Exponential Moving Average
 [Volume Weighted Average Price](https://www.investopedia.com/terms/v/vwap.asp)
 
 [Volume Weighted Moving Average](https://ninjatrader.com/blog/what-is-a-volume-weighted-moving-average-vwma/)
+
+[Z Distance From Vwap](https://www.tradingview.com/script/HraIjfKF-Z-distance-from-VWAP-LazyBear/)
