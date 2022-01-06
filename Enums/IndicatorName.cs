@@ -230,7 +230,21 @@ namespace OoplesFinance.StockIndicators.Enums
         [Category(IndicatorType.Trend)]
         WellesWilderMovingAverage,
         [Category(IndicatorType.Momentum)]
-        WilliamsR
+        WilliamsR,
+        [Category(IndicatorType.Volume)]
+        ZDistanceFromVwap,
+        [Category(IndicatorType.Momentum)]
+        ZScore,
+        [Category(IndicatorType.Trend)]
+        ZeroLagExponentialMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        ZeroLagSmoothedCycle,
+        [Category(IndicatorType.Trend)]
+        ZeroLagTripleExponentialMovingAverage,
+        [Category(IndicatorType.Trend)]
+        ZeroLowLagMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        ZweigMarketBreadthIndicator
     }
 }
 

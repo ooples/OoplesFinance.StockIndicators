@@ -77,6 +77,20 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the 4 Moving Average Convergence Divergence (Macd)
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="length3"></param>
+        /// <param name="length4"></param>
+        /// <param name="length5"></param>
+        /// <param name="length6"></param>
+        /// <param name="blueMult"></param>
+        /// <param name="yellowMult"></param>
+        /// <returns></returns>
         public static StockData Calculate4MovingAverageConvergenceDivergence(this StockData stockData, 
             MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 5, int length2 = 8, int length3 = 10, int length4 = 17,
             int length5 = 14, int length6 = 16, decimal blueMult = 4.3m, decimal yellowMult = 1.4m)

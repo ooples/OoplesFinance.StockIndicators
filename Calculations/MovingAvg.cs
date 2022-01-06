@@ -1625,6 +1625,13 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the 1LC Least Squares Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static StockData Calculate1LCLeastSquaresMovingAverage(this StockData stockData, MovingAvgType maType, int length = 14)
         {
             List<decimal> yList = new();
@@ -1677,6 +1684,13 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the 3HMA
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static StockData Calculate3HMA(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, int length = 50)
         {
             List<decimal> midList = new();
@@ -1723,7 +1737,13 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
-
+        
+        /// <summary>
+        /// Calculates the Jsa Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static StockData CalculateJsaMovingAverage(this StockData stockData, int length = 14)
         {
             List<decimal> jmaList = new();
@@ -1755,6 +1775,14 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the Jurik Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="phase"></param>
+        /// <param name="power"></param>
+        /// <returns></returns>
         public static StockData CalculateJurikMovingAverage(this StockData stockData, int length = 7, decimal phase = 50, decimal power = 2)
         {
             List<decimal> e0List = new();
@@ -1801,6 +1829,141 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = jmaList;
             stockData.IndicatorName = IndicatorName.JurikMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Zero Low Lag Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="lag"></param>
+        /// <returns></returns>
+        public static StockData CalculateZeroLowLagMovingAverage(this StockData stockData, int length = 50, decimal lag = 1.4m)
+        {
+            List<decimal> aList = new();
+            List<decimal> bList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int lbLength = MinOrMax((int)Math.Ceiling((decimal)length / 2));
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal priorB = i >= lbLength ? bList.ElementAtOrDefault(i - lbLength) : currentValue;
+                decimal priorA = i >= length ? aList.ElementAtOrDefault(i - length) : 0;
+
+                decimal prevA = aList.LastOrDefault();
+                decimal a = (lag * currentValue) + ((1 - lag) * priorB) + prevA;
+                aList.Add(a);
+
+                decimal aDiff = a - priorA;
+                decimal prevB = bList.LastOrDefault();
+                decimal b = aDiff / length;
+                bList.Add(b);
+
+                var signal = GetCompareSignal(currentValue - b, prevValue - prevB);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Zllma", bList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = bList;
+            stockData.IndicatorName = IndicatorName.ZeroLowLagMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Zero Lag Exponential Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateZeroLagExponentialMovingAverage(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14)
+        {
+            List<decimal> zemaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var ema1List = GetMovingAverageList(stockData, maType, length, inputList);
+            var ema2List = GetMovingAverageList(stockData, maType, length, ema1List);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal ema1 = ema1List.ElementAtOrDefault(i);
+                decimal ema2 = ema2List.ElementAtOrDefault(i);
+                decimal d = ema1 - ema2;
+
+                decimal prevZema = zemaList.LastOrDefault();
+                decimal zema = ema1 + d;
+                zemaList.Add(zema);
+
+                var signal = GetCompareSignal(currentValue - zema, prevValue - prevZema);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Zema", zemaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = zemaList;
+            stockData.IndicatorName = IndicatorName.ZeroLagExponentialMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Zero Lag Triple Exponential Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateZeroLagTripleExponentialMovingAverage(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.TripleExponentialMovingAverage, int length = 14)
+        {
+            List<decimal> zlTemaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var tma1List = GetMovingAverageList(stockData, maType, length, inputList);
+            var tma2List = GetMovingAverageList(stockData, maType, length, tma1List);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal tma1 = tma1List.ElementAtOrDefault(i);
+                decimal tma2 = tma2List.ElementAtOrDefault(i);
+                decimal diff = tma1 - tma2;
+
+                decimal prevZltema = zlTemaList.LastOrDefault();
+                decimal zltema = tma1 + diff;
+                zlTemaList.Add(zltema);
+
+                var signal = GetCompareSignal(currentValue - zltema, prevValue - prevZltema);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ztema", zlTemaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = zlTemaList;
+            stockData.IndicatorName = IndicatorName.ZeroLagTripleExponentialMovingAverage;
 
             return stockData;
         }

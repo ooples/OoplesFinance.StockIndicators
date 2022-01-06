@@ -2304,6 +2304,20 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the 4 Percentage Price Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="length3"></param>
+        /// <param name="length4"></param>
+        /// <param name="length5"></param>
+        /// <param name="length6"></param>
+        /// <param name="blueMult"></param>
+        /// <param name="yellowMult"></param>
+        /// <returns></returns>
         public static StockData Calculate4PercentagePriceOscillator(this StockData stockData,
             MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 5, int length2 = 8, int length3 = 10, int length4 = 17,
             int length5 = 14, int length6 = 16, decimal blueMult = 4.3m, decimal yellowMult = 1.4m)
@@ -2403,6 +2417,13 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the Japanese Correlation Coefficient
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static StockData CalculateJapaneseCorrelationCoefficient(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
             int length = 50)
         {
@@ -2446,6 +2467,12 @@ namespace OoplesFinance.StockIndicators
             return stockData;
         }
 
+        /// <summary>
+        /// Calculates the Jma Rsx Clone
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static StockData CalculateJmaRsxClone(this StockData stockData, int length = 14)
         {
             List<decimal> rsxList = new();
@@ -2563,7 +2590,16 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
-
+        
+        /// <summary>
+        /// Calculates the Jrc Fractal Dimension
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="smoothLength"></param>
+        /// <returns></returns>
         public static StockData CalculateJrcFractalDimension(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
             int length1 = 20, int length2 = 5, int smoothLength = 5)
         {
@@ -2627,6 +2663,258 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = jrcfdList;
             stockData.IndicatorName = IndicatorName.JrcFractalDimension;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Zweig Market Breadth Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateZweigMarketBreadthIndicator(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 10)
+        {
+            List<decimal> advDiffList = new();
+            List<decimal> advancesList = new();
+            List<decimal> declinesList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal advance = currentValue > prevValue ? 1 : 0;
+                advancesList.Add(advance);
+
+                decimal decline = currentValue < prevValue ? 1 : 0;
+                declinesList.Add(decline);
+
+                decimal advSum = advancesList.TakeLast(length).Sum();
+                decimal decSum = declinesList.TakeLast(length).Sum();
+
+                decimal advDiff = advSum + decSum != 0 ? advSum / (advSum + decSum) : 0;
+                advDiffList.Add(advDiff);
+            }
+
+            var zmbtiList = GetMovingAverageList(stockData, maType, length, advDiffList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal prevZmbti1 = i >= 1 ? zmbtiList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevZmbti2 = i >= 2 ? zmbtiList.ElementAtOrDefault(i - 2) : 0;
+                decimal zmbti = zmbtiList.ElementAtOrDefault(i);
+
+                var signal = GetRsiSignal(zmbti - prevZmbti1, prevZmbti1 - prevZmbti2, zmbti, prevZmbti1, 0.615m, 0.4m);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Zmbti", zmbtiList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = zmbtiList;
+            stockData.IndicatorName = IndicatorName.ZweigMarketBreadthIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Z Distance From Vwap Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateZDistanceFromVwapIndicator(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.VolumeWeightedAveragePrice, int length = 20)
+        {
+            List<decimal> zscoreList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var vwapList = GetMovingAverageList(stockData, maType, length, inputList);
+            stockData.CustomValuesList = vwapList;
+            var vwapSdList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevZScore1 = i >= 1 ? zscoreList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevZScore2 = i >= 2 ? zscoreList.ElementAtOrDefault(i - 2) : 0;
+                decimal mean = vwapList.ElementAtOrDefault(i);
+                decimal vwapsd = vwapSdList.ElementAtOrDefault(i);
+
+                decimal zscore = vwapsd != 0 ? (currentValue - mean) / vwapsd : 0;
+                zscoreList.Add(zscore);
+
+                var signal = GetRsiSignal(zscore - prevZScore1, prevZScore1 - prevZScore2, zscore, prevZScore1, 2, -2);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Zscore", zscoreList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = zscoreList;
+            stockData.IndicatorName = IndicatorName.ZDistanceFromVwap;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Z Score
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="matype"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateZScore(this StockData stockData, MovingAvgType matype = MovingAvgType.SimpleMovingAverage, int length = 14)
+        {
+            List<decimal> zScorePopulationList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var smaList = GetMovingAverageList(stockData, matype, length, inputList);
+            var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal sma = smaList.ElementAtOrDefault(i);
+                decimal dev = currentValue - sma;
+                decimal stdDevPopulation = stdDevList.ElementAtOrDefault(i);
+
+                decimal prevZScorePopulation = zScorePopulationList.LastOrDefault();
+                decimal zScorePopulation = stdDevPopulation != 0 ? dev / stdDevPopulation : 0;
+                zScorePopulationList.Add(zScorePopulation);
+
+                var signal = GetCompareSignal(zScorePopulation, prevZScorePopulation);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Zscore", zScorePopulationList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = zScorePopulationList;
+            stockData.IndicatorName = IndicatorName.ZScore;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Zero Lag Smoothed Cycle
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateZeroLagSmoothedCycle(this StockData stockData, int length = 100)
+        {
+            List<decimal> ax1List = new();
+            List<decimal> lx1List = new();
+            List<decimal> ax2List = new();
+            List<decimal> lx2List = new();
+            List<decimal> ax3List = new();
+            List<decimal> lcoList = new();
+            List<decimal> filterList = new();
+            List<decimal> lcoSma1List = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int length1 = MinOrMax((int)Math.Ceiling((decimal)length / 2));
+
+            var linregList = CalculateLinearRegression(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal linreg = linregList.ElementAtOrDefault(i);
+
+                decimal ax1 = currentValue - linreg;
+                ax1List.Add(ax1);
+            }
+
+            stockData.CustomValuesList = ax1List;
+            var ax1LinregList = CalculateLinearRegression(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ax1 = ax1List.ElementAtOrDefault(i);
+                decimal ax1Linreg = ax1LinregList.ElementAtOrDefault(i);
+
+                decimal lx1 = ax1 + (ax1 - ax1Linreg);
+                lx1List.Add(lx1);
+            }
+
+            stockData.CustomValuesList = lx1List;
+            var lx1LinregList = CalculateLinearRegression(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal lx1 = lx1List.ElementAtOrDefault(i);
+                decimal lx1Linreg = lx1LinregList.ElementAtOrDefault(i);
+
+                decimal ax2 = lx1 - lx1Linreg;
+                ax2List.Add(ax2);
+            }
+
+            stockData.CustomValuesList = ax2List;
+            var ax2LinregList = CalculateLinearRegression(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ax2 = ax2List.ElementAtOrDefault(i);
+                decimal ax2Linreg = ax2LinregList.ElementAtOrDefault(i);
+
+                decimal lx2 = ax2 + (ax2 - ax2Linreg);
+                lx2List.Add(lx2);
+            }
+
+            stockData.CustomValuesList = lx2List;
+            var lx2LinregList = CalculateLinearRegression(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal lx2 = lx2List.ElementAtOrDefault(i);
+                decimal lx2Linreg = lx2LinregList.ElementAtOrDefault(i);
+
+                decimal ax3 = lx2 - lx2Linreg;
+                ax3List.Add(ax3);
+            }
+
+            stockData.CustomValuesList = ax3List;
+            var ax3LinregList = CalculateLinearRegression(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ax3 = ax3List.ElementAtOrDefault(i);
+                decimal ax3Linreg = ax3LinregList.ElementAtOrDefault(i);
+
+                decimal prevLco = lcoList.LastOrDefault();
+                decimal lco = ax3 + (ax3 - ax3Linreg);
+                lcoList.Add(lco);
+
+                decimal lcoSma1 = lcoList.TakeLast(length1).Average();
+                lcoSma1List.Add(lcoSma1);
+
+                decimal lcoSma2 = lcoSma1List.TakeLast(length1).Average();
+                decimal prevFilter = filterList.LastOrDefault();
+                decimal filter = -lcoSma2 * 2;
+                filterList.Add(filter);
+
+                var signal = GetCompareSignal(lco - filter, prevLco - prevFilter);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Lco", lcoList },
+                { "Filter", filterList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = filterList;
+            stockData.IndicatorName = IndicatorName.ZeroLagSmoothedCycle;
 
             return stockData;
         }

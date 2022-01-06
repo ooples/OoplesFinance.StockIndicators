@@ -33,7 +33,10 @@
         VolumeWeightedAveragePrice,
         VolumeWeightedMovingAverage,
         WeightedMovingAverage,
-        WildersSmoothingMethod
+        WildersSmoothingMethod,
+        ZeroLagExponentialMovingAverage,
+        ZeroLagTripleExponentialMovingAverage,
+        ZeroLowLagMovingAverage
     }
 }
 
