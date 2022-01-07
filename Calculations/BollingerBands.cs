@@ -218,5 +218,186 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Bollinger Bands Fibonacci Ratios
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="fibRatio1"></param>
+        /// <param name="fibRatio2"></param>
+        /// <param name="fibRatio3"></param>
+        /// <returns></returns>
+        public static StockData CalculateBollingerBandsFibonacciRatios(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 20, decimal fibRatio1 = 1.618m, decimal fibRatio2 = 2.618m, decimal fibRatio3 = 4.236m)
+        {
+            List<decimal> fibTop3List = new();
+            List<decimal> fibBottom3List = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var atrList = CalculateAverageTrueRange(stockData, maType, length).CustomValuesList;
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal atr = atrList.ElementAtOrDefault(i);
+                decimal sma = smaList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevSma = i >= 1 ? smaList.ElementAtOrDefault(i - 1) : 0;
+                decimal r1 = atr * fibRatio1;
+                decimal r2 = atr * fibRatio2;
+                decimal r3 = atr * fibRatio3;
+
+                decimal prevFibTop3 = fibTop3List.LastOrDefault();
+                decimal fibTop3 = sma + r3;
+                fibTop3List.Add(fibTop3);
+
+                decimal fibTop2 = sma + r2;
+                decimal fibTop1 = sma + r1;
+                decimal fibBottom1 = sma - r1;
+                decimal fibBottom2 = sma - r2;
+
+                decimal prevFibBottom3 = fibBottom3List.LastOrDefault();
+                decimal fibBottom3 = sma - r3;
+                fibBottom3List.Add(fibBottom3);
+
+                var signal = GetBollingerBandsSignal(currentValue - sma, prevValue - prevSma, currentValue, prevValue, fibTop3, prevFibTop3, fibBottom3, prevFibBottom3);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", fibTop3List },
+                { "MiddleBand", smaList },
+                { "LowerBand", fibBottom3List }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.BollingerBandsFibonacciRatios;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Bollinger Bands Average True Range
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="atrLength"></param>
+        /// <param name="length"></param>
+        /// <param name="stdDevMult"></param>
+        /// <returns></returns>
+        public static StockData CalculateBollingerBandsAvgTrueRange(this StockData stockData, MovingAvgType maType, int atrLength = 22, int length = 55, 
+            decimal stdDevMult = 2)
+        {
+            List<decimal> atrDevList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var bollingerBands = CalculateBollingerBands(stockData, stdDevMult, maType, length);
+            var upperBandList = bollingerBands.OutputValues["UpperBand"];
+            var lowerBandList = bollingerBands.OutputValues["LowerBand"];
+            var emaList = GetMovingAverageList(stockData, maType, atrLength, inputList);
+            var atrList = CalculateAverageTrueRange(stockData, maType, atrLength).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentEma = emaList.ElementAtOrDefault(i);
+                decimal currentAtr = atrList.ElementAtOrDefault(i);
+                decimal upperBand = upperBandList.ElementAtOrDefault(i);
+                decimal lowerBand = lowerBandList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevEma = i >= 1 ? emaList.ElementAtOrDefault(i - 1) : 0;
+                decimal bbDiff = upperBand - lowerBand;
+
+                decimal atrDev = bbDiff != 0 ? currentAtr / bbDiff : 0;
+                atrDevList.Add(atrDev);
+
+                var signal = GetVolatilitySignal(currentValue - currentEma, prevValue - prevEma, atrDev, 0.5m);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "AtrDev", atrDevList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = atrDevList;
+            stockData.IndicatorName = IndicatorName.BollingerBandsAverageTrueRange;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Bollinger Bands using Atr Pct
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="bbLength"></param>
+        /// <param name="stdDevMult"></param>
+        /// <returns></returns>
+        public static StockData CalculateBollingerBandsWithAtrPct(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 14, int bbLength = 20, decimal stdDevMult = 2)
+        {
+            List<decimal> aptrList = new();
+            List<decimal> upperList = new();
+            List<decimal> lowerList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            decimal ratio = (decimal)2 / (length + 1);
+
+            var smaList = GetMovingAverageList(stockData, maType, bbLength, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal basis = smaList.ElementAtOrDefault(i);
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal lh = currentHigh - currentLow;
+                decimal hc = Math.Abs(currentHigh - prevClose);
+                decimal lc = Math.Abs(currentLow - prevClose);
+                decimal mm = Math.Max(Math.Max(lh, hc), lc);
+                decimal prevBasis = i >= 1 ? smaList.ElementAtOrDefault(i - 1) : 0;
+                decimal atrs = mm == hc ? hc / (prevClose + (hc / 2)) : mm == lc ? lc / (currentLow + (lc / 2)) : mm == lh ? lh / 
+                    (currentLow + (lh / 2)) : 0;
+
+                decimal prevAptr = aptrList.LastOrDefault();
+                decimal aptr = (100 * atrs * ratio) + (prevAptr * (1 - ratio));
+                aptrList.Add(aptr);
+
+                decimal dev = stdDevMult * aptr;
+                decimal prevUpper = upperList.LastOrDefault();
+                decimal upper = basis + (basis * dev / 100);
+                upperList.Add(upper);
+
+                decimal prevLower = lowerList.LastOrDefault();
+                decimal lower = basis - (basis * dev / 100);
+                lowerList.Add(lower);
+
+                var signal = GetBollingerBandsSignal(currentValue - basis, prevValue - prevBasis, currentValue, prevValue, upper, prevUpper, lower, prevLower);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperList },
+                { "MiddleBand", smaList },
+                { "LowerBand", lowerList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.BollingerBandsWithAtrPct;
+
+            return stockData;
+        }
     }
 }

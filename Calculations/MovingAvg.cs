@@ -749,7 +749,7 @@ namespace OoplesFinance.StockIndicators
             List<decimal> tempVolList = new();
             List<decimal> tempVolPriceList = new();
             List<Signal> signalsList = new();
-            var (inputList, _, _, _, volumeList) = GetInputValuesList(inputName, stockData);
+            var (inputList, _, _, _, _, volumeList) = GetInputValuesList(inputName, stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
@@ -1964,6 +1964,51 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = zlTemaList;
             stockData.IndicatorName = IndicatorName.ZeroLagTripleExponentialMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Bryant Adaptive Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="maxLength"></param>
+        /// <param name="trend"></param>
+        /// <returns></returns>
+        public static StockData CalculateBryantAdaptiveMovingAverage(this StockData stockData, int length = 14, int maxLength = 100, decimal trend = -1)
+        {
+            List<decimal> bamaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var erList = CalculateKaufmanAdaptiveMovingAverage(stockData, length: length).OutputValues["Er"];
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal er = erList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal ver = Pow(er - (((2 * er) - 1) / 2 * (1 - trend)) + 0.5m, 2);
+                decimal vLength = ver != 0 ? (length - ver + 1) / ver : 0;
+                vLength = Math.Min(vLength, maxLength);
+                decimal vAlpha = 2 / (vLength + 1);
+
+                decimal prevBama = bamaList.LastOrDefault();
+                decimal bama = (vAlpha * currentValue) + ((1 - vAlpha) * prevBama);
+                bamaList.Add(bama);
+
+                var signal = GetCompareSignal(currentValue - bama, prevValue - prevBama);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Bama", bamaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = bamaList;
+            stockData.IndicatorName = IndicatorName.BryantAdaptiveMovingAverage;
 
             return stockData;
         }

@@ -14,6 +14,7 @@
         AtrFilteredExponentialMovingAverage,
         AutoFilter,
         AutonomousRecursiveMovingAverage,
+        BryantAdaptiveMovingAverage,
         EndPointWeightedMovingAverage,
         ExponentialMovingAverage,
         HullMovingAverage,

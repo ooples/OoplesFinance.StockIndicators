@@ -376,5 +376,72 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Breakout Relative Strength Index
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="inputName"></param>
+        /// <param name="length"></param>
+        /// <param name="lbLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateBreakoutRelativeStrengthIndex(this StockData stockData, InputName inputName = InputName.FullTypicalPrice,
+            int length = 14, int lbLength = 2)
+        {
+            List<decimal> brsiList = new();
+            List<decimal> posPowerList = new();
+            List<decimal> boPowerList = new();
+            List<decimal> negPowerList = new();
+            List<decimal> tempList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, openList, closeList, volumeList) = GetInputValuesList(inputName, stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentClose = closeList.ElementAtOrDefault(i);
+                decimal currentOpen = openList.ElementAtOrDefault(i);
+                decimal prevBrsi1 = i >= 1 ? brsiList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevBrsi2 = i >= 2 ? brsiList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                tempList.Add(currentVolume);
+
+                decimal boVolume = tempList.TakeLast(lbLength).Sum();
+                decimal boStrength = currentHigh - currentLow != 0 ? (currentClose - currentOpen) / (currentHigh - currentLow) : 0;
+
+                decimal prevBoPower = boPowerList.LastOrDefault();
+                decimal boPower = currentValue * boStrength * boVolume;
+                boPowerList.Add(boPower);
+
+                decimal posPower = boPower > prevBoPower ? Math.Abs(boPower) : 0;
+                posPowerList.Add(posPower);
+
+                decimal negPower = boPower < prevBoPower ? Math.Abs(boPower) : 0;
+                negPowerList.Add(negPower);
+
+                decimal posPowerSum = posPowerList.TakeLast(length).Sum();
+                decimal negPowerSum = negPowerList.TakeLast(length).Sum();
+                decimal boRatio = negPowerSum != 0 ? posPowerSum / negPowerSum : 0;
+
+                decimal brsi = negPowerSum == 0 ? 100 : posPowerSum == 0 ? 0 : MinOrMax(100 - (100 / (1 + boRatio)), 100, 0);
+                brsiList.Add(brsi);
+
+                var signal = GetRsiSignal(brsi - prevBrsi1, prevBrsi1 - prevBrsi2, brsi, prevBrsi1, 80, 20);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Brsi", brsiList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = brsiList;
+            stockData.IndicatorName = IndicatorName.BreakoutRelativeStrengthIndex;
+
+            return stockData;
+        }
     }
 }

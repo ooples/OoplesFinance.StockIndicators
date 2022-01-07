@@ -89,8 +89,32 @@ namespace OoplesFinance.StockIndicators.Enums
         AwesomeOscillator,
         [Category(IndicatorType.Momentum)]
         BalanceOfPower,
+        [Category(IndicatorType.Momentum)]
+        BayesianOscillator,
+        [Category(IndicatorType.Momentum)]
+        BearPowerIndicator,
+        [Category(IndicatorType.Momentum)]
+        BelkhayateTiming,
+        [Category(IndicatorType.Volume)]
+        BetterVolumeIndicator,
+        [Category(IndicatorType.Trend)]
+        BilateralStochasticOscillator,
         [Category(IndicatorType.Volatility)]
         BollingerBands,
+        [Category(IndicatorType.Volatility)]
+        BollingerBandsAverageTrueRange,
+        [Category(IndicatorType.Volatility)]
+        BollingerBandsFibonacciRatios,
+        [Category(IndicatorType.Volatility)]
+        BollingerBandsWithAtrPct,
+        [Category(IndicatorType.Momentum)]
+        BreakoutRelativeStrengthIndex,
+        [Category(IndicatorType.Trend)]
+        BryantAdaptiveMovingAverage,
+        [Category(IndicatorType.Trend)]
+        BuffAverage,
+        [Category(IndicatorType.Momentum)]
+        BullPowerIndicator,
         [Category(IndicatorType.Volume)]
         ChaikinMoneyFlow,
         [Category(IndicatorType.Volume)]

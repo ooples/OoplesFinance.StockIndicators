@@ -63,6 +63,9 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.AutonomousRecursiveMovingAverage:
                     movingAvgList = stockData.CalculateAutonomousRecursiveMovingAverage(length: length).CustomValuesList;
                     break;
+                case MovingAvgType.BryantAdaptiveMovingAverage:
+                    movingAvgList = stockData.CalculateBryantAdaptiveMovingAverage(length: length).CustomValuesList;
+                    break;
                 case MovingAvgType.EndPointWeightedMovingAverage:
                     movingAvgList = stockData.CalculateEndPointMovingAverage(length: length).CustomValuesList;
                     break;
@@ -146,12 +149,13 @@ namespace OoplesFinance.StockIndicators.Helpers
         /// <param name="inputName">Name of the input.</param>
         /// <param name="stockData">The stock data.</param>
         /// <returns></returns>
-        public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> volumeList) 
-            GetInputValuesList(InputName inputName, StockData stockData)
+        public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> closeList,
+            List<decimal> volumeList) GetInputValuesList(InputName inputName, StockData stockData)
         {
             List<decimal> highList;
             List<decimal> lowList;
             List<decimal> openList;
+            List<decimal> closeList;
             List<decimal> volumeList;
             List<decimal> inputList = inputName switch
             {
@@ -191,9 +195,10 @@ namespace OoplesFinance.StockIndicators.Helpers
             }
 
             openList = stockData.OpenPrices;
+            closeList = stockData.ClosePrices;
             volumeList = stockData.Volumes;
 
-            return (inputList, highList, lowList, openList, volumeList);
+            return (inputList, highList, lowList, openList, closeList, volumeList);
         }
 
         /// <summary>

@@ -58,7 +58,7 @@ namespace OoplesFinance.StockIndicators
             List<decimal> tpDevDiffList = new();
             List<Signal> signalsList = new();
 
-            var (inputList, _, _, _, _) = GetInputValuesList(inputName, stockData);
+            var (inputList, _, _, _, _, _) = GetInputValuesList(inputName, stockData);
             var tpSmaList = GetMovingAverageList(stockData, maType, length, inputList);
 
             for (int i = 0; i < stockData.Count; i++)
@@ -126,7 +126,7 @@ namespace OoplesFinance.StockIndicators
             List<decimal> aoList = new();
             List<Signal> signalsList = new();
 
-            var (inputList, _, _, _, _) = GetInputValuesList(inputName, stockData);
+            var (inputList, _, _, _, _, _) = GetInputValuesList(inputName, stockData);
             var fastSmaList = GetMovingAverageList(stockData, maType, fastLength, inputList);
             var slowSmaList = GetMovingAverageList(stockData, maType, slowLength, inputList);
 
@@ -410,7 +410,7 @@ namespace OoplesFinance.StockIndicators
             List<decimal> posMoneyFlowList = new();
             List<decimal> negMoneyFlowList = new();
             List<Signal> signalsList = new();
-            var (inputList, _, _, _, volumeList) = GetInputValuesList(inputName, stockData);
+            var (inputList, _, _, _, _, volumeList) = GetInputValuesList(inputName, stockData);
 
             for (int i = 0; i < stockData.Count; i++)
             {
@@ -2915,6 +2915,548 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = filterList;
             stockData.IndicatorName = IndicatorName.ZeroLagSmoothedCycle;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Bayesian Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="stdDevMult"></param>
+        /// <param name="lowerThreshold"></param>
+        /// <returns></returns>
+        public static StockData CalculateBayesianOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 20, decimal stdDevMult = 2.5m, decimal lowerThreshold = 15)
+        {
+            List<decimal> probBbUpperUpSeqList = new();
+            List<decimal> probBbUpperDownSeqList = new();
+            List<decimal> probBbBasisUpSeqList = new();
+            List<decimal> probBbBasisUpList = new();
+            List<decimal> probBbBasisDownSeqList = new();
+            List<decimal> probBbBasisDownList = new();
+            List<decimal> sigmaProbsDownList = new();
+            List<decimal> sigmaProbsUpList = new();
+            List<decimal> probPrimeList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var bbList = CalculateBollingerBands(stockData, stdDevMult, maType, length);
+            var upperBbList = bbList.OutputValues["UpperBand"];
+            var basisList = bbList.OutputValues["MiddleBand"];
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal upperBb = upperBbList.ElementAtOrDefault(i);
+                decimal basis = basisList.ElementAtOrDefault(i);
+
+                decimal probBbUpperUpSeq = currentValue > upperBb ? 1 : 0;
+                probBbUpperUpSeqList.Add(probBbUpperUpSeq);
+
+                decimal probBbUpperUp = probBbUpperUpSeqList.TakeLast(length).Average();
+
+                decimal probBbUpperDownSeq = currentValue < upperBb ? 1 : 0;
+                probBbUpperDownSeqList.Add(probBbUpperDownSeq);
+
+                decimal probBbUpperDown = probBbUpperDownSeqList.TakeLast(length).Average();
+                decimal probUpBbUpper = probBbUpperUp + probBbUpperDown != 0 ? probBbUpperUp / (probBbUpperUp + probBbUpperDown) : 0;
+                decimal probDownBbUpper = probBbUpperUp + probBbUpperDown != 0 ? probBbUpperDown / (probBbUpperUp + probBbUpperDown) : 0;
+
+                decimal probBbBasisUpSeq = currentValue > basis ? 1 : 0;
+                probBbBasisUpSeqList.Add(probBbBasisUpSeq);
+
+                decimal probBbBasisUp = probBbBasisUpSeqList.TakeLast(length).Average();
+                probBbBasisUpList.Add(probBbBasisUp);
+
+                decimal probBbBasisDownSeq = currentValue < basis ? 1 : 0;
+                probBbBasisDownSeqList.Add(probBbBasisDownSeq);
+
+                decimal probBbBasisDown = probBbBasisDownSeqList.TakeLast(length).Average();
+                probBbBasisDownList.Add(probBbBasisDown);
+
+                decimal probUpBbBasis = probBbBasisUp + probBbBasisDown != 0 ? probBbBasisUp / (probBbBasisUp + probBbBasisDown) : 0;
+                decimal probDownBbBasis = probBbBasisUp + probBbBasisDown != 0 ? probBbBasisDown / (probBbBasisUp + probBbBasisDown) : 0;
+
+                decimal prevSigmaProbsDown = sigmaProbsDownList.LastOrDefault();
+                decimal sigmaProbsDown = probUpBbUpper != 0 && probUpBbBasis != 0 ? ((probUpBbUpper * probUpBbBasis) / (probUpBbUpper * probUpBbBasis)) +
+                    ((1 - probUpBbUpper) * (1 - probUpBbBasis)) : 0;
+                sigmaProbsDownList.Add(sigmaProbsDown);
+
+                decimal prevSigmaProbsUp = sigmaProbsUpList.LastOrDefault();
+                decimal sigmaProbsUp = probDownBbUpper != 0 && probDownBbBasis != 0 ? ((probDownBbUpper * probDownBbBasis) / (probDownBbUpper * probDownBbBasis)) +
+                    ((1 - probDownBbUpper) * (1 - probDownBbBasis)) : 0;
+                sigmaProbsUpList.Add(sigmaProbsUp);
+
+                decimal prevProbPrime = probPrimeList.LastOrDefault();
+                decimal probPrime = sigmaProbsDown != 0 && sigmaProbsUp != 0 ? ((sigmaProbsDown * sigmaProbsUp) / (sigmaProbsDown * sigmaProbsUp)) +
+                    ((1 - sigmaProbsDown) * (1 - sigmaProbsUp)) : 0;
+                probPrimeList.Add(probPrime);
+
+                bool longUsingProbPrime = probPrime > lowerThreshold / 100 && prevProbPrime == 0;
+                bool longUsingSigmaProbsUp = sigmaProbsUp < 1 && prevSigmaProbsUp == 1;
+                bool shortUsingProbPrime = probPrime == 0 && prevProbPrime > lowerThreshold / 100;
+                bool shortUsingSigmaProbsDown = sigmaProbsDown < 1 && prevSigmaProbsDown == 1;
+
+                var signal = GetConditionSignal(longUsingProbPrime || longUsingSigmaProbsUp, shortUsingProbPrime || shortUsingSigmaProbsDown);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "SigmaProbsDown", sigmaProbsDownList },
+                { "SigmaProbsUp", sigmaProbsUpList },
+                { "ProbPrime", probPrimeList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.BayesianOscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Bear Power Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateBearPowerIndicator(this StockData stockData, MovingAvgType maType, int length = 14)
+        {
+            List<decimal> bpiList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal close = inputList.ElementAtOrDefault(i);
+                decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal open = openList.ElementAtOrDefault(i);
+                decimal high = highList.ElementAtOrDefault(i);
+                decimal low = lowList.ElementAtOrDefault(i);
+
+                decimal bpi = close < open ? high - low : prevClose > open ? Math.Max(close - open, high - low) :
+                    close > open ? Math.Max(open - low, high - close) : prevClose > open ? Math.Max(prevClose - low, high - close) :
+                    high - close > close - low ? high - low : prevClose > open ? Math.Max(prevClose - open, high - low) :
+                    high - close < close - low ? open - low : close > open ? Math.Max(close - low, high - close) :
+                    close > open ? Math.Max(prevClose - open, high - close) : prevClose < open ? Math.Max(open - low, high - close) : high - low;
+                bpiList.Add(bpi);
+            }
+
+            var bpiEmaList = GetMovingAverageList(stockData, maType, length, bpiList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                var bpi = bpiList.ElementAtOrDefault(i);
+                var bpiEma = bpiEmaList.ElementAtOrDefault(i);
+                var prevBpi = i >= 1 ? bpiList.ElementAtOrDefault(i - 1) : 0;
+                var prevBpiEma = i >= 1 ? bpiEmaList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetCompareSignal(bpi - bpiEma, prevBpi - prevBpiEma, true);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "BearPower", bpiList },
+                { "Signal", bpiEmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = bpiList;
+            stockData.IndicatorName = IndicatorName.BearPowerIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Bull Power Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateBullPowerIndicator(this StockData stockData, MovingAvgType maType, int length = 14)
+        {
+            List<decimal> bpiList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal close = inputList.ElementAtOrDefault(i);
+                decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal open = openList.ElementAtOrDefault(i);
+                decimal high = highList.ElementAtOrDefault(i);
+                decimal low = lowList.ElementAtOrDefault(i);
+
+                decimal bpi = close < open ? Math.Max(high - open, close - low) : prevClose < open ? Math.Max(high - prevClose, close - low) :
+                    close > open ? Math.Max(open - prevClose, high - low) : prevClose > open ? high - low :
+                    high - close > close - low ? high - open : prevClose < open ? Math.Max(high - prevClose, close - low) :
+                    high - close < close - low ? Math.Max(open - close, high - low) : prevClose > open ? high - low :
+                    prevClose > open ? Math.Max(high - open, close - low) : prevClose < open ? Math.Max(open - close, high - low) : high - low;
+                bpiList.Add(bpi);
+            }
+
+            var bpiEmaList = GetMovingAverageList(stockData, maType, length, bpiList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                var bpi = bpiList.ElementAtOrDefault(i);
+                var bpiEma = bpiEmaList.ElementAtOrDefault(i);
+                var prevBpi = i >= 1 ? bpiList.ElementAtOrDefault(i - 1) : 0;
+                var prevBpiEma = i >= 1 ? bpiEmaList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetCompareSignal(bpi - bpiEma, prevBpi - prevBpiEma, true);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "BullPower", bpiList },
+                { "Signal", bpiEmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = bpiList;
+            stockData.IndicatorName = IndicatorName.BullPowerIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Belkhayate Timing
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <returns></returns>
+        public static StockData CalculateBelkhayateTiming(this StockData stockData)
+        {
+            List<decimal> bList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal prevHigh1 = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevLow1 = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevHigh2 = i >= 2 ? highList.ElementAtOrDefault(i - 2) : 0;
+                decimal prevLow2 = i >= 2 ? lowList.ElementAtOrDefault(i - 2) : 0;
+                decimal prevHigh3 = i >= 3 ? highList.ElementAtOrDefault(i - 3) : 0;
+                decimal prevLow3 = i >= 3 ? lowList.ElementAtOrDefault(i - 3) : 0;
+                decimal prevHigh4 = i >= 4 ? highList.ElementAtOrDefault(i - 4) : 0;
+                decimal prevLow4 = i >= 4 ? lowList.ElementAtOrDefault(i - 4) : 0;
+                decimal prevB1 = i >= 1 ? bList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevB2 = i >= 2 ? bList.ElementAtOrDefault(i - 2) : 0;
+                decimal middle = (((currentHigh + currentLow) / 2) + ((prevHigh1 + prevLow1) / 2) + ((prevHigh2 + prevLow2) / 2) + 
+                    ((prevHigh3 + prevLow3) / 2) + ((prevHigh4 + prevLow4) / 2)) / 5;
+                decimal scale = ((currentHigh - currentLow + (prevHigh1 - prevLow1) + (prevHigh2 - prevLow2) + (prevHigh3 - prevLow3) + 
+                    (prevHigh4 - prevLow4)) / 5) * 0.2m;
+
+                decimal b = scale != 0 ? (currentValue - middle) / scale : 0;
+                bList.Add(b);
+
+                var signal = GetRsiSignal(b - prevB1, prevB1 - prevB2, b, prevB1, 4, -4);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Belkhayate", bList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = bList;
+            stockData.IndicatorName = IndicatorName.BelkhayateTiming;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Better Volume Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="lbLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateBetterVolumeIndicator(this StockData stockData, int length = 8, int lbLength = 2)
+        {
+            List<decimal> v1List = new();
+            List<decimal> v2List = new();
+            List<decimal> v3List = new();
+            List<decimal> v4List = new();
+            List<decimal> v5List = new();
+            List<decimal> v6List = new();
+            List<decimal> v7List = new();
+            List<decimal> v8List = new();
+            List<decimal> v9List = new();
+            List<decimal> v10List = new();
+            List<decimal> v11List = new();
+            List<decimal> v12List = new();
+            List<decimal> v13List = new();
+            List<decimal> v14List = new();
+            List<decimal> v15List = new();
+            List<decimal> v16List = new();
+            List<decimal> v17List = new();
+            List<decimal> v18List = new();
+            List<decimal> v19List = new();
+            List<decimal> v20List = new();
+            List<decimal> v21List = new();
+            List<decimal> v22List = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, openList, volumeList) = GetInputValuesList(stockData);
+            var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, lbLength);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal highest = highestList.ElementAtOrDefault(i);
+                decimal lowest = lowestList.ElementAtOrDefault(i);
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                decimal currentOpen = openList.ElementAtOrDefault(i);
+                decimal currentClose = inputList.ElementAtOrDefault(i);
+                decimal highLowRange = highest - lowest;
+                decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevOpen = i >= 1 ? openList.ElementAtOrDefault(i - 1) : 0;
+                decimal range = CalculateTrueRange(currentHigh, currentLow, prevClose);
+
+                decimal prevV1 = v1List.LastOrDefault();
+                decimal v1 = currentClose > currentOpen ? range / ((2 * range) + currentOpen - currentClose) * currentVolume :
+                    currentClose < currentOpen ? (range + currentClose - currentOpen) / ((2 * range) + currentClose - currentOpen) * currentVolume : 
+                    0.5m * currentVolume;
+                v1List.Add(v1);
+
+                decimal prevV2 = v2List.LastOrDefault();
+                decimal v2 = currentVolume - v1;
+                v2List.Add(v2);
+
+                decimal prevV3 = v3List.LastOrDefault();
+                decimal v3 = v1 + v2;
+                v3List.Add(v3);
+
+                decimal v4 = v1 * range;
+                v4List.AddRounded(v4);
+
+                decimal v5 = (v1 - v2) * range;
+                v5List.AddRounded(v5);
+
+                decimal v6 = v2 * range;
+                v6List.AddRounded(v6);
+
+                decimal v7 = (v2 - v1) * range;
+                v7List.AddRounded(v7);
+
+                decimal v8 = range != 0 ? v1 / range : 0;
+                v8List.AddRounded(v8);
+
+                decimal v9 = range != 0 ? (v1 - v2) / range : 0;
+                v9List.AddRounded(v9);
+
+                decimal v10 = range != 0 ? v2 / range : 0;
+                v10List.AddRounded(v10);
+
+                decimal v11 = range != 0 ? (v2 - v1) / range : 0;
+                v11List.AddRounded(v11);
+
+                decimal v12 = range != 0 ? v3 / range : 0;
+                v12List.AddRounded(v12);
+
+                decimal v13 = v3 + prevV3;
+                v13List.AddRounded(v13);
+
+                decimal v14 = (v1 + prevV1) * highLowRange;
+                v14List.AddRounded(v14);
+
+                decimal v15 = (v1 + prevV1 - v2 - prevV2) * highLowRange;
+                v15List.AddRounded(v15);
+
+                decimal v16 = (v2 + prevV2) * highLowRange;
+                v16List.AddRounded(v16);
+
+                decimal v17 = (v2 + prevV2 - v1 - prevV1) * highLowRange;
+                v17List.AddRounded(v17);
+
+                decimal v18 = highLowRange != 0 ? (v1 + prevV1) / highLowRange : 0;
+                v18List.AddRounded(v18);
+
+                decimal v19 = highLowRange != 0 ? (v1 + prevV1 - v2 - prevV2) / highLowRange : 0;
+                v19List.AddRounded(v19);
+
+                decimal v20 = highLowRange != 0 ? (v2 + prevV2) / highLowRange : 0;
+                v20List.AddRounded(v20);
+
+                decimal v21 = highLowRange != 0 ? (v2 + prevV2 - v1 - prevV1) / highLowRange : 0;
+                v21List.AddRounded(v21);
+
+                decimal v22 = highLowRange != 0 ? v13 / highLowRange : 0;
+                v22List.AddRounded(v22);
+
+                bool c1 = v3 == v3List.TakeLast(length).Min();
+                bool c2 = v4 == v4List.TakeLast(length).Max() && currentClose > currentOpen;
+                bool c3 = v5 == v5List.TakeLast(length).Max() && currentClose > currentOpen;
+                bool c4 = v6 == v6List.TakeLast(length).Max() && currentClose < currentOpen;
+                bool c5 = v7 == v7List.TakeLast(length).Max() && currentClose < currentOpen;
+                bool c6 = v8 == v8List.TakeLast(length).Min() && currentClose < currentOpen;
+                bool c7 = v9 == v9List.TakeLast(length).Min() && currentClose < currentOpen;
+                bool c8 = v10 == v10List.TakeLast(length).Min() && currentClose > currentOpen;
+                bool c9 = v11 == v11List.TakeLast(length).Min() && currentClose > currentOpen;
+                bool c10 = v12 == v12List.TakeLast(length).Max();
+                bool c11 = v13 == v13List.TakeLast(length).Min() && currentClose > currentOpen && prevClose > prevOpen;
+                bool c12 = v14 == v14List.TakeLast(length).Max() && currentClose > currentOpen && prevClose > prevOpen;
+                bool c13 = v15 == v15List.TakeLast(length).Max() && currentClose > currentOpen && prevClose < prevOpen;
+                bool c14 = v16 == v16List.TakeLast(length).Min() && currentClose < currentOpen && prevClose < prevOpen;
+                bool c15 = v17 == v17List.TakeLast(length).Min() && currentClose < currentOpen && prevClose < prevOpen;
+                bool c16 = v18 == v18List.TakeLast(length).Min() && currentClose < currentOpen && prevClose < prevOpen;
+                bool c17 = v19 == v19List.TakeLast(length).Min() && currentClose > currentOpen && prevClose < prevOpen;
+                bool c18 = v20 == v20List.TakeLast(length).Min() && currentClose > currentOpen && prevClose > prevOpen;
+                bool c19 = v21 == v21List.TakeLast(length).Min() && currentClose > currentOpen && prevClose > prevOpen;
+                bool c20 = v22 == v22List.TakeLast(length).Min();
+                bool climaxUp = c2 || c3 || c8 || c9 || c12 || c13 || c18 || c19;
+                bool climaxDown = c4 || c5 || c6 || c7 || c14 || c15 || c16 || c17;
+                bool churn = c10 || c20;
+                bool lowVolue = c1 || c11;
+
+                var signal = GetConditionSignal(climaxUp, climaxDown);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Bvi", v1List }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = v1List;
+            stockData.IndicatorName = IndicatorName.BetterVolumeIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Bilateral Stochastic Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="signalLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateBilateralStochasticOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 100, int signalLength = 20)
+        {
+            List<decimal> bullList = new();
+            List<decimal> bearList = new();
+            List<decimal> rangeList = new();
+            List<decimal> maxList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+            var (highestList, lowestList) = GetMaxAndMinValuesList(smaList, length);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal highest = highestList.ElementAtOrDefault(i);
+                decimal lowest = lowestList.ElementAtOrDefault(i);
+
+                decimal range = highest - lowest;
+                rangeList.Add(range);
+            }
+
+            var rangeSmaList = GetMovingAverageList(stockData, maType, length, rangeList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal sma = smaList.ElementAtOrDefault(i);
+                decimal highest = highestList.ElementAtOrDefault(i);
+                decimal lowest = lowestList.ElementAtOrDefault(i);
+                decimal rangeSma = rangeSmaList.ElementAtOrDefault(i);
+
+                decimal bull = rangeSma != 0 ? (sma / rangeSma) - (lowest / rangeSma) : 0;
+                bullList.Add(bull);
+
+                decimal bear = rangeSma != 0 ? Math.Abs((sma / rangeSma) - (highest / rangeSma)) : 0;
+                bearList.Add(bear);
+
+                decimal max = Math.Max(bull, bear);
+                maxList.Add(max);
+            }
+
+            var signalList = GetMovingAverageList(stockData, maType, signalLength, maxList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal bull = bullList.ElementAtOrDefault(i);
+                decimal bear = bearList.ElementAtOrDefault(i);
+                decimal sig = signalList.ElementAtOrDefault(i);
+
+                var signal = GetConditionSignal(bull > bear || bull > sig, bear > bull || bull < sig);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Bull", bullList },
+                { "Bear", bearList },
+                { "Bso", maxList },
+                { "Signal", signalList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = maxList;
+            stockData.IndicatorName = IndicatorName.BilateralStochasticOscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Buff Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateBuffAverage(this StockData stockData, int fastLength = 5, int slowLength = 20)
+        {
+            List<decimal> priceVolList = new();
+            List<decimal> fastBuffList = new();
+            List<decimal> slowBuffList = new();
+            List<decimal> tempVolumeList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                tempVolumeList.Add(currentVolume);
+
+                decimal priceVol = currentValue * currentVolume;
+                priceVolList.Add(priceVol);
+
+                decimal fastBuffNum = priceVolList.TakeLast(fastLength).Sum();
+                decimal fastBuffDenom = tempVolumeList.TakeLast(fastLength).Sum();
+
+                decimal prevFastBuff = fastBuffList.LastOrDefault();
+                decimal fastBuff = fastBuffDenom != 0 ? fastBuffNum / fastBuffDenom : 0;
+                fastBuffList.Add(fastBuff);
+
+                decimal slowBuffNum = priceVolList.TakeLast(slowLength).Sum();
+                decimal slowBuffDenom = tempVolumeList.TakeLast(slowLength).Sum();
+
+                decimal prevSlowBuff = slowBuffList.LastOrDefault();
+                decimal slowBuff = slowBuffDenom != 0 ? slowBuffNum / slowBuffDenom : 0;
+                slowBuffList.Add(slowBuff);
+
+                var signal = GetCompareSignal(fastBuff - slowBuff, prevFastBuff - prevSlowBuff);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "FastBuff", fastBuffList },
+                { "SlowBuff", slowBuffList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.BuffAverage;
 
             return stockData;
         }
