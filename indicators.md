@@ -35,6 +35,16 @@
 
 [Balance Of Power](https://school.stockcharts.com/doku.php?id=technical_indicators:balance_of_power)
 
+[Bayesian Oscillator](https://www.tradingview.com/script/8lXcviYm-Bayesian-BBSMA-Oscillator/)
+
+[Bear Power Indicator](https://www.tradingview.com/script/nceU9N4S-Bear-Power-Indicator/)
+
+[Belkhayate Timing](https://www.tradingview.com/script/az4eEBSC-Belkhayate-Timing-LazyBear/)
+
+[Breakout Relative Strength Index](https://www.tradingview.com/script/sI3VAlQb-Breakout-Relative-Strength-Index/)
+
+[Bull Power Indicator](https://www.tradingview.com/script/K0wF9cV8-Bull-Power-Indicator/)
+
 [Choppiness Index](https://www.incrediblecharts.com/indicators/choppiness-index.php)
 
 [Commodity Channel Index](https://www.investopedia.com/terms/c/commoditychannelindex.asp)
@@ -131,6 +141,12 @@ Atr Filtered Exponential Moving Average
 
 [Average True Range Trailing Stops](https://www.motivewave.com/studies/atr_trailing_stops.htm)
 
+[Bilateral Stochastic Oscillator](https://www.tradingview.com/script/8YHcbEkW-Bilateral-Stochastic-Oscillator-For-The-Sake-Of-Efficiency/)
+
+[Bryant Adaptive Moving Average](https://www.tradingview.com/script/qvng6qui-Bryant-Adaptive-Moving-Average/)
+
+[Buff Average](https://www.motivewave.com/studies/buff_averages.htm)
+
 [Chandelier Exit](https://school.stockcharts.com/doku.php?id=technical_indicators:chandelier_exit)
 
 [Elder Ray Index](https://www.investopedia.com/terms/e/elderray.asp)
@@ -202,6 +218,12 @@ Atr Filtered Exponential Moving Average
 
 [Bollinger Bands](https://www.investopedia.com/terms/b/bollingerbands.asp)
 
+[Bollinger Bands Average True Range](https://www.motivewave.com/studies/standerror_avtruerange_bb.htm)
+
+[Bollinger Bands Fibonacci Ratios](https://www.motivewave.com/studies/bollinger_bands_fib_ratios.htm)
+
+[Bollinger Bands With Atr Pct](https://www.tradingview.com/script/RUCy4Kfk-Bollinger-Bands-with-ATR-Percent/)
+
 [Fractal Chaos Bands](https://www.stockmaniacs.net/fractal-chaos-bands-indicator/#:~:text=Fractal%20Chaos%20Bands%20Indicator%20connects,tool%20for%20any%20trading%20method.)
 
 [Historical Volatility](https://www.investopedia.com/terms/h/historicalvolatility.asp)
@@ -218,6 +240,8 @@ Atr Filtered Exponential Moving Average
 
 ## Volume
 [Accumulation Distribution Line](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/accumulation-distribution)
+
+[Better Volume Indicator](https://www.tradingview.com/script/LfVJhuir-Indicators-Better-Volume-Indicator-InstrumentVolume/)
 
 [Chaikin Money Flow](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf)
 
