@@ -41,6 +41,8 @@
 
 [Belkhayate Timing](https://www.tradingview.com/script/az4eEBSC-Belkhayate-Timing-LazyBear/)
 
+[Bollinger Bands %B](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/percent-b)
+
 [Breakout Relative Strength Index](https://www.tradingview.com/script/sI3VAlQb-Breakout-Relative-Strength-Index/)
 
 [Bull Power Indicator](https://www.tradingview.com/script/K0wF9cV8-Bull-Power-Indicator/)
@@ -58,6 +60,8 @@
 [Japanese Correlation Coefficient](https://www.tradingview.com/script/hzveNetW-Japanese-Correlation-Coefficient/)
 
 [Jma Rsx Clone](https://www.tradingview.com/script/XzcIRUHv-JMA-RSX-Clone-LazyBear/)
+
+[McClellan Oscillator](https://www.investopedia.com/terms/m/mcclellanoscillator.asp)
 
 [Moving Average Convergence Divergence](https://www.investopedia.com/terms/m/macd.asp)
 
@@ -77,7 +81,13 @@
 
 [True Strength Index](https://school.stockcharts.com/doku.php?id=technical_indicators:true_strength_index)
 
+[Uhl Ma Crossover System](https://www.tradingview.com/script/Hl1Sw0I4-Uhl-MA-Crossover-System/)
+
 [Ultimate Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:ultimate_oscillator)
+
+[Ultimate Trader Oscillator](https://www.tradingview.com/script/QvlJNUmN-Ultimate-Trader-Oscillator-UTO-v1/)
+
+[Ultimate Momentum Indicator](https://www.tradingview.com/script/dV5HEGpP-Ultimate-Momentum-Indicator-CC/)
 
 [Williams %R](https://www.investopedia.com/terms/w/williamsr.asp)
 
@@ -97,6 +107,8 @@
 [Price Channel](https://www.investopedia.com/terms/p/price-channel.asp)
 
 [Standard Pivot Points](https://school.stockcharts.com/doku.php?id=technical_indicators:pivot_points)
+
+[Uni Channel](https://www.motivewave.com/studies/uni_channel.htm)
 
 ## Trend
 [1LC Least Squares Moving Average](https://www.tradingview.com/script/TeSK3U9l-1LC-LSMA-1-line-code-lsma-with-3-functions/)
@@ -189,6 +201,8 @@ Atr Filtered Exponential Moving Average
 
 [Typical Price](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/typical-price)
 
+[Uber Trend Indicator](https://www.tradingview.com/script/mh4ebJnU-Uber-Trend-Indicator/)
+
 [Ultimate Moving Average](https://www.tradingview.com/script/hYVS9kuu-Ultimate-Moving-Average-CC-RedK/)
 
 [Variable Length Moving Average](https://www.tradingview.com/script/wskG0Eh9-Variable-Length-Moving-Average/)
@@ -222,6 +236,8 @@ Atr Filtered Exponential Moving Average
 
 [Bollinger Bands Fibonacci Ratios](https://www.motivewave.com/studies/bollinger_bands_fib_ratios.htm)
 
+[Bollinger Bands Width](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/bollinger-band-width)
+
 [Bollinger Bands With Atr Pct](https://www.tradingview.com/script/RUCy4Kfk-Bollinger-Bands-with-ATR-Percent/)
 
 [Fractal Chaos Bands](https://www.stockmaniacs.net/fractal-chaos-bands-indicator/#:~:text=Fractal%20Chaos%20Bands%20Indicator%20connects,tool%20for%20any%20trading%20method.)
@@ -237,6 +253,12 @@ Atr Filtered Exponential Moving Average
 [Stoller Average Range Channels](https://www.investopedia.com/terms/s/starc.asp)
 
 [Ulcer Index](https://school.stockcharts.com/doku.php?id=technical_indicators:ulcer_index)
+
+[Ultimate Moving Average Bands](https://www.tradingview.com/script/FD6lTYOj-Ultimate-Moving-Average-Bands-CC-RedK/)
+
+[Ultimate Volatility Indicator](https://www.tradingview.com/script/r7ae1VUY-Ultimate-Volatility-Indicator-CC/)
+
+[Upside Potential Ratio](https://www.motivewave.com/studies/upside_potential_ratio.htm)
 
 ## Volume
 [Accumulation Distribution Line](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/accumulation-distribution)
@@ -260,6 +282,8 @@ Atr Filtered Exponential Moving Average
 [Percentage Volume Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:percentage_volume_oscillator_pvo)
 
 [Positive Volume Index](https://www.investopedia.com/terms/p/pvi.asp)
+
+[Upside Downside Volume](https://www.motivewave.com/studies/upside_dnside_volume.htm)
 
 [Volume Weighted Average Price](https://www.investopedia.com/terms/v/vwap.asp)
 
