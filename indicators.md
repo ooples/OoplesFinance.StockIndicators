@@ -83,11 +83,11 @@
 
 [Uhl Ma Crossover System](https://www.tradingview.com/script/Hl1Sw0I4-Uhl-MA-Crossover-System/)
 
+[Ultimate Momentum Indicator](https://www.tradingview.com/script/dV5HEGpP-Ultimate-Momentum-Indicator-CC/)
+
 [Ultimate Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:ultimate_oscillator)
 
 [Ultimate Trader Oscillator](https://www.tradingview.com/script/QvlJNUmN-Ultimate-Trader-Oscillator-UTO-v1/)
-
-[Ultimate Momentum Indicator](https://www.tradingview.com/script/dV5HEGpP-Ultimate-Momentum-Indicator-CC/)
 
 [Williams %R](https://www.investopedia.com/terms/w/williamsr.asp)
 
