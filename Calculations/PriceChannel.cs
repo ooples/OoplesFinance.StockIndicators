@@ -411,5 +411,112 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Ultimate Moving Average Bands
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="minLength"></param>
+        /// <param name="maxLength"></param>
+        /// <param name="smoothLength"></param>
+        /// <param name="stdDevMult"></param>
+        /// <returns></returns>
+        public static StockData CalculateUltimateMovingAverageBands(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int minLength = 5, int maxLength = 50, int smoothLength = 4, decimal stdDevMult = 2)
+        {
+            List<decimal> upperBandList = new();
+            List<decimal> lowerBandList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var umaList = CalculateUltimateMovingAverage(stockData, maType, minLength, maxLength, 1).CustomValuesList;
+            var stdevList = CalculateStandardDeviationVolatility(stockData, minLength).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal uma = umaList.ElementAtOrDefault(i);
+                decimal prevUma = i >= 1 ? umaList.ElementAtOrDefault(i - 1) : 0;
+                decimal stdev = stdevList.ElementAtOrDefault(i);
+
+                decimal prevUpperBand = upperBandList.LastOrDefault();
+                decimal upperBand = uma + (stdDevMult * stdev);
+                upperBandList.Add(upperBand);
+
+                decimal prevLowerBand = lowerBandList.LastOrDefault();
+                decimal lowerBand = uma - (stdDevMult * stdev);
+                lowerBandList.Add(lowerBand);
+
+                var signal = GetBollingerBandsSignal(currentValue - uma, prevVal - prevUma, currentValue, prevVal, upperBand, prevUpperBand, 
+                    lowerBand, prevLowerBand);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperBandList },
+                { "MiddleBand", umaList },
+                { "LowerBand", lowerBandList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.UltimateMovingAverageBands;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Uni Channel
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="ubFac"></param>
+        /// <param name="lbFac"></param>
+        /// <param name="type1"></param>
+        /// <returns></returns>
+        public static StockData CalculateUniChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 10, decimal ubFac = 0.02m, decimal lbFac = 0.02m, bool type1 = false)
+        {
+            List<decimal> upperBandList = new();
+            List<decimal> lowerBandList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentSma = smaList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevSma = i >= 1 ? smaList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevUb = upperBandList.LastOrDefault();
+                decimal ub = type1 ? currentSma + ubFac : currentSma + (currentSma * ubFac);
+                upperBandList.Add(ub);
+
+                decimal prevLb = lowerBandList.LastOrDefault();
+                decimal lb = type1 ? currentSma - lbFac : currentSma - (currentSma * lbFac);
+                lowerBandList.Add(lb);
+
+                var signal = GetBollingerBandsSignal(currentValue - currentSma, prevValue - prevSma, currentValue, prevValue, ub, prevUb, lb, prevLb);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperBandList },
+                { "MiddleBand", smaList },
+                { "LowerBand", lowerBandList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.UniChannel;
+
+            return stockData;
+        }
     }
 }

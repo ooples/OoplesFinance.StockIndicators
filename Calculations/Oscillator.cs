@@ -3460,5 +3460,506 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Uber Trend Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateUberTrendIndicator(this StockData stockData, int length = 14)
+        {
+            List<decimal> advList = new();
+            List<decimal> decList = new();
+            List<decimal> advVolList = new();
+            List<decimal> decVolList = new();
+            List<decimal> utiList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                decimal prevUti1 = i >= 1 ? utiList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevUti2 = i >= 2 ? utiList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal adv = currentValue > prevValue ? currentValue - prevValue : 0;
+                advList.Add(adv);
+
+                decimal dec = currentValue < prevValue ? prevValue - currentValue : 0;
+                decList.Add(dec);
+
+                decimal advSum = advList.TakeLast(length).Sum();
+                decimal decSum = decList.TakeLast(length).Sum();
+
+                decimal advVol = currentValue > prevValue && advSum != 0 ? currentVolume / advSum : 0;
+                advVolList.Add(advVol);
+
+                decimal decVol = currentValue < prevValue && decSum != 0 ? currentVolume / decSum : 0;
+                decVolList.Add(decVol);
+
+                decimal advVolSum = advVolList.TakeLast(length).Sum();
+                decimal decVolSum = decVolList.TakeLast(length).Sum();
+                decimal top = decSum != 0 ? advSum / decSum : 0;
+                decimal bot = decVolSum != 0 ? advVolSum / decVolSum : 0;
+                decimal ut = bot != 0 ? top / bot : 0;
+                decimal utRev = top != 0 ? -1 * bot / top : 0;
+
+                decimal uti = ut + 1 != 0 ? (ut - 1) / (ut + 1) : 0;
+                utiList.Add(uti);
+
+                var signal = GetCompareSignal(uti - prevUti1, prevUti1 - prevUti2);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Uti", utiList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = utiList;
+            stockData.IndicatorName = IndicatorName.UberTrendIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Ultimate Volatility Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateUltimateVolatilityIndicator(this StockData stockData, MovingAvgType maType, int length = 14)
+        {
+            List<decimal> uviList = new();
+            List<decimal> absList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, openList, _) = GetInputValuesList(stockData);
+
+            var maList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentOpen = openList.ElementAtOrDefault(i);
+                decimal currentClose = inputList.ElementAtOrDefault(i);
+                decimal currentMa = maList.ElementAtOrDefault(i);
+                decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevMa = i >= 1 ? maList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal abs = Math.Abs(currentClose - currentOpen);
+                absList.Add(abs);
+
+                decimal uvi = (decimal)1 / length * absList.TakeLast(length).Sum();
+                uviList.Add(uvi);
+
+                var signal = GetVolatilitySignal(currentClose - currentMa, prevClose - prevMa, uvi, 1);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Uvi", uviList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = uviList;
+            stockData.IndicatorName = IndicatorName.UltimateVolatilityIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Ultimate Trader Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="lbLength"></param>
+        /// <param name="smoothLength"></param>
+        /// <param name="rangeLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateUltimateTraderOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, 
+            int length = 10, int lbLength = 5, int smoothLength = 4, int rangeLength = 2)
+        {
+            List<decimal> dxList = new();
+            List<decimal> dxiList = new();
+            List<decimal> trList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, openList, volumeList) = GetInputValuesList(stockData);
+            var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, rangeLength);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal tr = CalculateTrueRange(currentHigh, currentLow, prevClose);
+                trList.AddRounded(tr);
+            }
+
+            stockData.CustomValuesList = trList;
+            var trStoList = CalculateStochasticOscillator(stockData, maType, lbLength, lbLength).CustomValuesList;
+            stockData.CustomValuesList = volumeList;
+            var vStoList = CalculateStochasticOscillator(stockData, maType, lbLength, lbLength).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal close = inputList.ElementAtOrDefault(i);
+                decimal body = close - openList.ElementAtOrDefault(i);
+                decimal high = highList.ElementAtOrDefault(i);
+                decimal low = lowList.ElementAtOrDefault(i);
+                decimal range = high - low;
+                decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal c = close - prevClose;
+                decimal sign = Math.Sign(c);
+                decimal highest = highestList.ElementAtOrDefault(i);
+                decimal lowest = lowestList.ElementAtOrDefault(i);
+                decimal vSto = vStoList.ElementAtOrDefault(i);
+                decimal trSto = trStoList.ElementAtOrDefault(i);
+                decimal k1 = range != 0 ? body / range * 100 : 0;
+                decimal k2 = range == 0 ? 0 : ((close - low) / range * 100 * 2) - 100;
+                decimal k3 = c == 0 || highest - lowest == 0 ? 0 : ((close - lowest) / (highest - lowest) * 100 * 2) - 100;
+                decimal k4 = highest - lowest != 0 ? c / (highest - lowest) * 100 : 0;
+                decimal k5 = sign * trSto;
+                decimal k6 = sign * vSto;
+                decimal bullScore = Math.Max(0, k1) + Math.Max(0, k2) + Math.Max(0, k3) + Math.Max(0, k4) + Math.Max(0, k5) + Math.Max(0, k6);
+                decimal bearScore = -1 * (Math.Min(0, k1) + Math.Min(0, k2) + Math.Min(0, k3) + Math.Min(0, k4) + Math.Min(0, k5) + Math.Min(0, k6));
+
+                decimal dx = bearScore != 0 ? bullScore / bearScore : 0;
+                dxList.Add(dx);
+
+                decimal dxi = (2 * (100 - (100 / (1 + dx)))) - 100;
+                dxiList.Add(dxi);
+            }
+
+            var dxiavgList = GetMovingAverageList(stockData, maType, lbLength, dxiList);
+            var dxisList = GetMovingAverageList(stockData, maType, smoothLength, dxiavgList);
+            var dxissList = GetMovingAverageList(stockData, maType, smoothLength, dxisList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal dxis = dxisList.ElementAtOrDefault(i);
+                decimal dxiss = dxissList.ElementAtOrDefault(i);
+                decimal prevDxis = i >= 1 ? dxisList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevDxiss = i >= 1 ? dxissList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetCompareSignal(dxis - dxiss, prevDxis - prevDxiss);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Uto", dxisList },
+                { "Signal", dxissList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = dxisList;
+            stockData.IndicatorName = IndicatorName.UltimateTraderOscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Upside Potential Ratio
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="bmk"></param>
+        /// <returns></returns>
+        public static StockData CalculateUpsidePotentialRatio(this StockData stockData, int length = 30, decimal bmk = 0.05m)
+        {
+            List<decimal> retList = new();
+            List<decimal> upsidePotentialList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal barMin = 60 * 24;
+            decimal minPerYr = 60 * 24 * 30 * 12;
+            decimal barsPerYr = minPerYr / barMin;
+            decimal ratio = (decimal)1 / length;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+                decimal bench = Pow(1 + bmk, length / (double)barsPerYr) - 1;
+
+                decimal ret = prevValue != 0 ? (currentValue / prevValue) - 1 : 0;
+                retList.Add(ret);
+
+                decimal downSide = 0, upSide = 0;
+                for (int j = i - (length + 1); j <= i; j++)
+                {
+                    decimal iValue = j >= 0 && i >= j ? retList.ElementAtOrDefault(i - j) : 0;
+
+                    if (iValue < bench)
+                    {
+                        downSide += Pow(iValue - bench, 2) * ratio;
+                    }
+                    if (iValue > bench)
+                    {
+                        upSide += (iValue - bench) * ratio;
+                    }
+                }
+
+                decimal prevUpsidePotential = upsidePotentialList.LastOrDefault();
+                decimal upsidePotential = downSide >= 0 ? upSide / Sqrt(downSide) : 0;
+                upsidePotentialList.Add(upsidePotential);
+
+                var signal = GetCompareSignal(upsidePotential - 5, prevUpsidePotential - 5);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Upr", upsidePotentialList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = upsidePotentialList;
+            stockData.IndicatorName = IndicatorName.UpsidePotentialRatio;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Ultimate Momentum Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="inputName"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="length3"></param>
+        /// <param name="length4"></param>
+        /// <param name="length5"></param>
+        /// <param name="length6"></param>
+        /// <param name="stdDevMult"></param>
+        /// <returns></returns>
+        public static StockData CalculateUltimateMomentumIndicator(this StockData stockData, InputName inputName = InputName.TypicalPrice, 
+            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length1 = 13, int length2 = 19, int length3 = 21, int length4 = 39, 
+            int length5 = 50, int length6 = 200, decimal stdDevMult = 1.5m)
+        {
+            List<decimal> utmList = new();
+            List<Signal> signalsList = new();
+
+            var moVar = CalculateMcClellanOscillator(stockData, maType, fastLength: length2, slowLength: length4);
+            var advSumList = moVar.OutputValues["AdvSum"];
+            var decSumList = moVar.OutputValues["DecSum"];
+            var moList = moVar.OutputValues["Mo"];
+            var bbPctList = CalculateBollingerBandsPercentB(stockData, stdDevMult, maType, length5).CustomValuesList;
+            var mfi1List = CalculateMoneyFlowIndex(stockData, inputName, length2).CustomValuesList;
+            var mfi2List = CalculateMoneyFlowIndex(stockData, inputName, length3).CustomValuesList;
+            var mfi3List = CalculateMoneyFlowIndex(stockData, inputName, length4).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal mo = moList.ElementAtOrDefault(i);
+                decimal bbPct = bbPctList.ElementAtOrDefault(i);
+                decimal mfi1 = mfi1List.ElementAtOrDefault(i);
+                decimal mfi2 = mfi2List.ElementAtOrDefault(i);
+                decimal mfi3 = mfi3List.ElementAtOrDefault(i);
+                decimal advSum = advSumList.ElementAtOrDefault(i);
+                decimal decSum = decSumList.ElementAtOrDefault(i);
+                decimal ratio = decSum != 0 ? advSum / decSum : 0;
+
+                decimal utm = (200 * bbPct) + (100 * ratio) + (2 * mo) + (1.5m * mfi3) + (3 * mfi2) + (3 * mfi1);
+                utmList.Add(utm);
+            }
+
+            stockData.CustomValuesList = utmList;
+            var utmRsiList = CalculateRelativeStrengthIndex(stockData, maType, length1, length1).CustomValuesList;
+            var utmiList = GetMovingAverageList(stockData, maType, length1, utmRsiList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal utmi = utmiList.ElementAtOrDefault(i);
+                decimal prevUtmi1 = i >= 1 ? utmiList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevUtmi2 = i >= 2 ? utmiList.ElementAtOrDefault(i - 2) : 0;
+
+                var signal = GetCompareSignal(utmi - prevUtmi1, prevUtmi1 - prevUtmi2);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Utm", utmiList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = utmiList;
+            stockData.IndicatorName = IndicatorName.UltimateMomentumIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Upside Downside Volume
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateUpsideDownsideVolume(this StockData stockData, int length = 50)
+        {
+            List<decimal> upVolList = new();
+            List<decimal> downVolList = new();
+            List<decimal> upDownVolumeList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal upVol = currentValue > prevValue ? currentVolume : 0;
+                upVolList.Add(upVol);
+
+                decimal downVol = currentValue < prevValue ? currentVolume * -1 : 0;
+                downVolList.Add(downVol);
+
+                decimal upVolSum = upVolList.TakeLast(length).Sum();
+                decimal downVolSum = downVolList.TakeLast(length).Sum();
+
+                decimal prevUpDownVol = upDownVolumeList.LastOrDefault();
+                decimal upDownVol = downVolSum != 0 ? upVolSum / downVolSum : 0;
+                upDownVolumeList.Add(upDownVol);
+
+                var signal = GetCompareSignal(upDownVol, prevUpDownVol);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Udv", upDownVolumeList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = upDownVolumeList;
+            stockData.IndicatorName = IndicatorName.UpsideDownsideVolume;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Uhl Ma Crossover System
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateUhlMaCrossoverSystem(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 100)
+        {
+            List<decimal> cmaList = new();
+            List<decimal> ctsList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+            var varList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal sma = smaList.ElementAtOrDefault(i);
+                decimal prevVar = i >= length ? varList.ElementAtOrDefault(i - length) : 0;
+                decimal prevCma = i >= 1 ? cmaList.LastOrDefault() : currentValue;
+                decimal prevCts = i >= 1 ? ctsList.LastOrDefault() : currentValue;
+                decimal secma = Pow(sma - prevCma, 2);
+                decimal sects = Pow(currentValue - prevCts, 2);
+                decimal ka = prevVar < secma && secma != 0 ? 1 - (prevVar / secma) : 0;
+                decimal kb = prevVar < sects && sects != 0 ? 1 - (prevVar / sects) : 0;
+
+                decimal cma = (ka * sma) + ((1 - ka) * prevCma);
+                cmaList.Add(cma);
+
+                decimal cts = (kb * currentValue) + ((1 - kb) * prevCts);
+                ctsList.Add(cts);
+
+                var signal = GetCompareSignal(cts - cma, prevCts - prevCma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Cts", ctsList },
+                { "Cma", cmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.UhlMaCrossoverSystem;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the McClellan Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <param name="signalLength"></param>
+        /// <param name="mult"></param>
+        /// <returns></returns>
+        public static StockData CalculateMcClellanOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+            int fastLength = 19, int slowLength = 39, int signalLength = 9, decimal mult = 1000)
+        {
+            List<decimal> advancesList = new();
+            List<decimal> declinesList = new();
+            List<decimal> advancesSumList = new();
+            List<decimal> declinesSumList = new();
+            List<decimal> ranaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal advance = currentValue > prevValue ? 1 : 0;
+                advancesList.Add(advance);
+
+                decimal decline = currentValue < prevValue ? 1 : 0;
+                declinesList.Add(decline);
+
+                decimal advanceSum = advancesList.TakeLast(fastLength).Sum();
+                advancesSumList.Add(advanceSum);
+
+                decimal declineSum = declinesList.TakeLast(fastLength).Sum();
+                declinesSumList.Add(declineSum);
+
+                decimal rana = advanceSum + declineSum != 0 ? mult * (advanceSum - declineSum) / (advanceSum + declineSum) : 0;
+                ranaList.Add(rana);
+            }
+
+            stockData.CustomValuesList = ranaList;
+            var moList = CalculateMovingAverageConvergenceDivergence(stockData, maType, fastLength, slowLength, signalLength);
+            var mcclellanOscillatorList = moList.OutputValues["Macd"];
+            var mcclellanSignalLineList = moList.OutputValues["Signal"];
+            var mcclellanHistogramList = moList.OutputValues["Histogram"];
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal mcclellanHistogram = mcclellanHistogramList.ElementAtOrDefault(i);
+                decimal prevMcclellanHistogram = i >= 1 ? mcclellanHistogramList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetCompareSignal(mcclellanHistogram, prevMcclellanHistogram);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "AdvSum", advancesSumList },
+                { "DecSum", declinesSumList },
+                { "Mo", mcclellanOscillatorList },
+                { "Signal", mcclellanSignalLineList },
+                { "Histogram", mcclellanHistogramList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = mcclellanOscillatorList;
+            stockData.IndicatorName = IndicatorName.McClellanOscillator;
+
+            return stockData;
+        }
     }
 }

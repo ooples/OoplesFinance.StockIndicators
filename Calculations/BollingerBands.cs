@@ -399,5 +399,98 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Bollinger Bands %B
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="stdDevMult"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateBollingerBandsPercentB(this StockData stockData, decimal stdDevMult = 2, 
+            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 20)
+        {
+            List<decimal> pctBList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var bbList = CalculateBollingerBands(stockData, stdDevMult, maType, length);
+            var upperBandList = bbList.OutputValues["UpperBand"];
+            var lowerBandList = bbList.OutputValues["LowerBand"];
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal upperBand = upperBandList.ElementAtOrDefault(i);
+                decimal lowerBand = lowerBandList.ElementAtOrDefault(i);
+                decimal prevPctB1 = i >= 1 ? pctBList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevPctB2 = i >= 2 ? pctBList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal pctB = upperBand - lowerBand != 0 ? (currentValue - lowerBand) / (upperBand - lowerBand) * 100 : 0;
+                pctBList.AddRounded(pctB);
+
+                Signal signal = GetRsiSignal(pctB - prevPctB1, prevPctB1 - prevPctB2, pctB, prevPctB1, 100, 0);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "PctB", pctBList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = pctBList;
+            stockData.IndicatorName = IndicatorName.BollingerBandsPercentB;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Bollinger Bands Width
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="stdDevMult"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateBollingerBandsWidth(this StockData stockData, decimal stdDevMult = 2,
+            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 20)
+        {
+            List<decimal> bbWidthList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var bbList = CalculateBollingerBands(stockData, stdDevMult, maType, length);
+            var upperBandList = bbList.OutputValues["UpperBand"];
+            var lowerBandList = bbList.OutputValues["LowerBand"];
+            var middleBandList = bbList.OutputValues["MiddleBand"];
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal upperBand = upperBandList.ElementAtOrDefault(i);
+                decimal lowerBand = lowerBandList.ElementAtOrDefault(i);
+                decimal middleBand = middleBandList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevMiddleBand = i >= 1 ? middleBandList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevBbWidth = bbWidthList.LastOrDefault();
+                decimal bbWidth = middleBand != 0 ? (upperBand - lowerBand) / middleBand : 0;
+                bbWidthList.AddRounded(bbWidth);
+
+                Signal signal = GetVolatilitySignal(currentValue - middleBand, prevValue - prevMiddleBand, bbWidth, prevBbWidth);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "BbWidth", bbWidthList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = bbWidthList;
+            stockData.IndicatorName = IndicatorName.BollingerBandsWidth;
+
+            return stockData;
+        }
     }
 }

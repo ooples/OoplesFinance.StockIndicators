@@ -105,6 +105,10 @@ namespace OoplesFinance.StockIndicators.Enums
         BollingerBandsAverageTrueRange,
         [Category(IndicatorType.Volatility)]
         BollingerBandsFibonacciRatios,
+        [Category(IndicatorType.Momentum)]
+        BollingerBandsPercentB,
+        [Category(IndicatorType.Volatility)]
+        BollingerBandsWidth,
         [Category(IndicatorType.Volatility)]
         BollingerBandsWithAtrPct,
         [Category(IndicatorType.Momentum)]
@@ -171,6 +175,8 @@ namespace OoplesFinance.StockIndicators.Enums
         LeastSquaresMovingAverage,
         [Category(IndicatorType.Trend)]
         LinearRegression,
+        [Category(IndicatorType.Momentum)]
+        McClellanOscillator,
         [Category(IndicatorType.Trend)]
         MedianPrice,
         [Category(IndicatorType.Volume)]
@@ -233,12 +239,30 @@ namespace OoplesFinance.StockIndicators.Enums
         TrueStrengthIndex,
         [Category(IndicatorType.Trend)]
         TypicalPrice,
+        [Category(IndicatorType.Trend)]
+        UberTrendIndicator,
+        [Category(IndicatorType.Momentum)]
+        UhlMaCrossoverSystem,
         [Category(IndicatorType.Volatility)]
         UlcerIndex,
+        [Category(IndicatorType.Momentum)]
+        UltimateMomentumIndicator,
         [Category(IndicatorType.Trend)]
         UltimateMovingAverage,
+        [Category(IndicatorType.Volatility)]
+        UltimateMovingAverageBands,
         [Category(IndicatorType.Momentum)]
         UltimateOscillator,
+        [Category(IndicatorType.Momentum)]
+        UltimateTraderOscillator,
+        [Category(IndicatorType.Volatility)]
+        UltimateVolatilityIndicator,
+        [Category(IndicatorType.SupportAndResistance)]
+        UniChannel,
+        [Category(IndicatorType.Volume)]
+        UpsideDownsideVolume,
+        [Category(IndicatorType.Volatility)]
+        UpsidePotentialRatio,
         [Category(IndicatorType.Trend)]
         VariableLengthMovingAverage,
         [Category(IndicatorType.Trend)]
