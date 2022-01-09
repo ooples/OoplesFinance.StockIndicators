@@ -89,7 +89,19 @@
 
 [Ultimate Trader Oscillator](https://www.tradingview.com/script/QvlJNUmN-Ultimate-Trader-Oscillator-UTO-v1/)
 
+[Wami Oscillator](https://www.motivewave.com/studies/wami.htm)
+
+[Wave Trend Oscillator](https://www.tradingview.com/script/2KE8wTuF-Indicator-WaveTrend-Oscillator-WT/)
+
 [Williams %R](https://www.investopedia.com/terms/w/williamsr.asp)
+
+[Williams Accumulation Distribution](https://www.barchart.com/education/technical-indicators/accumulation_distribution_williams)
+
+[Williams Fractals](https://www.investopedia.com/terms/f/fractal.asp)
+
+[Wilson Relative Price Channel](https://www.tradingview.com/script/w0VlTHHV-Wilson-Relative-Price-Channel-in-Pine/)
+
+[Woodie Commodity Channel Index](https://reviews4forex.com/articles/woodie-commodity-channel-index-strategy-details,-patterns)
 
 [Z Score](https://www.tradingview.com/script/gRy0oaSB-Z-Score/)
 
@@ -109,6 +121,8 @@
 [Standard Pivot Points](https://school.stockcharts.com/doku.php?id=technical_indicators:pivot_points)
 
 [Uni Channel](https://www.motivewave.com/studies/uni_channel.htm)
+
+[Woodie Pivot Points](https://www.mypivots.com/dictionary/definition/228/woodie-pivot-points)
 
 ## Trend
 [1LC Least Squares Moving Average](https://www.tradingview.com/script/TeSK3U9l-1LC-LSMA-1-line-code-lsma-with-3-functions/)
@@ -209,11 +223,19 @@ Atr Filtered Exponential Moving Average
 
 [Vortex Indicator](https://www.investopedia.com/terms/v/vortex-indicator-vi.asp)
 
+[Waddah Attar Explosion](https://www.tradingview.com/script/iu3kKWDI-Waddah-Attar-Explosion-LazyBear/)
+
 [Weighted Close](https://www.incrediblecharts.com/indicators/weighted_close.php)
 
 [Weighted Moving Average](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/wma)
 
+[Well Rounded Moving Average](https://www.tradingview.com/script/Ez0QYKPI-Well-Rounded-Moving-Average/)
+
 [Welles Wilder Moving Average](https://www.incrediblecharts.com/indicators/wilder_moving_average.php)
+
+[Welles Wilder Summation](https://www.fmlabs.com/reference/default.htm?url=WellesSum.htm)
+
+[Windowed Volume Weighted Moving Average](https://www.tradingview.com/script/hoDB087Q-Windowed-Volume-Weighted-Moving-Average/)
 
 [Zero Lag Exponential Moving Average](https://en.wikipedia.org/wiki/Zero_lag_exponential_moving_average)
 
@@ -259,6 +281,8 @@ Atr Filtered Exponential Moving Average
 [Ultimate Volatility Indicator](https://www.tradingview.com/script/r7ae1VUY-Ultimate-Volatility-Indicator-CC/)
 
 [Upside Potential Ratio](https://www.motivewave.com/studies/upside_potential_ratio.htm)
+
+[Welles Wilder Volatility System](https://www.motivewave.com/studies/volatility_index.htm)
 
 ## Volume
 [Accumulation Distribution Line](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/accumulation-distribution)
