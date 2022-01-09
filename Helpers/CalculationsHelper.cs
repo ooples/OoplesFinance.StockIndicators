@@ -1,6 +1,8 @@
 ﻿using OoplesFinance.StockIndicators.Enums;
 using OoplesFinance.StockIndicators.Exceptions;
 using OoplesFinance.StockIndicators.Models;
+using System.Collections;
+using System.Collections.Generic;
 using static OoplesFinance.StockIndicators.Helpers.MathHelper;
 
 namespace OoplesFinance.StockIndicators.Helpers
@@ -321,7 +323,7 @@ namespace OoplesFinance.StockIndicators.Helpers
                 decimal input = inputs.ElementAt(i);
                 inputList.Add(input);
 
-                var list = inputList.TakeLast(Math.Max(length, 2)).ToList();
+                var list = inputList.TakeLastExt(Math.Max(length, 2)).ToList();
 
                 decimal highestValue = list.Max();
                 highestValuesList.Add(highestValue);
@@ -356,10 +358,10 @@ namespace OoplesFinance.StockIndicators.Helpers
                 decimal low = lowList.ElementAt(i);
                 tempLowList.Add(low);
 
-                decimal highest = tempHighList.TakeLast(length).Max();
+                decimal highest = tempHighList.TakeLastExt(length).Max();
                 highestList.AddRounded(highest);
 
-                decimal lowest = tempLowList.TakeLast(length).Min();
+                decimal lowest = tempLowList.TakeLastExt(length).Min();
                 lowestList.AddRounded(lowest);
             }
 
@@ -374,6 +376,53 @@ namespace OoplesFinance.StockIndicators.Helpers
         public static void AddRounded(this List<decimal> list, decimal value)
         {
             list.Add(Math.Round(value, 4));
+        }
+
+        /// <summary>
+        /// Extension for the default TakeLast method that works for older versions of .Net
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> TakeLastExt<T>(this IEnumerable<T> source, int count)
+        {
+            if (null == source)
+                throw new ArgumentNullException(nameof(source));
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (0 == count)
+                yield break;
+
+            if (source is ICollection<T> collection)
+            {
+                foreach (T item in source.Skip(collection.Count))
+                    yield return item;
+
+                yield break;
+            }
+
+            if (source is IReadOnlyCollection<T> collection1)
+            {
+                foreach (T item in source.Skip(collection1.Count))
+                    yield return item;
+
+                yield break;
+            }
+
+            Queue<T> result = new();
+
+            foreach (T item in source)
+            {
+                if (result.Count == count)
+                    result.Dequeue();
+
+                result.Enqueue(item);
+            }
+
+            foreach (T item in result)
+                yield return result.Dequeue();
         }
     }
 }

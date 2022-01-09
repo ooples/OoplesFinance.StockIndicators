@@ -44,7 +44,7 @@ namespace OoplesFinance.StockIndicators
                 tempList.AddRounded(currentValue);
 
                 decimal prevSma = smaList.LastOrDefault();
-                decimal sma = tempList.TakeLast(length).Average();
+                decimal sma = tempList.TakeLastExt(length).Average();
                 smaList.AddRounded(sma);
 
                 Signal signal = GetCompareSignal(currentValue - sma, prevValue - prevSma);
@@ -309,7 +309,7 @@ namespace OoplesFinance.StockIndicators
                 decimal volatility = Math.Abs(currentValue - prevValue);
                 volatilityList.Add(volatility);
 
-                decimal volatilitySum = volatilityList.TakeLast(length).Sum();
+                decimal volatilitySum = volatilityList.TakeLastExt(length).Sum();
                 decimal momentum = Math.Abs(currentValue - priorValue);
 
                 decimal efficiencyRatio = volatilitySum != 0 ? momentum / volatilitySum : 0;
@@ -810,7 +810,7 @@ namespace OoplesFinance.StockIndicators
                 decimal volumePrice = currentValue * currentVolume;
                 volumePriceList.Add(volumePrice);
 
-                decimal volumePriceSma = volumePriceList.TakeLast(length).Average();
+                decimal volumePriceSma = volumePriceList.TakeLastExt(length).Average();
 
                 decimal prevVwma = vwmaList.LastOrDefault();
                 decimal vwma = currentVolumeSma != 0 ? volumePriceSma / currentVolumeSma : 0;
@@ -869,8 +869,8 @@ namespace OoplesFinance.StockIndicators
                 negMoneyFlowList.Add(negMoneyFlow);
 
                 int len = (int)length;
-                decimal posMoneyFlowTotal = posMoneyFlowList.TakeLast(len).Sum();
-                decimal negMoneyFlowTotal = negMoneyFlowList.TakeLast(len).Sum();
+                decimal posMoneyFlowTotal = posMoneyFlowList.TakeLastExt(len).Sum();
+                decimal negMoneyFlowTotal = negMoneyFlowList.TakeLastExt(len).Sum();
                 decimal mfiRatio = negMoneyFlowTotal != 0 ? MinOrMax(posMoneyFlowTotal / negMoneyFlowTotal, 1, 0) : 0;
                 decimal mfi = negMoneyFlowTotal == 0 ? 100 : posMoneyFlowTotal == 0 ? 0 : MinOrMax(100 - (100 / (1 + mfiRatio)), 100, 0);
                 decimal mfScaled = (mfi * 2) - 100;
@@ -1175,10 +1175,10 @@ namespace OoplesFinance.StockIndicators
                 decimal c = currentValue > prevMad + d ? currentValue + d : currentValue < prevMad - d ? currentValue - d : prevMad;
                 cList.Add(c);
 
-                decimal ma1 = cList.TakeLast(length).Average();
+                decimal ma1 = cList.TakeLastExt(length).Average();
                 ma1List.Add(ma1);
 
-                decimal mad = ma1List.TakeLast(length).Average();
+                decimal mad = ma1List.TakeLastExt(length).Average();
                 madList.Add(mad);
 
                 var signal = GetCompareSignal(currentValue - mad, prevValue - prevMad);
@@ -1250,13 +1250,13 @@ namespace OoplesFinance.StockIndicators
                 decimal atrVal = atrValList.ElementAtOrDefault(i);
                 tempList.Add(atrVal);
 
-                decimal atrValSum = tempList.TakeLast(stdDevLength).Sum();
+                decimal atrValSum = tempList.TakeLastExt(stdDevLength).Sum();
                 decimal stdDevB = Pow(atrValSum, 2) / Pow(stdDevLength, 2);
 
                 decimal stdDev = stdDevA - stdDevB >= 0 ? Sqrt(stdDevA - stdDevB) : 0;
                 stdDevList.Add(stdDev);
 
-                decimal stdDevLow = stdDevList.TakeLast(lbLength).Min();
+                decimal stdDevLow = stdDevList.TakeLastExt(lbLength).Min();
                 decimal stdDevFactorAFP = stdDev != 0 ? stdDevLow / stdDev : 0;
                 decimal stdDevFactorCTP = stdDevLow != 0 ? stdDev / stdDevLow : 0;
                 decimal stdDevFactorAFPLow = Math.Min(stdDevFactorAFP, min);
@@ -1319,7 +1319,7 @@ namespace OoplesFinance.StockIndicators
                 decimal tr = CalculateTrueRange(currentHigh, currentLow, prevValue);
                 tempList.Add(tr);
 
-                decimal highest = tempList.TakeLast(length).Max();
+                decimal highest = tempList.TakeLastExt(length).Max();
                 decimal alpha = highest != 0 ? MinOrMax(Pow(tr / highest, (double)smooth), 0.99m, 0.01m) : 0.01m;
                 decimal xx = index * index;
                 decimal yy = currentValue * currentValue;
@@ -1503,7 +1503,7 @@ namespace OoplesFinance.StockIndicators
                 decimal x = currentValue > prevX + dev ? currentValue : currentValue < prevX - dev ? currentValue : prevX;
                 xList.Add(x);
 
-                var corr = GoodnessOfFit.R(tempList.TakeLast(length).Select(x => (double)x), xList.TakeLast(length).Select(x => (double)x));
+                var corr = GoodnessOfFit.R(tempList.TakeLastExt(length).Select(x => (double)x), xList.TakeLastExt(length).Select(x => (double)x));
                 corr = IsValueNullOrInfinity(corr) ? 0 : corr;
                 corrList.Add((decimal)corr);
             }
@@ -1652,7 +1652,7 @@ namespace OoplesFinance.StockIndicators
                 decimal index = i;
                 indexList.Add(index);
 
-                var corr = GoodnessOfFit.R(indexList.TakeLast(length).Select(x => (double)x), tempList.TakeLast(length).Select(x => (double)x));
+                var corr = GoodnessOfFit.R(indexList.TakeLastExt(length).Select(x => (double)x), tempList.TakeLastExt(length).Select(x => (double)x));
                 corr = IsValueNullOrInfinity(corr) ? 0 : corr;
                 corrList.Add((decimal)corr);
             }
@@ -2044,11 +2044,11 @@ namespace OoplesFinance.StockIndicators
                 decimal bartlettW = bartlett * currentVolume;
                 bartlettWList.Add(bartlettW);
 
-                decimal bartlettWSum = bartlettWList.TakeLast(length).Sum();
+                decimal bartlettWSum = bartlettWList.TakeLastExt(length).Sum();
                 decimal bartlettVW = currentValue * bartlettW;
                 bartlettVWList.Add(bartlettVW);
 
-                decimal bartlettVWSum = bartlettVWList.TakeLast(length).Sum();
+                decimal bartlettVWSum = bartlettVWList.TakeLastExt(length).Sum();
                 decimal prevBartlettWvwma = bartlettWvwmaList.LastOrDefault();
                 decimal bartlettWvwma = bartlettWSum != 0 ? bartlettVWSum / bartlettWSum : 0;
                 bartlettWvwmaList.Add(bartlettWvwma);
@@ -2057,11 +2057,11 @@ namespace OoplesFinance.StockIndicators
                 decimal blackmanW = blackman * currentVolume;
                 blackmanWList.Add(blackmanW);
 
-                decimal blackmanWSum = blackmanWList.TakeLast(length).Sum();
+                decimal blackmanWSum = blackmanWList.TakeLastExt(length).Sum();
                 decimal blackmanVW = currentValue * blackmanW;
                 blackmanVWList.Add(blackmanVW);
 
-                decimal blackmanVWSum = blackmanVWList.TakeLast(length).Sum();
+                decimal blackmanVWSum = blackmanVWList.TakeLastExt(length).Sum();
                 decimal blackmanWvwma = blackmanWSum != 0 ? blackmanVWSum / blackmanWSum : 0;
                 blackmanWvwmaList.Add(blackmanWvwma);
 
@@ -2069,11 +2069,11 @@ namespace OoplesFinance.StockIndicators
                 decimal hanningW = hanning * currentVolume;
                 hanningWList.Add(hanningW);
 
-                decimal hanningWSum = hanningWList.TakeLast(length).Sum();
+                decimal hanningWSum = hanningWList.TakeLastExt(length).Sum();
                 decimal hanningVW = currentValue * hanningW;
                 hanningVWList.Add(hanningVW);
 
-                decimal hanningVWSum = hanningVWList.TakeLast(length).Sum();
+                decimal hanningVWSum = hanningVWList.TakeLastExt(length).Sum();
                 decimal hanningWvwma = hanningWSum != 0 ? hanningVWSum / hanningWSum : 0;
                 hanningWvwmaList.Add(hanningWvwma);
 

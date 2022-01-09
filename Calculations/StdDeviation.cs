@@ -51,7 +51,7 @@ namespace OoplesFinance.StockIndicators
                 decimal deviationSquared = Pow(currentDeviation, 2);
                 deviationSquaredList.AddRounded(deviationSquared);
 
-                decimal divisionOfSum = deviationSquaredList.TakeLast(length).Average();
+                decimal divisionOfSum = deviationSquaredList.TakeLastExt(length).Average();
                 divisionOfSumList.AddRounded(divisionOfSum);
 
                 decimal stdDevVolatility = divisionOfSum >= 0 ? Sqrt(divisionOfSum) : 0;
@@ -164,10 +164,10 @@ namespace OoplesFinance.StockIndicators
                 decimal xy = x * currentValue;
                 xyList.Add(xy);
 
-                decimal sumX = xList.TakeLast(length).Sum();
-                decimal sumY = yList.TakeLast(length).Sum();
-                decimal sumXY = xyList.TakeLast(length).Sum();
-                decimal sumX2 = x2List.TakeLast(length).Sum();
+                decimal sumX = xList.TakeLastExt(length).Sum();
+                decimal sumY = yList.TakeLastExt(length).Sum();
+                decimal sumXY = xyList.TakeLastExt(length).Sum();
+                decimal sumX2 = x2List.TakeLastExt(length).Sum();
                 decimal top = (length * sumXY) - (sumX * sumY);
                 decimal bottom = (length * sumX2) - Pow(sumX, 2);
 

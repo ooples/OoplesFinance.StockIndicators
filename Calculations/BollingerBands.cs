@@ -169,7 +169,7 @@ namespace OoplesFinance.StockIndicators
                 decimal x2 = x * x;
                 x2List.Add(x2);
 
-                decimal x2Sma = x2List.TakeLast(length).Average();
+                decimal x2Sma = x2List.TakeLastExt(length).Average();
                 decimal sq = x2Sma >= 0 ? Sqrt(x2Sma) : 0;
 
                 decimal a = currentValue + sq;
@@ -178,10 +178,10 @@ namespace OoplesFinance.StockIndicators
                 decimal b = currentValue - sq;
                 bList.Add(b);
 
-                decimal aMax = aList.TakeLast(length).Max();
+                decimal aMax = aList.TakeLastExt(length).Max();
                 aMaxList.Add(aMax);
 
-                decimal bMin = bList.TakeLast(length).Min();
+                decimal bMin = bList.TakeLastExt(length).Min();
                 bMinList.Add(bMin);
             }
 

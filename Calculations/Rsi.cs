@@ -126,7 +126,7 @@ namespace OoplesFinance.StockIndicators
                 decimal roc = rocList.ElementAtOrDefault(i);
                 tempList.Add(roc);
 
-                var lookBackList = tempList.TakeLast(rocLength).Take(rocLength - 1).ToList();
+                var lookBackList = tempList.TakeLastExt(rocLength).Take(rocLength - 1).ToList();
                 int count = lookBackList.Where(x => x <= roc).Count();
                 decimal pctRank = MinOrMax((decimal)count / rocLength * 100, 100, 0);
                 pctRankList.Add(pctRank);
@@ -190,7 +190,7 @@ namespace OoplesFinance.StockIndicators
                 decimal roc = prevValue != 0 ? (currentValue - prevValue) / prevValue * 100 : 0;
                 rocList.Add(roc);
 
-                decimal upCount = rocList.TakeLast(length).Where(x => x >= 0).Count();
+                decimal upCount = rocList.TakeLastExt(length).Where(x => x >= 0).Count();
                 decimal upAlpha = upCount != 0 ? 1 / upCount : 0;
                 decimal posRoc = roc > 0 ? roc : 0;
                 decimal negRoc = roc < 0 ? Math.Abs(roc) : 0;
@@ -294,8 +294,8 @@ namespace OoplesFinance.StockIndicators
                 decimal eAbs = Math.Abs(e);
                 eAbsList.Add(eAbs);
 
-                decimal eAbsSma = eAbsList.TakeLast(length).Average();
-                decimal eSma = eList.TakeLast(length).Average();
+                decimal eAbsSma = eAbsList.TakeLastExt(length).Average();
+                decimal eSma = eList.TakeLastExt(length).Average();
 
                 decimal a = eAbsSma != 0 ? MinOrMax(eSma / eAbsSma, 1, -1) : 0;
                 aList.Add(a);
@@ -409,7 +409,7 @@ namespace OoplesFinance.StockIndicators
                 decimal currentVolume = volumeList.ElementAtOrDefault(i);
                 tempList.Add(currentVolume);
 
-                decimal boVolume = tempList.TakeLast(lbLength).Sum();
+                decimal boVolume = tempList.TakeLastExt(lbLength).Sum();
                 decimal boStrength = currentHigh - currentLow != 0 ? (currentClose - currentOpen) / (currentHigh - currentLow) : 0;
 
                 decimal prevBoPower = boPowerList.LastOrDefault();
@@ -422,8 +422,8 @@ namespace OoplesFinance.StockIndicators
                 decimal negPower = boPower < prevBoPower ? Math.Abs(boPower) : 0;
                 negPowerList.Add(negPower);
 
-                decimal posPowerSum = posPowerList.TakeLast(length).Sum();
-                decimal negPowerSum = negPowerList.TakeLast(length).Sum();
+                decimal posPowerSum = posPowerList.TakeLastExt(length).Sum();
+                decimal negPowerSum = negPowerList.TakeLastExt(length).Sum();
                 decimal boRatio = negPowerSum != 0 ? posPowerSum / negPowerSum : 0;
 
                 decimal brsi = negPowerSum == 0 ? 100 : posPowerSum == 0 ? 0 : MinOrMax(100 - (100 / (1 + boRatio)), 100, 0);
