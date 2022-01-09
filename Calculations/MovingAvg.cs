@@ -2012,5 +2012,184 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Windowed Volume Weighted Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateWindowedVolumeWeightedMovingAverage(this StockData stockData, int length = 100)
+        {
+            List<decimal> bartlettWList = new();
+            List<decimal> blackmanWList = new();
+            List<decimal> hanningWList = new();
+            List<decimal> bartlettVWList = new();
+            List<decimal> blackmanVWList = new();
+            List<decimal> hanningVWList = new();
+            List<decimal> bartlettWvwmaList = new();
+            List<decimal> blackmanWvwmaList = new();
+            List<decimal> hanningWvwmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal iRatio = (decimal)i / length;
+                decimal bartlett = 1 - (2 * Math.Abs(i - ((decimal)length / 2)) / length);
+
+                decimal bartlettW = bartlett * currentVolume;
+                bartlettWList.Add(bartlettW);
+
+                decimal bartlettWSum = bartlettWList.TakeLast(length).Sum();
+                decimal bartlettVW = currentValue * bartlettW;
+                bartlettVWList.Add(bartlettVW);
+
+                decimal bartlettVWSum = bartlettVWList.TakeLast(length).Sum();
+                decimal prevBartlettWvwma = bartlettWvwmaList.LastOrDefault();
+                decimal bartlettWvwma = bartlettWSum != 0 ? bartlettVWSum / bartlettWSum : 0;
+                bartlettWvwmaList.Add(bartlettWvwma);
+
+                decimal blackman = 0.42m - (0.5m * Cos(2 * (decimal)Math.PI * iRatio)) + (0.08m * Cos(4 * (decimal)Math.PI * iRatio));
+                decimal blackmanW = blackman * currentVolume;
+                blackmanWList.Add(blackmanW);
+
+                decimal blackmanWSum = blackmanWList.TakeLast(length).Sum();
+                decimal blackmanVW = currentValue * blackmanW;
+                blackmanVWList.Add(blackmanVW);
+
+                decimal blackmanVWSum = blackmanVWList.TakeLast(length).Sum();
+                decimal blackmanWvwma = blackmanWSum != 0 ? blackmanVWSum / blackmanWSum : 0;
+                blackmanWvwmaList.Add(blackmanWvwma);
+
+                decimal hanning = 0.5m - (0.5m * Cos(2 * (decimal)Math.PI * iRatio));
+                decimal hanningW = hanning * currentVolume;
+                hanningWList.Add(hanningW);
+
+                decimal hanningWSum = hanningWList.TakeLast(length).Sum();
+                decimal hanningVW = currentValue * hanningW;
+                hanningVWList.Add(hanningVW);
+
+                decimal hanningVWSum = hanningVWList.TakeLast(length).Sum();
+                decimal hanningWvwma = hanningWSum != 0 ? hanningVWSum / hanningWSum : 0;
+                hanningWvwmaList.Add(hanningWvwma);
+
+                var signal = GetCompareSignal(currentValue - bartlettWvwma, prevValue - prevBartlettWvwma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Wvwma", bartlettWvwmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = bartlettWvwmaList;
+            stockData.IndicatorName = IndicatorName.WindowedVolumeWeightedMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Well Rounded Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateWellRoundedMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> aList = new();
+            List<decimal> bList = new();
+            List<decimal> yList = new();
+            List<decimal> srcYList = new();
+            List<decimal> srcEmaList = new();
+            List<decimal> yEmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal alpha = (decimal)2 / (length + 1);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevSrcY = i >= 1 ? srcYList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevSrcEma = i >= 1 ? srcEmaList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevA = aList.LastOrDefault();
+                decimal a = prevA + (alpha * prevSrcY);
+                aList.Add(a);
+
+                decimal prevB = bList.LastOrDefault();
+                decimal b = prevB + (alpha * prevSrcEma);
+                bList.Add(b);
+
+                decimal ab = a + b;
+                decimal prevY = yList.LastOrDefault();
+                decimal y = CalculateEMA(ab, prevY, 1);
+                yList.Add(y);
+
+                decimal srcY = currentValue - y;
+                srcYList.Add(srcY);
+
+                decimal prevYEma = yEmaList.LastOrDefault();
+                decimal yEma = CalculateEMA(y, prevYEma, length);
+                yEmaList.Add(yEma);
+
+                decimal srcEma = currentValue - yEma;
+                srcEmaList.Add(srcEma);
+
+                var signal = GetCompareSignal(currentValue - y, prevValue - prevY);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Wrma", yList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = yList;
+            stockData.IndicatorName = IndicatorName.WellRoundedMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Welles Wilder Summation
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateWellesWilderSummation(this StockData stockData, int length = 14)
+        {
+            List<decimal> sumList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevSum = sumList.LastOrDefault();
+                decimal sum = prevSum - (prevSum / length) + currentValue;
+                sumList.Add(sum);
+
+                var signal = GetCompareSignal(currentValue - sum, prevValue - prevSum);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Wws", sumList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = sumList;
+            stockData.IndicatorName = IndicatorName.WellesWilderSummation;
+
+            return stockData;
+        }
     }
 }

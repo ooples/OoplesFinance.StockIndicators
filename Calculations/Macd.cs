@@ -31,7 +31,8 @@ namespace OoplesFinance.StockIndicators
         /// <param name="slowLength">Length of the slow.</param>
         /// <param name="signalLength">Length of the signal.</param>
         /// <returns></returns>
-        public static StockData CalculateMovingAverageConvergenceDivergence(this StockData stockData, MovingAvgType movingAvgType, int fastLength, int slowLength, int signalLength)
+        public static StockData CalculateMovingAverageConvergenceDivergence(this StockData stockData, 
+            MovingAvgType movingAvgType = MovingAvgType.ExponentialMovingAverage, int fastLength = 12, int slowLength = 26, int signalLength = 9)
         {
             List<decimal> macdList = new();
             List<decimal> macdHistogramList = new();

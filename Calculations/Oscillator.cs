@@ -3961,5 +3961,355 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Woodie Commodity Channel Index
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateWoodieCommodityChannelIndex(this StockData stockData, MovingAvgType maType, int fastLength = 6, int slowLength = 14)
+        {
+            List<decimal> histogramList = new();
+            List<Signal> signalsList = new();
+
+            var cciList = CalculateCommodityChannelIndex(stockData, slowLength, maType).CustomValuesList;
+            var turboCciList = CalculateCommodityChannelIndex(stockData, fastLength, maType).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal cci = cciList.ElementAtOrDefault(i);
+                decimal cciTurbo = turboCciList.ElementAtOrDefault(i);
+
+                decimal prevCciHistogram = histogramList.LastOrDefault();
+                decimal cciHistogram = cciTurbo - cci;
+                histogramList.AddRounded(cciHistogram);
+
+                var signal = GetCompareSignal(cciHistogram, prevCciHistogram);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "FastCci", turboCciList },
+                { "SlowCci", cciList },
+                { "Histogram", histogramList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.WoodieCommodityChannelIndex;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Wave Trend Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="inputName"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="smoothLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateWaveTrendOscillator(this StockData stockData, InputName inputName = InputName.FullTypicalPrice, 
+            MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 10, int length2 = 21, int smoothLength = 4)
+        {
+            List<decimal> absApEsaList = new();
+            List<decimal> ciList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _, _) = GetInputValuesList(inputName, stockData);
+
+            var emaList = GetMovingAverageList(stockData, maType, length1, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ap = inputList.ElementAtOrDefault(i);
+                decimal esa = emaList.ElementAtOrDefault(i);
+
+                decimal absApEsa = Math.Abs(ap - esa);
+                absApEsaList.Add(absApEsa);
+            }
+
+            var dList = GetMovingAverageList(stockData, maType, length1, absApEsaList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ap = inputList.ElementAtOrDefault(i);
+                decimal esa = emaList.ElementAtOrDefault(i);
+                decimal d = dList.ElementAtOrDefault(i);
+
+                decimal ci = d != 0 ? (ap - esa) / (0.015m * d) : 0;
+                ciList.Add(ci);
+            }
+
+            var tciList = GetMovingAverageList(stockData, maType, length2, ciList);
+            var wt2List = GetMovingAverageList(stockData, maType, smoothLength, tciList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal tci = tciList.ElementAtOrDefault(i);
+                decimal wt2 = wt2List.ElementAtOrDefault(i);
+                decimal prevTci = i >= 1 ? tciList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevWt2 = i >= 1 ? wt2List.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetRsiSignal(tci - wt2, prevTci - prevWt2, tci, prevTci, 53, -53);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Wto", tciList },
+                { "Signal", wt2List }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = tciList;
+            stockData.IndicatorName = IndicatorName.WaveTrendOscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Williams Fractals
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateWilliamsFractals(this StockData stockData, int length = 2)
+        {
+            List<decimal> upFractalList = new();
+            List<decimal> dnFractalList = new();
+            List<Signal> signalsList = new();
+            var (_, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal prevHigh = i >= length - 2 ? highList.ElementAtOrDefault(i - (length - 2)) : 0;
+                decimal prevHigh1 = i >= length - 1 ? highList.ElementAtOrDefault(i - (length - 1)) : 0;
+                decimal prevHigh2 = i >= length ? highList.ElementAtOrDefault(i - length) : 0;
+                decimal prevHigh3 = i >= length + 1 ? highList.ElementAtOrDefault(i - (length + 1)) : 0;
+                decimal prevHigh4 = i >= length + 2 ? highList.ElementAtOrDefault(i - (length + 2)) : 0;
+                decimal prevHigh5 = i >= length + 3 ? highList.ElementAtOrDefault(i - (length + 3)) : 0;
+                decimal prevHigh6 = i >= length + 4 ? highList.ElementAtOrDefault(i - (length + 4)) : 0;
+                decimal prevHigh7 = i >= length + 5 ? highList.ElementAtOrDefault(i - (length + 5)) : 0;
+                decimal prevHigh8 = i >= length + 8 ? highList.ElementAtOrDefault(i - (length + 6)) : 0;
+                decimal prevLow = i >= length - 2 ? lowList.ElementAtOrDefault(i - (length - 2)) : 0;
+                decimal prevLow1 = i >= length - 1 ? lowList.ElementAtOrDefault(i - (length - 1)) : 0;
+                decimal prevLow2 = i >= length ? lowList.ElementAtOrDefault(i - length) : 0;
+                decimal prevLow3 = i >= length + 1 ? lowList.ElementAtOrDefault(i - (length + 1)) : 0;
+                decimal prevLow4 = i >= length + 2 ? lowList.ElementAtOrDefault(i - (length + 2)) : 0;
+                decimal prevLow5 = i >= length + 3 ? lowList.ElementAtOrDefault(i - (length + 3)) : 0;
+                decimal prevLow6 = i >= length + 4 ? lowList.ElementAtOrDefault(i - (length + 4)) : 0;
+                decimal prevLow7 = i >= length + 5 ? lowList.ElementAtOrDefault(i - (length + 5)) : 0;
+                decimal prevLow8 = i >= length + 8 ? lowList.ElementAtOrDefault(i - (length + 6)) : 0;
+
+                decimal prevUpFractal = upFractalList.LastOrDefault();
+                decimal upFractal = (prevHigh4 < prevHigh2 && prevHigh3 < prevHigh2 && prevHigh1 < prevHigh2 && prevHigh < prevHigh2) ||
+                    (prevHigh5 < prevHigh2 && prevHigh4 < prevHigh2 && prevHigh3 == prevHigh2 && prevHigh1 < prevHigh2 && prevHigh1 < prevHigh2) ||
+                    (prevHigh6 < prevHigh2 && prevHigh5 < prevHigh2 && prevHigh4 == prevHigh2 && prevHigh3 <= prevHigh2 && prevHigh1 < prevHigh2 && 
+                    prevHigh < prevHigh2) || (prevHigh7 < prevHigh2 && prevHigh6 < prevHigh2 && prevHigh5 == prevHigh2 && prevHigh4 == prevHigh2 && 
+                    prevHigh3 <= prevHigh2 && prevHigh1 < prevHigh2 && prevHigh < prevHigh2) || (prevHigh8 < prevHigh2 && prevHigh7 < prevHigh2 && 
+                    prevHigh6 == prevHigh2 && prevHigh5 <= prevHigh2 && prevHigh4 == prevHigh2 && prevHigh3 <= prevHigh2 && prevHigh1 < prevHigh2 && 
+                    prevHigh < prevHigh2) ? 1 : 0;
+                upFractalList.Add(upFractal);
+
+                decimal prevDnFractal = dnFractalList.LastOrDefault();
+                decimal dnFractal = (prevLow4 > prevLow2 && prevLow3 > prevLow2 && prevLow1 > prevLow2 && prevLow > prevLow2) || (prevLow5 > prevLow2 && 
+                    prevLow4 > prevLow2 && prevLow3 == prevLow2 && prevLow1 > prevLow2 && prevLow > prevLow2) || (prevLow6 > prevLow2 && 
+                    prevLow5 > prevLow2 && prevLow4 == prevLow2 && prevLow3 >= prevLow2 && prevLow1 > prevLow2 && prevLow > prevLow2) || 
+                    (prevLow7 > prevLow2 && prevLow6 > prevLow2 && prevLow5 == prevLow2 && prevLow4 == prevLow2 && prevLow3 >= prevLow2 && 
+                    prevLow1 > prevLow2 && prevLow > prevLow2) || (prevLow8 > prevLow2 && prevLow7 > prevLow2 && prevLow6 == prevLow2 && 
+                    prevLow5 >= prevLow2 && prevLow4 == prevLow2 && prevLow3 >= prevLow2 && prevLow1 > prevLow2 && prevLow > prevLow2) ? 1 : 0;
+                dnFractalList.Add(dnFractal);
+
+                var signal = GetCompareSignal(upFractal - dnFractal, prevUpFractal - prevDnFractal);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpFractal", upFractalList },
+                { "DnFractal", dnFractalList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.WilliamsFractals;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Williams Accumulation Distribution
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <returns></returns>
+        public static StockData CalculateWilliamsAccumulationDistribution(this StockData stockData)
+        {
+            List<decimal> wadList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal close = inputList.ElementAtOrDefault(i);
+                decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevWad = wadList.LastOrDefault();
+                decimal wad = close > prevClose ? prevWad + close - prevLow : close < prevClose ? prevWad + close - prevHigh : 0;
+                wadList.Add(wad);
+
+                var signal = GetCompareSignal(wad, prevWad);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Wad", wadList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = wadList;
+            stockData.IndicatorName = IndicatorName.WilliamsAccumulationDistribution;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Wami Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <returns></returns>
+        public static StockData CalculateWamiOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+            int length1 = 13, int length2 = 4)
+        {
+            List<decimal> diffList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal diff = currentValue - prevValue;
+                diffList.Add(diff);
+            }
+
+            var wma1List = GetMovingAverageList(stockData, MovingAvgType.WeightedMovingAverage, length2, diffList);
+            var ema2List = GetMovingAverageList(stockData, maType, length1, wma1List);
+            var wamiList = GetMovingAverageList(stockData, maType, length1, ema2List);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal wami = wamiList.ElementAtOrDefault(i);
+                decimal prevWami = i >= 1 ? wamiList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetCompareSignal(wami, prevWami);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Wami", wamiList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = wamiList;
+            stockData.IndicatorName = IndicatorName.WamiOscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Waddah Attar Explosion
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <param name="sensitivity"></param>
+        /// <returns></returns>
+        public static StockData CalculateWaddahAttarExplosion(this StockData stockData, int fastLength = 20, int slowLength = 40, decimal sensitivity = 150)
+        {
+            List<decimal> t1List = new();
+            List<decimal> t2List = new();
+            List<decimal> e1List = new();
+            List<decimal> temp1List = new();
+            List<decimal> temp2List = new();
+            List<decimal> temp3List = new();
+            List<decimal> trendUpList = new();
+            List<decimal> trendDnList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var macd1List = CalculateMovingAverageConvergenceDivergence(stockData, fastLength: fastLength, slowLength: slowLength).CustomValuesList;
+            var bbList = CalculateBollingerBands(stockData, length: fastLength);
+            var upperBollingerBandList = bbList.OutputValues["UpperBand"];
+            var lowerBollingerBandList = bbList.OutputValues["LowerBand"];
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal prevValue1 = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                temp1List.Add(prevValue1);
+
+                decimal prevValue2 = i >= 2 ? inputList.ElementAtOrDefault(i - 2) : 0;
+                temp2List.Add(prevValue2);
+
+                decimal prevValue3 = i >= 3 ? inputList.ElementAtOrDefault(i - 3) : 0;
+                temp3List.Add(prevValue3);
+            }
+
+            stockData.CustomValuesList = temp1List;
+            var macd2List = CalculateMovingAverageConvergenceDivergence(stockData, fastLength: fastLength, slowLength: slowLength).CustomValuesList;
+            stockData.CustomValuesList = temp2List;
+            var macd3List = CalculateMovingAverageConvergenceDivergence(stockData, fastLength: fastLength, slowLength: slowLength).CustomValuesList;
+            stockData.CustomValuesList = temp3List;
+            var macd4List = CalculateMovingAverageConvergenceDivergence(stockData, fastLength: fastLength, slowLength: slowLength).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentMacd1 = macd1List.ElementAtOrDefault(i);
+                decimal currentMacd2 = macd2List.ElementAtOrDefault(i);
+                decimal currentMacd3 = macd3List.ElementAtOrDefault(i);
+                decimal currentMacd4 = macd4List.ElementAtOrDefault(i);
+                decimal currentUpperBB = upperBollingerBandList.ElementAtOrDefault(i);
+                decimal currentLowerBB = lowerBollingerBandList.ElementAtOrDefault(i);
+
+                decimal t1 = (currentMacd1 - currentMacd2) * sensitivity;
+                t1List.AddRounded(t1);
+
+                decimal t2 = (currentMacd3 - currentMacd4) * sensitivity;
+                t2List.AddRounded(t2);
+
+                decimal prevE1 = e1List.LastOrDefault();
+                decimal e1 = currentUpperBB - currentLowerBB;
+                e1List.Add(e1);
+
+                decimal prevTrendUp = trendUpList.LastOrDefault();
+                decimal trendUp = (t1 >= 0) ? t1 : 0;
+                trendUpList.Add(trendUp);
+
+                decimal trendDown = (t1 < 0) ? (-1 * t1) : 0;
+                trendDnList.Add(trendDown);
+
+                var signal = GetConditionSignal(trendUp > prevTrendUp && trendUp > e1 && e1 > prevE1 && trendUp > fastLength && e1 > fastLength, 
+                    trendUp < e1);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "T1", t1List },
+                { "T2", t2List },
+                { "E1", e1List },
+                { "TrendUp", trendUpList },
+                { "TrendDn", trendDnList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.WaddahAttarExplosion;
+
+            return stockData;
+        }
     }
 }

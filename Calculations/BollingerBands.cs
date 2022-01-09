@@ -28,7 +28,8 @@ namespace OoplesFinance.StockIndicators
         /// <param name="movingAvgType">Average type of the moving.</param>
         /// <param name="length">The length.</param>
         /// <returns></returns>
-        public static StockData CalculateBollingerBands(this StockData stockData, decimal stdDevMult, MovingAvgType maType, int length)
+        public static StockData CalculateBollingerBands(this StockData stockData, decimal stdDevMult = 2, 
+            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 20)
         {
             List<decimal> upperBandList = new();
             List<decimal> lowerBandList = new();

@@ -272,13 +272,37 @@ namespace OoplesFinance.StockIndicators.Enums
         [Category(IndicatorType.Trend)]
         VortexIndicator,
         [Category(IndicatorType.Trend)]
+        WaddahAttarExplosion,
+        [Category(IndicatorType.Momentum)]
+        WamiOscillator,
+        [Category(IndicatorType.Momentum)]
+        WaveTrendOscillator,
+        [Category(IndicatorType.Trend)]
         WeightedClose,
         [Category(IndicatorType.Trend)]
         WeightedMovingAverage,
         [Category(IndicatorType.Trend)]
+        WellRoundedMovingAverage,
+        [Category(IndicatorType.Trend)]
         WellesWilderMovingAverage,
+        [Category(IndicatorType.Trend)]
+        WellesWilderSummation,
+        [Category(IndicatorType.Volatility)]
+        WellesWilderVolatilitySystem,
+        [Category(IndicatorType.Momentum)]
+        WilliamsAccumulationDistribution,
+        [Category(IndicatorType.Momentum)]
+        WilliamsFractals,
         [Category(IndicatorType.Momentum)]
         WilliamsR,
+        [Category(IndicatorType.Momentum)]
+        WilsonRelativePriceChannel,
+        [Category(IndicatorType.Trend)]
+        WindowedVolumeWeightedMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        WoodieCommodityChannelIndex,
+        [Category(IndicatorType.SupportAndResistance)]
+        WoodiePivotPoints,
         [Category(IndicatorType.Volume)]
         ZDistanceFromVwap,
         [Category(IndicatorType.Momentum)]

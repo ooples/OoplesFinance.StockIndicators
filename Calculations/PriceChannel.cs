@@ -518,5 +518,98 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Wilson Relative Price Channel
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="smoothLength"></param>
+        /// <param name="overbought"></param>
+        /// <param name="oversold"></param>
+        /// <param name="upperNeutralZone"></param>
+        /// <param name="lowerNeutralZone"></param>
+        /// <returns></returns>
+        public static StockData CalculateWilsonRelativePriceChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+            int length = 34, int smoothLength = 1, decimal overbought = 70, decimal oversold = 30, decimal upperNeutralZone = 55, 
+            decimal lowerNeutralZone = 45)
+        {
+            List<decimal> rsiOverboughtList = new();
+            List<decimal> rsiOversoldList = new();
+            List<decimal> rsiUpperNeutralZoneList = new();
+            List<decimal> rsiLowerNeutralZoneList = new();
+            List<decimal> s1List = new();
+            List<decimal> s2List = new();
+            List<decimal> u1List = new();
+            List<decimal> u2List = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var rsiList = CalculateRelativeStrengthIndex(stockData, maType, length, smoothLength).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal rsi = rsiList.ElementAtOrDefault(i);
+
+                decimal rsiOverbought = rsi - overbought;
+                rsiOverboughtList.Add(rsiOverbought);
+
+                decimal rsiOversold = rsi - oversold;
+                rsiOversoldList.Add(rsiOversold);
+
+                decimal rsiUpperNeutralZone = rsi - upperNeutralZone;
+                rsiUpperNeutralZoneList.Add(rsiUpperNeutralZone);
+
+                decimal rsiLowerNeutralZone = rsi - lowerNeutralZone;
+                rsiLowerNeutralZoneList.Add(rsiLowerNeutralZone);
+            }
+
+            var obList = GetMovingAverageList(stockData, maType, smoothLength, rsiOverboughtList);
+            var osList = GetMovingAverageList(stockData, maType, smoothLength, rsiOversoldList);
+            var nzuList = GetMovingAverageList(stockData, maType, smoothLength, rsiUpperNeutralZoneList);
+            var nzlList = GetMovingAverageList(stockData, maType, smoothLength, rsiLowerNeutralZoneList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal ob = obList.ElementAtOrDefault(i);
+                decimal os = osList.ElementAtOrDefault(i);
+                decimal nzu = nzuList.ElementAtOrDefault(i);
+                decimal nzl = nzlList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevS1 = s1List.LastOrDefault();
+                decimal s1 = currentValue - (currentValue * os / 100);
+                s1List.Add(s1);
+
+                decimal prevU1 = u1List.LastOrDefault();
+                decimal u1 = currentValue - (currentValue * ob / 100);
+                u1List.Add(u1);
+
+                decimal prevU2 = u2List.LastOrDefault();
+                decimal u2 = currentValue - (currentValue * nzu / 100);
+                u2List.Add(u2);
+
+                decimal prevS2 = s2List.LastOrDefault();
+                decimal s2 = currentValue - (currentValue * nzl / 100);
+                s2List.Add(s2);
+
+                var signal = GetBullishBearishSignal(currentValue - Math.Min(u1, u2), prevValue - Math.Min(prevU1, prevU2), 
+                    currentValue - Math.Max(s1, s2), prevValue - Math.Max(prevS1, prevS2));
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "S1", s1List },
+                { "S2", s2List },
+                { "U1", u1List },
+                { "U2", u2List }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.WilsonRelativePriceChannel;
+
+            return stockData;
+        }
     }
 }

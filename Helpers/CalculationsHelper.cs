@@ -123,8 +123,17 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.WeightedMovingAverage:
                     movingAvgList = stockData.CalculateWeightedMovingAverage(length).CustomValuesList;
                     break;
+                case MovingAvgType.WellRoundedMovingAverage:
+                    movingAvgList = stockData.CalculateWellRoundedMovingAverage(length).CustomValuesList;
+                    break;
                 case MovingAvgType.WildersSmoothingMethod:
                     movingAvgList = stockData.CalculateWellesWilderMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.WildersSummationMethod:
+                    movingAvgList = stockData.CalculateWellesWilderSummation(length).CustomValuesList;
+                    break;
+                case MovingAvgType.WindowedVolumeWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateWindowedVolumeWeightedMovingAverage(length).CustomValuesList;
                     break;
                 case MovingAvgType.ZeroLagExponentialMovingAverage:
                     movingAvgList = stockData.CalculateZeroLagExponentialMovingAverage(MovingAvgType.ExponentialMovingAverage, length).CustomValuesList;
