@@ -69,6 +69,8 @@
 
 [Price Momentum Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:dppmo)
 
+[Quantitative Qualitative Estimation](https://www.tradingview.com/script/0vn4HZ7O-Quantitative-Qualitative-Estimation-QQE/)
+
 [Rate Of Change](https://www.investopedia.com/terms/r/rateofchange.asp)
 
 [Relative Strength Index](https://www.investopedia.com/terms/r/rsi.asp)
@@ -203,6 +205,16 @@ Atr Filtered Exponential Moving Average
 
 [Parabolic SAR](https://www.investopedia.com/trading/introduction-to-parabolic-sar/)
 
+[Quadratic Least Squares Moving Average](https://www.tradingview.com/script/JXdhlosm-Quadratic-Least-Squares-Moving-Average-Smoothing-Forecast/)
+
+[Quadratic Moving Average](https://www.tradingview.com/script/Iw3FtbxG-QMA-SMA-Difference/)
+
+[Quadratic Regression](https://www.tradingview.com/script/uuDEajsI-Quadratic-Regression/)
+
+[Quadruple Exponential Moving Average](https://www.tradingview.com/script/MVL8Gd3x-Quadruple-Exponential-Moving-Average-QEMA/)
+
+[Quick Moving Average](https://www.tradingview.com/script/fKinbRjG-Quick-Moving-Average/)
+
 [Simple Moving Average](https://www.investopedia.com/terms/s/sma.asp)
 
 [SuperTrend](https://www.elearnmarkets.com/blog/supertrend-indicator-strategy-trading/)
@@ -267,6 +279,10 @@ Atr Filtered Exponential Moving Average
 [Historical Volatility](https://www.investopedia.com/terms/h/historicalvolatility.asp)
 
 [Jrc Fractal Dimension](https://www.motivewave.com/studies/jrc_fractal_dimension.htm)
+
+[Qma Sma Difference](https://www.tradingview.com/script/Iw3FtbxG-QMA-SMA-Difference/)
+
+[Quasi White Noise](https://www.tradingview.com/script/UWKXaj5O-RESEARCH-Quasi-White-Noise/)
 
 [Standard Deviation Channel](https://www.motivewave.com/studies/standard_deviation_channel.htm)
 
