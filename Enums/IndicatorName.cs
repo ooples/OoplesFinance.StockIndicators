@@ -205,6 +205,22 @@ namespace OoplesFinance.StockIndicators.Enums
         PriceChannel,
         [Category(IndicatorType.Momentum)]
         PriceMomentumOscillator,
+        [Category(IndicatorType.Volatility)]
+        QmaSmaDifference,
+        [Category(IndicatorType.Trend)]
+        QuadraticLeastSquaresMovingAverage,
+        [Category(IndicatorType.Trend)]
+        QuadraticMovingAverage,
+        [Category(IndicatorType.Trend)]
+        QuadraticRegression,
+        [Category(IndicatorType.Trend)]
+        QuadrupleExponentialMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        QuantitativeQualitativeEstimation,
+        [Category(IndicatorType.Volatility)]
+        QuasiWhiteNoise,
+        [Category(IndicatorType.Trend)]
+        QuickMovingAverage,
         [Category(IndicatorType.Momentum)]
         RateOfChange,
         [Category(IndicatorType.Momentum)]

@@ -98,6 +98,21 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.PoweredKaufmanAdaptiveMovingAverage:
                     movingAvgList = stockData.CalculatePoweredKaufmanAdaptiveMovingAverage(length: length).CustomValuesList;
                     break;
+                case MovingAvgType.QuadraticLeastSquaresMovingAverage:
+                    movingAvgList = stockData.CalculateQuadraticLeastSquaresMovingAverage(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.QuadraticMovingAverage:
+                    movingAvgList = stockData.CalculateQuadraticMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.QuadraticRegression:
+                    movingAvgList = stockData.CalculateQuadraticRegression(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.QuadrupleExponentialMovingAverage:
+                    movingAvgList = stockData.CalculateQuadrupleExponentialMovingAverage(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.QuickMovingAverage:
+                    movingAvgList = stockData.CalculateQuickMovingAverage(length).CustomValuesList;
+                    break;
                 case MovingAvgType.SimpleMovingAverage:
                     movingAvgList = stockData.CalculateSimpleMovingAverage(length).CustomValuesList;
                     break;

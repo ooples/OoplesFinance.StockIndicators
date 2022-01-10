@@ -103,10 +103,9 @@ namespace OoplesFinance.StockIndicators
         /// <param name="streakLength">Length of the streak.</param>
         /// <param name="rsiLength">Length of the rsi.</param>
         /// <param name="rocLength">Length of the roc.</param>
-        /// <param name="signalLength">Length of the signal.</param>
         /// <returns></returns>
-        public static StockData CalculateConnorsRelativeStrengthIndex(this StockData stockData, MovingAvgType maType, int streakLength = 2, 
-            int rsiLength = 3, int rocLength = 100, int signalLength = 14)
+        public static StockData CalculateConnorsRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+            int streakLength = 2, int rsiLength = 3, int rocLength = 100)
         {
             List<decimal> streakList = new();
             List<decimal> tempList = new();
@@ -156,6 +155,9 @@ namespace OoplesFinance.StockIndicators
 
             stockData.OutputValues = new()
             {
+                { "Rsi", rsiList },
+                { "PctRank", pctRankList },
+                { "StreakRsi", rsiStreakList },
                 { "ConnorsRsi", connorsRsiList }
             };
             stockData.SignalsList = signalsList;

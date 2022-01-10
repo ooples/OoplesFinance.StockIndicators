@@ -8,7 +8,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>Open source C# library of stock indicators with over 700 indicators planned</Description>
-    <Version>0.0.8</Version>
+    <Version>0.0.9</Version>
     <Authors>ooples</Authors>
     <Company>Ooples Finance</Company>
     <RepositoryUrl>https://github.com/ooples/OoplesFinance.StockIndicators</RepositoryUrl>

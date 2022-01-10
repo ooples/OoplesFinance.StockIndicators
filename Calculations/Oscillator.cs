@@ -1,7 +1,4 @@
-﻿using MathNet.Numerics;
-using MathNet.Numerics.Statistics;
-using Nessos.LinqOptimizer.CSharp;
-using OoplesFinance.StockIndicators.Models;
+﻿using OoplesFinance.StockIndicators.Models;
 using static OoplesFinance.StockIndicators.Enums.SignalsClass;
 using static OoplesFinance.StockIndicators.Helpers.SignalHelper;
 using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
@@ -4308,6 +4305,170 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = new List<decimal>();
             stockData.IndicatorName = IndicatorName.WaddahAttarExplosion;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Qma Sma Difference
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateQmaSmaDifference(this StockData stockData, int length = 14)
+        {
+            List<decimal> cList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var qmaList = CalculateQuadraticMovingAverage(stockData, length).CustomValuesList;
+            var smaList = CalculateSimpleMovingAverage(stockData, length).CustomValuesList;
+            var emaList = CalculateExponentialMovingAverage(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentEma = emaList.ElementAtOrDefault(i);
+                decimal sma = smaList.ElementAtOrDefault(i);
+                decimal qma = qmaList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevEma = i >= 1 ? emaList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevC = cList.LastOrDefault();
+                decimal c = qma - sma;
+                cList.Add(c);
+
+                var signal = GetVolatilitySignal(currentValue - currentEma, prevValue - prevEma, c, prevC);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "QmaSmaDiff", cList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = cList;
+            stockData.IndicatorName = IndicatorName.QmaSmaDifference;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Quantitative Qualitative Estimation
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="smoothLength"></param>
+        /// <param name="fastFactor"></param>
+        /// <param name="slowFactor"></param>
+        /// <returns></returns>
+        public static StockData CalculateQuantitativeQualitativeEstimation(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14, int smoothLength = 5, decimal fastFactor = 2.618m, 
+            decimal slowFactor = 4.236m)
+        {
+            List<decimal> atrRsiList = new();
+            List<decimal> fastAtrRsiList = new();
+            List<decimal> slowAtrRsiList = new();
+            List<Signal> signalsList = new();
+
+            int wildersLength = (length * 2) - 1;
+
+            var rsiValueList = CalculateRelativeStrengthIndex(stockData, maType, length, smoothLength);
+            var rsiEmaList = rsiValueList.OutputValues["Signal"];
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentRsiEma = rsiEmaList.ElementAtOrDefault(i);
+                decimal prevRsiEma = i >= 1 ? rsiEmaList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal atrRsi = Math.Abs(currentRsiEma - prevRsiEma);
+                atrRsiList.Add(atrRsi);
+            }
+
+            var atrRsiEmaList = GetMovingAverageList(stockData, maType, wildersLength, atrRsiList);
+            var atrRsiEmaSmoothList = GetMovingAverageList(stockData, maType, wildersLength, atrRsiEmaList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal atrRsiEmaSmooth = atrRsiEmaSmoothList.ElementAtOrDefault(i);
+                decimal prevAtrRsiEmaSmooth = i >= 1 ? atrRsiEmaSmoothList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevFastTl = fastAtrRsiList.LastOrDefault();
+                decimal fastTl = atrRsiEmaSmooth * fastFactor;
+                fastAtrRsiList.Add(fastTl);
+
+                decimal prevSlowTl = slowAtrRsiList.LastOrDefault();
+                decimal slowTl = atrRsiEmaSmooth * slowFactor;
+                slowAtrRsiList.Add(slowTl);
+
+                var signal = GetBullishBearishSignal(atrRsiEmaSmooth - Math.Max(fastTl, slowTl), prevAtrRsiEmaSmooth - Math.Max(prevFastTl, prevSlowTl),
+                    atrRsiEmaSmooth - Math.Min(fastTl, slowTl), prevAtrRsiEmaSmooth - Math.Min(prevFastTl, prevSlowTl));
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "FastAtrRsi", fastAtrRsiList },
+                { "SlowAtrRsi", slowAtrRsiList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.QuantitativeQualitativeEstimation;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Quasi White Noise
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="noiseLength"></param>
+        /// <param name="divisor"></param>
+        /// <returns></returns>
+        public static StockData CalculateQuasiWhiteNoise(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+            int length = 20, int noiseLength = 500, decimal divisor = 40)
+        {
+            List<decimal> whiteNoiseList = new();
+            List<decimal> whiteNoiseVarianceList = new();
+            List<Signal> signalsList = new();
+
+            var connorsRsiList = CalculateConnorsRelativeStrengthIndex(stockData, maType, noiseLength, noiseLength, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal connorsRsi = connorsRsiList.ElementAtOrDefault(i);
+                decimal prevConnorsRsi1 = i >= 1 ? connorsRsiList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevConnorsRsi2 = i >= 2 ? connorsRsiList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal whiteNoise = (connorsRsi - 50) * (1 / divisor);
+                whiteNoiseList.Add(whiteNoise);
+
+                var signal = GetRsiSignal(connorsRsi - prevConnorsRsi1, prevConnorsRsi1 - prevConnorsRsi2, connorsRsi, prevConnorsRsi1, 70, 30);
+                signalsList.Add(signal);
+            }
+
+            var whiteNoiseSmaList = GetMovingAverageList(stockData, maType, noiseLength, whiteNoiseList);
+            stockData.CustomValuesList = whiteNoiseList;
+            var whiteNoiseStdDevList = CalculateStandardDeviationVolatility(stockData, noiseLength).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal whiteNoiseStdDev = whiteNoiseStdDevList.ElementAtOrDefault(i);
+
+                decimal whiteNoiseVariance = Pow(whiteNoiseStdDev, 2);
+                whiteNoiseVarianceList.Add(whiteNoiseVariance);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "WhiteNoise", whiteNoiseList },
+                { "WhiteNoiseMa", whiteNoiseSmaList },
+                { "WhiteNoiseStdDev", whiteNoiseStdDevList },
+                { "WhiteNoiseVariance", whiteNoiseVarianceList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = whiteNoiseList;
+            stockData.IndicatorName = IndicatorName.QuasiWhiteNoise;
 
             return stockData;
         }

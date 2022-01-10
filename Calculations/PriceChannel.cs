@@ -1,11 +1,7 @@
-﻿using MathNet.Numerics;
-using MathNet.Numerics.Statistics;
-using Nessos.LinqOptimizer.CSharp;
-using OoplesFinance.StockIndicators.Models;
+﻿using OoplesFinance.StockIndicators.Models;
 using static OoplesFinance.StockIndicators.Enums.SignalsClass;
 using static OoplesFinance.StockIndicators.Helpers.SignalHelper;
 using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
-using static OoplesFinance.StockIndicators.Helpers.MathHelper;
 using OoplesFinance.StockIndicators.Enums;
 
 namespace OoplesFinance.StockIndicators

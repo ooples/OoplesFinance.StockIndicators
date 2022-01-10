@@ -1,6 +1,4 @@
 ﻿using MathNet.Numerics;
-using MathNet.Numerics.Statistics;
-using Nessos.LinqOptimizer.CSharp;
 using OoplesFinance.StockIndicators.Models;
 using static OoplesFinance.StockIndicators.Enums.SignalsClass;
 using static OoplesFinance.StockIndicators.Helpers.SignalHelper;
@@ -2188,6 +2186,380 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = sumList;
             stockData.IndicatorName = IndicatorName.WellesWilderSummation;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Quick Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateQuickMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> qmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int peak = MinOrMax((int)Math.Ceiling((decimal)length / 3));
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal num = 0, denom = 0;
+                for (int j = 1; j <= length + 1; j++)
+                {
+                    decimal mult = j <= peak ? (decimal)j / peak : (decimal)(length + 1 - j) / (length + 1 - peak);
+                    decimal prevValue = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
+
+                    num += prevValue * mult;
+                    denom += mult;
+                }
+
+                decimal prevQma = qmaList.LastOrDefault();
+                decimal qma = denom != 0 ? num / denom : 0;
+                qmaList.Add(qma);
+
+                var signal = GetCompareSignal(currentValue - qma, prevVal - prevQma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Qma", qmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = qmaList;
+            stockData.IndicatorName = IndicatorName.QuickMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Quadratic Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateQuadraticMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> qmaList = new();
+            List<decimal> powList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal pow = Pow(currentValue, 2);
+                powList.Add(pow);
+
+                decimal prevQma = qmaList.LastOrDefault();
+                decimal powSma = powList.TakeLastExt(length).Average();
+                decimal qma = powSma >= 0 ? Sqrt((double)powSma) : 0;
+                qmaList.Add(qma);
+
+                var signal = GetCompareSignal(currentValue - qma, prevValue - prevQma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Qma", qmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = qmaList;
+            stockData.IndicatorName = IndicatorName.QuadraticMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Quadruple Exponential Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateQuadrupleExponentialMovingAverage(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20)
+        {
+            List<decimal> qemaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var ema1List = GetMovingAverageList(stockData, maType, length, inputList);
+            var ema2List = GetMovingAverageList(stockData, maType, length, ema1List);
+            var ema3List = GetMovingAverageList(stockData, maType, length, ema2List);
+            var ema4List = GetMovingAverageList(stockData, maType, length, ema3List);
+            var ema5List = GetMovingAverageList(stockData, maType, length, ema4List);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal ema1 = ema1List.ElementAtOrDefault(i);
+                decimal ema2 = ema2List.ElementAtOrDefault(i);
+                decimal ema3 = ema3List.ElementAtOrDefault(i);
+                decimal ema4 = ema4List.ElementAtOrDefault(i);
+                decimal ema5 = ema5List.ElementAtOrDefault(i);
+
+                decimal prevQema = qemaList.LastOrDefault();
+                decimal qema = (5 * ema1) - (10 * ema2) + (10 * ema3) - (5 * ema4) + ema5;
+                qemaList.Add(qema);
+
+                var signal = GetCompareSignal(currentValue - qema, prevValue - prevQema);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Qema", qemaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = qemaList;
+            stockData.IndicatorName = IndicatorName.QuadrupleExponentialMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Quadratic Least Squares Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="forecastLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateQuadraticLeastSquaresMovingAverage(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 50, int forecastLength = 14)
+        {
+            List<decimal> nList = new();
+            List<decimal> n2List = new();
+            List<decimal> nn2List = new();
+            List<decimal> nn2CovList = new();
+            List<decimal> n2vList = new();
+            List<decimal> n2vCovList = new();
+            List<decimal> nvList = new();
+            List<decimal> nvCovList = new();
+            List<decimal> qlsmaList = new();
+            List<decimal> fcastList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+
+                decimal n = i;
+                nList.Add(n);
+
+                decimal n2 = Pow(n, 2);
+                n2List.Add(n2);
+
+                decimal nn2 = n * n2;
+                nn2List.Add(nn2);
+
+                decimal n2v = n2 * currentValue;
+                n2vList.Add(n2v);
+
+                decimal nv = n * currentValue;
+                nvList.Add(nv);
+            }
+
+            var nSmaList = GetMovingAverageList(stockData, maType, length, nList);
+            var n2SmaList = GetMovingAverageList(stockData, maType, length, n2List);
+            var n2vSmaList = GetMovingAverageList(stockData, maType, length, n2vList);
+            var nvSmaList = GetMovingAverageList(stockData, maType, length, nvList);
+            var nn2SmaList = GetMovingAverageList(stockData, maType, length, nn2List);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal nSma = nSmaList.ElementAtOrDefault(i);
+                decimal n2Sma = n2SmaList.ElementAtOrDefault(i);
+                decimal n2vSma = n2vSmaList.ElementAtOrDefault(i);
+                decimal nvSma = nvSmaList.ElementAtOrDefault(i);
+                decimal nn2Sma = nn2SmaList.ElementAtOrDefault(i);
+                decimal sma = smaList.ElementAtOrDefault(i);
+
+                decimal nn2Cov = nn2Sma - (nSma * n2Sma);
+                nn2CovList.Add(nn2Cov);
+
+                decimal n2vCov = n2vSma - (n2Sma * sma);
+                n2vCovList.Add(n2vCov);
+
+                decimal nvCov = nvSma - (nSma * sma);
+                nvCovList.Add(nvCov);
+            }
+
+            stockData.CustomValuesList = nList;
+            var nVarianceList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            stockData.CustomValuesList = n2List;
+            var n2VarianceList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal n2Variance = n2VarianceList.ElementAtOrDefault(i);
+                decimal nVariance = nVarianceList.ElementAtOrDefault(i);
+                decimal nn2Cov = nn2CovList.ElementAtOrDefault(i);
+                decimal n2vCov = n2vCovList.ElementAtOrDefault(i);
+                decimal nvCov = nvCovList.ElementAtOrDefault(i);
+                decimal sma = smaList.ElementAtOrDefault(i);
+                decimal n2Sma = n2SmaList.ElementAtOrDefault(i);
+                decimal nSma = nSmaList.ElementAtOrDefault(i);
+                decimal n2 = n2List.ElementAtOrDefault(i);
+                decimal norm = (n2Variance * nVariance) - Pow(nn2Cov, 2);
+                decimal a = norm != 0 ? ((n2vCov * nVariance) - (nvCov * nn2Cov)) / norm : 0;
+                decimal b = norm != 0 ? ((nvCov * n2Variance) - (n2vCov * nn2Cov)) / norm : 0;
+                decimal c = sma - (a * n2Sma) - (b * nSma);
+
+                decimal prevQlsma = qlsmaList.LastOrDefault();
+                decimal qlsma = (a * n2) + (b * i) + c;
+                qlsmaList.Add(qlsma);
+
+                decimal fcast = (a * Pow(i + forecastLength, 2)) + (b * (i + forecastLength)) + c;
+                fcastList.Add(fcast);
+
+                var signal = GetCompareSignal(currentValue - qlsma, prevValue - prevQlsma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Qlma", qlsmaList },
+                { "Forecast", fcastList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = qlsmaList;
+            stockData.IndicatorName = IndicatorName.QuadraticLeastSquaresMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Quadratic Regression
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateQuadraticRegression(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 500)
+        {
+            List<decimal> tempList = new();
+            List<decimal> x1List = new();
+            List<decimal> x2List = new();
+            List<decimal> x1SumList = new();
+            List<decimal> x2SumList = new();
+            List<decimal> x1x2List = new();
+            List<decimal> x1x2SumList = new();
+            List<decimal> x2PowList = new();
+            List<decimal> x2PowSumList = new();
+            List<decimal> ySumList = new();
+            List<decimal> yx1List = new();
+            List<decimal> yx2List = new();
+            List<decimal> yx1SumList = new();
+            List<decimal> yx2SumList = new();
+            List<decimal> yList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal y = inputList.ElementAtOrDefault(i);
+                tempList.Add(y);
+
+                decimal x1 = i;
+                x1List.Add(x1);
+
+                decimal x2 = Pow(x1, 2);
+                x2List.Add(x2);
+
+                decimal x1x2 = x1 * x2;
+                x1x2List.Add(x1x2);
+
+                decimal yx1 = y * x1;
+                yx1List.Add(yx1);
+
+                decimal yx2 = y * x2;
+                yx2List.Add(yx2);
+
+                decimal x2Pow = Pow(x2, 2);
+                x2PowList.Add(x2Pow);
+
+                decimal ySum = tempList.TakeLastExt(length).Sum();
+                ySumList.Add(ySum);
+
+                decimal x1Sum = x1List.TakeLastExt(length).Sum();
+                x1SumList.Add(x1Sum);
+
+                decimal x2Sum = x2List.TakeLastExt(length).Sum();
+                x2SumList.Add(x2Sum);
+
+                decimal x1x2Sum = x1x2List.TakeLastExt(length).Sum();
+                x1x2SumList.Add(x1x2Sum);
+
+                decimal yx1Sum = yx1List.TakeLastExt(length).Sum();
+                yx1SumList.Add(yx1Sum);
+
+                decimal yx2Sum = yx2List.TakeLastExt(length).Sum();
+                yx2SumList.Add(yx2Sum);
+
+                decimal x2PowSum = x2PowList.TakeLastExt(length).Sum();
+                x2PowSumList.Add(x2PowSum);
+            }
+
+            var max1List = GetMovingAverageList(stockData, maType, length, x1List);
+            var max2List = GetMovingAverageList(stockData, maType, length, x2List);
+            var mayList = GetMovingAverageList(stockData, maType, length, inputList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal x1Sum = x1SumList.ElementAtOrDefault(i);
+                decimal x2Sum = x2SumList.ElementAtOrDefault(i);
+                decimal x1x2Sum = x1x2SumList.ElementAtOrDefault(i);
+                decimal x2PowSum = x2PowSumList.ElementAtOrDefault(i);
+                decimal yx1Sum = yx1SumList.ElementAtOrDefault(i);
+                decimal yx2Sum = yx2SumList.ElementAtOrDefault(i);
+                decimal ySum = ySumList.ElementAtOrDefault(i);
+                decimal may = mayList.ElementAtOrDefault(i);
+                decimal max1 = max1List.ElementAtOrDefault(i);
+                decimal max2 = max2List.ElementAtOrDefault(i);
+                decimal x1 = x1List.ElementAtOrDefault(i);
+                decimal x2 = x2List.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal s11 = x2Sum - (Pow(x1Sum, 2) / length);
+                decimal s12 = x1x2Sum - ((x1Sum * x2Sum) / length);
+                decimal s22 = x2PowSum - (Pow(x2Sum, 2) / length);
+                decimal sy1 = yx1Sum - ((ySum * x1Sum) / length);
+                decimal sy2 = yx2Sum - ((ySum * x2Sum) / length);
+                decimal bot = (s22 * s11) - Pow(s12, 2);
+                decimal b2 = bot != 0 ? ((sy1 * s22) - (sy2 * s12)) / bot : 0;
+                decimal b3 = bot != 0 ? ((sy2 * s11) - (sy1 * s12)) / bot : 0;
+                decimal b1 = may - (b2 * max1) - (b3 * max2);
+
+                decimal prevY = yList.LastOrDefault();
+                decimal y = b1 + (b2 * x1) + (b3 * x2);
+                yList.Add(y);
+
+                var signal = GetCompareSignal(currentValue - y, prevValue - prevY);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "QuadReg", yList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = yList;
+            stockData.IndicatorName = IndicatorName.QuadraticRegression;
 
             return stockData;
         }
