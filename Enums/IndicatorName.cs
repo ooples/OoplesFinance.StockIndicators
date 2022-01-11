@@ -171,10 +171,34 @@ namespace OoplesFinance.StockIndicators.Enums
         KaufmanAdaptiveMovingAverage,
         [Category(IndicatorType.Volume)]
         KlingerVolumeOscillator,
+        [Category(IndicatorType.SupportAndResistance)]
+        LBRPaintBars,
         [Category(IndicatorType.Trend)]
         LeastSquaresMovingAverage,
         [Category(IndicatorType.Trend)]
+        LeoMovingAverage,
+        [Category(IndicatorType.Trend)]
+        LightLeastSquaresMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        LindaRaschke3_10Oscillator,
+        [Category(IndicatorType.SupportAndResistance)]
+        LinearChannels,
+        [Category(IndicatorType.Trend)]
+        LinearExtrapolation,
+        [Category(IndicatorType.Momentum)]
+        LinearQuadraticConvergenceDivergenceOscillator,
+        [Category(IndicatorType.Trend)]
         LinearRegression,
+        [Category(IndicatorType.Trend)]
+        LinearRegressionLine,
+        [Category(IndicatorType.Trend)]
+        LinearTrailingStop,
+        [Category(IndicatorType.Trend)]
+        LinearWeightedMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        LiquidRelativeStrengthIndex,
+        [Category(IndicatorType.Momentum)]
+        LogisticCorrelation,
         [Category(IndicatorType.Momentum)]
         McClellanOscillator,
         [Category(IndicatorType.Trend)]

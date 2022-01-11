@@ -607,5 +607,60 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Linear Channels
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="mult"></param>
+        /// <returns></returns>
+        public static StockData CalculateLinearChannels(this StockData stockData, int length = 14, decimal mult = 50)
+        {
+            List<decimal> aList = new();
+            List<decimal> upperList = new();
+            List<decimal> lowerList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal s = (decimal)1 / length;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevA = i >= 1 ? aList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal prevA2 = i >= 2 ? aList.ElementAtOrDefault(i - 2) : currentValue;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal x = currentValue + ((prevA - prevA2) * mult);
+
+                decimal a = x > prevA + s ? prevA + s : x < prevA - s ? prevA - s : prevA;
+                aList.AddRounded(a);
+
+                decimal up = a + (Math.Abs(a - prevA) * mult);
+                decimal dn = a - (Math.Abs(a - prevA) * mult);
+
+                decimal prevUpper = upperList.LastOrDefault();
+                decimal upper = up == a ? prevUpper : up;
+                upperList.Add(upper);
+
+                decimal prevLower = lowerList.LastOrDefault();
+                decimal lower = dn == a ? prevLower : dn;
+                lowerList.Add(lower);
+
+                var signal = GetBollingerBandsSignal(currentValue - a, prevValue - prevA, currentValue, prevValue, upper, prevUpper, lower, prevLower);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperList },
+                { "LowerBand", lowerList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.LinearChannels;
+
+            return stockData;
+        }
     }
 }

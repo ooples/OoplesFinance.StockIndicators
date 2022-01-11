@@ -339,5 +339,69 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Linear Trailing Stop
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="mult"></param>
+        /// <returns></returns>
+        public static StockData CalculateLinearTrailingStop(this StockData stockData, int length = 14, decimal mult = 28)
+        {
+            List<decimal> aList = new();
+            List<decimal> osList = new();
+            List<decimal> tsList = new();
+            List<decimal> upperList = new();
+            List<decimal> lowerList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal s = (decimal)1 / length;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevA = i >= 1 ? aList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal prevA2 = i >= 2 ? aList.ElementAtOrDefault(i - 2) : currentValue;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal x = currentValue + ((prevA - prevA2) * mult);
+
+                decimal a = x > prevA + s ? prevA + s : x < prevA - s ? prevA - s : prevA;
+                aList.Add(a);
+
+                decimal up = a + (Math.Abs(a - prevA) * mult);
+                decimal dn = a - (Math.Abs(a - prevA) * mult);
+
+                decimal prevUpper = upperList.LastOrDefault();
+                decimal upper = up == a ? prevUpper : up;
+                upperList.Add(upper);
+
+                decimal prevLower = lowerList.LastOrDefault();
+                decimal lower = dn == a ? prevLower : dn;
+                lowerList.Add(lower);
+
+                decimal prevOs = osList.LastOrDefault();
+                decimal os = currentValue > upper ? 1 : currentValue > lower ? 0 : prevOs;
+                osList.Add(os);
+
+                decimal prevTs = tsList.LastOrDefault();
+                decimal ts = (os * lower) + ((1 - os) * upper);
+                tsList.Add(ts);
+
+                var signal = GetCompareSignal(currentValue - ts, prevValue - prevTs);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ts", tsList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = tsList;
+            stockData.IndicatorName = IndicatorName.LinearTrailingStop;
+
+            return stockData;
+        }
     }
 }

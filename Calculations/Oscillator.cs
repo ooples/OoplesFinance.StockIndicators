@@ -4,6 +4,7 @@ using static OoplesFinance.StockIndicators.Helpers.SignalHelper;
 using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
 using static OoplesFinance.StockIndicators.Helpers.MathHelper;
 using OoplesFinance.StockIndicators.Enums;
+using MathNet.Numerics;
 
 namespace OoplesFinance.StockIndicators
 {
@@ -4469,6 +4470,240 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = whiteNoiseList;
             stockData.IndicatorName = IndicatorName.QuasiWhiteNoise;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the LBR Paint Bars
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="lbLength"></param>
+        /// <param name="atrMult"></param>
+        /// <returns></returns>
+        public static StockData CalculateLBRPaintBars(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 9, 
+            int lbLength = 16, decimal atrMult = 2.5m)
+        {
+            List<decimal> upperBandList = new();
+            List<decimal> lowerBandList = new();
+            List<decimal> aatrList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+            var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, lbLength);
+
+            var atrList = CalculateAverageTrueRange(stockData, maType, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal highest = highestList.ElementAtOrDefault(i);
+                decimal lowest = lowestList.ElementAtOrDefault(i);
+                decimal currentAtr = atrList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal aatr = atrMult * currentAtr;
+                aatrList.Add(aatr);
+
+                decimal prevLowerBand = lowerBandList.LastOrDefault();
+                decimal lowerBand = lowest + aatr;
+                lowerBandList.Add(lowerBand);
+
+                decimal prevUpperBand = upperBandList.LastOrDefault();
+                decimal upperBand = highest - aatr;
+                upperBandList.Add(upperBand);
+
+                var signal = GetBullishBearishSignal(currentValue - Math.Max(lowerBand, upperBand), prevValue - Math.Max(prevLowerBand, prevUpperBand),
+                    currentValue - Math.Min(lowerBand, upperBand), prevValue - Math.Min(prevLowerBand, prevUpperBand));
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperBandList },
+                { "LowerBand", lowerBandList },
+                { "MiddleBand", aatrList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.LBRPaintBars;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Linear Quadratic Convergence Divergence Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="signalLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateLinearQuadraticConvergenceDivergenceOscillator(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 50, int signalLength = 25)
+        {
+            List<decimal> lqcdList = new();
+            List<decimal> histList = new();
+            List<Signal> signalsList = new();
+
+            var linregList = CalculateLinearRegression(stockData, length).CustomValuesList;
+            var yList = CalculateQuadraticRegression(stockData, maType, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal linreg = linregList.ElementAtOrDefault(i);
+                decimal y = yList.ElementAtOrDefault(i);
+
+                decimal lqcd = y - linreg;
+                lqcdList.Add(lqcd);
+            }
+
+            var signList = GetMovingAverageList(stockData, maType, signalLength, lqcdList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal sign = signList.ElementAtOrDefault(i);
+                decimal lqcd = lqcdList.ElementAtOrDefault(i);
+                decimal osc = lqcd - sign;
+
+                decimal prevHist = histList.LastOrDefault();
+                decimal hist = osc - sign;
+                histList.Add(hist);
+
+                var signal = GetCompareSignal(hist, prevHist);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Lqcdo", histList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = histList;
+            stockData.IndicatorName = IndicatorName.LinearQuadraticConvergenceDivergenceOscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Logistic Correlation
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="k"></param>
+        /// <returns></returns>
+        public static StockData CalculateLogisticCorrelation(this StockData stockData, int length = 100, decimal k = 10)
+        {
+            List<decimal> tempList = new();
+            List<decimal> indexList = new();
+            List<decimal> logList = new();
+            List<decimal> corrList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                tempList.Add(currentValue);
+
+                decimal index = i;
+                indexList.Add(index);
+
+                var corr = GoodnessOfFit.R(indexList.TakeLastExt(length).Select(x => (double)x), tempList.TakeLastExt(length).Select(x => (double)x));
+                corr = IsValueNullOrInfinity(corr) ? 0 : corr;
+                corrList.Add((decimal)corr);
+            }
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal corr = corrList.ElementAtOrDefault(i);
+                decimal prevLog1 = i >= 1 ? logList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevLog2 = i >= 2 ? logList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal log = 1 / (1 + Exp(k * -corr));
+                logList.Add(log);
+
+                var signal = GetCompareSignal(log - prevLog1, prevLog1 - prevLog2);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "LogCorr", logList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = logList;
+            stockData.IndicatorName = IndicatorName.LogisticCorrelation;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Linda Raschke 3/10 Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <param name="smoothLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateLindaRaschke3_10Oscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int fastLength = 3, int slowLength = 10, int smoothLength = 16)
+        {
+            List<decimal> macdList = new();
+            List<decimal> macdHistogramList = new();
+            List<decimal> ppoList = new();
+            List<decimal> ppoHistogramList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var fastSmaList = GetMovingAverageList(stockData, maType, fastLength, inputList);
+            var slowSmaList = GetMovingAverageList(stockData, maType, slowLength, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal sma3 = fastSmaList.ElementAtOrDefault(i);
+                decimal sma10 = slowSmaList.ElementAtOrDefault(i);
+
+                decimal ppo = sma10 != 0 ? (sma3 - sma10) / sma10 * 100 : 0;
+                ppoList.Add(ppo);
+
+                decimal macd = sma3 - sma10;
+                macdList.Add(macd);
+            }
+
+            var macdSignalLineList = GetMovingAverageList(stockData, maType, smoothLength, macdList);
+            var ppoSignalLineList = GetMovingAverageList(stockData, maType, smoothLength, ppoList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ppo = ppoList.ElementAtOrDefault(i);
+                decimal ppoSignalLine = ppoSignalLineList.ElementAtOrDefault(i);
+                decimal macd = macdList.ElementAtOrDefault(i);
+                decimal macdSignalLine = macdSignalLineList.ElementAtOrDefault(i);
+
+                decimal ppoHistogram = ppo - ppoSignalLine;
+                ppoHistogramList.Add(ppoHistogram);
+
+                decimal prevMacdHistogram = macdHistogramList.LastOrDefault();
+                decimal macdHistogram = macd - macdSignalLine;
+                macdHistogramList.Add(macdHistogram);
+
+                var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "LindaMacd", macdList },
+                { "LindaMacdSignal", macdSignalLineList },
+                { "LindaMacdHistogram", macdHistogramList },
+                { "LindaPpo", ppoList },
+                { "LindaPpoSignal", ppoSignalLineList },
+                { "LindaPpoHistogram", ppoHistogramList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = macdList;
+            stockData.IndicatorName = IndicatorName.LindaRaschke3_10Oscillator;
 
             return stockData;
         }

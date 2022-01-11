@@ -89,8 +89,23 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.LeastSquaresMovingAverage:
                     movingAvgList = stockData.CalculateLeastSquaresMovingAverage(length).CustomValuesList;
                     break;
+                case MovingAvgType.LeoMovingAverage:
+                    movingAvgList = stockData.CalculateLeoMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.LightLeastSquaresMovingAverage:
+                    movingAvgList = stockData.CalculateLightLeastSquaresMovingAverage(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.LinearExtrapolation:
+                    movingAvgList = stockData.CalculateLinearExtrapolation(length).CustomValuesList;
+                    break;
                 case MovingAvgType.LinearRegression:
                     movingAvgList = stockData.CalculateLinearRegression(length).CustomValuesList;
+                    break;
+                case MovingAvgType.LinearRegressionLine:
+                    movingAvgList = stockData.CalculateLinearRegressionLine(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.LinearWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateLinearWeightedMovingAverage(length).CustomValuesList;
                     break;
                 case MovingAvgType.MesaAdaptiveMovingAverage:
                     movingAvgList = stockData.CalculateEhlersMotherOfAdaptiveMovingAverages().CustomValuesList;

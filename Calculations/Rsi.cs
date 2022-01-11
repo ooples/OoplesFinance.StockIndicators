@@ -445,5 +445,60 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Liquid Relative Strength Index
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateLiquidRelativeStrengthIndex(this StockData stockData, int length = 14)
+        {
+            List<decimal> numEmaList = new();
+            List<decimal> denEmaList = new();
+            List<decimal> cList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
+
+            decimal k = (decimal)1 / length;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                decimal prevVolume = i >= 1 ? volumeList.ElementAtOrDefault(i - 1) : 0;
+                decimal a = currentValue - prevValue;
+                decimal b = currentVolume - prevVolume;
+                decimal prevC1 = i >= 1 ? cList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevC2 = i >= 2 ? cList.ElementAtOrDefault(i - 2) : 0;
+                decimal num = Math.Max(a, 0) * Math.Max(b, 0);
+                decimal den = Math.Abs(a) * Math.Abs(b);
+
+                decimal prevNumEma = numEmaList.LastOrDefault();
+                decimal numEma = (num * k) + (prevNumEma * (1 - k));
+                numEmaList.Add(numEma);
+
+                decimal prevDenEma = denEmaList.LastOrDefault();
+                decimal denEma = (den * k) + (prevDenEma * (1 - k));
+                denEmaList.Add(denEma);
+
+                decimal c = denEma != 0 ? MinOrMax(100 * numEma / denEma, 100, 0) : 0;
+                cList.Add(c);
+
+                var signal = GetRsiSignal(c - prevC1, prevC1 - prevC2, c, prevC1, 80, 20);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Lrsi", cList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = cList;
+            stockData.IndicatorName = IndicatorName.LiquidRelativeStrengthIndex;
+
+            return stockData;
+        }
     }
 }

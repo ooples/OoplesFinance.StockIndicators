@@ -2563,5 +2563,264 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Linear Weighted Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateLinearWeightedMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> lwmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal sum = 0, weightedSum = 0;
+                for (int j = 0; j <= length - 1; j++)
+                {
+                    decimal weight = length - j;
+                    decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                    sum += prevValue * weight;
+                    weightedSum += weight;
+                }
+
+                decimal prevLwma = lwmaList.LastOrDefault();
+                decimal lwma = weightedSum != 0 ? sum / weightedSum : 0;
+                lwmaList.Add(lwma);
+
+                var signal = GetCompareSignal(currentValue - lwma, prevVal - prevLwma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Lwma", lwmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = lwmaList;
+            stockData.IndicatorName = IndicatorName.LinearWeightedMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Leo Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateLeoMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> lmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var wmaList = CalculateWeightedMovingAverage(stockData, length).CustomValuesList;
+            var smaList = CalculateSimpleMovingAverage(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentWma = wmaList.ElementAtOrDefault(i);
+                decimal currentSma = smaList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevLma = lmaList.LastOrDefault();
+                decimal lma = (2 * currentWma) - currentSma;
+                lmaList.Add(lma);
+
+                var signal = GetCompareSignal(currentValue - lma, prevValue - prevLma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Lma", lmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = lmaList;
+            stockData.IndicatorName = IndicatorName.LeoMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Light Least Squares Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateLightLeastSquaresMovingAverage(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 250)
+        {
+            List<decimal> yList = new();
+            List<decimal> indexList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int length1 = MinOrMax((int)Math.Ceiling((decimal)length / 2));
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal index = i;
+                indexList.Add(index);
+            }
+
+            var sma1List = GetMovingAverageList(stockData, maType, length, inputList);
+            var sma2List = GetMovingAverageList(stockData, maType, length1, inputList);
+            var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            stockData.CustomValuesList = indexList;
+            var indexStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            var indexSmaList = GetMovingAverageList(stockData, maType, length, indexList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal sma1 = sma1List.ElementAtOrDefault(i);
+                decimal sma2 = sma2List.ElementAtOrDefault(i);
+                decimal stdDev = stdDevList.ElementAtOrDefault(i);
+                decimal indexStdDev = indexStdDevList.ElementAtOrDefault(i);
+                decimal indexSma = indexSmaList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal c = stdDev != 0 ? (sma2 - sma1) / stdDev : 0;
+                decimal z = indexStdDev != 0 && c != 0 ? (i - indexSma) / indexStdDev * c : 0;
+
+                decimal prevY = yList.LastOrDefault();
+                decimal y = sma1 + (z * stdDev);
+                yList.Add(y);
+
+                var signal = GetCompareSignal(currentValue - y, prevValue - prevY);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Llsma", yList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = yList;
+            stockData.IndicatorName = IndicatorName.LightLeastSquaresMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Linear Extrapolation
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateLinearExtrapolation(this StockData stockData, int length = 500)
+        {
+            List<decimal> extList = new();
+            List<decimal> xList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevY = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal priorY = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+                decimal priorY2 = i >= length * 2 ? inputList.ElementAtOrDefault(i - (length * 2)) : 0;
+                decimal priorX = i >= length ? xList.ElementAtOrDefault(i - length) : 0;
+                decimal priorX2 = i >= length * 2 ? xList.ElementAtOrDefault(i - (length * 2)) : 0;
+
+                decimal x = i;
+                xList.Add(i);
+
+                decimal prevExt = extList.LastOrDefault();
+                decimal ext = priorX2 - priorX != 0 && priorY2 - priorY != 0 ? priorY + ((x - priorX) / (priorX2 - priorX) * (priorY2 - priorY)) : priorY;
+                extList.Add(ext);
+
+                var signal = GetCompareSignal(currentValue - ext, prevY - prevExt);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "LinExt", extList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = extList;
+            stockData.IndicatorName = IndicatorName.LinearExtrapolation;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Linear Regression Line
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateLinearRegressionLine(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 14)
+        {
+            List<decimal> regList = new();
+            List<decimal> corrList = new();
+            List<decimal> yList = new();
+            List<decimal> xList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var yMaList = GetMovingAverageList(stockData, maType, length, inputList);
+            var myList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                yList.Add(currentValue);
+
+                decimal x = i;
+                xList.Add(x);
+
+                var corr = GoodnessOfFit.R(yList.TakeLastExt(length).Select(x => (double)x), xList.TakeLastExt(length).Select(x => (double)x));
+                corr = IsValueNullOrInfinity(corr) ? 0 : corr;
+                corrList.Add((decimal)corr);
+            }
+
+            var xMaList = GetMovingAverageList(stockData, maType, length, xList);
+            stockData.CustomValuesList = xList;
+            var mxList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList; ;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal my = myList.ElementAtOrDefault(i);
+                decimal mx = mxList.ElementAtOrDefault(i);
+                decimal corr = corrList.ElementAtOrDefault(i);
+                decimal yMa = yMaList.ElementAtOrDefault(i);
+                decimal xMa = xMaList.ElementAtOrDefault(i);
+                decimal x = xList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal slope = mx != 0 ? corr * (my / mx) : 0;
+                decimal inter = yMa - (slope * xMa);
+
+                decimal prevReg = regList.LastOrDefault();
+                decimal reg = (x * slope) + inter;
+                regList.Add(reg);
+
+                var signal = GetCompareSignal(currentValue - reg, prevValue - prevReg);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "LinReg", regList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = regList;
+            stockData.IndicatorName = IndicatorName.LinearRegressionLine;
+
+            return stockData;
+        }
     }
 }
