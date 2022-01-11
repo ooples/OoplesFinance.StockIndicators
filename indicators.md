@@ -61,6 +61,14 @@
 
 [Jma Rsx Clone](https://www.tradingview.com/script/XzcIRUHv-JMA-RSX-Clone-LazyBear/)
 
+[Linda Raschke 3/10 Oscillator](https://www2.wealth-lab.com/wl5wiki/LBR3_10.ashx)
+
+[Linear Quadratic Convergence Divergence Oscillator](https://www.tradingview.com/script/x3r41i2j-Linear-Quadratic-Convergence-Divergence-Oscillator/)
+
+[Liquid Relative Strength Index](https://www.tradingview.com/script/CDPtgBIX-Liquid-RSI-Marrying-The-Relative-Strength-Index-And-The-Volume/)
+
+[Logistic Correlation](https://www.tradingview.com/script/Te01hBsi-Logistic-Correlation/)
+
 [McClellan Oscillator](https://www.investopedia.com/terms/m/mcclellanoscillator.asp)
 
 [Moving Average Convergence Divergence](https://www.investopedia.com/terms/m/macd.asp)
@@ -113,6 +121,10 @@
         
 ## Support And Resistance
 [Donchian Channels](https://www.investopedia.com/terms/d/donchianchannels.asp)
+
+[LBR Paint Bars](https://www.motivewave.com/studies/lbr_paint_bars.htm)
+
+[Linear Channels](https://www.tradingview.com/script/J4ccCRMW-Linear-Channels/)
 
 [Moving Average Channel](https://www.linnsoft.com/techind/moving-average-channels)
 
@@ -197,7 +209,19 @@ Atr Filtered Exponential Moving Average
 
 [Least Squares Moving Average](https://tradingsim.com/blog/least-square-moving-average/)
 
+[Leo Moving Average](https://www.tradingview.com/script/eU9pCDrk-Leo-Moving-Average/)
+
+[Light Least Squares Moving Average](https://www.tradingview.com/script/qb8XbLC1-Light-LSMA/)
+
+[Linear Extrapolation](https://www.tradingview.com/script/ucuNrz1S-Linear-Extrapolation/)
+
 [Linear Regression](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/linear-regression)
+
+[Linear Regression Line](https://www.tradingview.com/script/LpbWEcA3-Regression-Line-Formula/)
+
+[Linear Trailing Stop](https://www.tradingview.com/script/CJQ3FQBG-Linear-Trailing-Stop/)
+
+[Linear Weighted Moving Average](https://www.fxcorporate.com/help/MS/NOTFIFO/i_LWMA.html)
 
 [Median Price](https://www.metastock.com/customer/resources/taaz/?p=70)
 
