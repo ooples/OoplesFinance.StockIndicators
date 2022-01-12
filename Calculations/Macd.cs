@@ -186,5 +186,60 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Impulse Moving Average Convergence Divergence
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="inputName"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="signalLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateImpulseMovingAverageConvergenceDivergence(this StockData stockData, InputName inputName = InputName.TypicalPrice,
+            MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, int length = 34, int signalLength = 9)
+        {
+            List<decimal> macdList = new();
+            List<decimal> macdSignalLineList = new();
+            List<decimal> macdHistogramList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _, _) = GetInputValuesList(inputName, stockData);
+
+            var typicalPriceZeroLagEmaList = GetMovingAverageList(stockData, MovingAvgType.ZeroLagExponentialMovingAverage, length, inputList);
+            var wellesWilderHighMovingAvgList = GetMovingAverageList(stockData, maType, length, highList);
+            var wellesWilderLowMovingAvgList = GetMovingAverageList(stockData, maType, length, lowList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal hi = wellesWilderHighMovingAvgList.ElementAtOrDefault(i);
+                decimal lo = wellesWilderLowMovingAvgList.ElementAtOrDefault(i);
+                decimal mi = typicalPriceZeroLagEmaList.ElementAtOrDefault(i);
+
+                decimal macd = mi > hi ? mi - hi : mi < lo ? mi - lo : 0;
+                macdList.Add(macd);
+
+                decimal macdSignalLine = macdList.TakeLastExt(signalLength).Average();
+                macdSignalLineList.Add(macdSignalLine);
+
+                decimal prevMacdHistogram = macdHistogramList.LastOrDefault();
+                decimal macdHistogram = macd - macdSignalLine;
+                macdHistogramList.Add(macdHistogram);
+
+                var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Macd", macdList },
+                { "Signal", macdSignalLineList },
+                { "Histogram", macdHistogramList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = macdList;
+            stockData.IndicatorName = IndicatorName.ImpulseMovingAverageConvergenceDivergence;
+
+            return stockData;
+        }
     }
 }

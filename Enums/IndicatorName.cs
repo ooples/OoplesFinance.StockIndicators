@@ -131,8 +131,12 @@ namespace OoplesFinance.StockIndicators.Enums
         CommodityChannelIndex,
         [Category(IndicatorType.Momentum)]
         ConnorsRelativeStrengthIndex,
+        [Category(IndicatorType.Momentum)]
+        DetrendedPriceOscillator,
         [Category(IndicatorType.SupportAndResistance)]
         DonchianChannels,
+        [Category(IndicatorType.Volume)]
+        EaseOfMovement,
         [Category(IndicatorType.Trend)]
         EhlersMotherOfAdaptiveMovingAverages,
         [Category(IndicatorType.Momentum)]
@@ -157,6 +161,28 @@ namespace OoplesFinance.StockIndicators.Enums
         HullMovingAverage,
         [Category(IndicatorType.Trend)]
         IchimokuCloud,
+        [Category(IndicatorType.Trend)]
+        IIRLeastSquaresEstimate,
+        [Category(IndicatorType.Momentum)]
+        ImpulseMovingAverageConvergenceDivergence,
+        [Category(IndicatorType.Momentum)]
+        ImpulsePercentagePriceOscillator,
+        [Category(IndicatorType.Momentum)]
+        InertiaIndicator,
+        [Category(IndicatorType.Volatility)]
+        InformationRatio,
+        [Category(IndicatorType.Trend)]
+        InsyncIndex,
+        [Category(IndicatorType.Momentum)]
+        InternalBarStrengthIndicator,
+        [Category(IndicatorType.Volatility)]
+        InterquartileRangeBands,
+        [Category(IndicatorType.Trend)]
+        InverseDistanceWeightedMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        InverseFisherFastZScore,
+        [Category(IndicatorType.Momentum)]
+        InverseFisherZScore,
         [Category(IndicatorType.Momentum)]
         JapaneseCorrelationCoefficient,
         [Category(IndicatorType.Momentum)]
@@ -249,6 +275,10 @@ namespace OoplesFinance.StockIndicators.Enums
         RateOfChange,
         [Category(IndicatorType.Momentum)]
         RelativeStrengthIndex,
+        [Category(IndicatorType.Volatility)]
+        RelativeVolatilityIndexV1,
+        [Category(IndicatorType.Volatility)]
+        RelativeVolatilityIndexV2,
         [Category(IndicatorType.Momentum)]
         SchaffTrendCycle,
         [Category(IndicatorType.Trend)]
@@ -271,6 +301,8 @@ namespace OoplesFinance.StockIndicators.Enums
         T3MovingAverage,
         [Category(IndicatorType.Trend)]
         TriangularMovingAverage,
+        [Category(IndicatorType.Trend)]
+        Trimean,
         [Category(IndicatorType.Trend)]
         TripleExponentialMovingAverage,
         [Category(IndicatorType.Momentum)]

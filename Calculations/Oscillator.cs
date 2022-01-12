@@ -49,8 +49,8 @@ namespace OoplesFinance.StockIndicators
         /// <param name="inputName">Name of the input.</param>
         /// <param name="constant">The constant.</param>
         /// <returns></returns>
-        public static StockData CalculateCommodityChannelIndex(this StockData stockData, int length, MovingAvgType maType, InputName inputName, 
-            decimal constant)
+        public static StockData CalculateCommodityChannelIndex(this StockData stockData, int length = 20, 
+            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, InputName inputName = InputName.TypicalPrice, decimal constant = 0.015m)
         {
             List<decimal> cciList = new();
             List<decimal> tpDevDiffList = new();
@@ -402,7 +402,7 @@ namespace OoplesFinance.StockIndicators
         /// <param name="inputName">Name of the input.</param>
         /// <param name="length">The length.</param>
         /// <returns></returns>
-        public static StockData CalculateMoneyFlowIndex(this StockData stockData, InputName inputName, int length)
+        public static StockData CalculateMoneyFlowIndex(this StockData stockData, InputName inputName = InputName.TypicalPrice, int length = 14)
         {
             List<decimal> mfiList = new();
             List<decimal> posMoneyFlowList = new();
@@ -1536,9 +1536,11 @@ namespace OoplesFinance.StockIndicators
         /// <param name="stockData">The stock data.</param>
         /// <param name="maType">Type of the ma.</param>
         /// <param name="length">The length.</param>
-        /// <param name="signalLength">Length of the signal.</param>
+        /// <param name="kLength">Length of the K signal.</param>
+        /// <param name="dLength">Length of the D signal.</param>
         /// <returns></returns>
-        public static StockData CalculateStochasticOscillator(this StockData stockData, MovingAvgType maType, int length = 14, int signalLength = 3)
+        public static StockData CalculateStochasticOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 14, int kLength = 3, int dLength = 3)
         {
             List<decimal> fastKList = new();
             List<Signal> signalsList = new();
@@ -1555,8 +1557,8 @@ namespace OoplesFinance.StockIndicators
                 fastKList.Add(fastK);
             }
 
-            var fastDList = GetMovingAverageList(stockData, maType, signalLength, fastKList);
-            var slowDList = GetMovingAverageList(stockData, maType, signalLength, fastDList);
+            var fastDList = GetMovingAverageList(stockData, maType, kLength, fastKList);
+            var slowDList = GetMovingAverageList(stockData, maType, dLength, fastDList);
             for (int i = 0; i < stockData.Count; i++)
             {
                 decimal slowK = fastDList.ElementAtOrDefault(i);
@@ -1669,7 +1671,7 @@ namespace OoplesFinance.StockIndicators
             }
 
             stockData.CustomValuesList = macdList;
-            var stcList = CalculateStochasticOscillator(stockData, maType, cycleLength, cycleLength).CustomValuesList;
+            var stcList = CalculateStochasticOscillator(stockData, maType, length: cycleLength).CustomValuesList;
             for (int i = 0; i < stockData.Count; i++)
             {
                 decimal stc = stcList.ElementAtOrDefault(i);
@@ -2086,7 +2088,7 @@ namespace OoplesFinance.StockIndicators
             decimal mep = (decimal)2 / (smoothLength + 1);
             decimal ce = (stochLength + smoothLength) * 2;
 
-            var stochList = CalculateStochasticOscillator(stockData, maType, stochLength, stochLength).CustomValuesList;
+            var stochList = CalculateStochasticOscillator(stockData, maType, length: stochLength).CustomValuesList;
 
             for (int i = 0; i < stockData.Count; i++)
             {
@@ -3599,9 +3601,9 @@ namespace OoplesFinance.StockIndicators
             }
 
             stockData.CustomValuesList = trList;
-            var trStoList = CalculateStochasticOscillator(stockData, maType, lbLength, lbLength).CustomValuesList;
+            var trStoList = CalculateStochasticOscillator(stockData, maType, length: lbLength).CustomValuesList;
             stockData.CustomValuesList = volumeList;
-            var vStoList = CalculateStochasticOscillator(stockData, maType, lbLength, lbLength).CustomValuesList;
+            var vStoList = CalculateStochasticOscillator(stockData, maType, length: lbLength).CustomValuesList;
             for (int i = 0; i < stockData.Count; i++)
             {
                 decimal close = inputList.ElementAtOrDefault(i);
@@ -4704,6 +4706,622 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = macdList;
             stockData.IndicatorName = IndicatorName.LindaRaschke3_10Oscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Information Ratio
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="bmk"></param>
+        /// <returns></returns>
+        public static StockData CalculateInformationRatio(this StockData stockData, int length = 30, decimal bmk = 0.05m)
+        {
+            List<decimal> infoList = new();
+            List<decimal> retList = new();
+            List<decimal> deviationSquaredList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal barMin = 60 * 24;
+            decimal minPerYr = 60 * 24 * 30 * 12;
+            decimal barsPerYr = minPerYr / barMin;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+                decimal bench = Pow(1 + bmk, length / (double)barsPerYr) - 1;
+
+                decimal ret = prevValue != 0 ? (currentValue / prevValue) - 1 : 0;
+                retList.Add(ret);
+
+                decimal retSma = retList.TakeLastExt(length).Average();
+                decimal deviationSquared = Pow(ret - retSma, 2);
+                deviationSquaredList.Add(deviationSquared);
+
+                decimal divisionOfSum = deviationSquaredList.TakeLastExt(length).Average();
+                decimal stdDeviation = divisionOfSum >= 0 ? Sqrt(divisionOfSum) : 0;
+
+                decimal prevInfo = infoList.LastOrDefault();
+                decimal info = stdDeviation != 0 ? (retSma - bench) / stdDeviation : 0;
+                infoList.Add(info);
+
+                var signal = GetCompareSignal(info - 5, prevInfo - 5);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ir", infoList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = infoList;
+            stockData.IndicatorName = IndicatorName.InformationRatio;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Impulse Percentage Price Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="inputName"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="signalLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateImpulsePercentagePriceOscillator(this StockData stockData, InputName inputName = InputName.TypicalPrice, 
+            MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, int length = 34, int signalLength = 9)
+        {
+            List<decimal> ppoList = new();
+            List<decimal> ppoSignalLineList = new();
+            List<decimal> ppoHistogramList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _, _) = GetInputValuesList(inputName, stockData);
+
+            var typicalPriceZeroLagEmaList = GetMovingAverageList(stockData, MovingAvgType.ZeroLagExponentialMovingAverage, length, inputList);
+            var wellesWilderHighMovingAvgList = GetMovingAverageList(stockData, maType, length, highList);
+            var wellesWilderLowMovingAvgList = GetMovingAverageList(stockData, maType, length, lowList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal hi = wellesWilderHighMovingAvgList.ElementAtOrDefault(i);
+                decimal lo = wellesWilderLowMovingAvgList.ElementAtOrDefault(i);
+                decimal mi = typicalPriceZeroLagEmaList.ElementAtOrDefault(i);
+                decimal macd = mi > hi ? mi - hi : mi < lo ? mi - lo : 0;
+
+                decimal ppo = mi > hi && hi != 0 ? macd / hi * 100 : mi < lo && lo != 0 ? macd / lo * 100 : 0;
+                ppoList.Add(ppo);
+
+                decimal ppoSignalLine = ppoList.TakeLastExt(signalLength).Average();
+                ppoSignalLineList.Add(ppoSignalLine);
+
+                decimal prevPpoHistogram = ppoHistogramList.LastOrDefault();
+                decimal ppoHistogram = ppo - ppoSignalLine;
+                ppoHistogramList.Add(ppoHistogram);
+
+                var signal = GetCompareSignal(ppoHistogram, prevPpoHistogram);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ppo", ppoList },
+                { "Signal", ppoSignalLineList },
+                { "Histogram", ppoHistogramList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = ppoList;
+            stockData.IndicatorName = IndicatorName.ImpulsePercentagePriceOscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Relative Volatility Index V1
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="smoothLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateRelativeVolatilityIndexV1(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, int length = 10, int smoothLength = 14)
+        {
+            List<decimal> upList = new();
+            List<decimal> downList = new();
+            List<decimal> rviOriginalList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var stdDeviationList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentStdDeviation = stdDeviationList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal up = currentValue > prevValue ? currentStdDeviation : 0;
+                upList.Add(up);
+
+                decimal down = currentValue < prevValue ? currentStdDeviation : 0;
+                downList.Add(down);
+            }
+
+            var upAvgList = GetMovingAverageList(stockData, maType, smoothLength, upList);
+            var downAvgList = GetMovingAverageList(stockData, maType, smoothLength, downList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal avgUp = upAvgList.ElementAtOrDefault(i);
+                decimal avgDown = downAvgList.ElementAtOrDefault(i);
+                decimal prevRvi1 = i >= 1 ? rviOriginalList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevRvi2 = i >= 1 ? rviOriginalList.ElementAtOrDefault(i - 2) : 0;
+                decimal rs = avgDown != 0 ? avgUp / avgDown : 0;
+
+                decimal rvi = avgDown == 0 ? 100 : avgUp == 0 ? 0 : MinOrMax(100 - (100 / (1 + rs)), 100, 0);
+                rviOriginalList.Add(rvi);
+
+                var signal = GetRsiSignal(rvi - prevRvi1, prevRvi1 - prevRvi2, rvi, prevRvi1, 70, 30);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Rvi", rviOriginalList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = rviOriginalList;
+            stockData.IndicatorName = IndicatorName.RelativeVolatilityIndexV1;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Relative Volatility Index V2
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="smoothLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateRelativeVolatilityIndexV2(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+            int length = 10, int smoothLength = 14)
+        {
+            List<decimal> rviList = new();
+            List<Signal> signalsList = new();
+            var (_, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            stockData.CustomValuesList = highList;
+            var rviHighList = CalculateRelativeVolatilityIndexV1(stockData, maType, length, smoothLength).CustomValuesList;
+            stockData.CustomValuesList = lowList;
+            var rviLowList = CalculateRelativeVolatilityIndexV1(stockData, maType, length, smoothLength).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal rviOriginalHigh = rviHighList.ElementAtOrDefault(i);
+                decimal rviOriginalLow = rviLowList.ElementAtOrDefault(i);
+                decimal prevRvi1 = i >= 1 ? rviList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevRvi2 = i >= 2 ? rviList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal rvi = (rviOriginalHigh + rviOriginalLow) / 2;
+                rviList.Add(rvi);
+
+                var signal = GetRsiSignal(rvi - prevRvi1, prevRvi1 - prevRvi2, rvi, prevRvi1, 70, 30);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Rvi", rviList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = rviList;
+            stockData.IndicatorName = IndicatorName.RelativeVolatilityIndexV2;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Inertia Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateInertiaIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.LinearRegression, 
+            int length = 20)
+        {
+            List<Signal> signalsList = new();
+
+            var rviList = CalculateRelativeVolatilityIndexV2(stockData).CustomValuesList;
+            var inertiaList = GetMovingAverageList(stockData, maType, length, rviList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal inertiaIndicator = inertiaList.ElementAtOrDefault(i);
+                decimal prevInertiaIndicator1 = i >= 1 ? inertiaList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevInertiaIndicator2 = i >= 2 ? inertiaList.ElementAtOrDefault(i - 2) : 0;
+
+                var signal = GetCompareSignal(inertiaIndicator - prevInertiaIndicator1, prevInertiaIndicator1 - prevInertiaIndicator2);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Inertia", inertiaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = inertiaList;
+            stockData.IndicatorName = IndicatorName.InertiaIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Internal Bar Strength Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="smoothLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateInternalBarStrengthIndicator(this StockData stockData, int length = 14, int smoothLength = 3)
+        {
+            List<decimal> ibsList = new();
+            List<decimal> ibsiList = new();
+            List<decimal> ibsEmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal close = inputList.ElementAtOrDefault(i);
+                decimal high = highList.ElementAtOrDefault(i);
+                decimal low = lowList.ElementAtOrDefault(i);
+
+                decimal ibs = high - low != 0 ? (close - low) / (high - low) * 100 : 0;
+                ibsList.Add(ibs);
+
+                decimal prevIbsi = ibsiList.LastOrDefault();
+                decimal ibsi = ibsList.TakeLastExt(length).Average();
+                ibsiList.Add(ibsi);
+
+                decimal prevIbsiEma = ibsEmaList.LastOrDefault();
+                decimal ibsiEma = CalculateEMA(ibsi, prevIbsiEma, smoothLength);
+                ibsEmaList.Add(ibsiEma);
+
+                var signal = GetRsiSignal(ibsi - ibsiEma, prevIbsi - prevIbsiEma, ibsi, prevIbsi, 70, 30);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ibs", ibsiList },
+                { "Signal", ibsEmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = ibsiList;
+            stockData.IndicatorName = IndicatorName.InternalBarStrengthIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Inverse Fisher Fast Z Score
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateInverseFisherFastZScore(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 50)
+        {
+            List<decimal> ifzList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int length1 = MinOrMax((int)Math.Ceiling((decimal)length / 2));
+
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+            stockData.CustomValuesList = smaList;
+            var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            stockData.CustomValuesList = smaList;
+            var linreg1List = CalculateLinearRegression(stockData, length).CustomValuesList;
+            stockData.CustomValuesList = smaList;
+            var linreg2List = CalculateLinearRegression(stockData, length1).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal linreg1 = linreg1List.ElementAtOrDefault(i);
+                decimal linreg2 = linreg2List.ElementAtOrDefault(i);
+                decimal stdDev = stdDevList.ElementAtOrDefault(i);
+                decimal fz = stdDev != 0 ? (linreg2 - linreg1) / stdDev / 2 : 0;
+                decimal prevIfz1 = i >= 1 ? ifzList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevIfz2 = i >= 2 ? ifzList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal ifz = Exp(10 * fz) + 1 != 0 ? (Exp(10 * fz) - 1) / (Exp(10 * fz) + 1) : 0;
+                ifzList.Add(ifz);
+
+                var signal = GetCompareSignal(ifz - prevIfz1, prevIfz1 - prevIfz2);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Iffzs", ifzList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = ifzList;
+            stockData.IndicatorName = IndicatorName.InverseFisherFastZScore;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Inverse Fisher Z Score
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateInverseFisherZScore(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 100)
+        {
+            List<decimal> fList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+            var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal sma = smaList.ElementAtOrDefault(i);
+                decimal stdDev = stdDevList.ElementAtOrDefault(i);
+                decimal prevF1 = i >= 1 ? fList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevF2 = i >= 2 ? fList.ElementAtOrDefault(i - 2) : 0;
+                decimal z = stdDev != 0 ? (currentValue - sma) / stdDev : 0;
+                decimal expZ = Exp(2 * z);
+
+                decimal f = expZ + 1 != 0 ? MinOrMax((((expZ - 1) / (expZ + 1)) + 1) * 50, 100, 0) : 0;
+                fList.Add(f);
+
+                var signal = GetRsiSignal(f - prevF1, prevF1 - prevF2, f, prevF1, 80, 20);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ifzs", fList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = fList;
+            stockData.IndicatorName = IndicatorName.InverseFisherZScore;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Insync Index
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <param name="signalLength"></param>
+        /// <param name="emoLength"></param>
+        /// <param name="mfiLength"></param>
+        /// <param name="bbLength"></param>
+        /// <param name="cciLength"></param>
+        /// <param name="dpoLength"></param>
+        /// <param name="rocLength"></param>
+        /// <param name="rsiLength"></param>
+        /// <param name="stochLength"></param>
+        /// <param name="stochKLength"></param>
+        /// <param name="stochDLength"></param>
+        /// <param name="smaLength"></param>
+        /// <param name="stdDevMult"></param>
+        /// <param name="divisor"></param>
+        /// <returns></returns>
+        public static StockData CalculateInsyncIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int fastLength = 12, int slowLength = 26, int signalLength = 9, int emoLength = 14, int mfiLength = 20, int bbLength = 20, 
+            int cciLength = 14, int dpoLength = 18, int rocLength = 10, int rsiLength = 14, int stochLength = 14, int stochKLength = 1, 
+            int stochDLength = 3, int smaLength = 10, decimal stdDevMult = 2, decimal divisor = 10000)
+        {
+            List<decimal> iidxList = new();
+            List<decimal> tempMacdList = new();
+            List<decimal> tempDpoList = new();
+            List<decimal> tempRocList = new();
+            List<decimal> pdoinsbList = new();
+            List<decimal> pdoinssList = new();
+            List<decimal> emoList = new();
+            List<decimal> emoSmaList = new();
+            List<Signal> signalsList = new();
+
+            var rsiList = CalculateRelativeStrengthIndex(stockData, length: rsiLength).CustomValuesList;
+            var cciList = CalculateCommodityChannelIndex(stockData, length: cciLength).CustomValuesList;
+            var mfiList = CalculateMoneyFlowIndex(stockData, length: mfiLength).CustomValuesList;
+            var macdList = CalculateMovingAverageConvergenceDivergence(stockData, fastLength: fastLength, slowLength: slowLength, 
+                signalLength: signalLength).CustomValuesList;
+            var bbIndicatorList = CalculateBollingerBands(stockData, stdDevMult: stdDevMult, length: bbLength).CustomValuesList;
+            var dpoList = CalculateDetrendedPriceOscillator(stockData, length: dpoLength).CustomValuesList;
+            var rocList = CalculateRateOfChange(stockData, length: rocLength).CustomValuesList;
+            var stochasticList = CalculateStochasticOscillator(stockData, length: stochLength, kLength: stochKLength, dLength: stochDLength);
+            var stochKList = stochasticList.OutputValues["FastD"];
+            var stochDList = stochasticList.OutputValues["SlowD"];
+            var emvList = CalculateEaseOfMovement(stockData, length: emoLength, divisor: divisor).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal bolins2 = bbIndicatorList.ElementAtOrDefault(i);
+                decimal prevPdoinss10 = i >= smaLength ? pdoinssList.ElementAtOrDefault(i - smaLength) : 0;
+                decimal prevPdoinsb10 = i >= smaLength ? pdoinsbList.ElementAtOrDefault(i - smaLength) : 0;
+                decimal cci = cciList.ElementAtOrDefault(i);
+                decimal mfi = mfiList.ElementAtOrDefault(i);
+                decimal rsi = rsiList.ElementAtOrDefault(i);
+                decimal stochD = stochDList.ElementAtOrDefault(i);
+                decimal stochK = stochKList.ElementAtOrDefault(i);
+                decimal prevIidx1 = i >= 1 ? iidxList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevIidx2 = i >= 2 ? iidxList.ElementAtOrDefault(i - 2) : 0;
+                decimal bolinsll = bolins2 < 0.05m ? -5 : bolins2 > 0.95m ? 5 : 0;
+                decimal cciins = cci > 100 ? 5 : cci < -100 ? -5 : 0;
+
+                decimal emo = emvList.ElementAtOrDefault(i);
+                emoList.Add(emo);
+
+                decimal emoSma = emoList.TakeLastExt(smaLength).Average();
+                emoSmaList.Add(emoSma);
+
+                decimal emvins2 = emo - emoSma;
+                decimal emvinsb = emvins2 < 0 ? emoSma < 0 ? -5 : 0 : emoSma > 0 ? 5 : 0;
+
+                decimal macd = macdList.ElementAtOrDefault(i);
+                tempMacdList.Add(macd);
+
+                decimal macdSma = tempMacdList.TakeLastExt(smaLength).Average();
+                decimal macdins2 = macd - macdSma;
+                decimal macdinsb = macdins2 < 0 ? macdSma < 0 ? -5 : 0 : macdSma > 0 ? 5 : 0;
+                decimal mfiins = mfi > 80 ? 5 : mfi < 20 ? -5 : 0;
+
+                decimal dpo = dpoList.ElementAtOrDefault(i);
+                tempDpoList.Add(dpo);
+
+                decimal dpoSma = tempDpoList.TakeLastExt(smaLength).Average();
+                decimal pdoins2 = dpo - dpoSma;
+                decimal pdoinsb = pdoins2 < 0 ? dpoSma < 0 ? -5 : 0 : dpoSma > 0 ? 5 : 0;
+                pdoinsbList.Add(pdoinsb);
+
+                decimal pdoinss = pdoins2 > 0 ? dpoSma > 0 ? 5 : 0 : dpoSma < 0 ? -5 : 0;
+                pdoinssList.Add(pdoinss);
+
+                decimal roc = rocList.ElementAtOrDefault(i);
+                tempRocList.Add(roc);
+
+                decimal rocSma = tempRocList.TakeLastExt(smaLength).Average();
+                decimal rocins2 = roc - rocSma;
+                decimal rocinsb = rocins2 < 0 ? rocSma < 0 ? -5 : 0 : rocSma > 0 ? 5 : 0;
+                decimal rsiins = rsi > 70 ? 5 : rsi < 30 ? -5 : 0;
+                decimal stopdins = stochD > 80 ? 5 : stochD < 20 ? -5 : 0;
+                decimal stopkins = stochK > 80 ? 5 : stochK < 20 ? -5 : 0;
+
+                decimal iidx = 50 + cciins + bolinsll + rsiins + stopkins + stopdins + mfiins + emvinsb + rocinsb + prevPdoinss10 + prevPdoinsb10 + macdinsb;
+                iidxList.Add(iidx);
+
+                var signal = GetRsiSignal(iidx - prevIidx1, prevIidx1 - prevIidx2, iidx, prevIidx1, 95, 5);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Iidx", iidxList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = iidxList;
+            stockData.IndicatorName = IndicatorName.InsyncIndex;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Ease Of Movement
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="divisor"></param>
+        /// <returns></returns>
+        public static StockData CalculateEaseOfMovement(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 14,
+            decimal divisor = 1000000)
+        {
+            List<decimal> halfRangeList = new();
+            List<decimal> midpointMoveList = new();
+            List<decimal> emvList = new();
+            List<Signal> signalsList = new();
+            var (_, highList, lowList, _, volumeList) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                decimal prevHalfRange = halfRangeList.LastOrDefault();
+                decimal halfRange = (currentHigh - currentLow) * 0.5m;
+                decimal boxRatio = currentHigh - currentLow != 0 ? currentVolume / (currentHigh - currentLow) : 0;
+
+                decimal prevMidpointMove = midpointMoveList.LastOrDefault();
+                decimal midpointMove = halfRange - prevHalfRange;
+                midpointMoveList.Add(midpointMove);
+
+                decimal emv = boxRatio != 0 ? divisor * ((midpointMove - prevMidpointMove) / boxRatio) : 0;
+                emvList.Add(emv);
+            }
+
+            var emvSmaList = GetMovingAverageList(stockData, maType, length, emvList);
+            var emvSignalList = GetMovingAverageList(stockData, maType, length, emvSmaList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal emv = emvList.ElementAtOrDefault(i);
+                decimal emvSignal = emvSignalList.ElementAtOrDefault(i);
+                decimal prevEmv = i >= 1 ? emvList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevEmvSignal = i >= 1 ? emvSignalList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetCompareSignal(emv - emvSignal, prevEmv - prevEmvSignal);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Eom", emvList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = emvList;
+            stockData.IndicatorName = IndicatorName.EaseOfMovement;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Detrended Price Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateDetrendedPriceOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 20)
+        {
+            List<decimal> dpoList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int prevPeriods = MinOrMax((int)Math.Ceiling(((decimal)length / 2) + 1));
+
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentSma = smaList.ElementAtOrDefault(i);
+                decimal prevValue = i >= prevPeriods ? inputList.ElementAtOrDefault(i - prevPeriods) : 0;
+
+                decimal prevDpo = dpoList.LastOrDefault();
+                decimal dpo = prevValue - currentSma;
+                dpoList.Add(dpo);
+
+                var signal = GetCompareSignal(dpo, prevDpo);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Dpo", dpoList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = dpoList;
+            stockData.IndicatorName = IndicatorName.DetrendedPriceOscillator;
 
             return stockData;
         }

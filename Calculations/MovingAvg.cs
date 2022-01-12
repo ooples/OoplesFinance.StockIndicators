@@ -2822,5 +2822,156 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the IIR Least Squares Estimate
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateIIRLeastSquaresEstimate(this StockData stockData, int length = 100)
+        {
+            List<decimal> sList = new();
+            List<decimal> sEmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal a = (decimal)4 / (length + 2);
+            int halfLength = MinOrMax((int)Math.Ceiling((decimal)length / 2));
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevS = i >= 1 ? sList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal prevSEma = sEmaList.LastOrDefault();
+                decimal sEma = CalculateEMA(prevS, prevSEma, halfLength);
+                sEmaList.Add(prevSEma);
+
+                decimal s = (a * currentValue) + prevS - (a * sEma);
+                sList.Add(s);
+
+                var signal = GetCompareSignal(currentValue - s, prevValue - prevS);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "IIRLse", sList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = sList;
+            stockData.IndicatorName = IndicatorName.IIRLeastSquaresEstimate;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Inverse Distance Weighted Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateInverseDistanceWeightedMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> idwmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal sum = 0, weightedSum = 0;
+                for (int j = 0; j <= length - 1; j++)
+                {
+                    decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                    decimal weight = 0;
+                    for (int k = 0; k <= length - 1; k++)
+                    {
+                        decimal prevValue2 = i >= k ? inputList.ElementAtOrDefault(i - k) : 0;
+                        weight += Math.Abs(prevValue - prevValue2);
+                    }
+
+                    sum += prevValue * weight;
+                    weightedSum += weight;
+                }
+
+                decimal prevIdwma = idwmaList.LastOrDefault();
+                decimal idwma = weightedSum != 0 ? sum / weightedSum : 0;
+                idwmaList.Add(idwma);
+
+                var signal = GetCompareSignal(currentValue - idwma, prevVal - prevIdwma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Idwma", idwmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = idwmaList;
+            stockData.IndicatorName = IndicatorName.InverseDistanceWeightedMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Trimean
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateTrimean(this StockData stockData, int length = 14)
+        {
+            List<decimal> tempList = new();
+            List<decimal> medianList = new();
+            List<decimal> q1List = new();
+            List<decimal> q3List = new();
+            List<decimal> trimeanList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal prevValue = tempList.LastOrDefault();
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                tempList.Add(currentValue);
+
+                var lookBackList = tempList.TakeLastExt(length);
+
+                decimal q1 = lookBackList.PercentileNearestRank(25);
+                q1List.Add(q1);
+
+                decimal median = lookBackList.PercentileNearestRank(50);
+                medianList.Add(median);
+
+                decimal q3 = lookBackList.PercentileNearestRank(75);
+                q3List.Add(q3);
+
+                decimal prevTrimean = trimeanList.LastOrDefault();
+                decimal trimean = (q1 + (2 * median) + q3) / 4;
+                trimeanList.Add(trimean);
+
+                var signal = GetCompareSignal(currentValue - trimean, prevValue - prevTrimean);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Trimean", trimeanList },
+                { "Q1", q1List },
+                { "Median", medianList },
+                { "Q3", q3List }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = trimeanList;
+            stockData.IndicatorName = IndicatorName.Trimean;
+
+            return stockData;
+        }
     }
 }

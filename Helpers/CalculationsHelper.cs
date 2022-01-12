@@ -77,6 +77,12 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.HullMovingAverage:
                     movingAvgList = stockData.CalculateHullMovingAverage(MovingAvgType.WeightedMovingAverage, length).CustomValuesList;
                     break;
+                case MovingAvgType.IIRLeastSquaresEstimate:
+                    movingAvgList = stockData.CalculateIIRLeastSquaresEstimate(length).CustomValuesList;
+                    break;
+                case MovingAvgType.InverseDistanceWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateInverseDistanceWeightedMovingAverage(length).CustomValuesList;
+                    break;
                 case MovingAvgType.JsaMovingAverage:
                     movingAvgList = stockData.CalculateJsaMovingAverage(length).CustomValuesList;
                     break;
@@ -136,6 +142,9 @@ namespace OoplesFinance.StockIndicators.Helpers
                     break;
                 case MovingAvgType.TriangularMovingAverage:
                     movingAvgList = stockData.CalculateTriangularMovingAverage(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                    break;
+                case MovingAvgType.Trimean:
+                    movingAvgList = stockData.CalculateTrimean(length).CustomValuesList;
                     break;
                 case MovingAvgType.TripleExponentialMovingAverage:
                     movingAvgList = stockData.CalculateTripleExponentialMovingAverage(MovingAvgType.ExponentialMovingAverage, length).CustomValuesList;
@@ -453,6 +462,21 @@ namespace OoplesFinance.StockIndicators.Helpers
 
             foreach (T item in result)
                 yield return result.Dequeue();
+        }
+
+        /// <summary>
+        /// Gets the Percentile Nearest Rank
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <param name="percentile"></param>
+        /// <returns></returns>
+        public static decimal PercentileNearestRank(this IEnumerable<decimal> sequence, decimal percentile)
+        {
+            var list = sequence.OrderBy(i => i).ToList();
+            var n = list.Count;
+            int rank = n > 0 ? (int)Math.Ceiling(percentile / 100 * n) : 0;
+
+            return list.ElementAtOrDefault(Math.Max(rank - 1, 0));
         }
     }
 }

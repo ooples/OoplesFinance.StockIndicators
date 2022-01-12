@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Description>Open source C# library of stock indicators with over 700 indicators planned</Description>
-    <Version>0.0.10</Version>
+    <Description>Largest C# library of stock indicators and easiest to use with abilities such as making an indicator out of any other indicator or using any moving average with any indicator. </Description>
+    <Version>0.0.11</Version>
     <Authors>ooples</Authors>
     <Company>Ooples Finance</Company>
     <RepositoryUrl>https://github.com/ooples/OoplesFinance.StockIndicators</RepositoryUrl>
@@ -19,7 +19,7 @@
     <PackageReleaseNotes>https://github.com/ooples/OoplesFinance.StockIndicators/releases</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/ooples/OoplesFinance.StockIndicators</PackageProjectUrl>
     <PackageTags>stock; stocks; technical; indicators; market; markets; analysis; library; finance; financial; indicator; moving average; algorithm; algorithms; trading; trades; algorithmic; ai; trade</PackageTags>
-    <Copyright>Ooples Finance LLC 2021</Copyright>
+    <Copyright>Ooples Finance LLC 2021-2022</Copyright>
     <PackageIcon>Favicon.jpg</PackageIcon>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     <UseWindowsForms>False</UseWindowsForms>

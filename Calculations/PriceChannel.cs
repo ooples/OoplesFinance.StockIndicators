@@ -662,5 +662,59 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Interquartile Range Bands
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="mult"></param>
+        /// <returns></returns>
+        public static StockData CalculateInterquartileRangeBands(this StockData stockData, int length = 14, decimal mult = 1.5m)
+        {
+            List<decimal> upperBandList = new();
+            List<decimal> lowerBandList = new();
+            List<decimal> middleBandList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var trimeanList = CalculateTrimean(stockData, length);
+            var q1List = trimeanList.OutputValues["Q1"];
+            var q3List = trimeanList.OutputValues["Q3"];
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal q1 = q1List.ElementAtOrDefault(i);
+                decimal q3 = q3List.ElementAtOrDefault(i);
+                decimal iqr = q3 - q1;
+
+                decimal upperBand = q3 + (mult * iqr);
+                upperBandList.Add(upperBand);
+
+                decimal lowerBand = q1 - (mult * iqr);
+                lowerBandList.Add(lowerBand);
+
+                decimal prevMiddleBand = middleBandList.LastOrDefault();
+                decimal middleBand = (upperBand + lowerBand) / 2;
+                middleBandList.AddRounded(middleBand);
+
+                var signal = GetCompareSignal(currentValue - middleBand, prevValue - prevMiddleBand);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperBandList },
+                { "MiddleBand", middleBandList },
+                { "LowerBand", lowerBandList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.InterquartileRangeBands;
+
+            return stockData;
+        }
     }
 }

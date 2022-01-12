@@ -19,7 +19,7 @@ namespace OoplesFinance.StockIndicators
         {
             int length = 14, signalLength = 3;
 
-            return CalculateRelativeStrengthIndex(stockData, MovingAvgType.ExponentialMovingAverage, length, signalLength);
+            return CalculateRelativeStrengthIndex(stockData, MovingAvgType.WildersSmoothingMethod, length, signalLength);
         }
 
         /// <summary>
@@ -30,7 +30,8 @@ namespace OoplesFinance.StockIndicators
         /// <param name="length">The length.</param>
         /// <param name="signalLength">Length of the signal.</param>
         /// <returns></returns>
-        public static StockData CalculateRelativeStrengthIndex(this StockData stockData, MovingAvgType movingAvgType, int length, int signalLength)
+        public static StockData CalculateRelativeStrengthIndex(this StockData stockData, MovingAvgType movingAvgType = MovingAvgType.WildersSmoothingMethod, 
+            int length = 14, int signalLength = 3)
         {
             List<decimal> rsiList = new();
             List<decimal> rsList = new();
