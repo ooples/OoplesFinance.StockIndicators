@@ -53,9 +53,23 @@
 
 [Connors Relative Strength Index](https://school.stockcharts.com/doku.php?id=technical_indicators:connorsrsi)
 
+[Detrended Price Oscillator](https://www.tradingview.com/script/yMRm9CPq-Detrended-Price-Oscillator/)
+
 [Ehlers Roofing Filter](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersRoofingFilter)
 
 [Gator Oscillator](https://www.motivewave.com/studies/gator_oscillator.htm)
+
+[Impulse Moving Average Convergence Divergence](https://www.tradingview.com/script/qt6xLfLi-Impulse-MACD-LazyBear/)
+
+[Impulse Percentage Price Oscillator](https://www.tradingview.com/script/qt6xLfLi-Impulse-MACD-LazyBear/)
+
+[Inertia Indicator](https://www.tradingview.com/script/bzxmXFGd-Dorsey-Inertia/)
+
+[Internal Bar Strength Indicator](https://www.tradingview.com/script/d4ZKlO1n-Internal-Bar-Strength-Indicator/)
+
+[Inverse Fisher Fast Z Score](https://www.tradingview.com/script/3kDZjmea-Inverse-Fisher-Fast-Z-score/)
+
+[Inverse Fisher Z Score](https://www.tradingview.com/script/mL8Dc8aI-Inverse-Fisher-Z-Score/)
 
 [Japanese Correlation Coefficient](https://www.tradingview.com/script/hzveNetW-Japanese-Correlation-Coefficient/)
 
@@ -201,6 +215,12 @@ Atr Filtered Exponential Moving Average
 
 [Ichimoku Cloud](https://www.investopedia.com/terms/i/ichimoku-cloud.asp)
 
+[IIR Least Squares Estimate](https://www.tradingview.com/script/eNyXWlC4-IIR-Least-Squares-Estimate/)
+
+[Insync Index](https://www.tradingview.com/script/klczcNre-Insync-Index-LazyBear/)
+
+[Inverse Distance Weighted Moving Average](https://www.tradingview.com/script/Lf8rYmMR-Inverse-Distance-Weighted-Moving-Average/)
+
 [Jsa Moving Average](https://www.tradingview.com/script/uv7U7kpS-Jsa-Moving-Average-CC/)
 
 [Jurik Moving Average](https://www.tradingview.com/script/714vYiDe-Jurik-Moving-Average/)
@@ -246,6 +266,8 @@ Atr Filtered Exponential Moving Average
 [T3 Moving Average](https://www.technicalindicators.net/indicators-technical-analysis/150-t3-moving-average)
 
 [Triangular Moving Average](https://commodity.com/technical-analysis/ma-triangular/)
+
+[Trimean](https://www.tradingview.com/script/Qf7glwIh-Trimean/)
 
 [Triple Exponential Moving Average](https://www.investopedia.com/terms/t/triple-exponential-moving-average.asp)
 
@@ -302,11 +324,19 @@ Atr Filtered Exponential Moving Average
 
 [Historical Volatility](https://www.investopedia.com/terms/h/historicalvolatility.asp)
 
+[Information Ratio](https://www.motivewave.com/studies/information_ratio.htm)
+
+[Interquartile Range Bands](https://www.tradingview.com/script/YoNUqtWW-Interquartile-Range-Bands/)
+
 [Jrc Fractal Dimension](https://www.motivewave.com/studies/jrc_fractal_dimension.htm)
 
 [Qma Sma Difference](https://www.tradingview.com/script/Iw3FtbxG-QMA-SMA-Difference/)
 
 [Quasi White Noise](https://www.tradingview.com/script/UWKXaj5O-RESEARCH-Quasi-White-Noise/)
+
+[Relative Volatility Index V1](https://www.tradingview.com/script/mLZJqxKn-Relative-Volatility-Index/)
+
+[Relative Volatility Index V2](https://www.tradingview.com/script/mLZJqxKn-Relative-Volatility-Index/)
 
 [Standard Deviation Channel](https://www.motivewave.com/studies/standard_deviation_channel.htm)
 
@@ -332,6 +362,8 @@ Atr Filtered Exponential Moving Average
 [Chaikin Money Flow](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/cmf)
 
 [Chaikin Oscillator](https://www.investopedia.com/terms/c/chaikinoscillator.asp)
+
+[Ease Of Movement](https://www.tradingview.com/script/Y9Eykm1v-Ease-of-Movement-EOM/)
 
 [Force Index](https://www.investopedia.com/articles/trading/03/031203.asp)
 
