@@ -116,6 +116,12 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.MesaAdaptiveMovingAverage:
                     movingAvgList = stockData.CalculateEhlersMotherOfAdaptiveMovingAverages().CustomValuesList;
                     break;
+                case MovingAvgType.OptimalWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateOptimalWeightedMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.OvershootReductionMovingAverage:
+                    movingAvgList = stockData.CalculateOvershootReductionMovingAverage(length: length).CustomValuesList;
+                    break;
                 case MovingAvgType.PoweredKaufmanAdaptiveMovingAverage:
                     movingAvgList = stockData.CalculatePoweredKaufmanAdaptiveMovingAverage(length: length).CustomValuesList;
                     break;
@@ -151,6 +157,9 @@ namespace OoplesFinance.StockIndicators.Helpers
                     break;
                 case MovingAvgType.UltimateMovingAverage:
                     movingAvgList = stockData.CalculateUltimateMovingAverage(MovingAvgType.SimpleMovingAverage).CustomValuesList;
+                    break;
+                case MovingAvgType.VariableIndexDynamicAverage:
+                    movingAvgList = stockData.CalculateVariableIndexDynamicAverage(length: length).CustomValuesList;
                     break;
                 case MovingAvgType.VariableLengthMovingAverage:
                     movingAvgList = stockData.CalculateVariableLengthMovingAverage(MovingAvgType.SimpleMovingAverage).CustomValuesList;

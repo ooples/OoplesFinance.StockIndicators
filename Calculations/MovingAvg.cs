@@ -2973,5 +2973,181 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Optimal Weighted Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateOptimalWeightedMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> tempList = new();
+            List<decimal> owmaList = new();
+            List<decimal> prevOwmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal prevVal = tempList.LastOrDefault();
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                tempList.Add(currentValue);
+
+                decimal prevOwma = i >= 1 ? owmaList.ElementAtOrDefault(i - 1) : 0;
+                prevOwmaList.Add(prevOwma);
+
+                var corr = GoodnessOfFit.R(tempList.TakeLastExt(length).Select(x => (double)x), prevOwmaList.TakeLastExt(length).Select(x => (double)x));
+                corr = IsValueNullOrInfinity((double)corr) ? 0 : corr;
+
+                decimal sum = 0, weightedSum = 0;
+                for (int j = 0; j <= length - 1; j++)
+                {
+                    decimal weight = Pow(length - j, corr);
+                    decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                    sum += prevValue * weight;
+                    weightedSum += weight;
+                }
+
+                decimal owma = weightedSum != 0 ? sum / weightedSum : 0;
+                owmaList.Add(owma);
+
+                var signal = GetCompareSignal(currentValue - owma, prevVal - prevOwma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Owma", owmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = owmaList;
+            stockData.IndicatorName = IndicatorName.OptimalWeightedMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Overshoot Reduction Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateOvershootReductionMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 14)
+        {
+            List<decimal> indexList = new();
+            List<decimal> bList = new();
+            List<decimal> dList = new();
+            List<decimal> bSmaList = new();
+            List<decimal> corrList = new();
+            List<decimal> tempList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int length1 = (int)Math.Ceiling((decimal)length / 2);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal index = i;
+                indexList.Add(index);
+
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                tempList.Add(currentValue);
+
+                var corr = GoodnessOfFit.R(indexList.TakeLastExt(length).Select(x => (double)x), tempList.TakeLastExt(length).Select(x => (double)x));
+                corr = IsValueNullOrInfinity(corr) ? 0 : corr;
+                corrList.Add((decimal)corr);
+            }
+
+            var indexSmaList = GetMovingAverageList(stockData, maType, length, indexList);
+            var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+            var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            stockData.CustomValuesList = indexList;
+            var indexStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal index = indexList.ElementAtOrDefault(i);
+                decimal indexSma = indexSmaList.ElementAtOrDefault(i);
+                decimal indexStdDev = indexStdDevList.ElementAtOrDefault(i);
+                decimal corr = corrList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevD = i >= 1 ? dList.ElementAtOrDefault(i - 1) != 0 ? dList.ElementAtOrDefault(i - 1) : prevValue : prevValue;
+                decimal sma = smaList.ElementAtOrDefault(i);
+                decimal stdDev = stdDevList.ElementAtOrDefault(i);
+                decimal a = indexStdDev != 0 && corr != 0 ? (index - indexSma) / indexStdDev * corr : 0;
+
+                decimal b = Math.Abs(prevD - currentValue);
+                bList.Add(b);
+
+                decimal bSma = bList.TakeLastExt(length1).Average();
+                bSmaList.Add(bSma);
+
+                decimal highest = bSmaList.TakeLastExt(length).Max();
+                decimal c = highest != 0 ? b / highest : 0;
+
+                decimal d = sma + (a * (stdDev * c));
+                dList.Add(d);
+
+                var signal = GetCompareSignal(currentValue - d, prevValue - prevD);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Orma", dList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = dList;
+            stockData.IndicatorName = IndicatorName.OvershootReductionMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Variable Index Dynamic Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateVariableIndexDynamicAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+            int length = 14)
+        {
+            List<decimal> vidyaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal alpha = (decimal)2 / (length + 1);
+
+            var cmoList = CalculateChandeMomentumOscillator(stockData, maType, length: length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentCmo = Math.Abs(cmoList.ElementAtOrDefault(i) / 100);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevVidya = vidyaList.LastOrDefault();
+                decimal currentVidya = (currentValue * alpha * currentCmo) + (prevVidya * (1 - (alpha * currentCmo)));
+                vidyaList.Add(currentVidya);
+
+                var signal = GetCompareSignal(currentValue - currentVidya, prevValue - prevVidya);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Vidya", vidyaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = vidyaList;
+            stockData.IndicatorName = IndicatorName.VariableIndexDynamicAverage;
+
+            return stockData;
+        }
     }
 }

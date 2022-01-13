@@ -123,6 +123,8 @@ namespace OoplesFinance.StockIndicators.Enums
         ChaikinMoneyFlow,
         [Category(IndicatorType.Volume)]
         ChaikinOscillator,
+        [Category(IndicatorType.Momentum)]
+        ChandeMomentumOscillator,
         [Category(IndicatorType.Trend)]
         ChandelierExit,
         [Category(IndicatorType.Momentum)]
@@ -239,8 +241,30 @@ namespace OoplesFinance.StockIndicators.Enums
         MovingAverageEnvelope,
         [Category(IndicatorType.Volume)]
         NegativeVolumeIndex,
+        [Category(IndicatorType.Momentum)]
+        OCHistogram,
+        [Category(IndicatorType.Momentum)]
+        OceanIndicator,
+        [Category(IndicatorType.Volatility)]
+        OmegaRatio,
         [Category(IndicatorType.Volume)]
         OnBalanceVolume,
+        [Category(IndicatorType.Volume)]
+        OnBalanceVolumeDisparityIndicator,
+        [Category(IndicatorType.Volume)]
+        OnBalanceVolumeModified,
+        [Category(IndicatorType.Volume)]
+        OnBalanceVolumeReflex,
+        [Category(IndicatorType.Trend)]
+        OptimalWeightedMovingAverage,
+        [Category(IndicatorType.Trend)]
+        OptimizedTrendTracker,
+        [Category(IndicatorType.Momentum)]
+        OscOscillator,
+        [Category(IndicatorType.Momentum)]
+        OscarIndicator,
+        [Category(IndicatorType.Trend)]
+        OvershootReductionMovingAverage,
         [Category(IndicatorType.Trend)]
         ParabolicSAR,
         [Category(IndicatorType.Momentum)]
@@ -335,6 +359,8 @@ namespace OoplesFinance.StockIndicators.Enums
         UpsideDownsideVolume,
         [Category(IndicatorType.Volatility)]
         UpsidePotentialRatio,
+        [Category(IndicatorType.Trend)]
+        VariableIndexDynamicAverage,
         [Category(IndicatorType.Trend)]
         VariableLengthMovingAverage,
         [Category(IndicatorType.Trend)]
