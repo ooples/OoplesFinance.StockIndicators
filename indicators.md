@@ -47,6 +47,8 @@
 
 [Bull Power Indicator](https://www.tradingview.com/script/K0wF9cV8-Bull-Power-Indicator/)
 
+[Chande Momentum Oscillator](https://www.motivewave.com/studies/chande_momentum_oscillator.htm)
+
 [Choppiness Index](https://www.incrediblecharts.com/indicators/choppiness-index.php)
 
 [Commodity Channel Index](https://www.investopedia.com/terms/c/commoditychannelindex.asp)
@@ -86,6 +88,14 @@
 [McClellan Oscillator](https://www.investopedia.com/terms/m/mcclellanoscillator.asp)
 
 [Moving Average Convergence Divergence](https://www.investopedia.com/terms/m/macd.asp)
+
+[OC Histogram](https://www.motivewave.com/studies/oc_histogram.htm)
+
+[Ocean Indicator](https://www.tradingview.com/script/oQ7Uf68E-Ocean-Indicator-CC/)
+
+[Osc Oscillator](https://www.tradingview.com/script/IYZEQaC0-OSC-Oscillator/)
+
+[Oscar Indicator](https://www.motivewave.com/studies/oscar.htm)
 
 [Percentage Price Oscillator](https://www.investopedia.com/terms/p/ppo.asp)
 
@@ -247,6 +257,12 @@ Atr Filtered Exponential Moving Average
 
 [Mother Of Adaptive Moving Averages](https://www.prorealcode.com/prorealtime-indicators/john-ehlers-mama-the-mother-of-adaptive-moving-average/)
 
+[Optimal Weighted Moving Average](https://www.tradingview.com/script/JFbgKEAK-Optimal-Weighted-Moving-Average/)
+
+[Optimized Trend Tracker](https://www.tradingview.com/script/zVhoDQME/)
+
+[Overshoot Reduction Moving Average](https://www.tradingview.com/script/k5rO6xlR-Least-Squares-Moving-Average-With-Overshoot-Reduction/)
+
 [Parabolic SAR](https://www.investopedia.com/trading/introduction-to-parabolic-sar/)
 
 [Quadratic Least Squares Moving Average](https://www.tradingview.com/script/JXdhlosm-Quadratic-Least-Squares-Moving-Average-Smoothing-Forecast/)
@@ -276,6 +292,8 @@ Atr Filtered Exponential Moving Average
 [Uber Trend Indicator](https://www.tradingview.com/script/mh4ebJnU-Uber-Trend-Indicator/)
 
 [Ultimate Moving Average](https://www.tradingview.com/script/hYVS9kuu-Ultimate-Moving-Average-CC-RedK/)
+
+[Variable Index Dynamic Average](https://www.tradingview.com/script/hdrf0fXV-Variable-Index-Dynamic-Average-VIDYA/)
 
 [Variable Length Moving Average](https://www.tradingview.com/script/wskG0Eh9-Variable-Length-Moving-Average/)
 
@@ -330,6 +348,8 @@ Atr Filtered Exponential Moving Average
 
 [Jrc Fractal Dimension](https://www.motivewave.com/studies/jrc_fractal_dimension.htm)
 
+[Omega Ratio](https://www.motivewave.com/studies/omega_ratio.htm)
+
 [Qma Sma Difference](https://www.tradingview.com/script/Iw3FtbxG-QMA-SMA-Difference/)
 
 [Quasi White Noise](https://www.tradingview.com/script/UWKXaj5O-RESEARCH-Quasi-White-Noise/)
@@ -374,6 +394,12 @@ Atr Filtered Exponential Moving Average
 [Negative Volume Index](https://www.investopedia.com/terms/n/nvi.asp)
 
 [On Balance Volume](https://www.investopedia.com/terms/o/onbalancevolume.asp)
+
+[On Balance Volume Disparity Indicator](https://www.tradingview.com/script/jOgIN6e8-On-Balance-Volume-Disparity-Indicator/)
+
+[On Balance Volume Modified](https://www.tradingview.com/script/QAkBiJT0-On-Balance-Volume-Modified/)
+
+[On Balance Volume Reflex](https://www.tradingview.com/script/wA6QuxvX-On-Balance-Volume-Reflex/)
 
 [Percentage Volume Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:percentage_volume_oscillator_pvo)
 
