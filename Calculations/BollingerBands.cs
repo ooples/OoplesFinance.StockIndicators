@@ -17,7 +17,7 @@ namespace OoplesFinance.StockIndicators
         /// <returns></returns>
         public static StockData CalculateBollingerBands(this StockData stockData)
         {
-            return CalculateBollingerBands(stockData, 2, MovingAvgType.SimpleMovingAverage, 20);
+            return CalculateBollingerBands(stockData, MovingAvgType.SimpleMovingAverage, 20, 2);
         }
 
         /// <summary>
@@ -28,8 +28,8 @@ namespace OoplesFinance.StockIndicators
         /// <param name="movingAvgType">Average type of the moving.</param>
         /// <param name="length">The length.</param>
         /// <returns></returns>
-        public static StockData CalculateBollingerBands(this StockData stockData, decimal stdDevMult = 2, 
-            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 20)
+        public static StockData CalculateBollingerBands(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 20, decimal stdDevMult = 2)
         {
             List<decimal> upperBandList = new();
             List<decimal> lowerBandList = new();
@@ -88,7 +88,7 @@ namespace OoplesFinance.StockIndicators
             List<Signal> signalsList = new();
             var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
 
-            int nP = MinOrMax((int)Math.Ceiling(Sqrt((double)length)));
+            int nP = MinOrMax((int)Math.Ceiling(Sqrt(length)));
 
             var ema1List = GetMovingAverageList(stockData, maType, nP, inputList);
             var ema2List = GetMovingAverageList(stockData, maType, nP, ema1List);
@@ -298,7 +298,7 @@ namespace OoplesFinance.StockIndicators
             List<Signal> signalsList = new();
             var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-            var bollingerBands = CalculateBollingerBands(stockData, stdDevMult, maType, length);
+            var bollingerBands = CalculateBollingerBands(stockData, maType, length, stdDevMult);
             var upperBandList = bollingerBands.OutputValues["UpperBand"];
             var lowerBandList = bollingerBands.OutputValues["LowerBand"];
             var emaList = GetMovingAverageList(stockData, maType, atrLength, inputList);
@@ -416,7 +416,7 @@ namespace OoplesFinance.StockIndicators
             List<Signal> signalsList = new();
             var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-            var bbList = CalculateBollingerBands(stockData, stdDevMult, maType, length);
+            var bbList = CalculateBollingerBands(stockData, maType, length, stdDevMult);
             var upperBandList = bbList.OutputValues["UpperBand"];
             var lowerBandList = bbList.OutputValues["LowerBand"];
 
@@ -461,7 +461,7 @@ namespace OoplesFinance.StockIndicators
             List<Signal> signalsList = new();
             var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-            var bbList = CalculateBollingerBands(stockData, stdDevMult, maType, length);
+            var bbList = CalculateBollingerBands(stockData, maType, length, stdDevMult);
             var upperBandList = bbList.OutputValues["UpperBand"];
             var lowerBandList = bbList.OutputValues["LowerBand"];
             var middleBandList = bbList.OutputValues["MiddleBand"];

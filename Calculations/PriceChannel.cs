@@ -716,5 +716,35 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Narrow Sideways Channel
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="stdDevMult"></param>
+        /// <returns></returns>
+        public static StockData CalculateNarrowSidewaysChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 14, decimal stdDevMult = 3)
+        {
+            var narrowChannelList = CalculateBollingerBands(stockData, maType, length, stdDevMult);
+            var upperBandList = narrowChannelList.OutputValues["UpperBand"];
+            var middleBandList = narrowChannelList.OutputValues["MiddleBand"];
+            var lowerBandList = narrowChannelList.OutputValues["LowerBand"];
+            var signalsList = narrowChannelList.SignalsList;
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperBandList },
+                { "MiddleBand", middleBandList },
+                { "LowerBand", lowerBandList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.NarrowSidewaysChannel;
+
+            return stockData;
+        }
     }
 }

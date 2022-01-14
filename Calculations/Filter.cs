@@ -35,11 +35,11 @@ namespace OoplesFinance.StockIndicators
             List<Signal> signalsList = new();
             var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-            decimal alphaArg = Math.Min((decimal)(0.707 * 2 * Math.PI) / upperLength, 0.99m);
+            decimal alphaArg = Math.Min(0.707m * 2 * Pi / upperLength, 0.99m);
             decimal alphaCos = Cos(alphaArg);
             decimal alpha1 = alphaCos != 0 ? (alphaCos + Sin(alphaArg) - 1) / alphaCos : 0;
-            decimal a1 = Exp(-1.414 * Math.PI / lowerLength);
-            decimal b1 = 2 * a1 * Cos(Math.Min(1.414 * Math.PI / lowerLength, 0.99));
+            decimal a1 = Exp(-1.414m * Pi / lowerLength);
+            decimal b1 = 2 * a1 * Cos(Math.Min(1.414m * Pi / lowerLength, 0.99m));
             decimal c2 = b1;
             decimal c3 = -1 * a1 * a1;
             decimal c1 = 1 - c2 - c3;

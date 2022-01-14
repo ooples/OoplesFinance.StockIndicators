@@ -17,29 +17,9 @@
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public static decimal Log10(double value)
-        {
-            return (decimal)Math.Log10(value);
-        }
-
-        /// <summary>
-        /// Log10s the specified value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
         public static decimal Log10(decimal value)
         {
             return (decimal)Math.Log10((double)value);
-        }
-
-        /// <summary>
-        /// SQRTs the specified value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        public static decimal Sqrt(double value)
-        {
-            return (decimal)Math.Sqrt(value);
         }
 
         /// <summary>
@@ -60,16 +40,6 @@
         public static decimal Sin(decimal value)
         {
             return (decimal)Math.Sin((double)value);
-        }
-
-        /// <summary>
-        /// Coses the specified value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        public static decimal Cos(double value)
-        {
-            return (decimal)Math.Cos(value);
         }
 
         /// <summary>
@@ -112,27 +82,6 @@
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Exps the specified value.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        public static decimal Exp(double value)
-        {
-            decimal exp;
-
-            if (IsValueNullOrInfinity(value))
-            {
-                exp = 0;
-            }
-            else
-            {
-                exp = (decimal)Math.Exp(Math.Min(100, value));
-            }
-
-            return exp;
         }
 
         /// <summary>

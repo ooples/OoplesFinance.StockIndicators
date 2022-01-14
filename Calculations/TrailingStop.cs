@@ -403,5 +403,76 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Nick Rypock Trailing Reverse
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateNickRypockTrailingReverse(this StockData stockData, int length = 2)
+        {
+            List<decimal> nrtrList = new();
+            List<decimal> hpList = new();
+            List<decimal> lpList = new();
+            List<decimal> trendList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal pct = length * 0.01m;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevTrend = trendList.LastOrDefault();
+                decimal prevHp = hpList.LastOrDefault();
+                decimal prevLp = lpList.LastOrDefault();
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevNrtr = nrtrList.LastOrDefault();
+                decimal nrtr, hp = 0, lp = 0, trend = 0;
+                if (prevTrend >= 0)
+                {
+                    hp = currentValue > prevHp ? currentValue : prevHp;
+                    nrtr = hp * (1 - pct);
+
+                    if (currentValue <= nrtr)
+                    {
+                        trend = -1;
+                        lp = currentValue;
+                        nrtr = lp * (1 + pct);
+                    }
+                }
+                else
+                {
+                    lp = currentValue < prevLp ? currentValue : prevLp;
+                    nrtr = lp * (1 + pct);
+
+                    if (currentValue > nrtr)
+                    {
+                        trend = 1;
+                        hp = currentValue;
+                        nrtr = hp * (1 - pct);
+                    }
+                }
+                trendList.Add(trend);
+                hpList.Add(hp);
+                lpList.Add(lp);
+                nrtrList.Add(nrtr);
+
+                var signal = GetCompareSignal(currentValue - nrtr, prevValue - prevNrtr);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Nrtr", nrtrList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = nrtrList;
+            stockData.IndicatorName = IndicatorName.NickRypockTrailingReverse;
+
+            return stockData;
+        }
     }
 }

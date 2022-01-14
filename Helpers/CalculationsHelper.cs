@@ -1,14 +1,14 @@
 ﻿using OoplesFinance.StockIndicators.Enums;
 using OoplesFinance.StockIndicators.Exceptions;
 using OoplesFinance.StockIndicators.Models;
-using System.Collections;
-using System.Collections.Generic;
 using static OoplesFinance.StockIndicators.Helpers.MathHelper;
 
 namespace OoplesFinance.StockIndicators.Helpers
 {
     public static class CalculationsHelper
     {
+        public const decimal Pi = 3.1415926535897931m;
+
         /// <summary>
         /// Gets the moving average list.
         /// </summary>
@@ -116,6 +116,9 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.MesaAdaptiveMovingAverage:
                     movingAvgList = stockData.CalculateEhlersMotherOfAdaptiveMovingAverages().CustomValuesList;
                     break;
+                case MovingAvgType.NaturalMovingAverage:
+                    movingAvgList = stockData.CalculateNaturalMovingAverage(length).CustomValuesList;
+                    break;
                 case MovingAvgType.OptimalWeightedMovingAverage:
                     movingAvgList = stockData.CalculateOptimalWeightedMovingAverage(length).CustomValuesList;
                     break;
@@ -142,6 +145,9 @@ namespace OoplesFinance.StockIndicators.Helpers
                     break;
                 case MovingAvgType.SimpleMovingAverage:
                     movingAvgList = stockData.CalculateSimpleMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.SymmetricallyWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateSymmetricallyWeightedMovingAverage(length).CustomValuesList;
                     break;
                 case MovingAvgType.T3MovingAverage:
                     movingAvgList = stockData.CalculateT3MovingAverage(MovingAvgType.ExponentialMovingAverage, length: length).CustomValuesList;

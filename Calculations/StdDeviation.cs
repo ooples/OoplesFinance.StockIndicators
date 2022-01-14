@@ -90,7 +90,7 @@ namespace OoplesFinance.StockIndicators
             List<Signal> signalsList = new();
             var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-            decimal annualSqrt = Sqrt((double)365);
+            decimal annualSqrt = Sqrt(365);
 
             var emaList = GetMovingAverageList(stockData, maType, length, inputList);
 

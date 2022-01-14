@@ -241,8 +241,8 @@ namespace OoplesFinance.StockIndicators
             List<Signal> signalsList = new();
             var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-            int length2 = MinOrMax((int)Math.Ceiling((double)length / 2)); ;
-            int sqrtLength = MinOrMax((int)Math.Ceiling(Sqrt((double)length)));
+            int length2 = MinOrMax((int)Math.Ceiling((decimal)length / 2)); ;
+            int sqrtLength = MinOrMax((int)Math.Ceiling(Sqrt(length)));
 
             var wma1List = GetMovingAverageList(stockData, maType, length, inputList);
             var wma2List = GetMovingAverageList(stockData, maType, length2, inputList);
@@ -2261,7 +2261,7 @@ namespace OoplesFinance.StockIndicators
 
                 decimal prevQma = qmaList.LastOrDefault();
                 decimal powSma = powList.TakeLastExt(length).Average();
-                decimal qma = powSma >= 0 ? Sqrt((double)powSma) : 0;
+                decimal qma = powSma >= 0 ? Sqrt(powSma) : 0;
                 qmaList.Add(qma);
 
                 var signal = GetCompareSignal(currentValue - qma, prevValue - prevQma);
@@ -3146,6 +3146,134 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = vidyaList;
             stockData.IndicatorName = IndicatorName.VariableIndexDynamicAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Natural Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateNaturalMovingAverage(this StockData stockData, int length = 40)
+        {
+            List<decimal> lnList = new();
+            List<decimal> nmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal ln = currentValue > 0 ? Log(currentValue) * 1000 : 0;
+                lnList.Add(ln);
+
+                decimal num = 0, denom = 0;
+                for (int j = 0; j < length; j++)
+                {
+                    decimal currentLn = i >= j ? lnList.ElementAtOrDefault(i - j) : 0;
+                    decimal prevLn = i >= j + 1 ? lnList.ElementAtOrDefault(i - (j + 1)) : 0;
+                    decimal oi = Math.Abs(currentLn - prevLn);
+                    num += oi * (Sqrt(j + 1) - Sqrt(j));
+                    denom += oi;
+                }
+
+                decimal ratio = denom != 0 ? num / denom : 0;
+                decimal prevNma = nmaList.LastOrDefault();
+                decimal nma = (currentValue * ratio) + (prevValue * (1 - ratio));
+                nmaList.Add(nma);
+
+                var signal = GetCompareSignal(currentValue - nma, prevValue - prevNma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Nma", nmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = nmaList;
+            stockData.IndicatorName = IndicatorName.NaturalMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Symmetrically Weighted Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateSymmetricallyWeightedMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> swmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int floorLength = (int)Math.Floor((decimal)length / 2);
+            int roundLength = (int)Math.Round((decimal)length / 2);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal nr = 0, nl = 0, sr = 0, sl = 0;
+                if (floorLength == roundLength)
+                {
+                    for (int j = 0; j <= floorLength - 1; j++)
+                    {
+                        decimal wr = (length - (length - 1 - j)) * length;
+                        decimal prevVal = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+                        nr += wr;
+                        sr += prevVal * wr;
+                    }
+
+                    for (int j = floorLength; j <= length - 1; j++)
+                    {
+                        decimal wl = (length - j) * length;
+                        decimal prevVal = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+                        nl += wl;
+                        sl += prevVal * wl;
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j <= floorLength; j++)
+                    {
+                        decimal wr = (length - (length - 1 - j)) * length;
+                        decimal prevVal = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+                        nr += wr;
+                        sr += prevVal * wr;
+                    }
+
+                    for (int j = roundLength; j <= length - 1; j++)
+                    {
+                        decimal wl = (length - j) * length;
+                        decimal prevVal = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+                        nl += wl;
+                        sl += prevVal * wl;
+                    }
+                }
+
+                decimal prevSwma = swmaList.LastOrDefault();
+                decimal swma = nr + nl != 0 ? (sr + sl) / (nr + nl) : 0;
+                swmaList.AddRounded(swma);
+
+                var signal = GetCompareSignal(currentValue - swma, prevValue - prevSwma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Swma", swmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = swmaList;
+            stockData.IndicatorName = IndicatorName.SymmetricallyWeightedMovingAverage;
 
             return stockData;
         }

@@ -239,8 +239,36 @@ namespace OoplesFinance.StockIndicators.Enums
         MovingAverageConvergenceDivergence,
         [Category(IndicatorType.SupportAndResistance)]
         MovingAverageEnvelope,
+        [Category(IndicatorType.Momentum)]
+        NarrowBandpassFilter,
+        [Category(IndicatorType.Momentum)]
+        NarrowSidewaysChannel,
+        [Category(IndicatorType.Momentum)]
+        NaturalDirectionalCombo,
+        [Category(IndicatorType.Momentum)]
+        NaturalDirectionalIndex,
+        [Category(IndicatorType.Momentum)]
+        NaturalMarketCombo,
+        [Category(IndicatorType.Momentum)]
+        NaturalMarketMirror,
+        [Category(IndicatorType.Momentum)]
+        NaturalMarketRiver,
+        [Category(IndicatorType.Momentum)]
+        NaturalMarketSlope,
+        [Category(IndicatorType.Trend)]
+        NaturalMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        NaturalStochasticIndicator,
+        [Category(IndicatorType.Volume)]
+        NegativeVolumeDisparityIndicator,
         [Category(IndicatorType.Volume)]
         NegativeVolumeIndex,
+        [Category(IndicatorType.Trend)]
+        NickRypockTrailingReverse,
+        [Category(IndicatorType.Trend)]
+        NormalizedRelativeVigorIndex,
+        [Category(IndicatorType.Momentum)]
+        NthOrderDifferencingOscillator,
         [Category(IndicatorType.Momentum)]
         OCHistogram,
         [Category(IndicatorType.Momentum)]
@@ -321,6 +349,8 @@ namespace OoplesFinance.StockIndicators.Enums
         StollerAverageRangeChannels,
         [Category(IndicatorType.Trend)]
         SuperTrend,
+        [Category(IndicatorType.Trend)]
+        SymmetricallyWeightedMovingAverage,
         [Category(IndicatorType.Trend)]
         T3MovingAverage,
         [Category(IndicatorType.Trend)]
