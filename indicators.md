@@ -89,6 +89,26 @@
 
 [Moving Average Convergence Divergence](https://www.investopedia.com/terms/m/macd.asp)
 
+[Narrow Bandpass Filter](https://www.tradingview.com/script/7u7lTclV-Narrow-Bandpass-Filter/)
+
+[Natural Directional Combo](https://www.tradingview.com/script/GBaq1yp8-Natural-Directional-Combo-CC/)
+
+[Natural Directional Index](https://www.tradingview.com/script/ArIVuigo-Natural-Directional-Index-CC/)
+
+[Natural Market Combo](https://www.tradingview.com/script/PQ9rBoWK-Natural-Market-Combo-CC/)
+
+[Natural Market Mirror](https://www.tradingview.com/script/6EhoPyMX-Natural-Market-Mirror-CC/)
+
+[Natural Market River](https://www.tradingview.com/script/PECtVZsE-Natural-Market-River-CC/)
+
+[Natural Market Slope](https://www.tradingview.com/script/p9ZxSsbR-Natural-Market-Slope-CC/)
+
+[Natural Stochastic Indicator](https://www.tradingview.com/script/j0QlE15n-Natural-Stochastic-Indicator-CC/)
+
+[Normalized Relative Vigor Index](https://www.tradingview.com/script/pZOLCRBu-Normalized-Relative-Vigor-Index/)
+
+[Nth Order Differencing Oscillator](https://www.tradingview.com/script/rezMdWg0-Nth-Order-Differencing-Oscillator/)
+
 [OC Histogram](https://www.motivewave.com/studies/oc_histogram.htm)
 
 [Ocean Indicator](https://www.tradingview.com/script/oQ7Uf68E-Ocean-Indicator-CC/)
@@ -257,6 +277,10 @@ Atr Filtered Exponential Moving Average
 
 [Mother Of Adaptive Moving Averages](https://www.prorealcode.com/prorealtime-indicators/john-ehlers-mama-the-mother-of-adaptive-moving-average/)
 
+[Natural Moving Average](https://www.tradingview.com/script/WkBFJbJD-Natural-Moving-Average-CC/)
+
+[Nick Rypock Trailing Reverse](https://www.tradingview.com/script/XAscppNW-Nick-Rypock-Trailing-Reverse-NRTR/)
+
 [Optimal Weighted Moving Average](https://www.tradingview.com/script/JFbgKEAK-Optimal-Weighted-Moving-Average/)
 
 [Optimized Trend Tracker](https://www.tradingview.com/script/zVhoDQME/)
@@ -278,6 +302,8 @@ Atr Filtered Exponential Moving Average
 [Simple Moving Average](https://www.investopedia.com/terms/s/sma.asp)
 
 [SuperTrend](https://www.elearnmarkets.com/blog/supertrend-indicator-strategy-trading/)
+
+[Symmetrically Weighted Moving Average](https://www.tradingview.com/script/MjrqeXd0-Symmetrically-Weighted-Moving-Average/)
 
 [T3 Moving Average](https://www.technicalindicators.net/indicators-technical-analysis/150-t3-moving-average)
 
@@ -348,6 +374,8 @@ Atr Filtered Exponential Moving Average
 
 [Jrc Fractal Dimension](https://www.motivewave.com/studies/jrc_fractal_dimension.htm)
 
+[Narrow Sideways Channel](https://www.motivewave.com/studies/narrow_sideways_channel.htm)
+
 [Omega Ratio](https://www.motivewave.com/studies/omega_ratio.htm)
 
 [Qma Sma Difference](https://www.tradingview.com/script/Iw3FtbxG-QMA-SMA-Difference/)
@@ -390,6 +418,8 @@ Atr Filtered Exponential Moving Average
 [Klinger Volume Oscillator](https://www.investopedia.com/terms/k/klingeroscillator.asp)
 
 [Money Flow Index](https://www.investopedia.com/terms/m/mfi.asp)
+
+[Negative Volume Disparity Indicator](https://www.motivewave.com/studies/negative_volume_disparity_indicator.htm)
 
 [Negative Volume Index](https://www.investopedia.com/terms/n/nvi.asp)
 
