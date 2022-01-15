@@ -1,6 +1,7 @@
 ### Indicators List
 
 ## Cycle
+[Grover Llorens Cycle Oscillator](https://www.tradingview.com/script/zZCpzplM-Grover-Llorens-Cycle-Oscillator-alexgrover-Luc%C3%ADa-Llorens/)
         
 ## Momentum
 [4 Moving Average Convergence Divergence](https://www.tradingview.com/script/nbx4UFZ6-Indicator-4MACD/)
@@ -59,7 +60,17 @@
 
 [Ehlers Roofing Filter](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersRoofingFilter)
 
+[G Oscillator](https://www.tradingview.com/script/A2dBZ55S-G-Oscillator/)
+
+[Gain Loss Moving Average](https://www.tradingview.com/script/Hb8w5z5U-Gain-Loss-Moving-Average-Cyrus-c-D/)
+
+[Gann Swing Oscillator](https://www.tradingview.com/script/BGRqp9ol-Gann-Swing-Oscillator/)
+
+[Gann Trend Oscillator](https://www.tradingview.com/script/8vAHBir8-Gann-Trend-Oscillator/)
+
 [Gator Oscillator](https://www.motivewave.com/studies/gator_oscillator.htm)
+
+[Guppy Multiple Moving Average Oscillator](https://www.tradingview.com/script/YESRunMr-GMMA-Oscillator-v1-by-JustUncleL/)
 
 [Impulse Moving Average Convergence Divergence](https://www.tradingview.com/script/qt6xLfLi-Impulse-MACD-LazyBear/)
 
@@ -166,6 +177,8 @@
 ## Support And Resistance
 [Donchian Channels](https://www.investopedia.com/terms/d/donchianchannels.asp)
 
+[G Channels](https://www.tradingview.com/script/fIvlS64B-G-Channels-Efficient-Calculation-Of-Upper-Lower-Extremities/)
+
 [LBR Paint Bars](https://www.motivewave.com/studies/lbr_paint_bars.htm)
 
 [Linear Channels](https://www.tradingview.com/script/J4ccCRMW-Linear-Channels/)
@@ -240,6 +253,20 @@ Atr Filtered Exponential Moving Average
 [Exponential Moving Average](https://www.investopedia.com/terms/e/ema.asp)
 
 [Full Typical Price](https://tlc.thinkorswim.com/center/reference/thinkScript/Functions/Fundamentals/ohlc4)
+
+[Gann HiLo Activator](https://www.tradingview.com/script/hAgKQR25-Gann-HiLo-Activator-CC/)
+
+[General Filter Estimator](https://www.tradingview.com/script/egfaHjZW-General-Filter-Estimator-An-Experiment-on-Estimating-Everything/)
+
+[Generalized Double Exponential Moving Average](https://www.technicalindicators.net/indicators-technical-analysis/149-gdema-generalized-double-exponential-moving-average)
+
+[Grand Trend Forecasting](https://www.tradingview.com/script/72EEPT4L-Grand-Trend-Forecasting-A-Simple-And-Original-Approach/)
+
+[Grover Llorens Activator](https://www.tradingview.com/script/UVzC9TOv-Grover-Llorens-Activator-alexgrover-Luc%C3%ADa-Llorens/)
+
+[Guppy Count Back Line](https://www.tradingview.com/script/7HW4liRS-Guppy-Count-Back-Line/)
+
+[Guppy Distance Indicator](https://www.tradingview.com/script/0mUo8TMZ-IO-GuppyDistance/)
 
 [Hull Moving Average](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/hull-moving-average)
 
@@ -365,6 +392,10 @@ Atr Filtered Exponential Moving Average
 [Bollinger Bands With Atr Pct](https://www.tradingview.com/script/RUCy4Kfk-Bollinger-Bands-with-ATR-Percent/)
 
 [Fractal Chaos Bands](https://www.stockmaniacs.net/fractal-chaos-bands-indicator/#:~:text=Fractal%20Chaos%20Bands%20Indicator%20connects,tool%20for%20any%20trading%20method.)
+
+[Garman Klass Volatility](https://www.tradingview.com/script/w3xglYEv-Garman-Klass-Volatility/)
+
+[Gopalakrishnan Range Index](https://www.tradingview.com/script/89qjkiB1-Gopalakrishnan-Range-Index/)
 
 [Historical Volatility](https://www.investopedia.com/terms/h/historicalvolatility.asp)
 
