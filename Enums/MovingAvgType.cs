@@ -17,6 +17,8 @@
         BryantAdaptiveMovingAverage,
         EndPointWeightedMovingAverage,
         ExponentialMovingAverage,
+        GeneralFilterEstimator,
+        GeneralizedDoubleExponentialMovingAverage,
         HullMovingAverage,
         IIRLeastSquaresEstimate,
         InverseDistanceWeightedMovingAverage,

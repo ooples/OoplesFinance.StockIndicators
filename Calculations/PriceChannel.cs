@@ -746,5 +746,54 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the G Channels
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateGChannels(this StockData stockData, int length = 100)
+        {
+            List<decimal> aList = new();
+            List<decimal> bList = new();
+            List<decimal> midList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevA = aList.LastOrDefault();
+                decimal prevB = bList.LastOrDefault();
+                decimal factor = length != 0 ? (prevA - prevB) / length : 0;
+
+                decimal a = Math.Max(currentValue, prevA) - factor;
+                aList.Add(a);
+
+                decimal b = Math.Min(currentValue, prevB) + factor;
+                bList.Add(b);
+
+                decimal prevMid = midList.LastOrDefault();
+                decimal mid = (a + b) / 2;
+                midList.Add(mid);
+
+                var signal = GetCompareSignal(currentValue - mid, prevValue - prevMid);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", aList },
+                { "MiddleBand", midList },
+                { "LowerBand", bList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.GChannels;
+
+            return stockData;
+        }
     }
 }

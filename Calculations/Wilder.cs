@@ -17,7 +17,7 @@ namespace OoplesFinance.StockIndicators
         /// <returns></returns>
         public static StockData CalculateAverageTrueRange(this StockData stockData)
         {
-            var maType = MovingAvgType.ExponentialMovingAverage;
+            var maType = MovingAvgType.WildersSmoothingMethod;
             var length = 14;
 
             return CalculateAverageTrueRange(stockData, maType, length);
@@ -30,7 +30,8 @@ namespace OoplesFinance.StockIndicators
         /// <param name="maType">Type of the ma.</param>
         /// <param name="length">The length.</param>
         /// <returns></returns>
-        public static StockData CalculateAverageTrueRange(this StockData stockData, MovingAvgType maType, int length)
+        public static StockData CalculateAverageTrueRange(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+            int length = 14)
         {
             List<decimal> trList = new();
             List<Signal> signalsList = new();
@@ -94,7 +95,8 @@ namespace OoplesFinance.StockIndicators
         /// <param name="maType">Type of the ma.</param>
         /// <param name="length">The length.</param>
         /// <returns></returns>
-        public static StockData CalculateAverageDirectionalIndex(this StockData stockData, MovingAvgType maType, int length)
+        public static StockData CalculateAverageDirectionalIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+            int length = 14)
         {
             List<decimal> dmPlusList = new();
             List<decimal> dmMinusList = new();

@@ -3277,5 +3277,101 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Generalized Double Exponential Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="factor"></param>
+        /// <returns></returns>
+        public static StockData CalculateGeneralizedDoubleExponentialMovingAverage(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 5, decimal factor = 0.7m)
+        {
+            List<decimal> gdList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var ema1List = GetMovingAverageList(stockData, maType, length, inputList);
+            var ema2List = GetMovingAverageList(stockData, maType, length, ema1List);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentEma1 = ema1List.ElementAtOrDefault(i);
+                decimal currentEma2 = ema2List.ElementAtOrDefault(i);
+
+                decimal prevGd = gdList.LastOrDefault();
+                decimal gd = (currentEma1 * (1 + factor)) - (currentEma2 * factor);
+                gdList.Add(gd);
+
+                var signal = GetCompareSignal(currentValue - gd, prevValue - prevGd);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Gdema", gdList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = gdList;
+            stockData.IndicatorName = IndicatorName.GeneralizedDoubleExponentialMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the General Filter Estimator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="beta"></param>
+        /// <param name="gamma"></param>
+        /// <param name="zeta"></param>
+        /// <returns></returns>
+        public static StockData CalculateGeneralFilterEstimator(this StockData stockData, int length = 100, decimal beta = 5.25m, decimal gamma = 1,
+            decimal zeta = 1)
+        {
+            List<decimal> dList = new();
+            List<decimal> bList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int p = beta != 0 ? (int)Math.Ceiling(length / beta) : 0;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal priorB = i >= p ? bList.ElementAtOrDefault(i - p) : currentValue;
+                decimal a = currentValue - priorB;
+
+                decimal prevB = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal b = prevB + (a / p * gamma);
+                bList.Add(b);
+
+                decimal priorD = i >= p ? dList.ElementAtOrDefault(i - p) : b;
+                decimal c = b - priorD;
+
+                decimal prevD = i >= 1 ? dList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal d = prevD + (((zeta * a) + ((1 - zeta) * c)) / p * gamma);
+                dList.Add(d);
+
+                var signal = GetCompareSignal(currentValue - d, prevValue - prevD);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Gfe", dList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = dList;
+            stockData.IndicatorName = IndicatorName.GeneralFilterEstimator;
+
+            return stockData;
+        }
     }
 }

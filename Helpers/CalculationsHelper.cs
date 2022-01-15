@@ -74,6 +74,12 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.ExponentialMovingAverage:
                     movingAvgList = stockData.CalculateExponentialMovingAverage(length).CustomValuesList;
                     break;
+                case MovingAvgType.GeneralFilterEstimator:
+                    movingAvgList = stockData.CalculateGeneralFilterEstimator(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.GeneralizedDoubleExponentialMovingAverage:
+                    movingAvgList = stockData.CalculateGeneralizedDoubleExponentialMovingAverage(length: length).CustomValuesList;
+                    break;
                 case MovingAvgType.HullMovingAverage:
                     movingAvgList = stockData.CalculateHullMovingAverage(MovingAvgType.WeightedMovingAverage, length).CustomValuesList;
                     break;

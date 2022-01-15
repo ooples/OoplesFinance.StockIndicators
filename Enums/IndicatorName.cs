@@ -155,8 +155,40 @@ namespace OoplesFinance.StockIndicators.Enums
         FractalChaosBands,
         [Category(IndicatorType.Trend)]
         FullTypicalPrice,
+        [Category(IndicatorType.SupportAndResistance)]
+        GChannels,
+        [Category(IndicatorType.Momentum)]
+        GOscillator,
+        [Category(IndicatorType.Trend)]
+        GainLossMovingAverage,
+        [Category(IndicatorType.Trend)]
+        GannHiLoActivator,
+        [Category(IndicatorType.Momentum)]
+        GannSwingOscillator,
+        [Category(IndicatorType.Momentum)]
+        GannTrendOscillator,
+        [Category(IndicatorType.Volatility)]
+        GarmanKlassVolatility,
         [Category(IndicatorType.Momentum)]
         GatorOscillator,
+        [Category(IndicatorType.Trend)]
+        GeneralFilterEstimator,
+        [Category(IndicatorType.Trend)]
+        GeneralizedDoubleExponentialMovingAverage,
+        [Category(IndicatorType.Volatility)]
+        GopalakrishnanRangeIndex,
+        [Category(IndicatorType.Trend)]
+        GrandTrendForecasting,
+        [Category(IndicatorType.Trend)]
+        GroverLlorensActivator,
+        [Category(IndicatorType.Cycle)]
+        GroverLlorensCycleOscillator,
+        [Category(IndicatorType.Trend)]
+        GuppyCountBackLine,
+        [Category(IndicatorType.Trend)]
+        GuppyDistanceIndicator,
+        [Category(IndicatorType.Momentum)]
+        GuppyMultipleMovingAverage,
         [Category(IndicatorType.Volatility)]
         HistoricalVolatility,
         [Category(IndicatorType.Trend)]
@@ -241,7 +273,7 @@ namespace OoplesFinance.StockIndicators.Enums
         MovingAverageEnvelope,
         [Category(IndicatorType.Momentum)]
         NarrowBandpassFilter,
-        [Category(IndicatorType.Momentum)]
+        [Category(IndicatorType.Volatility)]
         NarrowSidewaysChannel,
         [Category(IndicatorType.Momentum)]
         NaturalDirectionalCombo,
@@ -265,7 +297,7 @@ namespace OoplesFinance.StockIndicators.Enums
         NegativeVolumeIndex,
         [Category(IndicatorType.Trend)]
         NickRypockTrailingReverse,
-        [Category(IndicatorType.Trend)]
+        [Category(IndicatorType.Momentum)]
         NormalizedRelativeVigorIndex,
         [Category(IndicatorType.Momentum)]
         NthOrderDifferencingOscillator,
