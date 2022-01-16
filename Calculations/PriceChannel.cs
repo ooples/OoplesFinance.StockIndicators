@@ -2,6 +2,7 @@
 using static OoplesFinance.StockIndicators.Enums.SignalsClass;
 using static OoplesFinance.StockIndicators.Helpers.SignalHelper;
 using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
+using static OoplesFinance.StockIndicators.Helpers.MathHelper;
 using OoplesFinance.StockIndicators.Enums;
 
 namespace OoplesFinance.StockIndicators
@@ -792,6 +793,374 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = new List<decimal>();
             stockData.IndicatorName = IndicatorName.GChannels;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the High Low Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateHighLowMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, 
+            int length = 14)
+        {
+            List<decimal> middleBandList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+            var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
+
+            var upperBandList = GetMovingAverageList(stockData, maType, length, highestList);
+            var lowerBandList = GetMovingAverageList(stockData, maType, length, lowestList);
+
+            for (int j = 0; j < stockData.Count; j++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(j);
+                decimal prevValue = j >= 1 ? inputList.ElementAtOrDefault(j - 1) : 0;
+                decimal upperBand = upperBandList.ElementAtOrDefault(j);
+                decimal lowerBand = lowerBandList.ElementAtOrDefault(j);
+
+                decimal prevMiddleBand = middleBandList.LastOrDefault();
+                decimal middleBand = (upperBand + lowerBand) / 2;
+                middleBandList.Add(middleBand);
+
+                var signal = GetCompareSignal(currentValue - middleBand, prevValue - prevMiddleBand);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperBandList },
+                { "MiddleBand", middleBandList },
+                { "LowerBand", lowerBandList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.HighLowMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the High Low Bands
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="pctShift"></param>
+        /// <returns></returns>
+        public static StockData CalculateHighLowBands(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 14, 
+            decimal pctShift = 1)
+        {
+            List<decimal> highBandList = new();
+            List<decimal> lowBandList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var tmaList1 = GetMovingAverageList(stockData, maType, length, inputList);
+            var tmaList2 = GetMovingAverageList(stockData, maType, length, tmaList1);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal tma = tmaList2.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevTma = i >= 1 ? tmaList2.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevHighBand = highBandList.LastOrDefault();
+                decimal highBand = tma + (tma * pctShift / 100);
+                highBandList.Add(highBand);
+
+                decimal prevLowBand = lowBandList.LastOrDefault();
+                decimal lowBand = tma - (tma * pctShift / 100);
+                lowBandList.Add(lowBand);
+
+                var signal = GetBollingerBandsSignal(currentValue - tma, prevValue - prevTma, currentValue, prevValue, highBand, prevHighBand, 
+                    lowBand, prevLowBand);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", highBandList },
+                { "MiddleBand", tmaList2 },
+                { "LowerBand", lowBandList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.HighLowBands;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Hurst Cycle Channel
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <param name="fastMult"></param>
+        /// <param name="slowMult"></param>
+        /// <returns></returns>
+        public static StockData CalculateHurstCycleChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+            int fastLength = 10, int slowLength = 30, decimal fastMult = 1, decimal slowMult = 3)
+        {
+            List<decimal> sctList = new();
+            List<decimal> scbList = new();
+            List<decimal> mctList = new();
+            List<decimal> mcbList = new();
+            List<decimal> scmmList = new();
+            List<decimal> mcmmList = new();
+            List<decimal> omedList = new();
+            List<decimal> oshortList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int scl = MinOrMax((int)Math.Ceiling((decimal)fastLength / 2));
+            int mcl = MinOrMax((int)Math.Ceiling((decimal)slowLength / 2));
+            int scl_2 = MinOrMax((int)Math.Ceiling((decimal)scl / 2));
+            int mcl_2 = MinOrMax((int)Math.Ceiling((decimal)mcl / 2));
+
+            var sclAtrList = CalculateAverageTrueRange(stockData, maType, scl).CustomValuesList;
+            var mclAtrList = CalculateAverageTrueRange(stockData, maType, mcl).CustomValuesList;
+            var sclRmaList = GetMovingAverageList(stockData, maType, scl, inputList);
+            var mclRmaList = GetMovingAverageList(stockData, maType, mcl, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal sclAtr = sclAtrList.ElementAtOrDefault(i);
+                decimal mclAtr = mclAtrList.ElementAtOrDefault(i);
+                decimal prevSclRma = i >= scl_2 ? sclRmaList.ElementAtOrDefault(i - scl_2) : currentValue;
+                decimal prevMclRma = i >= mcl_2 ? mclRmaList.ElementAtOrDefault(i - mcl_2) : currentValue;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal scm_off = fastMult * sclAtr;
+                decimal mcm_off = slowMult * mclAtr;
+
+                decimal prevSct = sctList.LastOrDefault();
+                decimal sct = prevSclRma + scm_off;
+                sctList.Add(sct);
+
+                decimal prevScb = scbList.LastOrDefault();
+                decimal scb = prevSclRma - scm_off;
+                scbList.Add(scb);
+
+                decimal mct = prevMclRma + mcm_off;
+                mctList.Add(mct);
+
+                decimal mcb = prevMclRma - mcm_off;
+                mcbList.Add(mcb);
+
+                decimal scmm = (sct + scb) / 2;
+                scmmList.Add(scmm);
+
+                decimal mcmm = (mct + mcb) / 2;
+                mcmmList.Add(mcmm);
+
+                decimal omed = mct - mcb != 0 ? (scmm - mcb) / (mct - mcb) : 0;
+                omedList.Add(omed);
+
+                decimal oshort = mct - mcb != 0 ? (currentValue - mcb) / (mct - mcb) : 0;
+                oshortList.Add(oshort);
+
+                var signal = GetBullishBearishSignal(currentValue - sct, prevValue - prevSct, currentValue - scb, prevValue - prevScb);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "FastUpperBand", sctList },
+                { "SlowUpperBand", mctList },
+                { "FastMiddleBand", scmmList },
+                { "SlowMiddleBand", mcmmList },
+                { "FastLowerBand", scbList },
+                { "SlowLowerBand", mcbList },
+                { "OMed", omedList },
+                { "OShort", oshortList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.HurstCycleChannel;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Hurst Bands
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="innerMult"></param>
+        /// <param name="outerMult"></param>
+        /// <param name="extremeMult"></param>
+        /// <returns></returns>
+        public static StockData CalculateHurstBands(this StockData stockData, int length = 10, decimal innerMult = 1.6m, decimal outerMult = 2.6m, 
+            decimal extremeMult = 4.2m)
+        {
+            List<decimal> cmaList = new();
+            List<decimal> upperExtremeBandList = new();
+            List<decimal> lowerExtremeBandList = new();
+            List<decimal> upperOuterBandList = new();
+            List<decimal> lowerOuterBandList = new();
+            List<decimal> upperInnerBandList = new();
+            List<decimal> lowerInnerBandList = new();
+            List<decimal> dPriceList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int displacement = MinOrMax((int)Math.Ceiling((decimal)length / 2) + 1);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevCma1 = i >= 1 ? cmaList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevCma2 = i >= 2 ? cmaList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal dPrice = i >= displacement ? inputList.ElementAtOrDefault(i - displacement) : 0;
+                dPriceList.Add(dPrice);
+
+                decimal cma = dPrice == 0 ? prevCma1 + (prevCma1 - prevCma2) : dPriceList.TakeLastExt(length).Average();
+                cmaList.Add(cma);
+
+                decimal extremeBand = cma * extremeMult / 100;
+                decimal outerBand = cma * outerMult / 100;
+                decimal innerBand = cma * innerMult / 100;
+
+                decimal upperExtremeBand = cma + extremeBand;
+                upperExtremeBandList.Add(upperExtremeBand);
+
+                decimal lowerExtremeBand = cma - extremeBand;
+                lowerExtremeBandList.Add(lowerExtremeBand);
+
+                decimal upperInnerBand = cma + innerBand;
+                upperInnerBandList.Add(upperInnerBand);
+
+                decimal lowerInnerBand = cma - innerBand;
+                lowerInnerBandList.Add(lowerInnerBand);
+
+                decimal upperOuterBand = cma + outerBand;
+                upperOuterBandList.Add(upperOuterBand);
+
+                decimal lowerOuterBand = cma - outerBand;
+                lowerOuterBandList.Add(lowerOuterBand);
+
+                var signal = GetCompareSignal(currentValue - cma, prevValue - prevCma1);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperExtremeBand", upperExtremeBandList },
+                { "UpperOuterBand", upperOuterBandList },
+                { "UpperInnerBand", upperInnerBandList },
+                { "MiddleBand", cmaList },
+                { "LowerExtremeBand", lowerExtremeBandList },
+                { "LowerOuterBand", lowerOuterBandList },
+                { "LowerInnerBand", lowerInnerBandList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.HurstBands;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Hirashima Sugita RS
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateHirashimaSugitaRS(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage,
+            int length = 1000)
+        {
+            List<decimal> d1List = new();
+            List<decimal> absD1List = new();
+            List<decimal> d2List = new();
+            List<decimal> basisList = new();
+            List<decimal> upper1List = new();
+            List<decimal> lower1List = new();
+            List<decimal> upper2List = new();
+            List<decimal> lower2List = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var emaList = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal ema = emaList.ElementAtOrDefault(i);
+
+                decimal d1 = currentValue - ema;
+                d1List.Add(d1);
+
+                decimal absD1 = Math.Abs(d1);
+                absD1List.Add(absD1);
+            }
+
+            var wmaList = GetMovingAverageList(stockData, maType, length, absD1List);
+            stockData.CustomValuesList = d1List;
+            var s1List = CalculateLinearRegression(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ema = emaList.ElementAtOrDefault(i);
+                decimal s1 = s1List.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal x = ema + s1;
+
+                decimal d2 = currentValue - x;
+                d2List.Add(d2);
+            }
+
+            stockData.CustomValuesList = d2List;
+            var s2List = CalculateLinearRegression(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ema = emaList.ElementAtOrDefault(i);
+                decimal s1 = s1List.ElementAtOrDefault(i);
+                decimal s2 = s2List.ElementAtOrDefault(i);
+                decimal prevS2 = i >= 1 ? s2List.ElementAtOrDefault(i - 1) : 0;
+                decimal wma = wmaList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevBasis = basisList.LastOrDefault();
+                decimal basis = ema + s1 + (s2 - prevS2);
+                basisList.Add(basis);
+
+                decimal upper1 = basis + wma;
+                upper1List.Add(upper1);
+
+                decimal lower1 = basis - wma;
+                lower1List.Add(lower1);
+
+                decimal upper2 = upper1 + wma;
+                upper2List.Add(upper2);
+
+                decimal lower2 = lower1 - wma;
+                lower2List.Add(lower2);
+
+                var signal = GetCompareSignal(currentValue - basis, prevValue - prevBasis);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand1", upper1List },
+                { "UpperBand2", upper2List },
+                { "MiddleBand", basisList },
+                { "LowerBand1", lower1List },
+                { "LowerBand2", lower2List }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.HirashimaSugitaRS;
 
             return stockData;
         }

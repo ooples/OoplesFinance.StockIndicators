@@ -474,5 +474,126 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Half Trend
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="atrLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateHalfTrend(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 2, 
+            int atrLength = 100)
+        {
+            List<decimal> trendList = new();
+            List<decimal> nextTrendList = new();
+            List<decimal> upList = new();
+            List<decimal> downList = new();
+            List<decimal> htList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+            var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
+
+            var atrList = CalculateAverageTrueRange(stockData, maType, atrLength).CustomValuesList;
+            var highMaList = GetMovingAverageList(stockData, maType, length, highList);
+            var lowMaList = GetMovingAverageList(stockData, maType, length, lowList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentAvgTrueRange = atrList.ElementAtOrDefault(i);
+                decimal high = highestList.ElementAtOrDefault(i);
+                decimal low = lowestList.ElementAtOrDefault(i);
+                decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+                decimal highMa = highMaList.ElementAtOrDefault(i);
+                decimal lowMa = lowMaList.ElementAtOrDefault(i);
+                decimal maxLow = i >= 1 ? prevLow : low;
+                decimal minHigh = i >= 1 ? prevHigh : high;
+                decimal prevNextTrend = nextTrendList.LastOrDefault();
+                decimal prevTrend = trendList.LastOrDefault();
+                decimal prevUp = upList.LastOrDefault();
+                decimal prevDown = downList.LastOrDefault();
+                decimal atr = currentAvgTrueRange / 2;
+                decimal dev = length * atr;
+
+                decimal trend = 0, nextTrend = 0;
+                if (prevNextTrend == 1)
+                {
+                    maxLow = Math.Max(low, maxLow);
+
+                    if (highMa < maxLow && currentValue < (prevLow != 0 ? prevLow : low))
+                    {
+                        trend = 1;
+                        nextTrend = 0;
+                        minHigh = high;
+                    }
+                    else
+                    {
+                        minHigh = Math.Min(high, minHigh);
+
+                        if (lowMa > minHigh && currentValue > (prevHigh != 0 ? prevHigh : high))
+                        {
+                            trend = 0;
+                            nextTrend = 1;
+                            maxLow = low;
+                        }
+                    }
+                }
+                trendList.Add(trend);
+                nextTrendList.Add(nextTrend);
+
+                decimal up = 0, down = 0, arrowUp = 0, arrowDown = 0, atrHigh, atrLow;
+                if (trend == 0)
+                {
+                    if (prevTrend != 0)
+                    {
+                        up = prevDown;
+                        arrowUp = up - atr;
+                    }
+                    else
+                    {
+                        up = Math.Max(maxLow, prevUp);
+                    }
+
+                    atrHigh = up + dev;
+                    atrLow = up - dev;
+                }
+                else
+                {
+                    if (prevTrend != 1)
+                    {
+                        down = prevUp;
+                        arrowDown = down + atr;
+                    }
+                    else
+                    {
+                        down = Math.Min(minHigh, prevDown);
+                    }
+
+                    atrHigh = down + dev;
+                    atrLow = down - dev;
+                }
+                upList.Add(up);
+                downList.Add(down);
+
+                decimal ht = trend == 0 ? up : down;
+                htList.Add(ht);
+
+                var signal = GetConditionSignal(arrowUp != 0 && trend == 0 && prevTrend == 1, arrowDown != 0 && trend == 1 && prevTrend == 0);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ht", htList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = htList;
+            stockData.IndicatorName = IndicatorName.HalfTrend;
+
+            return stockData;
+        }
     }
 }

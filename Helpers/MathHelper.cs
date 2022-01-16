@@ -2,6 +2,8 @@
 {
     public static class MathHelper
     {
+        public const decimal Pi = 3.1415926535897931m;
+
         /// <summary>
         /// Logs the specified value.
         /// </summary>

@@ -159,7 +159,7 @@ namespace OoplesFinance.StockIndicators.Enums
         GChannels,
         [Category(IndicatorType.Momentum)]
         GOscillator,
-        [Category(IndicatorType.Trend)]
+        [Category(IndicatorType.Momentum)]
         GainLossMovingAverage,
         [Category(IndicatorType.Trend)]
         GannHiLoActivator,
@@ -189,10 +189,40 @@ namespace OoplesFinance.StockIndicators.Enums
         GuppyDistanceIndicator,
         [Category(IndicatorType.Momentum)]
         GuppyMultipleMovingAverage,
+        [Category(IndicatorType.Trend)]
+        HalfTrend,
+        [Category(IndicatorType.Trend)]
+        HampelFilter,
+        [Category(IndicatorType.Volume)]
+        HawkeyeVolumeIndicator,
+        [Category(IndicatorType.Trend)]
+        HendersonWeightedMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        HerrickPayoffIndex,
+        [Category(IndicatorType.SupportAndResistance)]
+        HighLowBands,
+        [Category(IndicatorType.Momentum)]
+        HighLowIndex,
+        [Category(IndicatorType.SupportAndResistance)]
+        HighLowMovingAverage,
+        [Category(IndicatorType.SupportAndResistance)]
+        HirashimaSugitaRS,
         [Category(IndicatorType.Volatility)]
         HistoricalVolatility,
+        [Category(IndicatorType.Volatility)]
+        HistoricalVolatilityPercentile,
+        [Category(IndicatorType.Trend)]
+        HoltExponentialMovingAverage,
+        [Category(IndicatorType.Trend)]
+        HullEstimate,
         [Category(IndicatorType.Trend)]
         HullMovingAverage,
+        [Category(IndicatorType.SupportAndResistance)]
+        HurstBands,
+        [Category(IndicatorType.Cycle)]
+        HurstCycleChannel,
+        [Category(IndicatorType.Trend)]
+        HybridConvolutionFilter,
         [Category(IndicatorType.Trend)]
         IchimokuCloud,
         [Category(IndicatorType.Trend)]

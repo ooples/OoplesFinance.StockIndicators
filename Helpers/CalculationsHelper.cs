@@ -7,8 +7,6 @@ namespace OoplesFinance.StockIndicators.Helpers
 {
     public static class CalculationsHelper
     {
-        public const decimal Pi = 3.1415926535897931m;
-
         /// <summary>
         /// Gets the moving average list.
         /// </summary>
@@ -80,8 +78,23 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.GeneralizedDoubleExponentialMovingAverage:
                     movingAvgList = stockData.CalculateGeneralizedDoubleExponentialMovingAverage(length: length).CustomValuesList;
                     break;
+                case MovingAvgType.HampelFilter:
+                    movingAvgList = stockData.CalculateHampelFilter(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.HendersonWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateHendersonWeightedMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.HoltExponentialMovingAverage:
+                    movingAvgList = stockData.CalculateHoltExponentialMovingAverage(length, length).CustomValuesList;
+                    break;
+                case MovingAvgType.HullEstimate:
+                    movingAvgList = stockData.CalculateHullEstimate(length).CustomValuesList;
+                    break;
                 case MovingAvgType.HullMovingAverage:
-                    movingAvgList = stockData.CalculateHullMovingAverage(MovingAvgType.WeightedMovingAverage, length).CustomValuesList;
+                    movingAvgList = stockData.CalculateHullMovingAverage(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.HybridConvolutionFilter:
+                    movingAvgList = stockData.CalculateHybridConvolutionFilter(length).CustomValuesList;
                     break;
                 case MovingAvgType.IIRLeastSquaresEstimate:
                     movingAvgList = stockData.CalculateIIRLeastSquaresEstimate(length).CustomValuesList;
@@ -498,6 +511,92 @@ namespace OoplesFinance.StockIndicators.Helpers
             int rank = n > 0 ? (int)Math.Ceiling(percentile / 100 * n) : 0;
 
             return list.ElementAtOrDefault(Math.Max(rank - 1, 0));
+        }
+
+        /// <summary>
+        /// Calculates the median of a sequence of doubles.
+        /// </summary>
+        /// <param name="sequence">The sequence to operate on.</param>
+        /// <returns>The median of the sequence.</returns>
+        public static decimal Median(this IEnumerable<decimal> sequence)
+        {
+            var list = sequence.ToList();
+            var mid = (list.Count - 1) / 2;
+            return list.NthOrderStatistic(mid);
+        }
+
+        /// <summary>
+        /// Calculates the median of a sequence of elements.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in sequence.</typeparam>
+        /// <param name="sequence">The sequence to operate on.</param>
+        /// <param name="getValue">Logic to get a double from each element.</param>
+        /// <returns>The median of the sequence.</returns>
+        public static decimal Median<T>(this IEnumerable<T> sequence, Func<T, decimal> getValue) => Median(sequence.Select(getValue));
+
+        /// <summary>
+        /// Gets the median member of a list of elements.
+        /// </summary>
+        /// <typeparam name="T">Type of elements in the list.</typeparam>
+        /// <param name="list">The list to operate on.</param>
+        /// <returns>The median of the list.</returns>
+        public static T Median<T>(this IList<T> list) where T : IComparable<T> => list.NthOrderStatistic((list.Count - 1) / 2);
+
+        /// <summary>
+        /// Partitions the given list around a pivot element such that all elements on left of pivot are less than or equal to pivot
+        /// Elements to right of the pivot are guaranteed greater than the pivot. Can be used for sorting N-order statistics such
+        /// as median finding algorithms.
+        /// Pivot is selected randomly if random number generator is supplied else its selected as last element in the list.
+        /// </summary>
+        private static int Partition<T>(this IList<T> list, int start, int end, Random? rnd = null) where T : IComparable<T>
+        {
+            if (rnd != null) list.Swap(end, rnd.Next(start, end));
+            var pivot = list[end];
+            var lastLow = start - 1;
+            for (var i = start; i < end; i++)
+                if (list[i].CompareTo(pivot) <= 0) list.Swap(i, ++lastLow);
+            list.Swap(end, ++lastLow);
+            return lastLow;
+        }
+
+        /// <summary>
+        /// Returns Nth smallest element from the list. Here n starts from 0 so that n=0 returns minimum, n=1 returns 2nd smallest element etc.
+        /// Note: specified list would be mutated in the process.
+        /// </summary>
+        public static T NthOrderStatistic<T>(this IList<T> list, int n, Random? rnd = null) where T : IComparable<T> => 
+            NthOrderStatistic(list, n, 0, list.Count - 1, rnd);
+        /// <summary>
+        /// Gets Nth smallest element from a list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="n"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="rnd"></param>
+        /// <returns></returns>
+        private static T NthOrderStatistic<T>(this IList<T> list, int n, int start, int end, Random? rnd) where T : IComparable<T>
+        {
+            while (true)
+            {
+                var pivotIndex = list.Partition(start, end, rnd);
+                if (pivotIndex == n) return list[pivotIndex];
+                if (n < pivotIndex) end = pivotIndex - 1;
+                else start = pivotIndex + 1;
+            }
+        }
+
+        /// <summary>
+        /// Swap two elements positions in a list.
+        /// </summary>
+        /// <typeparam name="T">Type of elements.</typeparam>
+        /// <param name="list">The list to swap on.</param>
+        /// <param name="i">The first element position to swap.</param>
+        /// <param name="j">The second element position to swap.</param>
+        public static void Swap<T>(this IList<T> list, int i, int j)
+        {
+            if (i == j) return;
+            (list[j], list[i]) = (list[i], list[j]);
         }
     }
 }

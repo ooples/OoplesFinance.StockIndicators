@@ -7276,5 +7276,264 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the High Low Index
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateHighLowIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+            int length = 10)
+        {
+            List<decimal> hliList = new();
+            List<decimal> advList = new();
+            List<decimal> loList = new();
+            List<decimal> advDiffList = new();
+            List<Signal> signalsList = new();
+            var (_, highList, lowList, _, _) = GetInputValuesList(stockData);
+            var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal prevHighest = i >= 1 ? highestList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevLowest = i >= 1 ? lowestList.ElementAtOrDefault(i - 1) : 0;
+                decimal highest = highestList.ElementAtOrDefault(i);
+                decimal lowest = lowestList.ElementAtOrDefault(i);
+
+                decimal adv = highest > prevHighest ? 1 : 0;
+                advList.Add(adv);
+
+                decimal lo = lowest < prevLowest ? 1 : 0;
+                loList.Add(lo);
+
+                decimal advSum = advList.TakeLastExt(length).Sum();
+                decimal loSum = loList.TakeLastExt(length).Sum();
+
+                decimal advDiff = advSum + loSum != 0 ? MinOrMax(advSum / (advSum + loSum) * 100, 100, 0) : 0;
+                advDiffList.Add(advDiff);
+            }
+
+            var zmbtiList = GetMovingAverageList(stockData, maType, length, advDiffList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal zmbti = zmbtiList.ElementAtOrDefault(i);
+                decimal prevZmbti1 = i >= 1 ? hliList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevZmbti2 = i >= 2 ? hliList.ElementAtOrDefault(i - 2) : 0;
+
+                var signal = GetRsiSignal(zmbti - prevZmbti1, prevZmbti1 - prevZmbti2, zmbti, prevZmbti1, 70, 30);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Zmbti", zmbtiList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = zmbtiList;
+            stockData.IndicatorName = IndicatorName.HighLowIndex;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Hawkeye Volume Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="inputName"></param>
+        /// <param name="length"></param>
+        /// <param name="divisor"></param>
+        /// <returns></returns>
+        public static StockData CalculateHawkeyeVolumeIndicator(this StockData stockData, InputName inputName = InputName.MedianPrice, int length = 200, 
+            decimal divisor = 3.6m)
+        {
+            List<decimal> tempRangeList = new();
+            List<decimal> tempVolumeList = new();
+            List<decimal> u1List = new();
+            List<decimal> d1List = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, closeList, volumeList) = GetInputValuesList(inputName, stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentValue = closeList.ElementAtOrDefault(i);
+
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                tempVolumeList.Add(currentVolume);
+
+                decimal range = currentHigh - currentLow;
+                tempRangeList.Add(range);
+
+                decimal volumeSma = tempVolumeList.TakeLastExt(length).Average();
+                decimal rangeSma = tempRangeList.TakeLastExt(length).Average();
+                decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevMidpoint = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevVolume = i >= 1 ? volumeList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal u1 = divisor != 0 ? prevMidpoint + ((prevHigh - prevLow) / divisor) : prevMidpoint;
+                u1List.Add(u1);
+
+                decimal d1 = divisor != 0 ? prevMidpoint - ((prevHigh - prevLow) / divisor) : prevMidpoint;
+                d1List.Add(d1);
+
+                bool rEnabled1 = range > rangeSma && currentValue < d1 && currentVolume > volumeSma;
+                bool rEnabled2 = currentValue < prevMidpoint;
+                bool rEnabled = rEnabled1 || rEnabled2;
+
+                bool gEnabled1 = currentValue > prevMidpoint;
+                bool gEnabled2 = range > rangeSma && currentValue > u1 && currentVolume > volumeSma;
+                bool gEnabled3 = currentHigh > prevHigh && range < rangeSma / 1.5m && currentVolume < volumeSma;
+                bool gEnabled4 = currentLow < prevLow && range < rangeSma / 1.5m && currentVolume > volumeSma;
+                bool gEnabled = gEnabled1 || gEnabled2 || gEnabled3 || gEnabled4;
+
+                bool grEnabled1 = range > rangeSma && currentValue > d1 && currentValue < u1 && currentVolume > volumeSma && currentVolume < volumeSma * 1.5m && currentVolume > prevVolume;
+                bool grEnabled2 = range < rangeSma / 1.5m && currentVolume < volumeSma / 1.5m;
+                bool grEnabled3 = currentValue > d1 && currentValue < u1;
+                bool grEnabled = grEnabled1 || grEnabled2 || grEnabled3;
+
+                var signal = GetConditionSignal(gEnabled, rEnabled);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Up", u1List },
+                { "Dn", d1List }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.HawkeyeVolumeIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Herrick Payoff Index
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="inputName"></param>
+        /// <param name="pointValue"></param>
+        /// <returns></returns>
+        public static StockData CalculateHerrickPayoffIndex(this StockData stockData, InputName inputName = InputName.MedianPrice, decimal pointValue = 100)
+        {
+            List<decimal> kList = new();
+            List<decimal> hpicList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, openList, closeList, volumeList) = GetInputValuesList(inputName, stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentClose = closeList.ElementAtOrDefault(i);
+                decimal currentOpen = openList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentVolume = volumeList.ElementAtOrDefault(i);
+                decimal prevClose = i >= 1 ? closeList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevOpen = i >= 1 ? openList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevK = kList.LastOrDefault();
+                decimal absDiff = Math.Abs(currentClose - prevClose);
+                decimal g = Math.Min(currentOpen, prevOpen);
+                decimal k = (currentValue - prevValue) * pointValue * currentVolume;
+                decimal temp = g != 0 ? currentValue < prevValue ? 1 - (absDiff / 2 / g) : 1 + (absDiff / 2 / g) : 1;
+
+                k *= temp;
+                kList.Add(k);
+
+                decimal prevHpic = hpicList.LastOrDefault();
+                decimal hpic = prevK + (k - prevK);
+                hpicList.Add(hpic);
+
+                var signal = GetCompareSignal(hpic, prevHpic);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Hpi", hpicList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = hpicList;
+            stockData.IndicatorName = IndicatorName.HerrickPayoffIndex;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Historical Volatility Percentile
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="annualLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateHistoricalVolatilityPercentile(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 21, int annualLength = 252)
+        {
+            List<decimal> devLogSqList = new();
+            List<decimal> devLogSqAvgList = new();
+            List<decimal> hvList = new();
+            List<decimal> hvpList = new();
+            List<decimal> tempLogList = new();
+            List<decimal> stdDevLogList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var emaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentEma = emaList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal temp = prevValue != 0 ? currentValue / prevValue : 0;
+                decimal prevEma = i >= 1 ? emaList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal tempLog = temp > 0 ? Log(temp) : 0;
+                tempLogList.Add(tempLog);
+
+                decimal avgLog = tempLogList.TakeLastExt(length).Average();
+                decimal devLogSq = Pow(tempLog - avgLog, 2);
+                devLogSqList.Add(devLogSq);
+
+                decimal devLogSqAvg = devLogSqList.TakeLastExt(length).Sum() / (length - 1);
+                decimal stdDevLog = devLogSqAvg >= 0 ? Sqrt(devLogSqAvg) : 0;
+
+                decimal hv = stdDevLog * Sqrt(annualLength);
+                hvList.Add(hv);
+
+                decimal count = hvList.TakeLastExt(annualLength).Where(i => i < hv).Count();
+                decimal hvp = count / annualLength * 100;
+                hvpList.Add(hvp);
+            }
+
+            var hvpEmaList = GetMovingAverageList(stockData, maType, length, hvpList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentEma = emaList.ElementAtOrDefault(i);
+                decimal prevEma = i >= 1 ? emaList.ElementAtOrDefault(i - 1) : 0;
+                decimal hvp = hvpList.ElementAtOrDefault(i);
+                decimal hvpEma = hvpEmaList.ElementAtOrDefault(i);
+
+                var signal = GetVolatilitySignal(currentValue - currentEma, prevValue - prevEma, hvp, hvpEma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Hvp", hvpList },
+                { "Signal", hvpEmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = hvpList;
+            stockData.IndicatorName = IndicatorName.HistoricalVolatilityPercentile;
+
+            return stockData;
+        }
     }
 }

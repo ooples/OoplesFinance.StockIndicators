@@ -235,7 +235,8 @@ namespace OoplesFinance.StockIndicators
         /// <param name="maType">Type of the ma.</param>
         /// <param name="length">The length.</param>
         /// <returns></returns>
-        public static StockData CalculateHullMovingAverage(this StockData stockData, MovingAvgType maType, int length)
+        public static StockData CalculateHullMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, 
+            int length = 20)
         {
             List<decimal> totalWeightedMAList = new();
             List<Signal> signalsList = new();
@@ -3370,6 +3371,242 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = dList;
             stockData.IndicatorName = IndicatorName.GeneralFilterEstimator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Henderson Weighted Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateHendersonWeightedMovingAverage(this StockData stockData, int length = 7)
+        {
+            List<decimal> hwmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int termMult = MinOrMax((int)Math.Floor((decimal)(length - 1) / 2));
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal sum = 0, weightedSum = 0;
+                for (int j = 0; j <= length - 1; j++)
+                {
+                    int m = termMult;
+                    int n = j - termMult;
+                    decimal numerator = 315 * (Pow(m + 1, 2) - Pow(n, 2)) * (Pow(m + 2, 2) - Pow(n, 2)) * (Pow(m + 3, 2) -
+                        Pow(n, 2)) * ((3 * Pow(m + 2, 2)) - (11 * Pow(n, 2)) - 16);
+                    decimal denominator = 8 * (m + 2) * (Pow(m + 2, 2) - 1) * ((4 * Pow(m + 2, 2)) - 1) * ((4 * Pow(m + 2, 2)) - 9) *
+                        ((4 * Pow(m + 2, 2)) - 25);
+                    decimal weight = denominator != 0 ? numerator / denominator : 0;
+                    decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                    sum += prevValue * weight;
+                    weightedSum += weight;
+                }
+
+                decimal prevHwma = hwmaList.LastOrDefault();
+                decimal hwma = weightedSum != 0 ? sum / weightedSum : 0;
+                hwmaList.Add(hwma);
+
+                var signal = GetCompareSignal(currentValue - hwma, prevVal - prevHwma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Hwma", hwmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = hwmaList;
+            stockData.IndicatorName = IndicatorName.HendersonWeightedMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Holt Exponential Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="alphaLength"></param>
+        /// <param name="gammaLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateHoltExponentialMovingAverage(this StockData stockData, int alphaLength = 20, int gammaLength = 20)
+        {
+            List<decimal> hemaList = new();
+            List<decimal> bList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal alpha = (decimal)2 / (alphaLength + 1);
+            decimal gamma = (decimal)2 / (gammaLength + 1);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevB = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevHema = hemaList.LastOrDefault();
+                decimal hema = ((1 - alpha) * (prevHema + prevB)) + (alpha * currentValue);
+                hemaList.Add(hema);
+
+                decimal b = ((1 - gamma) * prevB) + (gamma * (hema - prevHema));
+                bList.Add(b);
+
+                var signal = GetCompareSignal(currentValue - hema, prevValue - prevHema);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Hema", hemaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = hemaList;
+            stockData.IndicatorName = IndicatorName.HoltExponentialMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Hull Estimate
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateHullEstimate(this StockData stockData, int length = 50)
+        {
+            List<decimal> hemaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            int maLength = MinOrMax((int)Math.Ceiling((decimal)length / 2));
+
+            var wmaList = GetMovingAverageList(stockData, MovingAvgType.WeightedMovingAverage, maLength, inputList);
+            var emaList = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, maLength, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal currentWma = wmaList.ElementAtOrDefault(i);
+                decimal currentEma = emaList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevHema = hemaList.LastOrDefault();
+                decimal hema = (3 * currentWma) - (2 * currentEma);
+                hemaList.Add(hema);
+
+                var signal = GetCompareSignal(currentValue - hema, prevValue - prevHema);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "He", hemaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = hemaList;
+            stockData.IndicatorName = IndicatorName.HullEstimate;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Hampel Filter
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="scalingFactor"></param>
+        /// <returns></returns>
+        public static StockData CalculateHampelFilter(this StockData stockData, int length = 14, decimal scalingFactor = 3)
+        {
+            List<decimal> tempList = new();
+            List<decimal> absDiffList = new();
+            List<decimal> hfList = new();
+            List<decimal> hfEmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal alpha = (decimal)2 / (length + 1);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal prevValue = tempList.LastOrDefault();
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                tempList.Add(currentValue);
+
+                decimal sampleMedian = tempList.TakeLastExt(length).Median();
+                decimal absDiff = Math.Abs(currentValue - sampleMedian);
+                absDiffList.Add(absDiff);
+
+                decimal mad = absDiffList.TakeLastExt(length).Median();
+                decimal hf = absDiff <= scalingFactor * mad ? currentValue : sampleMedian;
+                hfList.Add(hf);
+
+                decimal prevHfEma = hfEmaList.LastOrDefault();
+                decimal hfEma = (alpha * hf) + ((1 - alpha) * prevHfEma);
+                hfEmaList.Add(hfEma);
+
+                var signal = GetCompareSignal(currentValue - hfEma, prevValue - prevHfEma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Hf", hfEmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = hfEmaList;
+            stockData.IndicatorName = IndicatorName.HampelFilter;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Hybrid Convolution Filter
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateHybridConvolutionFilter(this StockData stockData, int length = 14)
+        {
+            List<decimal> outputList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevOutput = i >= 1 ? outputList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal output = 0;
+                for (int j = 1; j <= length; j++)
+                {
+                    decimal sign = (0.5m * (1 - Cos(MinOrMax(j / length * Pi, 0.99m, 0.01m))));
+                    decimal d = sign - (0.5m * (1 - Cos(MinOrMax((decimal)(j - 1) / length, 0.99m, 0.01m))));
+                    decimal prevValue = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
+                    output += ((sign * prevOutput) + ((1 - sign) * prevValue)) * d;
+                }
+                outputList.Add(output);
+
+                var signal = GetCompareSignal(currentValue - output, prevVal - prevOutput);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Hcf", outputList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = outputList;
+            stockData.IndicatorName = IndicatorName.HybridConvolutionFilter;
 
             return stockData;
         }
