@@ -2,6 +2,8 @@
 
 ## Cycle
 [Grover Llorens Cycle Oscillator](https://www.tradingview.com/script/zZCpzplM-Grover-Llorens-Cycle-Oscillator-alexgrover-Luc%C3%ADa-Llorens/)
+
+[Hurst Cycle Channel](https://www.tradingview.com/script/QmgtSIj5-Hurst-Cycle-Channel-Clone-LazyBear/)
         
 ## Momentum
 [4 Moving Average Convergence Divergence](https://www.tradingview.com/script/nbx4UFZ6-Indicator-4MACD/)
@@ -71,6 +73,10 @@
 [Gator Oscillator](https://www.motivewave.com/studies/gator_oscillator.htm)
 
 [Guppy Multiple Moving Average Oscillator](https://www.tradingview.com/script/YESRunMr-GMMA-Oscillator-v1-by-JustUncleL/)
+
+[Herrick Payoff Index](https://www.motivewave.com/studies/herrick_payoff_index.htm)
+
+[High Low Index](https://school.stockcharts.com/doku.php?id=market_indicators:high_low_index)
 
 [Impulse Moving Average Convergence Divergence](https://www.tradingview.com/script/qt6xLfLi-Impulse-MACD-LazyBear/)
 
@@ -179,6 +185,14 @@
 
 [G Channels](https://www.tradingview.com/script/fIvlS64B-G-Channels-Efficient-Calculation-Of-Upper-Lower-Extremities/)
 
+[High Low Bands](https://www.tradingview.com/script/roEy4Oon-High-Low-Bands/)
+
+[High Low Moving Average](https://www.motivewave.com/studies/ma_high_low.htm)
+
+[Hirashima Sugita RS](https://www.tradingview.com/script/GCcUC752/)
+
+[Hurst Bands](https://www.tradingview.com/script/yl3pK2zM-Indicators-Hurst-Bands-and-Hurst-Oscillator/)
+
 [LBR Paint Bars](https://www.motivewave.com/studies/lbr_paint_bars.htm)
 
 [Linear Channels](https://www.tradingview.com/script/J4ccCRMW-Linear-Channels/)
@@ -268,7 +282,19 @@ Atr Filtered Exponential Moving Average
 
 [Guppy Distance Indicator](https://www.tradingview.com/script/0mUo8TMZ-IO-GuppyDistance/)
 
+[Half Trend](https://www.tradingview.com/script/U1SJ8ubc-HalfTrend/)
+
+[Hampel Filter](https://www.tradingview.com/script/FAddWsSc-Hampel-Filter/)
+
+[Henderson Weighted Moving Average](https://www.tradingview.com/script/jzalZZv7-Henderson-Weighted-Moving-Average/)
+
+[Holt Exponential Moving Average](https://www.tradingview.com/script/Y9K4SHMj-Holt-Exponential-Moving-Average/)
+
+[Hull Estimate](https://www.tradingview.com/script/ZfPg833e-HEMA-A-Fast-And-Efficient-Estimate-Of-The-Hull-Moving-Average/)
+
 [Hull Moving Average](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/hull-moving-average)
+
+[Hybrid Convolution Filter](https://www.tradingview.com/script/cXsM9iiY-Hybrid-Convolution-Filter/)
 
 [Ichimoku Cloud](https://www.investopedia.com/terms/i/ichimoku-cloud.asp)
 
@@ -399,6 +425,8 @@ Atr Filtered Exponential Moving Average
 
 [Historical Volatility](https://www.investopedia.com/terms/h/historicalvolatility.asp)
 
+[Historical Volatility Percentile](https://www.tradingview.com/script/WQEK8atJ-Historical-Volatility-Percentile-SMA/)
+
 [Information Ratio](https://www.motivewave.com/studies/information_ratio.htm)
 
 [Interquartile Range Bands](https://www.tradingview.com/script/YoNUqtWW-Interquartile-Range-Bands/)
@@ -445,6 +473,8 @@ Atr Filtered Exponential Moving Average
 [Ease Of Movement](https://www.tradingview.com/script/Y9Eykm1v-Ease-of-Movement-EOM/)
 
 [Force Index](https://www.investopedia.com/articles/trading/03/031203.asp)
+
+[Hawkeye Volume Indicator](https://www.tradingview.com/script/gci6llVF-Indicator-HawkEye-Volume-Indicator/)
 
 [Klinger Volume Oscillator](https://www.investopedia.com/terms/k/klingeroscillator.asp)
 
