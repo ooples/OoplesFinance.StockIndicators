@@ -72,6 +72,24 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.ExponentialMovingAverage:
                     movingAvgList = stockData.CalculateExponentialMovingAverage(length).CustomValuesList;
                     break;
+                case MovingAvgType.FallingRisingFilter:
+                    movingAvgList = stockData.CalculateFallingRisingFilter(length).CustomValuesList;
+                    break;
+                case MovingAvgType.FareySequenceWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateFareySequenceWeightedMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.FibonacciWeightedMovingAverage:
+                    movingAvgList = stockData.CalculateFibonacciWeightedMovingAverage(length).CustomValuesList;
+                    break;
+                case MovingAvgType.FisherLeastSquaresMovingAverage:
+                    movingAvgList = stockData.CalculateFisherLeastSquaresMovingAverage(length: length).CustomValuesList;
+                    break;
+                case MovingAvgType.FollowingAdaptiveMovingAverage:
+                    movingAvgList = stockData.CalculateEhlersMotherOfAdaptiveMovingAverages().OutputValues["Fama"];
+                    break;
+                case MovingAvgType.FractalAdaptiveMovingAverage:
+                    movingAvgList = stockData.CalculateFractalAdaptiveMovingAverage(length).CustomValuesList;
+                    break;
                 case MovingAvgType.GeneralFilterEstimator:
                     movingAvgList = stockData.CalculateGeneralFilterEstimator(length: length).CustomValuesList;
                     break;

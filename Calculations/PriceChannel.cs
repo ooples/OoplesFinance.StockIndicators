@@ -1164,5 +1164,72 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Flagging Bands
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateFlaggingBands(this StockData stockData, int length = 14)
+        {
+            List<decimal> aList = new();
+            List<decimal> bList = new();
+            List<decimal> tavgList = new();
+            List<decimal> tsList = new();
+            List<decimal> tosList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal stdDev = stdDevList.ElementAtOrDefault(i);
+                decimal prevA1 = i >= 1 ? aList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal prevB1 = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal prevA2 = i >= 2 ? aList.ElementAtOrDefault(i - 2) : currentValue;
+                decimal prevB2 = i >= 2 ? bList.ElementAtOrDefault(i - 2) : currentValue;
+                decimal prevA3 = i >= 3 ? aList.ElementAtOrDefault(i - 3) : currentValue;
+                decimal prevB3 = i >= 3 ? bList.ElementAtOrDefault(i - 3) : currentValue;
+                decimal l = stdDev != 0 ? (decimal)1 / length * stdDev : 0;
+
+                decimal a = currentValue > prevA1 ? prevA1 + (currentValue - prevA1) : prevA2 == prevA3 ? prevA2 - l : prevA2;
+                aList.Add(a);
+
+                decimal b = currentValue < prevB1 ? prevB1 + (currentValue - prevB1) : prevB2 == prevB3 ? prevB2 + l : prevB2;
+                bList.Add(b);
+
+                decimal prevTos = tosList.LastOrDefault();
+                decimal tos = currentValue > prevA2 ? 1 : currentValue < prevB2 ? 0 : prevTos;
+                tosList.Add(tos);
+
+                decimal prevTavg = tavgList.LastOrDefault();
+                decimal avg = (a + b) / 2;
+                decimal tavg = tos == 1 ? (a + avg) / 2 : (b + avg) / 2;
+                tavgList.Add(tavg);
+
+                decimal ts = (tos * b) + ((1 - tos) * a);
+                tsList.Add(ts);
+
+                var signal = GetCompareSignal(currentValue - tavg, prevValue - prevTavg);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", aList },
+                { "MiddleBand", tavgList },
+                { "LowerBand", bList },
+                { "TrailingStop", tsList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.FlaggingBands;
+
+            return stockData;
+        }
     }
 }

@@ -149,12 +149,60 @@ namespace OoplesFinance.StockIndicators.Enums
         EndPointMovingAverage,
         [Category(IndicatorType.Trend)]
         ExponentialMovingAverage,
+        [Category(IndicatorType.Trend)]
+        FallingRisingFilter,
+        [Category(IndicatorType.Trend)]
+        FareySequenceWeightedMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        FastandSlowKurtosisOscillator,
+        [Category(IndicatorType.Momentum)]
+        FastandSlowRelativeStrengthIndexOscillator,
+        [Category(IndicatorType.Momentum)]
+        FastandSlowStochasticOscillator,
+        [Category(IndicatorType.Momentum)]
+        FastSlowDegreeOscillator,
+        [Category(IndicatorType.Momentum)]
+        FastZScore,
+        [Category(IndicatorType.Momentum)]
+        FearAndGreedIndicator,
+        [Category(IndicatorType.SupportAndResistance)]
+        FibonacciPivotPoints,
+        [Category(IndicatorType.SupportAndResistance)]
+        FibonacciRetrace,
+        [Category(IndicatorType.Trend)]
+        FibonacciWeightedMovingAverage,
+        [Category(IndicatorType.Volume)]
+        FiniteVolumeElements,
+        [Category(IndicatorType.Volatility)]
+        FireflyOscillator,
+        [Category(IndicatorType.Trend)]
+        FisherLeastSquaresMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        FisherTransformStochasticOscillator,
+        [Category(IndicatorType.SupportAndResistance)]
+        FlaggingBands,
+        [Category(IndicatorType.SupportAndResistance)]
+        FloorPivotPoints,
+        [Category(IndicatorType.Momentum)]
+        FoldedRelativeStrengthIndex,
         [Category(IndicatorType.Volume)]
         ForceIndex,
+        [Category(IndicatorType.Momentum)]
+        ForecastOscillator,
+        [Category(IndicatorType.Trend)]
+        FractalAdaptiveMovingAverage,
         [Category(IndicatorType.Volatility)]
         FractalChaosBands,
+        [Category(IndicatorType.Momentum)]
+        FractalChaosOscillator,
+        [Category(IndicatorType.Volume)]
+        FreedomOfMovement,
         [Category(IndicatorType.Trend)]
         FullTypicalPrice,
+        [Category(IndicatorType.Momentum)]
+        FunctionToCandles,
+        [Category(IndicatorType.Trend)]
+        FXSniperIndicator,
         [Category(IndicatorType.SupportAndResistance)]
         GChannels,
         [Category(IndicatorType.Momentum)]
@@ -393,6 +441,8 @@ namespace OoplesFinance.StockIndicators.Enums
         RelativeVolatilityIndexV1,
         [Category(IndicatorType.Volatility)]
         RelativeVolatilityIndexV2,
+        [Category(IndicatorType.Volume)]
+        RelativeVolumeIndicator,
         [Category(IndicatorType.Momentum)]
         SchaffTrendCycle,
         [Category(IndicatorType.Trend)]

@@ -3610,5 +3610,288 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Fibonacci Weighted Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateFibonacciWeightedMovingAverage(this StockData stockData, int length = 14)
+        {
+            List<decimal> fibonacciWmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal phi = (1 + Sqrt(5)) / 2;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal sum = 0, weightedSum = 0;
+                for (int j = 0; j <= length - 1; j++)
+                {
+                    decimal pow = Pow(phi, length - j);
+                    decimal weight = (pow - (Pow(-1, j) / pow)) / Sqrt(5);
+                    decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                    sum += prevValue * weight;
+                    weightedSum += weight;
+                }
+
+                decimal prevFwma = fibonacciWmaList.LastOrDefault();
+                decimal fwma = weightedSum != 0 ? sum / weightedSum : 0;
+                fibonacciWmaList.Add(fwma);
+
+                var signal = GetCompareSignal(currentValue - fwma, prevVal - prevFwma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Fwma", fibonacciWmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = fibonacciWmaList;
+            stockData.IndicatorName = IndicatorName.FibonacciWeightedMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Farey Sequence Weighted Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateFareySequenceWeightedMovingAverage(this StockData stockData, int length = 5)
+        {
+            List<decimal> fswmaList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal[] array = new decimal[4] { 0, 1, 1, length };
+            List<decimal> resList = new();
+
+            while (array[2] <= length)
+            {
+                decimal a = array[0];
+                decimal b = array[1];
+                decimal c = array[2];
+                decimal d = array[3];
+                decimal k = Math.Floor((length + b) / array[3]);
+
+                array[0] = c;
+                array[1] = d;
+                array[2] = (k * c) - a;
+                array[3] = (k * d) - b;
+
+                decimal res = array[1] != 0 ? Math.Round(array[0] / array[1], 3) : 0;
+                resList.Insert(0, res);
+            }
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal sum = 0, weightedSum = 0;
+                for (int k = 0; k < resList.Count; k++)
+                {
+                    decimal prevValue = i >= k ? inputList.ElementAtOrDefault(i - k) : 0;
+                    decimal weight = resList.ElementAtOrDefault(k);
+
+                    sum += prevValue * weight;
+                    weightedSum += weight;
+                }
+
+                decimal prevFswma = fswmaList.LastOrDefault();
+                decimal fswma = weightedSum != 0 ? sum / weightedSum : 0;
+                fswmaList.Add(fswma);
+
+                var signal = GetCompareSignal(currentValue - fswma, prevVal - prevFswma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Fswma", fswmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = fswmaList;
+            stockData.IndicatorName = IndicatorName.FareySequenceWeightedMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Fractal Adaptive Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateFractalAdaptiveMovingAverage(this StockData stockData, int length = 20)
+        {
+            List<decimal> filterList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            int halfP = MinOrMax((int)Math.Ceiling((decimal)length / 2));
+
+            var (highestList1, lowestList1) = GetMaxAndMinValuesList(highList, lowList, length);
+            var (highestList2, lowestList2) = GetMaxAndMinValuesList(highList, lowList, halfP);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevFilter = i >= 1 ? filterList.LastOrDefault() : currentValue;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal highestHigh1 = highestList1.ElementAtOrDefault(i);
+                decimal lowestLow1 = lowestList1.ElementAtOrDefault(i);
+                decimal highestHigh2 = highestList2.ElementAtOrDefault(i);
+                decimal lowestLow2 = lowestList2.ElementAtOrDefault(i);
+                decimal highestHigh3 = highestList2.ElementAtOrDefault(Math.Max(i - halfP, i));
+                decimal lowestLow3 = lowestList2.ElementAtOrDefault(Math.Max(i - halfP, i));
+                decimal n3 = (highestHigh1 - lowestLow1) / length;
+                decimal n1 = (highestHigh2 - lowestLow2) / halfP;
+                decimal n2 = (highestHigh3 - lowestLow3) / halfP;
+                decimal dm = n1 > 0 && n2 > 0 && n3 > 0 ? (Log(n1 + n2) - Log(n3)) / Log(2) : 0;
+
+                decimal alpha = MinOrMax(Exp(-4.6m * (dm - 1)), 1, 0.01m);
+                decimal filter = (alpha * currentValue) + ((1 - alpha) * prevFilter);
+                filterList.Add(filter);
+
+                var signal = GetCompareSignal(currentValue - filter, prevValue - prevFilter);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Fama", filterList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = filterList;
+            stockData.IndicatorName = IndicatorName.FractalAdaptiveMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Falling Rising Filter
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateFallingRisingFilter(this StockData stockData, int length = 14)
+        {
+            List<decimal> tempList = new();
+            List<decimal> aList = new();
+            List<decimal> errorList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            decimal alpha = (decimal)2 / (length + 1);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevA = i >= 1 ? aList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevError = i >= 1 ? errorList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                tempList.Add(prevValue);
+
+                var lbList = tempList.TakeLastExt(length).ToList();
+                decimal beta = currentValue > lbList.Max() || currentValue < lbList.Min() ? 1 : alpha;
+                decimal a = prevA + (alpha * prevError) + (beta * prevError);
+                aList.Add(a);
+
+                decimal error = currentValue - a;
+                errorList.Add(error);
+
+                var signal = GetCompareSignal(error, prevError);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Frf", aList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = aList;
+            stockData.IndicatorName = IndicatorName.FallingRisingFilter;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Fisher Least Squares Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateFisherLeastSquaresMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length = 100)
+        {
+            List<decimal> bList = new();
+            List<decimal> indexList = new();
+            List<decimal> diffList = new();
+            List<decimal> absDiffList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var stdDevSrcList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            var smaSrcList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal index = i;
+                indexList.Add(index);
+            }
+
+            stockData.CustomValuesList = indexList;
+            var indexStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            var indexSmaList = GetMovingAverageList(stockData, maType, length, indexList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal stdDevSrc = stdDevSrcList.ElementAtOrDefault(i);
+                decimal indexStdDev = indexStdDevList.ElementAtOrDefault(i);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevB = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal indexSma = indexSmaList.ElementAtOrDefault(i);
+                decimal sma = smaSrcList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal diff = currentValue - prevB;
+                diffList.Add(diff);
+
+                decimal absDiff = Math.Abs(diff);
+                absDiffList.Add(absDiff);
+
+                decimal e = absDiffList.TakeLastExt(length).Average();
+                decimal z = e != 0 ? diffList.TakeLastExt(length).Average() / e : 0;
+                decimal r = Exp(2 * z) + 1 != 0 ? (Exp(2 * z) - 1) / (Exp(2 * z) + 1) : 0;
+                decimal a = indexStdDev != 0 && r != 0 ? (i - indexSma) / indexStdDev * r : 0;
+
+                decimal b = sma + (a * stdDevSrc);
+                bList.Add(b);
+
+                var signal = GetCompareSignal(currentValue - b, prevValue - prevB);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Flsma", bList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = bList;
+            stockData.IndicatorName = IndicatorName.FisherLeastSquaresMovingAverage;
+
+            return stockData;
+        }
     }
 }

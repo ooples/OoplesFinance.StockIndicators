@@ -501,5 +501,56 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Folded Relative Strength Index
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateFoldedRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+            int length = 14)
+        {
+            List<decimal> absRsiList = new();
+            List<decimal> frsiList = new();
+            List<Signal> signalsList = new();
+
+            var rsiList = CalculateRelativeStrengthIndex(stockData, maType, length: length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal rsi = rsiList.ElementAtOrDefault(i);
+
+                decimal absRsi = 2 * Math.Abs(rsi - 50);
+                absRsiList.Add(absRsi);
+
+                decimal frsi = absRsiList.TakeLastExt(length).Sum();
+                frsiList.Add(frsi);
+            }
+
+            var frsiMaList = GetMovingAverageList(stockData, maType, length, frsiList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal frsi = frsiList.ElementAtOrDefault(i);
+                decimal frsiMa = frsiMaList.ElementAtOrDefault(i);
+                decimal prevFrsi = i >= 1 ? frsiList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevFrsiMa = i >= 1 ? frsiMaList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetRsiSignal(frsi - frsiMa, prevFrsi - prevFrsiMa, frsi, prevFrsi, 50, 10);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Frsi", frsiList },
+                { "Signal", frsiMaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = frsiList;
+            stockData.IndicatorName = IndicatorName.FoldedRelativeStrengthIndex;
+
+            return stockData;
+        }
     }
 }
