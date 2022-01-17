@@ -62,6 +62,30 @@
 
 [Ehlers Roofing Filter](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersRoofingFilter)
 
+[Fast and Slow Kurtosis Oscillator](https://www.motivewave.com/studies/fast_and_slow_kurtosis.htm)
+
+[Fast and Slow Relative Strength Index](https://www.motivewave.com/studies/fast_and_slow_rsi.htm)
+
+[Fast and Slow Stochastic Oscillator](https://www.motivewave.com/studies/fast_and_slow_st.htm)
+
+[Fast Slow Degree Oscillator](https://www.tradingview.com/script/e4STG9zx-Fast-Slow-Degree-Oscillator/)
+
+[Fast Z Score](https://www.tradingview.com/script/PtVHfP4v-Fast-Z-Score/)
+
+[Fear and Greed Indicator](https://www.tradingview.com/script/MgjyWQW7-Fear-And-Greed-Indicator/)
+
+[Fisher Transform Stochastic Oscillator](https://www.motivewave.com/studies/fisher_transform_stochastic_oscillator.htm)
+
+[Folded Relative Strength Index](https://www.tradingview.com/script/3MHrImYN-Folded-Relative-Strength-Index-CC/)
+
+[Forecast Oscillator](https://www.tradingview.com/script/CMSQGuGP-Indicator-Forecast-Oscillator-a-BB-extrapolation-experiment/)
+
+[Fractal Chaos Oscillator](https://www.tradingview.com/script/nxSWdKmV-Fractal-Chaos-Oscillator/)
+
+[Function To Candles](https://www.tradingview.com/script/xfcTTyOQ-Function-To-Candles-Another-way-to-see-indicators/)
+
+[FX Sniper Indicator](https://www.tradingview.com/script/pT7lglYP-FX-Sniper-T3-CCI/)
+
 [G Oscillator](https://www.tradingview.com/script/A2dBZ55S-G-Oscillator/)
 
 [Gain Loss Moving Average](https://www.tradingview.com/script/Hb8w5z5U-Gain-Loss-Moving-Average-Cyrus-c-D/)
@@ -183,6 +207,14 @@
 ## Support And Resistance
 [Donchian Channels](https://www.investopedia.com/terms/d/donchianchannels.asp)
 
+[Fibonacci Pivot Points](https://www.tradingview.com/script/vDWxTZCv-Fibonacci-Pivot-Points/)
+
+[Fibonacci Retrace](https://www.motivewave.com/studies/fibonacci_retrace.htm)
+
+[Flagging Bands](https://www.tradingview.com/script/bqffXjLg-Flagging-Bands/)
+
+[Floor Pivot Points](https://www.interactivebrokers.com/en/software/tws/usersguidebook/technicalanalytics/floorpivotpoints.htm)
+
 [G Channels](https://www.tradingview.com/script/fIvlS64B-G-Channels-Efficient-Calculation-Of-Upper-Lower-Extremities/)
 
 [High Low Bands](https://www.tradingview.com/script/roEy4Oon-High-Low-Bands/)
@@ -265,6 +297,16 @@ Atr Filtered Exponential Moving Average
 [End Point Moving Average](https://tickeron.com/trading-investing-101/what-epma)
 
 [Exponential Moving Average](https://www.investopedia.com/terms/e/ema.asp)
+
+[Falling Rising Filter](https://www.tradingview.com/script/pSSy9HML-Falling-Rising-Filter/)
+
+[Farey Sequence Weighted Moving Average](https://www.tradingview.com/script/UQ48Qh3y-Farey-Sequence-Weighted-Moving-Average/)
+
+[Fibonacci Weighted Moving Average](https://www.tradingview.com/script/gObTdd4J-Fibonacci-Weighted-Moving-Average/)
+
+[Fisher Least Squares Moving Average](https://www.tradingview.com/script/ZZ1LjoJC-Fisher-Least-Squares-Moving-Average/)
+
+[Fractal Adaptive Moving Average](https://www.motivewave.com/studies/fractal_adaptive_moving_average.htm)
 
 [Full Typical Price](https://tlc.thinkorswim.com/center/reference/thinkScript/Functions/Fundamentals/ohlc4)
 
@@ -417,6 +459,8 @@ Atr Filtered Exponential Moving Average
 
 [Bollinger Bands With Atr Pct](https://www.tradingview.com/script/RUCy4Kfk-Bollinger-Bands-with-ATR-Percent/)
 
+[Firefly Oscillator](https://www.tradingview.com/script/pgvRuoUi-Firefly-Oscillator-LazyBear/)
+
 [Fractal Chaos Bands](https://www.stockmaniacs.net/fractal-chaos-bands-indicator/#:~:text=Fractal%20Chaos%20Bands%20Indicator%20connects,tool%20for%20any%20trading%20method.)
 
 [Garman Klass Volatility](https://www.tradingview.com/script/w3xglYEv-Garman-Klass-Volatility/)
@@ -472,7 +516,11 @@ Atr Filtered Exponential Moving Average
 
 [Ease Of Movement](https://www.tradingview.com/script/Y9Eykm1v-Ease-of-Movement-EOM/)
 
+[Finite Volume Elements](https://www.tradingview.com/script/XrBPKrWL-Finite-Volume-Elements-FVE/)
+
 [Force Index](https://www.investopedia.com/articles/trading/03/031203.asp)
+
+[Freedom Of Movement](https://www.tradingview.com/script/HT2zozvk-Indicator-Relative-Volume-Indicator-Freedom-Of-Movement/)
 
 [Hawkeye Volume Indicator](https://www.tradingview.com/script/gci6llVF-Indicator-HawkEye-Volume-Indicator/)
 
@@ -495,6 +543,8 @@ Atr Filtered Exponential Moving Average
 [Percentage Volume Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:percentage_volume_oscillator_pvo)
 
 [Positive Volume Index](https://www.investopedia.com/terms/p/pvi.asp)
+
+[Relative Volume Indicator](https://www.tradingview.com/script/HT2zozvk-Indicator-Relative-Volume-Indicator-Freedom-Of-Movement/)
 
 [Upside Downside Volume](https://www.motivewave.com/studies/upside_dnside_volume.htm)
 
