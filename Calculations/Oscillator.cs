@@ -5,6 +5,7 @@ using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
 using static OoplesFinance.StockIndicators.Helpers.MathHelper;
 using OoplesFinance.StockIndicators.Enums;
 using MathNet.Numerics;
+using MathNet.Numerics.Statistics;
 
 namespace OoplesFinance.StockIndicators
 {
@@ -8531,6 +8532,827 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = new List<decimal>();
             stockData.IndicatorName = IndicatorName.FunctionToCandles;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Karobein Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateKarobeinOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+            int length = 50)
+        {
+            List<decimal> aList = new();
+            List<decimal> bList = new();
+            List<decimal> dList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var emaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ema = emaList.ElementAtOrDefault(i);
+                decimal prevEma = i >= 1 ? emaList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal a = ema < prevEma && prevEma != 0 ? ema / prevEma : 0;
+                aList.Add(a);
+
+                decimal b = ema > prevEma && prevEma != 0 ? ema / prevEma : 0;
+                bList.Add(b);
+            }
+
+            var aEmaList = GetMovingAverageList(stockData, maType, length, aList);
+            var bEmaList = GetMovingAverageList(stockData, maType, length, bList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal ema = emaList.ElementAtOrDefault(i);
+                decimal prevEma = i >= 1 ? emaList.ElementAtOrDefault(i - 1) : 0;
+                decimal a = aEmaList.ElementAtOrDefault(i);
+                decimal b = bEmaList.ElementAtOrDefault(i);
+                decimal prevD1 = i >= 1 ? dList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevD2 = i >= 2 ? dList.ElementAtOrDefault(i - 2) : 0;
+                decimal c = prevEma != 0 && ema != 0 ? MinOrMax(ema / prevEma / ((ema / prevEma) + b), 1, 0) : 0;
+
+                decimal d = prevEma != 0 && ema != 0 ? MinOrMax((2 * (ema / prevEma / ((ema / prevEma) + (c * a)))) - 1, 1, 0) : 0;
+                dList.Add(d);
+
+                var signal = GetRsiSignal(d - prevD1, prevD1 - prevD2, d, prevD1, 0.8m, 0.2m);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ko", dList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = dList;
+            stockData.IndicatorName = IndicatorName.KarobeinOscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kase Peak Oscillator V1
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="smoothLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateKasePeakOscillatorV1(this StockData stockData, int length = 30, int smoothLength = 3)
+        {
+            List<decimal> diffList = new();
+            List<decimal> lnList = new();
+            List<Signal> signalsList = new();
+            var (_, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            decimal sqrt = Sqrt(length);
+
+            var atrList = CalculateAverageTrueRange(stockData, length: length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentAtr = atrList.ElementAtOrDefault(i);
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal prevLow = i >= length ? lowList.ElementAtOrDefault(i - length) : 0;
+                decimal prevHigh = i >= length ? highList.ElementAtOrDefault(i - length) : 0;
+                decimal rwh = currentAtr != 0 ? (currentHigh - prevLow) / currentAtr * sqrt : 0;
+                decimal rwl = currentAtr != 0 ? (prevHigh - currentLow) / currentAtr * sqrt : 0;
+
+                decimal diff = rwh - rwl;
+                diffList.Add(diff);
+            }
+
+            var pkList = GetMovingAverageList(stockData, MovingAvgType.WeightedMovingAverage, smoothLength, diffList);
+            var mnList = GetMovingAverageList(stockData, MovingAvgType.SimpleMovingAverage, length, pkList);
+            stockData.CustomValuesList = pkList;
+            var sdList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal pk = pkList.ElementAtOrDefault(i);
+                decimal mn = mnList.ElementAtOrDefault(i);
+                decimal sd = sdList.ElementAtOrDefault(i);
+                decimal prevPk = i >= 1 ? pkList.ElementAtOrDefault(i - 1) : 0;
+                decimal v1 = mn + (1.33m * sd) > 2.08m ? mn + (1.33m * sd) : 2.08m;
+                decimal v2 = mn - (1.33m * sd) < -1.92m ? mn - (1.33m * sd) : -1.92m;
+
+                decimal prevLn = lnList.LastOrDefault();
+                decimal ln = prevPk >= 0 && pk > 0 ? v1 : prevPk <= 0 && pk < 0 ? v2 : 0;
+                lnList.Add(ln);
+
+                var signal = GetCompareSignal(ln, prevLn);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Kpo", lnList },
+                { "Pk", pkList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = lnList;
+            stockData.IndicatorName = IndicatorName.KasePeakOscillatorV1;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kase Peak Oscillator V2
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="length3"></param>
+        /// <param name="smoothLength"></param>
+        /// <param name="devFactor"></param>
+        /// <param name="sensitivity"></param>
+        /// <returns></returns>
+        public static StockData CalculateKasePeakOscillatorV2(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int fastLength = 8, int slowLength = 65, int length1 = 9, int length2 = 30, int length3 = 50, int smoothLength = 3, decimal devFactor = 2, 
+            decimal sensitivity = 40)
+        {
+            List<decimal> ccLogList = new();
+            List<decimal> xpAbsAvgList = new();
+            List<decimal> kpoBufferList = new();
+            List<decimal> x1List = new();
+            List<decimal> x2List = new();
+            List<decimal> xpList = new();
+            List<decimal> xpAbsList = new();
+            List<decimal> kppBufferList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal temp = prevValue != 0 ? currentValue / prevValue : 0;
+
+                decimal ccLog = temp > 0 ? Log(temp) : 0;
+                ccLogList.Add(ccLog);
+            }
+
+            stockData.CustomValuesList = ccLogList;
+            var ccDevList = CalculateStandardDeviationVolatility(stockData, length1).CustomValuesList;
+            var ccDevAvgList = GetMovingAverageList(stockData, maType, length2, ccDevList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal avg = ccDevAvgList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+
+                decimal max1 = 0, max2 = 0;
+                for (int j = fastLength; j < slowLength; j++)
+                {
+                    decimal sqrtK = Sqrt(j);
+                    decimal prevLow = i >= j ? lowList.ElementAtOrDefault(i - j) : 0;
+                    decimal prevHigh = i >= j ? highList.ElementAtOrDefault(i - j) : 0;
+                    decimal temp1 = prevLow != 0 ? currentHigh / prevLow : 0;
+                    decimal log1 = temp1 > 0 ? Log(temp1) : 0;
+                    max1 = Math.Max(log1 / sqrtK, max1);
+                    decimal temp2 = currentLow != 0 ? prevHigh / currentLow : 0;
+                    decimal log2 = temp2 > 0 ? Log(temp2) : 0;
+                    max2 = Math.Max(log2 / sqrtK, max2);
+                }
+
+                decimal x1 = avg != 0 ? max1 / avg : 0;
+                x1List.Add(x1);
+
+                decimal x2 = avg != 0 ? max2 / avg : 0;
+                x2List.Add(x2);
+
+                decimal xp = sensitivity * (x1List.TakeLastExt(smoothLength).Average() - x2List.TakeLastExt(smoothLength).Average());
+                xpList.Add(xp);
+
+                decimal xpAbs = Math.Abs(xp);
+                xpAbsList.Add(xpAbs);
+
+                decimal xpAbsAvg = xpAbsList.TakeLastExt(length3).Average();
+                xpAbsAvgList.Add(xpAbsAvg);
+            }
+
+            stockData.CustomValuesList = xpAbsList;
+            var xpAbsStdDevList = CalculateStandardDeviationVolatility(stockData, length3).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal xpAbsAvg = xpAbsAvgList.ElementAtOrDefault(i);
+                decimal xpAbsStdDev = xpAbsStdDevList.ElementAtOrDefault(i);
+                decimal prevKpoBuffer1 = i >= 1 ? kpoBufferList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevKpoBuffer2 = i >= 2 ? kpoBufferList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal tmpVal = xpAbsAvg + (devFactor * xpAbsStdDev);
+                decimal maxVal = Math.Max(90, tmpVal);
+                decimal minVal = Math.Min(90, tmpVal);
+
+                decimal prevKpoBuffer = kpoBufferList.LastOrDefault();
+                decimal kpoBuffer = xpList.ElementAtOrDefault(i);
+                kpoBufferList.Add(kpoBuffer);
+
+                decimal kppBuffer = prevKpoBuffer1 > 0 && prevKpoBuffer1 > kpoBuffer && prevKpoBuffer1 >= prevKpoBuffer2 && 
+                    prevKpoBuffer1 >= maxVal ? prevKpoBuffer1 : prevKpoBuffer1 < 0 && prevKpoBuffer1 < kpoBuffer && 
+                    prevKpoBuffer1 <= prevKpoBuffer2 && prevKpoBuffer1 <= maxVal * -1 ? prevKpoBuffer1 :
+                    prevKpoBuffer1 > 0 && prevKpoBuffer1 > kpoBuffer && prevKpoBuffer1 >= prevKpoBuffer2 ? prevKpoBuffer1 :
+                    prevKpoBuffer1 < 0 && prevKpoBuffer1 < kpoBuffer && prevKpoBuffer1 <= prevKpoBuffer2 ? prevKpoBuffer1 : 0;
+                kppBufferList.Add(kppBuffer);
+
+                var signal = GetCompareSignal(kpoBuffer, prevKpoBuffer);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Kpo", xpList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = xpList;
+            stockData.IndicatorName = IndicatorName.KasePeakOscillatorV2;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kase Serial Dependency Index
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaseSerialDependencyIndex(this StockData stockData, int length = 14)
+        {
+            List<decimal> ksdiUpList = new();
+            List<decimal> ksdiDownList = new();
+            List<decimal> tempList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal temp = prevValue != 0 ? currentValue / prevValue : 0;
+
+                decimal tempLog = temp > 0 ? Log(temp) : 0;
+                tempList.Add(tempLog);
+            }
+
+            stockData.CustomValuesList = tempList;
+            var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal volatility = stdDevList.ElementAtOrDefault(i);
+                decimal prevHigh = i >= length ? highList.ElementAtOrDefault(i - length) : 0;
+                decimal prevLow = i >= length ? lowList.ElementAtOrDefault(i - length) : 0;
+                decimal ksdiUpTemp = prevLow != 0 ? currentHigh / prevLow : 0;
+                decimal ksdiDownTemp = prevHigh != 0 ? currentLow / prevHigh : 0;
+                decimal ksdiUpLog = ksdiUpTemp > 0 ? Log(ksdiUpTemp) : 0;
+                decimal ksdiDownLog = ksdiDownTemp > 0 ? Log(ksdiDownTemp) : 0;
+
+                decimal prevKsdiUp = ksdiUpList.LastOrDefault();
+                decimal ksdiUp = volatility != 0 ? ksdiUpLog / volatility : 0;
+                ksdiUpList.Add(ksdiUp);
+
+                decimal prevKsdiDown = ksdiDownList.LastOrDefault();
+                decimal ksdiDown = volatility != 0 ? ksdiDownLog / volatility : 0;
+                ksdiDownList.Add(ksdiDown);
+
+                var signal = GetCompareSignal(ksdiUp - ksdiDown, prevKsdiUp - prevKsdiDown);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "KsdiUp", ksdiUpList },
+                { "KsdiDn", ksdiDownList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.KaseSerialDependencyIndex;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kaufman Binary Wave
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="fastSc"></param>
+        /// <param name="slowSc"></param>
+        /// <param name="filterPct"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaufmanBinaryWave(this StockData stockData, int length = 20, decimal fastSc = 0.6022m, decimal slowSc = 0.0645m, 
+            decimal filterPct = 10)
+        {
+            List<decimal> amaList = new();
+            List<decimal> diffList = new();
+            List<decimal> amaLowList = new();
+            List<decimal> amaHighList = new();
+            List<decimal> bwList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var efRatioList = CalculateKaufmanAdaptiveMovingAverage(stockData, length: length).OutputValues["Er"];
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal efRatio = efRatioList.ElementAtOrDefault(i);
+                decimal prevAma = i >= 1 ? amaList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal smooth = Pow((efRatio * fastSc) + slowSc, 2);
+
+                decimal ama = prevAma + (smooth * (currentValue - prevAma));
+                amaList.Add(ama);
+
+                decimal diff = ama - prevAma;
+                diffList.Add(diff);
+            }
+
+            stockData.CustomValuesList = diffList;
+            var diffStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal ama = amaList.ElementAtOrDefault(i);
+                decimal diffStdDev = diffStdDevList.ElementAtOrDefault(i);
+                decimal prevAma = i >= 1 ? amaList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal filter = filterPct / 100 * diffStdDev;
+
+                decimal prevAmaLow = amaLowList.LastOrDefault();
+                decimal amaLow = ama < prevAma ? ama : prevAmaLow;
+                amaLowList.Add(amaLow);
+
+                decimal prevAmaHigh = amaHighList.LastOrDefault();
+                decimal amaHigh = ama > prevAma ? ama : prevAmaHigh;
+                amaHighList.Add(amaHigh);
+
+                decimal prevBw = bwList.LastOrDefault();
+                decimal bw = ama - amaLow > filter ? 1 : amaHigh - ama > filter ? -1 : 0;
+                bwList.Add(bw);
+
+                var signal = GetCompareSignal(bw, prevBw);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Kbw", bwList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = bwList;
+            stockData.IndicatorName = IndicatorName.KaufmanBinaryWave;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kurtosis Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateKurtosisIndicator(this StockData stockData, int length1 = 3, int length2 = 1, int fastLength = 3, 
+            int slowLength = 65)
+        {
+            List<decimal> diffList = new();
+            List<decimal> kList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= length1 ? inputList.ElementAtOrDefault(i - length1) : 0;
+                decimal prevDiff = i >= length2 ? diffList.ElementAtOrDefault(i - length2) : 0;
+
+                decimal diff = currentValue - prevValue;
+                diffList.Add(diff);
+
+                decimal k = diff - prevDiff;
+                kList.Add(k);
+            }
+
+            var fkList = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, slowLength, kList);
+            var fskList = GetMovingAverageList(stockData, MovingAvgType.WeightedMovingAverage, fastLength, fkList);
+            for (int j = 0; j < stockData.Count; j++)
+            {
+                decimal fsk = fskList.ElementAtOrDefault(j);
+                decimal prevFsk = j >= 1 ? fskList.ElementAtOrDefault(j - 1) : 0;
+
+                var signal = GetCompareSignal(fsk, prevFsk);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Fk", fkList },
+                { "Signal", fskList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = fkList;
+            stockData.IndicatorName = IndicatorName.KurtosisIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kaufman Adaptive Correlation Oscillator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaufmanAdaptiveCorrelationOscillator(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.KaufmanAdaptiveMovingAverage, int length = 14)
+        {
+            List<decimal> indexList = new();
+            List<decimal> index2List = new();
+            List<decimal> src2List = new();
+            List<decimal> srcStList = new();
+            List<decimal> indexStList = new();
+            List<decimal> indexSrcList = new();
+            List<decimal> rList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var kamaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+
+                decimal index = i;
+                indexList.Add(index);
+
+                decimal indexSrc = i * currentValue;
+                indexSrcList.Add(indexSrc);
+
+                decimal srcSrc = currentValue * currentValue;
+                src2List.Add(srcSrc);
+
+                decimal indexIndex = index * index;
+                index2List.Add(indexIndex);
+            }
+
+            var indexMaList = GetMovingAverageList(stockData, maType, length, indexList);
+            var indexSrcMaList = GetMovingAverageList(stockData, maType, length, indexSrcList);
+            var index2MaList = GetMovingAverageList(stockData, maType, length, index2List);
+            var src2MaList = GetMovingAverageList(stockData, maType, length, src2List);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal srcMa = kamaList.ElementAtOrDefault(i);
+                decimal indexMa = indexMaList.ElementAtOrDefault(i);
+                decimal indexSrcMa = indexSrcMaList.ElementAtOrDefault(i);
+                decimal index2Ma = index2MaList.ElementAtOrDefault(i);
+                decimal src2Ma = src2MaList.ElementAtOrDefault(i);
+                decimal prevR1 = i >= 1 ? rList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevR2 = i >= 2 ? rList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal indexSqrt = index2Ma - Pow(indexMa, 2);
+                decimal indexSt = indexSqrt >= 0 ? Sqrt(indexSqrt) : 0;
+                indexStList.Add(indexSt);
+
+                decimal srcSqrt = src2Ma - Pow(srcMa, 2);
+                decimal srcSt = srcSqrt >= 0 ? Sqrt(srcSqrt) : 0;
+                srcStList.Add(srcSt);
+
+                decimal a = indexSrcMa - (indexMa * srcMa);
+                decimal b = indexSt * srcSt;
+
+                decimal r = b != 0 ? a / b : 0;
+                rList.Add(r);
+
+                var signal = GetRsiSignal(r - prevR1, prevR1 - prevR2, r, prevR1, 0.5m, -0.5m);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "IndexSt", indexStList },
+                { "SrcSt", srcStList },
+                { "Kaco", rList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = rList;
+            stockData.IndicatorName = IndicatorName.KaufmanAdaptiveCorrelationOscillator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Know Sure Thing Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="length3"></param>
+        /// <param name="length4"></param>
+        /// <param name="rocLength1"></param>
+        /// <param name="rocLength2"></param>
+        /// <param name="rocLength3"></param>
+        /// <param name="rocLength4"></param>
+        /// <param name="signalLength"></param>
+        /// <param name="weight1"></param>
+        /// <param name="weight2"></param>
+        /// <param name="weight3"></param>
+        /// <param name="weight4"></param>
+        /// <returns></returns>
+        public static StockData CalculateKnowSureThing(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length1 = 10,
+            int length2 = 10, int length3 = 10, int length4 = 15, int rocLength1 = 10, int rocLength2 = 15, int rocLength3 = 20, int rocLength4 = 30, 
+            int signalLength = 9, decimal weight1 = 1, decimal weight2 = 2, decimal weight3 = 3, decimal weight4 = 4)
+        {
+            List<decimal> kstList = new();
+            List<Signal> signalsList = new();
+
+            var roc1List = CalculateRateOfChange(stockData, rocLength1).CustomValuesList;
+            var roc2List = CalculateRateOfChange(stockData, rocLength2).CustomValuesList;
+            var roc3List = CalculateRateOfChange(stockData, rocLength3).CustomValuesList;
+            var roc4List = CalculateRateOfChange(stockData, rocLength4).CustomValuesList;
+            var roc1SmaList = GetMovingAverageList(stockData, maType, length1, roc1List);
+            var roc2SmaList = GetMovingAverageList(stockData, maType, length2, roc2List);
+            var roc3SmaList = GetMovingAverageList(stockData, maType, length3, roc3List);
+            var roc4SmaList = GetMovingAverageList(stockData, maType, length4, roc4List);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal roc1 = roc1SmaList.ElementAtOrDefault(i);
+                decimal roc2 = roc2SmaList.ElementAtOrDefault(i);
+                decimal roc3 = roc3SmaList.ElementAtOrDefault(i);
+                decimal roc4 = roc4SmaList.ElementAtOrDefault(i);
+
+                decimal kst = (roc1 * weight1) + (roc2 * weight2) + (roc3 * weight3) + (roc4 * weight4);
+                kstList.Add(kst);
+            }
+
+            var kstSignalList = GetMovingAverageList(stockData, maType, signalLength, kstList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal kst = kstList.ElementAtOrDefault(i);
+                decimal kstSignal = kstSignalList.ElementAtOrDefault(i);
+                decimal prevKst = i >= 1 ? kstList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevKstSignal = i >= 1 ? kstSignalList.ElementAtOrDefault(i - 1) : 0;
+
+                var signal = GetCompareSignal(kst - kstSignal, prevKst - prevKstSignal);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Kst", kstList },
+                { "Signal", kstSignalList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = kstList;
+            stockData.IndicatorName = IndicatorName.KnowSureThing;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kase Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaseIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 10)
+        {
+            List<decimal> kUpList = new();
+            List<decimal> kDownList = new();
+            List<Signal> signalsList = new();
+            var (_, highList, lowList, _, volumeList) = GetInputValuesList(stockData);
+
+            decimal sqrtPeriod = Sqrt(length);
+
+            var volumeSmaList = GetMovingAverageList(stockData, maType, length, volumeList);
+            var atrList = CalculateAverageTrueRange(stockData, maType, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal avgTrueRange = atrList.ElementAtOrDefault(i);
+                decimal avgVolSma = volumeSmaList.ElementAtOrDefault(i);
+                decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+                decimal ratio = avgVolSma * sqrtPeriod;
+
+                decimal prevKUp = kUpList.LastOrDefault();
+                decimal kUp = avgTrueRange > 0 && ratio != 0 && currentLow != 0 ? prevHigh / currentLow / ratio : prevKUp;
+                kUpList.Add(kUp);
+
+                decimal prevKDown = kDownList.LastOrDefault();
+                decimal kDown = avgTrueRange > 0 && ratio != 0 && prevLow != 0 ? currentHigh / prevLow / ratio : prevKDown;
+                kDownList.Add(kDown);
+
+                var signal = GetCompareSignal(kUp - kDown, prevKUp - prevKDown);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "KaseUp", kUpList },
+                { "KaseDn", kDownList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.KaseIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kendall Rank Correlation Coefficient
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateKendallRankCorrelationCoefficient(this StockData stockData, int length = 20)
+        {
+            List<decimal> tempList = new();
+            List<decimal> numeratorList = new();
+            List<decimal> tempLinRegList = new();
+            List<decimal> pearsonCorrelationList = new();
+            List<decimal> kendallCorrelationList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var linRegList = CalculateLinearRegression(stockData, length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal prevKendall1 = i >= 1 ? kendallCorrelationList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevKendall2 = i >= 2 ? kendallCorrelationList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                tempList.Add(currentValue);
+
+                decimal linReg = linRegList.ElementAtOrDefault(i);
+                tempLinRegList.Add(linReg);
+
+                var pearsonCorrelation = Correlation.Pearson(tempLinRegList.TakeLastExt(length).Select(x => (double)x), 
+                    tempList.TakeLastExt(length).Select(x => (double)x));
+                pearsonCorrelation = IsValueNullOrInfinity(pearsonCorrelation) ? 0 : pearsonCorrelation;
+                pearsonCorrelationList.Add((decimal)pearsonCorrelation);
+
+                decimal totalPairs = length * (length - 1) / 2;
+                decimal numerator = 0;
+                for (int j = 0; j <= length - 1; j++)
+                {
+                    for (int k = 0; k <= j; k++)
+                    {
+                        decimal prevValueJ = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+                        decimal prevValueK = i >= k ? inputList.ElementAtOrDefault(i - k) : 0;
+                        decimal prevLinRegJ = i >= j ? linRegList.ElementAtOrDefault(i - j) : 0;
+                        decimal prevLinRegK = i >= k ? linRegList.ElementAtOrDefault(i - k) : 0;
+                        numerator += Math.Sign(prevLinRegJ - prevLinRegK) * Math.Sign(prevValueJ - prevValueK);
+                    }
+                }
+
+                decimal kendallCorrelation = numerator / totalPairs;
+                kendallCorrelationList.Add(kendallCorrelation);
+
+                var signal = GetCompareSignal(kendallCorrelation - prevKendall1, prevKendall1 - prevKendall2);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Krcc", kendallCorrelationList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = kendallCorrelationList;
+            stockData.IndicatorName = IndicatorName.KendallRankCorrelationCoefficient;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kwan Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <param name="smoothLength"></param>
+        /// <returns></returns>
+        public static StockData CalculateKwanIndicator(this StockData stockData, MovingAvgType maType, int length = 9, int smoothLength = 2)
+        {
+            List<decimal> vrList = new();
+            List<decimal> prevList = new();
+            List<decimal> knrpList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+            var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
+
+            var rsiList = CalculateRelativeStrengthIndex(stockData, maType, length: length).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentClose = inputList.ElementAtOrDefault(i);
+                decimal priorClose = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+                decimal mom = priorClose != 0 ? currentClose / priorClose * 100 : 0;
+                decimal rsi = rsiList.ElementAtOrDefault(i);
+                decimal hh = highestList.ElementAtOrDefault(i);
+                decimal ll = lowestList.ElementAtOrDefault(i);
+                decimal sto = hh - ll != 0 ? (currentClose - ll) / (hh - ll) * 100 : 0;
+                decimal prevVr = i >= smoothLength ? vrList.ElementAtOrDefault(i - smoothLength) : 0;
+                decimal prevKnrp1 = i >= 1 ? knrpList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevKnrp2 = i >= 2 ? knrpList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal vr = mom != 0 ? sto * rsi / mom : 0;
+                vrList.Add(vr);
+
+                decimal prev = prevVr;
+                prevList.Add(prev);
+
+                decimal vrSum = prevList.Sum();
+                decimal knrp = vrSum / smoothLength;
+                knrpList.Add(knrp);
+
+                var signal = GetCompareSignal(knrp - prevKnrp1, prevKnrp1 - prevKnrp2);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ki", knrpList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = knrpList;
+            stockData.IndicatorName = IndicatorName.KwanIndicator;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kaufman Stress Indicator
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="marketData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaufmanStressIndicator(this StockData stockData, StockData marketData, int length = 60)
+        {
+            List<decimal> svList = new();
+            List<decimal> dList = new();
+            List<Signal> signalsList = new();
+            var (inputList1, highList1, lowList1, _, _) = GetInputValuesList(stockData);
+            var (inputList2, highList2, lowList2, _, _) = GetInputValuesList(marketData);
+            var (highestList1, lowestList1) = GetMaxAndMinValuesList(highList1, lowList1, length);
+            var (highestList2, lowestList2) = GetMaxAndMinValuesList(highList2, lowList2, length);
+
+            if (stockData.Count == marketData.Count)
+            {
+                for (int i = 0; i < stockData.Count; i++)
+                {
+                    decimal highestHigh1 = highestList1.ElementAtOrDefault(i);
+                    decimal lowestLow1 = lowestList1.ElementAtOrDefault(i);
+                    decimal highestHigh2 = highestList2.ElementAtOrDefault(i);
+                    decimal lowestLow2 = lowestList2.ElementAtOrDefault(i);
+                    decimal currentValue1 = inputList1.ElementAtOrDefault(i);
+                    decimal currentValue2 = inputList2.ElementAtOrDefault(i);
+                    decimal prevSv1 = i >= 1 ? svList.ElementAtOrDefault(i - 1) : 0;
+                    decimal prevSv2 = i >= 2 ? svList.ElementAtOrDefault(i - 2) : 0;
+                    decimal r1 = highestHigh1 - lowestLow1;
+                    decimal r2 = highestHigh2 - lowestLow2;
+                    decimal s1 = r1 != 0 ? (currentValue1 - lowestLow1) / r1 : 50;
+                    decimal s2 = r2 != 0 ? (currentValue2 - lowestLow2) / r2 : 50;
+
+                    decimal d = s1 - s2;
+                    dList.Add(d);
+
+                    var list = dList.TakeLastExt(length).ToList();
+                    decimal highestD = list.Max();
+                    decimal lowestD = list.Min();
+                    decimal r11 = highestD - lowestD;
+
+                    decimal sv = r11 != 0 ? MinOrMax(100 * (d - lowestD) / r11, 100, 0) : 50;
+                    svList.Add(sv);
+
+                    var signal = GetRsiSignal(sv - prevSv1, prevSv1 - prevSv2, sv, prevSv1, 90, 10);
+                    signalsList.Add(signal);
+                }
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ksi", svList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = svList;
+            stockData.IndicatorName = IndicatorName.KaufmanStressIndicator;
 
             return stockData;
         }

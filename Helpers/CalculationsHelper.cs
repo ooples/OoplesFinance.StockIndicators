@@ -126,6 +126,12 @@ namespace OoplesFinance.StockIndicators.Helpers
                 case MovingAvgType.JurikMovingAverage:
                     movingAvgList = stockData.CalculateJurikMovingAverage(length: length).CustomValuesList;
                     break;
+                case MovingAvgType.KalmanSmoother:
+                    movingAvgList = stockData.CalculateKalmanSmoother(length).CustomValuesList;
+                    break;
+                case MovingAvgType.KaufmanAdaptiveLeastSquaresMovingAverage:
+                    movingAvgList = stockData.CalculateKaufmanAdaptiveLeastSquaresMovingAverage(length: length).CustomValuesList;
+                    break;
                 case MovingAvgType.KaufmanAdaptiveMovingAverage:
                     movingAvgList = stockData.CalculateKaufmanAdaptiveMovingAverage(length: length).CustomValuesList;
                     break;

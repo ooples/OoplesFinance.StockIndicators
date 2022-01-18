@@ -241,5 +241,47 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Kase Convergence Divergence
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="length3"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaseConvergenceDivergence(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int length1 = 30, int length2 = 3, int length3 = 8)
+        {
+            List<decimal> kcdList = new();
+            List<Signal> signalsList = new();
+
+            var pkList = CalculateKasePeakOscillatorV1(stockData, length1, length2).OutputValues["Pk"];
+            var pkSignalList = GetMovingAverageList(stockData, maType, length3, pkList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal pk = pkList.ElementAtOrDefault(i);
+                decimal pkSma = pkSignalList.ElementAtOrDefault(i);
+
+                decimal prevKcd = kcdList.LastOrDefault();
+                decimal kcd = pk - pkSma;
+                kcdList.Add(kcd);
+
+                var signal = GetCompareSignal(kcd, prevKcd);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Kcd", kcdList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = kcdList;
+            stockData.IndicatorName = IndicatorName.KaseConvergenceDivergence;
+
+            return stockData;
+        }
     }
 }

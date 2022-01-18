@@ -2,6 +2,7 @@
 using static OoplesFinance.StockIndicators.Enums.SignalsClass;
 using static OoplesFinance.StockIndicators.Helpers.SignalHelper;
 using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
+using static OoplesFinance.StockIndicators.Helpers.MathHelper;
 using OoplesFinance.StockIndicators.Enums;
 
 namespace OoplesFinance.StockIndicators
@@ -592,6 +593,185 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = htList;
             stockData.IndicatorName = IndicatorName.HalfTrend;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kase Dev Stop V1
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="inputName"></param>
+        /// <param name="maType"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <param name="length"></param>
+        /// <param name="stdDev1"></param>
+        /// <param name="stdDev2"></param>
+        /// <param name="stdDev3"></param>
+        /// <param name="stdDev4"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaseDevStopV1(this StockData stockData, InputName inputName = InputName.TypicalPrice, 
+            MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int fastLength = 5, int slowLength = 21, int length = 20, decimal stdDev1 = 0, 
+            decimal stdDev2 = 1, decimal stdDev3 = 2.2m, decimal stdDev4 = 3.6m)
+        {
+            List<decimal> warningLineList = new();
+            List<decimal> dev1List = new();
+            List<decimal> dev2List = new();
+            List<decimal> dev3List = new();
+            List<decimal> dtrList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, closeList, _) = GetInputValuesList(inputName, stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal prevClose = i >= 2 ? closeList.ElementAtOrDefault(i - 2) : 0;
+                decimal prevLow = i >= 2 ? lowList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal dtr = Math.Max(Math.Max(currentHigh - prevLow, Math.Abs(currentHigh - prevClose)), Math.Max(Math.Abs(currentLow - prevClose),
+                    Math.Abs(currentLow - prevClose)));
+                dtrList.Add(dtr);
+            }
+
+            var dtrAvgList = GetMovingAverageList(stockData, maType, length, dtrList);
+            var smaSlowList = GetMovingAverageList(stockData, maType, slowLength, inputList);
+            var smaFastList = GetMovingAverageList(stockData, maType, fastLength, inputList);
+            stockData.CustomValuesList = dtrList;
+            var dtrStdList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal maFast = smaFastList.ElementAtOrDefault(i);
+                decimal maSlow = smaSlowList.ElementAtOrDefault(i);
+                decimal dtrAvg = dtrAvgList.ElementAtOrDefault(i);
+                decimal dtrStd = dtrStdList.ElementAtOrDefault(i);
+                decimal currentTypicalPrice = inputList.ElementAtOrDefault(i);
+                decimal prevMaFast = i >= 1 ? smaFastList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevMaSlow = i >= 1 ? smaSlowList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal warningLine = maFast < maSlow ? currentTypicalPrice + dtrAvg + (stdDev1 * dtrStd) : 
+                    currentTypicalPrice - dtrAvg - (stdDev1 * dtrStd);
+                warningLineList.Add(warningLine);
+
+                decimal dev1 = maFast < maSlow ? currentTypicalPrice + dtrAvg + (stdDev2 * dtrStd) : currentTypicalPrice - dtrAvg - (stdDev2 * dtrStd);
+                dev1List.Add(dev1);
+
+                decimal dev2 = maFast < maSlow ? currentTypicalPrice + dtrAvg + (stdDev3 * dtrStd) : currentTypicalPrice - dtrAvg - (stdDev3 * dtrStd);
+                dev2List.Add(dev2);
+
+                decimal dev3 = maFast < maSlow ? currentTypicalPrice + dtrAvg + (stdDev4 * dtrStd) : currentTypicalPrice - dtrAvg - (stdDev4 * dtrStd);
+                dev3List.Add(dev3);
+
+                var signal = GetCompareSignal(maFast - maSlow, prevMaFast - prevMaSlow);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Dev1", dev1List },
+                { "Dev2", dev2List },
+                { "Dev3", dev3List },
+                { "WarningLine", warningLineList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.KaseDevStopV1;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kase Dev Stop V2
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="fastLength"></param>
+        /// <param name="slowLength"></param>
+        /// <param name="length"></param>
+        /// <param name="stdDev1"></param>
+        /// <param name="stdDev2"></param>
+        /// <param name="stdDev3"></param>
+        /// <param name="stdDev4"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaseDevStopV2(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+            int fastLength = 10, int slowLength = 21, int length = 20, decimal stdDev1 = 0, decimal stdDev2 = 1, decimal stdDev3 = 2.2m, 
+            decimal stdDev4 = 3.6m)
+        {
+            List<decimal> valList = new();
+            List<decimal> val1List = new();
+            List<decimal> val2List = new();
+            List<decimal> val3List = new();
+            List<decimal> rrangeList = new();
+            List<decimal> priceList = new();
+            List<decimal> trendList = new();
+            List<Signal> signalsList = new();
+            var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+            var smaFastList = GetMovingAverageList(stockData, maType, fastLength, inputList);
+            var smaSlowList = GetMovingAverageList(stockData, maType, slowLength, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentHigh = highList.ElementAtOrDefault(i);
+                decimal currentLow = lowList.ElementAtOrDefault(i);
+                decimal maFast = smaFastList.ElementAtOrDefault(i);
+                decimal maSlow = smaSlowList.ElementAtOrDefault(i);
+                decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+                decimal prevClose = i >= 2 ? inputList.ElementAtOrDefault(i - 2) : 0;
+
+                decimal trend = maFast > maSlow ? 1 : -1;
+                trendList.Add(trend);
+
+                decimal price = trend == 1 ? currentHigh : currentLow;
+                price = trend > 0 ? Math.Max(price, currentHigh) : Math.Min(price, currentLow);
+                priceList.Add(price);
+
+                decimal mmax = Math.Max(Math.Max(currentHigh, prevHigh), prevClose);
+                decimal mmin = Math.Min(Math.Min(currentLow, prevLow), prevClose);
+                decimal rrange = mmax - mmin;
+                rrangeList.Add(rrange);
+            }
+
+            var rangeAvgList = GetMovingAverageList(stockData, maType, length, rrangeList);
+            stockData.CustomValuesList = rrangeList;
+            var rangeStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal price = priceList.ElementAtOrDefault(i);
+                decimal trend = trendList.ElementAtOrDefault(i);
+                decimal avg = rangeAvgList.ElementAtOrDefault(i);
+                decimal dev = rangeStdDevList.ElementAtOrDefault(i);
+                decimal prevPrice = i >= 1 ? priceList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal val = (price + ((-1) * trend)) * (avg + (stdDev1 * dev));
+                valList.Add(val);
+
+                decimal val1 = (price + ((-1) * trend)) * (avg + (stdDev2 * dev));
+                val1List.Add(val1);
+
+                decimal val2 = (price + ((-1) * trend)) * (avg + (stdDev3 * dev));
+                val2List.Add(val2);
+
+                decimal prevVal3 = val3List.LastOrDefault();
+                decimal val3 = (price + ((-1) * trend)) * (avg + (stdDev4 * dev));
+                val3List.Add(val3);
+
+                var signal = GetCompareSignal(price - val3, prevPrice - prevVal3);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Dev1", valList },
+                { "Dev2", val1List },
+                { "Dev3", val2List },
+                { "Dev4", val3List }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.KaseDevStopV2;
 
             return stockData;
         }

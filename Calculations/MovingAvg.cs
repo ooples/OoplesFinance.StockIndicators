@@ -3893,5 +3893,107 @@ namespace OoplesFinance.StockIndicators
 
             return stockData;
         }
+
+        /// <summary>
+        /// Calculates the Kaufman Adaptive Least Squares Moving Average
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaufmanAdaptiveLeastSquaresMovingAverage(this StockData stockData, 
+            MovingAvgType maType = MovingAvgType.KaufmanAdaptiveMovingAverage, int length = 100)
+        {
+            List<decimal> kalsmaList = new();
+            List<decimal> indexList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var kamaList = CalculateKaufmanAdaptiveCorrelationOscillator(stockData, maType, length);
+            var indexStList = kamaList.OutputValues["IndexSt"];
+            var srcStList = kamaList.OutputValues["SrcSt"];
+            var rList = kamaList.OutputValues["Kaco"];
+            var srcMaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal index = i;
+                indexList.Add(index);
+            }
+
+            var indexMaList = GetMovingAverageList(stockData, maType, length, indexList);
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                var indexSt = indexStList.ElementAtOrDefault(i);
+                var srcSt = srcStList.ElementAtOrDefault(i);
+                var srcMa = srcMaList.ElementAtOrDefault(i);
+                var indexMa = indexMaList.ElementAtOrDefault(i);
+                var r = rList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal alpha = indexSt != 0 ? srcSt / indexSt * r : 0;
+                decimal beta = srcMa - (alpha * indexMa);
+
+                decimal prevKalsma = kalsmaList.LastOrDefault();
+                decimal kalsma = (alpha * i) + beta;
+                kalsmaList.Add(kalsma);
+
+                var signal = GetCompareSignal(currentValue - kalsma, prevValue - prevKalsma);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Kalsma", kalsmaList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = kalsmaList;
+            stockData.IndicatorName = IndicatorName.KaufmanAdaptiveLeastSquaresMovingAverage;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kalman Smoother
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static StockData CalculateKalmanSmoother(this StockData stockData, int length = 200)
+        {
+            List<decimal> veloList = new();
+            List<decimal> kfList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevKf = i >= 1 ? kfList.ElementAtOrDefault(i - 1) : currentValue;
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal dk = currentValue - prevKf;
+                decimal smooth = prevKf + (dk * Sqrt((decimal)length / 10000 * 2));
+
+                decimal prevVelo = i >= 1 ? veloList.ElementAtOrDefault(i - 1) : 0;
+                decimal velo = prevVelo + ((decimal)length / 10000 * dk);
+                veloList.Add(velo);
+
+                decimal kf = smooth + velo;
+                kfList.Add(kf);
+
+                var signal = GetCompareSignal(currentValue - kf, prevValue - prevKf);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "Ks", kfList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = kfList;
+            stockData.IndicatorName = IndicatorName.KalmanSmoother;
+
+            return stockData;
+        }
     }
 }

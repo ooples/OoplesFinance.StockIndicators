@@ -35,6 +35,8 @@
         InverseDistanceWeightedMovingAverage,
         JsaMovingAverage,
         JurikMovingAverage,
+        KalmanSmoother,
+        KaufmanAdaptiveLeastSquaresMovingAverage,
         KaufmanAdaptiveMovingAverage,
         LeastSquaresMovingAverage,
         LeoMovingAverage,

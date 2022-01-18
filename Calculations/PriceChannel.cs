@@ -4,6 +4,8 @@ using static OoplesFinance.StockIndicators.Helpers.SignalHelper;
 using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
 using static OoplesFinance.StockIndicators.Helpers.MathHelper;
 using OoplesFinance.StockIndicators.Enums;
+using MathNet.Numerics.Statistics;
+using MathNet.Numerics;
 
 namespace OoplesFinance.StockIndicators
 {
@@ -1228,6 +1230,183 @@ namespace OoplesFinance.StockIndicators
             stockData.SignalsList = signalsList;
             stockData.CustomValuesList = new List<decimal>();
             stockData.IndicatorName = IndicatorName.FlaggingBands;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kirshenbaum Bands
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="stdDevFactor"></param>
+        /// <returns></returns>
+        public static StockData CalculateKirshenbaumBands(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+            int length1 = 30, int length2 = 20, decimal stdDevFactor = 1)
+        {
+            List<decimal> topList = new();
+            List<decimal> bottomList = new();
+            List<decimal> tempInputList = new();
+            List<decimal> tempLinRegList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var emaList = GetMovingAverageList(stockData, maType, length1, inputList);
+            var linRegList = CalculateLinearRegression(stockData, length2).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentEma = emaList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                tempInputList.Add(currentValue);
+
+                decimal currentLinReg = linRegList.ElementAtOrDefault(i);
+                tempLinRegList.Add(currentLinReg);
+
+                var stdError = GoodnessOfFit.PopulationStandardError(tempLinRegList.TakeLastExt(length2).Select(x => (double)x),
+                    tempInputList.TakeLastExt(length2).Select(x => (double)x));
+                stdError = IsValueNullOrInfinity(stdError) ? 0 : stdError;
+                decimal ratio = (decimal)stdError * stdDevFactor;
+
+                decimal prevTop = topList.LastOrDefault();
+                decimal top = currentEma + ratio;
+                topList.Add(top);
+
+                decimal prevBottom = bottomList.LastOrDefault();
+                decimal bottom = currentEma - ratio;
+                bottomList.Add(bottom);
+
+                var signal = GetBullishBearishSignal(currentValue - top, prevValue - prevTop, currentValue - bottom, prevValue - prevBottom);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", topList },
+                { "MiddleBand", emaList },
+                { "LowerBand", bottomList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.KirshenbaumBands;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Kaufman Adaptive Bands
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="length"></param>
+        /// <param name="stdDevFactor"></param>
+        /// <returns></returns>
+        public static StockData CalculateKaufmanAdaptiveBands(this StockData stockData, int length = 100, decimal stdDevFactor = 3)
+        {
+            List<decimal> upperBandList = new();
+            List<decimal> lowerBandList = new();
+            List<decimal> powMaList = new();
+            List<decimal> middleBandList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var erList = CalculateKaufmanAdaptiveMovingAverage(stockData, length: length).OutputValues["Er"];
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal er = Pow(erList.ElementAtOrDefault(i), (double)stdDevFactor);
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+                decimal prevMiddleBand = middleBandList.LastOrDefault();
+                decimal middleBand = (currentValue * er) + ((1 - er) * prevMiddleBand);
+                middleBandList.Add(middleBand);
+
+                decimal prevPowMa = powMaList.LastOrDefault();
+                decimal powMa = (Pow(currentValue, 2) * er) + ((1 - er) * prevPowMa);
+                powMaList.Add(powMa);
+
+                decimal kaufmanDev = powMa - Pow(middleBand, 2) >= 0 ? Sqrt(powMa - Pow(middleBand, 2)) : 0;
+                decimal prevUpperBand = upperBandList.LastOrDefault();
+                decimal upperBand = middleBand + kaufmanDev;
+                upperBandList.Add(upperBand);
+
+                decimal prevLowerBand = lowerBandList.LastOrDefault();
+                decimal lowerBand = middleBand - kaufmanDev;
+                lowerBandList.Add(lowerBand);
+
+                var signal = GetBollingerBandsSignal(currentValue - middleBand, prevValue - prevMiddleBand, currentValue, prevValue, upperBand, 
+                    prevUpperBand, lowerBand, prevLowerBand);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperBandList },
+                { "MiddleBand", middleBandList },
+                { "LowerBand", lowerBandList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.KaufmanAdaptiveBands;
+
+            return stockData;
+        }
+
+        /// <summary>
+        /// Calculates the Keltner Channels
+        /// </summary>
+        /// <param name="stockData"></param>
+        /// <param name="maType"></param>
+        /// <param name="length1"></param>
+        /// <param name="length2"></param>
+        /// <param name="multFactor"></param>
+        /// <returns></returns>
+        public static StockData CalculateKeltnerChannels(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+            int length1 = 20, int length2 = 10, decimal multFactor = 2)
+        {
+            List<decimal> upperChannelList = new();
+            List<decimal> lowerChannelList = new();
+            List<decimal> midChannelList = new();
+            List<Signal> signalsList = new();
+            var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+            var emaList = GetMovingAverageList(stockData, maType, length1, inputList);
+            var atrList = CalculateAverageTrueRange(stockData, maType, length2).CustomValuesList;
+
+            for (int i = 0; i < stockData.Count; i++)
+            {
+                decimal currentValue = inputList.ElementAtOrDefault(i);
+                decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+                decimal currentEma20Day = emaList.ElementAtOrDefault(i);
+                decimal currentAtr10Day = atrList.ElementAtOrDefault(i);
+
+                decimal upperChannel = currentEma20Day + (multFactor * currentAtr10Day);
+                upperChannelList.Add(upperChannel);
+
+                decimal lowerChannel = currentEma20Day - (multFactor * currentAtr10Day);
+                lowerChannelList.Add(lowerChannel);
+
+                decimal prevMidChannel = midChannelList.LastOrDefault();
+                decimal midChannel = (upperChannel + lowerChannel) / 2;
+                midChannelList.Add(midChannel);
+
+                var signal = GetCompareSignal(currentValue - midChannel, prevValue - prevMidChannel);
+                signalsList.Add(signal);
+            }
+
+            stockData.OutputValues = new()
+            {
+                { "UpperBand", upperChannelList },
+                { "MiddleBand", midChannelList },
+                { "LowerBand", lowerChannelList }
+            };
+            stockData.SignalsList = signalsList;
+            stockData.CustomValuesList = new List<decimal>();
+            stockData.IndicatorName = IndicatorName.KeltnerChannels;
 
             return stockData;
         }

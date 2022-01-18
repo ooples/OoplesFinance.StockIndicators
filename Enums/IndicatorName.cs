@@ -201,7 +201,7 @@ namespace OoplesFinance.StockIndicators.Enums
         FullTypicalPrice,
         [Category(IndicatorType.Momentum)]
         FunctionToCandles,
-        [Category(IndicatorType.Trend)]
+        [Category(IndicatorType.Momentum)]
         FXSniperIndicator,
         [Category(IndicatorType.SupportAndResistance)]
         GChannels,
@@ -306,9 +306,49 @@ namespace OoplesFinance.StockIndicators.Enums
         [Category(IndicatorType.Trend)]
         JurikMovingAverage,
         [Category(IndicatorType.Trend)]
+        KalmanSmoother,
+        [Category(IndicatorType.Momentum)]
+        KarobeinOscillator,
+        [Category(IndicatorType.Trend)]
+        KaseConvergenceDivergence,
+        [Category(IndicatorType.SupportAndResistance)]
+        KaseDevStopV1,
+        [Category(IndicatorType.SupportAndResistance)]
+        KaseDevStopV2,
+        [Category(IndicatorType.Volume)]
+        KaseIndicator,
+        [Category(IndicatorType.Trend)]
+        KasePeakOscillatorV1,
+        [Category(IndicatorType.Trend)]
+        KasePeakOscillatorV2,
+        [Category(IndicatorType.Volatility)]
+        KaseSerialDependencyIndex,
+        [Category(IndicatorType.Volatility)]
+        KaufmanAdaptiveBands,
+        [Category(IndicatorType.Momentum)]
+        KaufmanAdaptiveCorrelationOscillator,
+        [Category(IndicatorType.Trend)]
+        KaufmanAdaptiveLeastSquaresMovingAverage,
+        [Category(IndicatorType.Trend)]
         KaufmanAdaptiveMovingAverage,
+        [Category(IndicatorType.Momentum)]
+        KaufmanBinaryWave,
+        [Category(IndicatorType.Momentum)]
+        KaufmanStressIndicator,
+        [Category(IndicatorType.Volatility)]
+        KeltnerChannels,
+        [Category(IndicatorType.Volatility)]
+        KendallRankCorrelationCoefficient,
+        [Category(IndicatorType.Volatility)]
+        KirshenbaumBands,
         [Category(IndicatorType.Volume)]
         KlingerVolumeOscillator,
+        [Category(IndicatorType.Momentum)]
+        KnowSureThing,
+        [Category(IndicatorType.Momentum)]
+        KurtosisIndicator,
+        [Category(IndicatorType.Momentum)]
+        KwanIndicator,
         [Category(IndicatorType.SupportAndResistance)]
         LBRPaintBars,
         [Category(IndicatorType.Trend)]
