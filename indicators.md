@@ -118,6 +118,26 @@
 
 [Jma Rsx Clone](https://www.tradingview.com/script/XzcIRUHv-JMA-RSX-Clone-LazyBear/)
 
+[Karobein Oscillator](https://www.tradingview.com/script/JiNi0f62-Karobein-Oscillator/)
+
+[Kase Convergence Divergence](https://www.tradingview.com/script/wIWnrc4i-Indicators-KaseCD-Kase-Peak-Oscillator/)
+
+[Kase Peak Oscillator V1](https://www.tradingview.com/script/wIWnrc4i-Indicators-KaseCD-Kase-Peak-Oscillator/)
+
+[Kase Peak Oscillator V2](https://www.prorealcode.com/prorealtime-indicators/kase-peak-oscillator-v2/)
+
+[Kaufman Adaptive Correlation Oscillator](https://www.tradingview.com/script/qnbpqJ0D-Kaufman-Adaptive-Correlation-Oscillator/)
+
+[Kaufman Binary Wave](https://www.tradingview.com/chart/BTCUSD/UFv7wX1B-Indicator-Kaufman-AMA-Binary-Wave/)
+
+[Kaufman Stress Indicator](https://www.tradingview.com/script/uKzpaELr-Kaufman-Stress-Indicator/)
+
+[Know Sure Thing](https://school.stockcharts.com/doku.php?id=technical_indicators:know_sure_thing_kst)
+
+[Kurtosis Indicator](https://www.tradingview.com/script/je6cSj04-FSK-Fast-and-Slow-Kurtosis/)
+
+[Kwan Indicator](https://www.tradingview.com/script/Nq3ER6lH-Kwan-NRP/)
+
 [Linda Raschke 3/10 Oscillator](https://www2.wealth-lab.com/wl5wiki/LBR3_10.ashx)
 
 [Linear Quadratic Convergence Divergence Oscillator](https://www.tradingview.com/script/x3r41i2j-Linear-Quadratic-Convergence-Divergence-Oscillator/)
@@ -224,6 +244,10 @@
 [Hirashima Sugita RS](https://www.tradingview.com/script/GCcUC752/)
 
 [Hurst Bands](https://www.tradingview.com/script/yl3pK2zM-Indicators-Hurst-Bands-and-Hurst-Oscillator/)
+
+[Kase Dev Stop V1](https://www.tradingview.com/script/wF0Cm55t-Kase-Dev-Stops/)
+
+[Kase Dev Stop V2](https://www.prorealcode.com/prorealtime-indicators/kase-dev-stop-v3/)
 
 [LBR Paint Bars](https://www.motivewave.com/studies/lbr_paint_bars.htm)
 
@@ -349,6 +373,10 @@ Atr Filtered Exponential Moving Average
 [Jsa Moving Average](https://www.tradingview.com/script/uv7U7kpS-Jsa-Moving-Average-CC/)
 
 [Jurik Moving Average](https://www.tradingview.com/script/714vYiDe-Jurik-Moving-Average/)
+
+[Kalman Smoother](https://www.tradingview.com/script/4a5daqKU-Kalman-Smoother/)
+
+[Kaufman Adaptive Least Squares Moving Average](https://www.tradingview.com/script/JrgIB2zb-Kaufman-Adaptive-Least-Squares-Moving-Average/)
 
 [Kaufman Adaptive Moving Average](https://school.stockcharts.com/doku.php?id=technical_indicators:kaufman_s_adaptive_moving_average)
 
@@ -477,6 +505,16 @@ Atr Filtered Exponential Moving Average
 
 [Jrc Fractal Dimension](https://www.motivewave.com/studies/jrc_fractal_dimension.htm)
 
+[Kase Serial Dependency Index](https://www.prorealcode.com/topic/choppiness-index-and-range-trading/page/2/)
+
+[Kaufman Adaptive Bands](https://www.tradingview.com/script/upVpydXI-Kaufman-Adaptive-Bands/)
+
+[Keltner Channels](https://www.motivewave.com/studies/keltner_channel.htm)
+
+[Kendall Rank Correlation Coefficient](https://www.tradingview.com/script/lDkvchYp-Kendall-Rank-Correlation-Coefficient/)
+
+[Kirshenbaum Bands](https://www.motivewave.com/studies/kirshenbaum_bands.htm)
+
 [Narrow Sideways Channel](https://www.motivewave.com/studies/narrow_sideways_channel.htm)
 
 [Omega Ratio](https://www.motivewave.com/studies/omega_ratio.htm)
@@ -523,6 +561,8 @@ Atr Filtered Exponential Moving Average
 [Freedom Of Movement](https://www.tradingview.com/script/HT2zozvk-Indicator-Relative-Volume-Indicator-Freedom-Of-Movement/)
 
 [Hawkeye Volume Indicator](https://www.tradingview.com/script/gci6llVF-Indicator-HawkEye-Volume-Indicator/)
+
+[Kase Indicator](https://www.motivewave.com/studies/kase_indicator.htm)
 
 [Klinger Volume Oscillator](https://www.investopedia.com/terms/k/klingeroscillator.asp)
 
