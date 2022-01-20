@@ -204,6 +204,20 @@
 
 [Ultimate Trader Oscillator](https://www.tradingview.com/script/QvlJNUmN-Ultimate-Trader-Oscillator-UTO-v1/)
 
+[Value Chart Indicator](https://www.tradingview.com/script/vqWXNNq2-ValueChart-Indicator-LazyBear/)
+
+[Varadi Oscillator](https://www.tradingview.com/script/m5lVzOkh-Varadi-Oscillator/)
+
+[Vervoort Heiken Ashi Candlestick Oscillator](https://www.tradingview.com/script/UyhY8FuQ-Vervoort-Heiken-Ashi-Candlestick-Oscillator/)
+
+[Vervoort Heiken Ashi Long Term Candlestick Oscillator](https://www.tradingview.com/script/4zuhGaAU-Vervoort-Heiken-Ashi-LongTerm-Candlestick-Oscillator-LazyBear/)
+
+[Vervoort Smoothed Oscillator](https://www.tradingview.com/script/EXtLf5PR-Indicator-Vervoort-Smoothed-Oscillator-LazyBear/)
+
+[Volume Weighted Relative Strength Index](https://www.tradingview.com/script/RdnSXUOF-VWAP-Relative-Strength-Index-CC/)
+
+[Vostro Indicator](https://www.tradingview.com/script/3XngolO2/)
+
 [Wami Oscillator](https://www.motivewave.com/studies/wami.htm)
 
 [Wave Trend Oscillator](https://www.tradingview.com/script/2KE8wTuF-Indicator-WaveTrend-Oscillator-WT/)
@@ -442,9 +456,31 @@ Atr Filtered Exponential Moving Average
 
 [Ultimate Moving Average](https://www.tradingview.com/script/hYVS9kuu-Ultimate-Moving-Average-CC-RedK/)
 
+[Vanilla ABCD Pattern](https://www.tradingview.com/script/TtZLyZhZ-Vanilla-ABCD-Pattern/)
+
+[Variable Adaptive Moving Average](https://www.tradingview.com/script/ohiKlriC-Variable-Adaptive-Moving-Average/)
+
 [Variable Index Dynamic Average](https://www.tradingview.com/script/hdrf0fXV-Variable-Index-Dynamic-Average-VIDYA/)
 
 [Variable Length Moving Average](https://www.tradingview.com/script/wskG0Eh9-Variable-Length-Moving-Average/)
+
+[Variable Moving Average](https://www.tradingview.com/script/6Ix0E5Yr-Variable-Moving-Average-LazyBear/)
+
+[Vertical Horizontal Moving Average](https://www.tradingview.com/script/PDeuC7NY-Vertical-Horizontal-Moving-Average-AneoPsy-alexgrover/)
+
+[Volatility Index Dynamic Average Indicator](https://www.tradingview.com/script/hdrf0fXV-Variable-Index-Dynamic-Average-VIDYA/)
+
+[Volatility Moving Average](https://www.tradingview.com/script/ULwwndwn-RedK-MAGicWAVe-v3-Improved-Visual-Code-Revamp/)
+
+[Volatility Wave Moving Average](https://www.tradingview.com/script/wNwWDoWA-The-V-Wave-Volatility-Adaptive-Moving-Average/)
+
+[Volume Adjusted Moving Average](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/vama)
+
+[Volume Weighted Average Price](https://www.investopedia.com/terms/v/vwap.asp)
+
+[Volume Weighted Moving Average](https://www.motivewave.com/studies/volume_weighted_moving_average.htm)
+
+[Vortex Bands](https://www.tradingview.com/script/jCOl5YHZ-Vortex-Bands/)
 
 [Vortex Indicator](https://www.investopedia.com/terms/v/vortex-indicator-vi.asp)
 
@@ -541,6 +577,24 @@ Atr Filtered Exponential Moving Average
 
 [Upside Potential Ratio](https://www.motivewave.com/studies/upside_potential_ratio.htm)
 
+[Variable Moving Average Bands](https://www.tradingview.com/script/HT99VkZb-Variable-Moving-Average-Bands-LazyBear/)
+
+[Vertical Horizontal Filter](https://www.tradingview.com/script/TkvqDfpu-Vertical-Horizontal-Filter/)
+
+[Vervoort Modified Bollinger Band Indicator](https://www.tradingview.com/script/sDPe1PDd-Vervoort-Smoothed-b-LazyBear/)
+
+[Vervoort Volatility Bands](https://www.tradingview.com/script/zXEjsttC-Vervoort-Volatility-Bands-LazyBear/)
+
+[Vix Trading System](https://www.motivewave.com/studies/vix_trading_system.htm)
+
+[Volatility Based Momentum](https://www.tradingview.com/script/g0XVuxKc-Volatility-Based-Momentum-VBM/)
+
+[Volatility Quality Index](https://www.tradingview.com/script/MbAO4zo0-Indicator-Volatility-Quality-Index-VQI/)
+
+[Volatility Ratio](https://www.tradingview.com/script/Xu6dEeWK-Volatility-Ratio/)
+
+[Volatility Switch Indicator](https://www.tradingview.com/script/50YzpVDY-Volatility-Switch-Indicator-LazyBear/)
+
 [Welles Wilder Volatility System](https://www.motivewave.com/studies/volatility_index.htm)
 
 ## Volume
@@ -587,6 +641,18 @@ Atr Filtered Exponential Moving Average
 [Relative Volume Indicator](https://www.tradingview.com/script/HT2zozvk-Indicator-Relative-Volume-Indicator-Freedom-Of-Movement/)
 
 [Upside Downside Volume](https://www.motivewave.com/studies/upside_dnside_volume.htm)
+
+[Volume Accumulation Oscillator](https://www.motivewave.com/studies/volume_accumulation_oscillator.htm)
+
+[Volume Accumulation Percent](https://www.tradingview.com/script/kVk6pN9z-Volume-Accumulation-Percentage-Indicator-LazyBear/)
+
+[Volume Adaptive Bands](https://www.tradingview.com/script/kzmBoVcW-Volume-Adaptive-Bands/)
+
+[Volume Flow Indicator](https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/)
+
+[Volume Positive Negative Indicator](https://www.tradingview.com/script/t88r6A0G-Volume-Positive-Negative-Indicator-CC/)
+
+[Volume Price Confirmation Indicator](https://www.tradingview.com/script/lmTqKOsa-Indicator-Volume-Price-Confirmation-Indicator-VPCI/)
 
 [Volume Weighted Average Price](https://www.investopedia.com/terms/v/vwap.asp)
 
