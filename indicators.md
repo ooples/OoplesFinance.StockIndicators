@@ -410,6 +410,8 @@ Atr Filtered Exponential Moving Average
 
 [Linear Weighted Moving Average](https://www.fxcorporate.com/help/MS/NOTFIFO/i_LWMA.html)
 
+[McNicholl Moving Average](https://www.tradingview.com/script/O7gCMT1q-McNicholl-Moving-Average/)
+
 [Median Price](https://www.metastock.com/customer/resources/taaz/?p=70)
 
 [Mother Of Adaptive Moving Averages](https://www.prorealcode.com/prorealtime-indicators/john-ehlers-mama-the-mother-of-adaptive-moving-average/)
