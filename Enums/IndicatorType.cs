@@ -1,12 +1,11 @@
-﻿namespace OoplesFinance.StockIndicators.Enums
+﻿namespace OoplesFinance.StockIndicators.Enums;
+
+public enum IndicatorType
 {
-    public enum IndicatorType
-    {
-        Cycle,
-        Momentum,
-        SupportAndResistance,
-        Trend,
-        Volatility,
-        Volume
-    }
+    Cycle,
+    Momentum,
+    SupportAndResistance,
+    Trend,
+    Volatility,
+    Volume
 }

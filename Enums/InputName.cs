@@ -1,16 +1,15 @@
-﻿namespace OoplesFinance.StockIndicators.Enums
+﻿namespace OoplesFinance.StockIndicators.Enums;
+
+public enum InputName
 {
-    public enum InputName
-    {
-        AdjustedClose,
-        Close,
-        FullTypicalPrice,
-        High,
-        Low,
-        MedianPrice,
-        Open,
-        TypicalPrice,
-        Volume,
-        WeightedClose
-    }
+    AdjustedClose,
+    Close,
+    FullTypicalPrice,
+    High,
+    Low,
+    MedianPrice,
+    Open,
+    TypicalPrice,
+    Volume,
+    WeightedClose
 }

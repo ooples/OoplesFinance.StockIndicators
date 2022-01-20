@@ -1,14 +1,10 @@
-﻿namespace OoplesFinance.StockIndicators.Enums
+﻿namespace OoplesFinance.StockIndicators.Enums;
+
+public enum Signal
 {
-    public class SignalsClass
-    {
-        public enum Signal
-        {
-            None,
-            Buy,
-            Sell,
-            StrongBuy,
-            StrongSell
-        }
-    }
+    None,
+    Buy,
+    Sell,
+    StrongBuy,
+    StrongSell
 }

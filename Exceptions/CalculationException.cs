@@ -1,28 +1,27 @@
-﻿using System.Runtime.Serialization;
+﻿global using System.Runtime.Serialization;
 
-namespace OoplesFinance.StockIndicators.Exceptions
+namespace OoplesFinance.StockIndicators.Exceptions;
+
+[Serializable]
+public sealed class CalculationException : Exception
 {
-    [Serializable]
-    public sealed class CalculationException : Exception
+    public CalculationException()
     {
-        public CalculationException()
-        {
 
-        }
+    }
 
-        public CalculationException(string message) : base(message)
-        {
+    public CalculationException(string message) : base(message)
+    {
 
-        }
+    }
 
-        public CalculationException(string message, Exception inner) : base(message, inner)
-        {
+    public CalculationException(string message, Exception inner) : base(message, inner)
+    {
 
-        }
+    }
 
-        private CalculationException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
+    private CalculationException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
 
-        }
     }
 }
