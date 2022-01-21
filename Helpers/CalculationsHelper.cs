@@ -32,16 +32,16 @@ public static class CalculationsHelper
         switch (movingAvgType)
         {
             case MovingAvgType._1LCLeastSquaresMovingAverage:
-                movingAvgList = stockData.Calculate1LCLeastSquaresMovingAverage(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                movingAvgList = stockData.Calculate1LCLeastSquaresMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType._3HMA:
-                movingAvgList = stockData.Calculate3HMA(MovingAvgType.WeightedMovingAverage, length).CustomValuesList;
+                movingAvgList = stockData.Calculate3HMA(length: length).CustomValuesList;
                 break;
             case MovingAvgType.AdaptiveAutonomousRecursiveMovingAverage:
                 movingAvgList = stockData.CalculateAdaptiveAutonomousRecursiveMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.AdaptiveExponentialMovingAverage:
-                movingAvgList = stockData.CalculateAdaptiveExponentialMovingAverage(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                movingAvgList = stockData.CalculateAdaptiveExponentialMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.AdaptiveLeastSquares:
                 movingAvgList = stockData.CalculateAdaptiveLeastSquares(length: length).CustomValuesList;
@@ -59,16 +59,28 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateArnaudLegouxMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.AtrFilteredExponentialMovingAverage:
-                movingAvgList = stockData.CalculateAtrFilteredExponentialMovingAverage(MovingAvgType.SimpleMovingAverage, length: length).CustomValuesList;
+                movingAvgList = stockData.CalculateAtrFilteredExponentialMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.AutoFilter:
-                movingAvgList = stockData.CalculateAutoFilter(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                movingAvgList = stockData.CalculateAutoFilter(length: length).CustomValuesList;
                 break;
             case MovingAvgType.AutonomousRecursiveMovingAverage:
                 movingAvgList = stockData.CalculateAutonomousRecursiveMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.BryantAdaptiveMovingAverage:
                 movingAvgList = stockData.CalculateBryantAdaptiveMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.CompoundRatioMovingAverage:
+                movingAvgList = stockData.CalculateCompoundRatioMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.CorrectedMovingAverage:
+                movingAvgList = stockData.CalculateCorrectedMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.CubedWeightedMovingAverage:
+                movingAvgList = stockData.CalculateCubedWeightedMovingAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.DoubleExponentialMovingAverage:
+                movingAvgList = stockData.CalculateDoubleExponentialMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.EndPointWeightedMovingAverage:
                 movingAvgList = stockData.CalculateEndPointMovingAverage(length: length).CustomValuesList;
@@ -200,19 +212,19 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateSymmetricallyWeightedMovingAverage(length).CustomValuesList;
                 break;
             case MovingAvgType.T3MovingAverage:
-                movingAvgList = stockData.CalculateT3MovingAverage(MovingAvgType.ExponentialMovingAverage, length: length).CustomValuesList;
+                movingAvgList = stockData.CalculateT3MovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.TriangularMovingAverage:
-                movingAvgList = stockData.CalculateTriangularMovingAverage(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                movingAvgList = stockData.CalculateTriangularMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.Trimean:
                 movingAvgList = stockData.CalculateTrimean(length).CustomValuesList;
                 break;
             case MovingAvgType.TripleExponentialMovingAverage:
-                movingAvgList = stockData.CalculateTripleExponentialMovingAverage(MovingAvgType.ExponentialMovingAverage, length).CustomValuesList;
+                movingAvgList = stockData.CalculateTripleExponentialMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.UltimateMovingAverage:
-                movingAvgList = stockData.CalculateUltimateMovingAverage(MovingAvgType.SimpleMovingAverage).CustomValuesList;
+                movingAvgList = stockData.CalculateUltimateMovingAverage().CustomValuesList;
                 break;
             case MovingAvgType.VariableAdaptiveMovingAverage:
                 movingAvgList = stockData.CalculateVariableAdaptiveMovingAverage(length: length).CustomValuesList;
@@ -221,7 +233,7 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateVariableIndexDynamicAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.VariableLengthMovingAverage:
-                movingAvgList = stockData.CalculateVariableLengthMovingAverage(MovingAvgType.SimpleMovingAverage).CustomValuesList;
+                movingAvgList = stockData.CalculateVariableLengthMovingAverage().CustomValuesList;
                 break;
             case MovingAvgType.VariableMovingAverage:
                 movingAvgList = stockData.CalculateVariableMovingAverage(length).CustomValuesList;
@@ -242,7 +254,7 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateVolumeWeightedAveragePrice().CustomValuesList;
                 break;
             case MovingAvgType.VolumeWeightedMovingAverage:
-                movingAvgList = stockData.CalculateVolumeWeightedMovingAverage(MovingAvgType.SimpleMovingAverage, length).CustomValuesList;
+                movingAvgList = stockData.CalculateVolumeWeightedMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.WeightedMovingAverage:
                 movingAvgList = stockData.CalculateWeightedMovingAverage(length).CustomValuesList;
@@ -260,10 +272,10 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateWindowedVolumeWeightedMovingAverage(length).CustomValuesList;
                 break;
             case MovingAvgType.ZeroLagExponentialMovingAverage:
-                movingAvgList = stockData.CalculateZeroLagExponentialMovingAverage(MovingAvgType.ExponentialMovingAverage, length).CustomValuesList;
+                movingAvgList = stockData.CalculateZeroLagExponentialMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.ZeroLagTripleExponentialMovingAverage:
-                movingAvgList = stockData.CalculateZeroLagTripleExponentialMovingAverage(MovingAvgType.TripleExponentialMovingAverage, length).CustomValuesList;
+                movingAvgList = stockData.CalculateZeroLagTripleExponentialMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.ZeroLowLagMovingAverage:
                 movingAvgList = stockData.CalculateZeroLowLagMovingAverage(length: length).CustomValuesList;

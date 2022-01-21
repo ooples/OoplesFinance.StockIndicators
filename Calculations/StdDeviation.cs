@@ -58,6 +58,7 @@ public static partial class Calculations
         stockData.OutputValues = new()
         {
             { "StdDev", stdDevVolatilityList },
+            { "Variance", divisionOfSumList },
             { "Signal", stdDevEmaList }
         };
         stockData.SignalsList = signalsList;

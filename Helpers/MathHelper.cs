@@ -65,18 +65,48 @@ public static class MathHelper
     }
 
     /// <summary>
+    /// Calculates the Acos for the specified value
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static decimal Acos(decimal value)
+    {
+        return (decimal)Math.Acos((double)value);
+    }
+
+    /// <summary>
+    /// Convert to Degrees.
+    /// </summary>
+    /// <param name="val">The value to convert to degrees</param>
+    /// <returns>The value in degrees</returns>
+    public static decimal ToDegrees(this decimal radianValue)
+    {
+        return 180 / Pi * radianValue;
+    }
+
+    /// <summary>
+    /// Convert to Radians.
+    /// </summary>
+    /// <param name="val">The value to convert to radians</param>
+    /// <returns>The value in radians</returns>
+    public static decimal ToRadians(this decimal val)
+    {
+        return Pi / 180 * val;
+    }
+
+    /// <summary>
     /// Pows the specified value.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <param name="power">The power.</param>
     /// <returns></returns>
-    public static decimal Pow(decimal value, double power)
+    public static decimal Pow(decimal value, decimal power)
     {
         decimal result;
 
         try
         {
-            result = (decimal)Math.Pow((double)value, power);
+            result = (decimal)Math.Pow((double)value, (double)power);
         }
         catch (OverflowException)
         {

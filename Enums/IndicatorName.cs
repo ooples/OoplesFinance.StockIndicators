@@ -119,24 +119,88 @@ public enum IndicatorName
     BuffAverage,
     [Category(IndicatorType.Momentum)]
     BullPowerIndicator,
+    [Category(IndicatorType.Volatility)]
+    CalmarRatio,
+    [Category(IndicatorType.SupportAndResistance)]
+    CamarillaPivotPoints,
+    [Category(IndicatorType.Momentum)]
+    CCTStochRelativeStrengthIndex,
+    [Category(IndicatorType.Momentum)]
+    CenterOfLinearity,
     [Category(IndicatorType.Volume)]
     ChaikinMoneyFlow,
     [Category(IndicatorType.Volume)]
     ChaikinOscillator,
+    [Category(IndicatorType.Volatility)]
+    ChaikinVolatility,
+    [Category(IndicatorType.Momentum)]
+    ChandeCompositeMomentumIndex,
+    [Category(IndicatorType.Momentum)]
+    ChandeForecastOscillator,
+    [Category(IndicatorType.Momentum)]
+    ChandeIntradayMomentumIndex,
+    [Category(IndicatorType.Momentum)]
+    ChandeKrollRSquaredIndex,
     [Category(IndicatorType.Momentum)]
     ChandeMomentumOscillator,
+    [Category(IndicatorType.Momentum)]
+    ChandeMomentumOscillatorAbsolute,
+    [Category(IndicatorType.Momentum)]
+    ChandeMomentumOscillatorAbsoluteAverage,
+    [Category(IndicatorType.Momentum)]
+    ChandeMomentumOscillatorAverage,
+    [Category(IndicatorType.Momentum)]
+    ChandeMomentumOscillatorAverageDisparityIndex,
+    [Category(IndicatorType.Momentum)]
+    ChandeMomentumOscillatorFilter,
+    [Category(IndicatorType.Momentum)]
+    ChandeQuickStick,
+    [Category(IndicatorType.Trend)]
+    ChandeTrendScore,
+    [Category(IndicatorType.Trend)]
+    ChandeVolatilityIndexDynamicAverageIndicator,
     [Category(IndicatorType.Trend)]
     ChandelierExit,
     [Category(IndicatorType.Momentum)]
+    ChartmillValueIndicator,
+    [Category(IndicatorType.Trend)]
+    ChopZone,
+    [Category(IndicatorType.Momentum)]
     ChoppinessIndex,
+    [Category(IndicatorType.Volatility)]
+    ClosedFormDistanceVolatility,
     [Category(IndicatorType.Momentum)]
     CommodityChannelIndex,
+    [Category(IndicatorType.Volatility)]
+    CommoditySelectionIndex,
+    [Category(IndicatorType.Momentum)]
+    ComparePriceMomentumOscillator,
+    [Category(IndicatorType.Trend)]
+    CompoundRatioMovingAverage,
+    [Category(IndicatorType.Trend)]
+    ConditionalAccumulator,
+    [Category(IndicatorType.Momentum)]
+    ConfluenceIndicator,
     [Category(IndicatorType.Momentum)]
     ConnorsRelativeStrengthIndex,
+    [Category(IndicatorType.Momentum)]
+    ConstanceBrownCompositeIndex,
+    [Category(IndicatorType.SupportAndResistance)]
+    ContractHighLow,
+    [Category(IndicatorType.Momentum)]
+    CoppockCurve,
+    [Category(IndicatorType.Trend)]
+    CoralTrendIndicator,
+    [Category(IndicatorType.Trend)]
+    CorrectedMovingAverage,
+    [Category(IndicatorType.Trend)]
+    CubedWeightedMovingAverage,
     [Category(IndicatorType.Momentum)]
     DetrendedPriceOscillator,
     [Category(IndicatorType.SupportAndResistance)]
     DonchianChannels,
+    [Category(IndicatorType.Trend)]
+    DoubleExponentialMovingAverage,
     [Category(IndicatorType.Volume)]
     EaseOfMovement,
     [Category(IndicatorType.Trend)]
@@ -559,7 +623,7 @@ public enum IndicatorName
     VariableMovingAverage,
     [Category(IndicatorType.Volatility)]
     VariableMovingAverageBands,
-    [Category(IndicatorType.Trend)]
+    [Category(IndicatorType.Volatility)]
     VerticalHorizontalFilter,
     [Category(IndicatorType.Trend)]
     VerticalHorizontalMovingAverage,

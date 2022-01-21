@@ -178,7 +178,8 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateTriangularMovingAverage(this StockData stockData, MovingAvgType maType, int length)
+    public static StockData CalculateTriangularMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 20)
     {
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
@@ -636,7 +637,8 @@ public static partial class Calculations
     /// <param name="length">The length.</param>
     /// <param name="vFactor">The v factor.</param>
     /// <returns></returns>
-    public static StockData CalculateT3MovingAverage(this StockData stockData, MovingAvgType maType, int length = 5, decimal vFactor = 0.7m)
+    public static StockData CalculateT3MovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length = 5, decimal vFactor = 0.7m)
     {
         List<decimal> t3List = new();
         List<Signal> signalsList = new();
@@ -689,7 +691,8 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateTripleExponentialMovingAverage(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData CalculateTripleExponentialMovingAverage(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14)
     {
         List<decimal> temaList = new();
         List<Signal> signalsList = new();
@@ -780,7 +783,8 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateVolumeWeightedMovingAverage(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData CalculateVolumeWeightedMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 14)
     {
         List<decimal> volumePriceList = new();
         List<decimal> vwmaList = new();
@@ -829,8 +833,8 @@ public static partial class Calculations
     /// <param name="maxLength">The maximum length.</param>
     /// <param name="acc">The acc.</param>
     /// <returns></returns>
-    public static StockData CalculateUltimateMovingAverage(this StockData stockData, MovingAvgType maType, int minLength = 5, int maxLength = 50,
-        decimal acc = 1)
+    public static StockData CalculateUltimateMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int minLength = 5, int maxLength = 50, decimal acc = 1)
     {
         List<decimal> umaList = new();
         List<decimal> posMoneyFlowList = new();
@@ -867,7 +871,7 @@ public static partial class Calculations
             decimal sum = 0, weightedSum = 0;
             for (int j = 0; j <= len - 1; j++)
             {
-                decimal weight = Pow(len - j, (double)p);
+                decimal weight = Pow(len - j, p);
                 decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
 
                 sum += prevValue * weight;
@@ -901,7 +905,8 @@ public static partial class Calculations
     /// <param name="minLength">The minimum length.</param>
     /// <param name="maxLength">The maximum length.</param>
     /// <returns></returns>
-    public static StockData CalculateVariableLengthMovingAverage(this StockData stockData, MovingAvgType maType, int minLength = 5, int maxLength = 50)
+    public static StockData CalculateVariableLengthMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int minLength = 5, int maxLength = 50)
     {
         List<decimal> vlmaList = new();
         List<decimal> lengthList = new();
@@ -1038,7 +1043,8 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateAdaptiveExponentialMovingAverage(this StockData stockData, MovingAvgType maType, int length = 10)
+    public static StockData CalculateAdaptiveExponentialMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 10)
     {
         List<decimal> aemaList = new();
         List<Signal> signalsList = new();
@@ -1196,8 +1202,9 @@ public static partial class Calculations
     /// <param name="lbLength">Length of the lb.</param>
     /// <param name="min">The minimum.</param>
     /// <returns></returns>
-    public static StockData CalculateAtrFilteredExponentialMovingAverage(this StockData stockData, MovingAvgType maType, int length = 45,
-        int atrLength = 20, int stdDevLength = 10, int lbLength = 20, decimal min = 5)
+    public static StockData CalculateAtrFilteredExponentialMovingAverage(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 45, int atrLength = 20, int stdDevLength = 10, int lbLength = 20, 
+        decimal min = 5)
     {
         List<decimal> trValList = new();
         List<decimal> atrValPowList = new();
@@ -1309,7 +1316,7 @@ public static partial class Calculations
             tempList.Add(tr);
 
             decimal highest = tempList.TakeLastExt(length).Max();
-            decimal alpha = highest != 0 ? MinOrMax(Pow(tr / highest, (double)smooth), 0.99m, 0.01m) : 0.01m;
+            decimal alpha = highest != 0 ? MinOrMax(Pow(tr / highest, smooth), 0.99m, 0.01m) : 0.01m;
             decimal xx = index * index;
             decimal yy = currentValue * currentValue;
             decimal xy = index * currentValue;
@@ -1431,9 +1438,9 @@ public static partial class Calculations
             decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
             decimal er = erList.ElementAtOrDefault(i);
             decimal powSp = er != 0 ? 1 / er : factor;
-            decimal perSp = Pow(er, (double)powSp);
+            decimal perSp = Pow(er, powSp);
 
-            decimal per = Pow(er, (double)factor);
+            decimal per = Pow(er, factor);
             perList.AddRounded(per);
 
             decimal prevA = i >= 1 ? aList.LastOrDefault() : currentValue;
@@ -1467,7 +1474,7 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateAutoFilter(this StockData stockData, MovingAvgType maType, int length = 500)
+    public static StockData CalculateAutoFilter(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 500)
     {
         List<decimal> regList = new();
         List<decimal> corrList = new();
@@ -1620,7 +1627,8 @@ public static partial class Calculations
     /// <param name="maType"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    public static StockData Calculate1LCLeastSquaresMovingAverage(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData Calculate1LCLeastSquaresMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 14)
     {
         List<decimal> yList = new();
         List<decimal> tempList = new();
@@ -1783,7 +1791,7 @@ public static partial class Calculations
         decimal phaseRatio = phase < -100 ? 0.5m : phase > 100 ? 2.5m : ((decimal)phase / 100) + 1.5m;
         decimal ratio = 0.45m * (length - 1);
         decimal beta = ratio / (ratio + 2);
-        decimal alpha = Pow(beta, (double)power);
+        decimal alpha = Pow(beta, power);
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -2988,12 +2996,12 @@ public static partial class Calculations
             prevOwmaList.Add(prevOwma);
 
             var corr = GoodnessOfFit.R(tempList.TakeLastExt(length).Select(x => (double)x), prevOwmaList.TakeLastExt(length).Select(x => (double)x));
-            corr = IsValueNullOrInfinity((double)corr) ? 0 : corr;
+            corr = IsValueNullOrInfinity(corr) ? 0 : corr;
 
             decimal sum = 0, weightedSum = 0;
             for (int j = 0; j <= length - 1; j++)
             {
-                decimal weight = Pow(length - j, corr);
+                decimal weight = Pow(length - j, (decimal)corr);
                 decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
 
                 sum += prevValue * weight;
@@ -4083,7 +4091,7 @@ public static partial class Calculations
             decimal sum = 0, weightedSum = 0;
             for (int j = 0; j <= length - 1; j++)
             {
-                decimal weight = Pow(length - j, (double)p);
+                decimal weight = Pow(length - j, p);
                 decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
 
                 sum += prevValue * weight;
@@ -4417,6 +4425,207 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = mnmaList;
         stockData.IndicatorName = IndicatorName.McNichollMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Compound Ratio Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateCompoundRatioMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, 
+        int length = 20)
+    {
+        List<decimal> coraRawList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal r = Pow(length, ((decimal)1 / (length - 1)) - 1);
+        int smoothLength = Math.Max((int)Math.Round(Math.Sqrt(length)), 1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal sum = 0, weightedSum = 0, bas = 1 + (r * 2);
+            for (int j = 0; j <= length - 1; j++)
+            {
+                decimal weight = Pow(bas, length - i);
+                decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                sum += prevValue * weight;
+                weightedSum += weight;
+            }
+
+            decimal coraRaw = weightedSum != 0 ? sum / weightedSum : 0;
+            coraRawList.Add(coraRaw);
+        }
+
+        var coraWaveList = GetMovingAverageList(stockData, maType, smoothLength, coraRawList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal coraWave = coraWaveList.ElementAtOrDefault(i);
+            decimal prevCoraWave = i >= 1 ? coraWaveList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetCompareSignal(currentValue - coraWave, prevValue - prevCoraWave);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Crma", coraWaveList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = coraWaveList;
+        stockData.IndicatorName = IndicatorName.CompoundRatioMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Cubed Weighted Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateCubedWeightedMovingAverage(this StockData stockData, int length = 14)
+    {
+        List<decimal> cwmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal sum = 0, weightedSum = 0;
+            for (int j = 0; j <= length - 1; j++)
+            {
+                decimal weight = Pow(length - j, 3);
+                decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                sum += prevValue * weight;
+                weightedSum += weight;
+            }
+
+            decimal prevCwma = cwmaList.LastOrDefault();
+            decimal cwma = weightedSum != 0 ? sum / weightedSum : 0;
+            cwmaList.Add(cwma);
+
+            var signal = GetCompareSignal(currentValue - cwma, prevVal - prevCwma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Cwma", cwmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = cwmaList;
+        stockData.IndicatorName = IndicatorName.CubedWeightedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Corrected Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateCorrectedMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 35)
+    {
+        List<decimal> cmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+        var v1List = CalculateStandardDeviationVolatility(stockData, length).OutputValues["Variance"];
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal sma = smaList.ElementAtOrDefault(i);
+            decimal prevCma = i >= 1 ? cmaList.ElementAtOrDefault(i - 1) : sma;
+            decimal v1 = v1List.ElementAtOrDefault(i);
+            decimal v2 = Pow(prevCma - sma, 2);
+            decimal v3 = v1 == 0 || v2 == 0 ? 1 : v2 / (v1 + v2);
+
+            decimal tolerance = Pow(10, -5), err = 1, kPrev = 1, k = 1;
+            for (int j = 0; j <= 5000; j++)
+            {
+                if (err > tolerance)
+                {
+                    k = v3 * kPrev * (2 - kPrev);
+                    err = kPrev - k;
+                    kPrev = k;
+                }
+            }
+
+            decimal cma = prevCma + (k * (sma - prevCma));
+            cmaList.Add(cma);
+
+            var signal = GetCompareSignal(currentValue - cma, prevValue - prevCma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Cma", cmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = cmaList;
+        stockData.IndicatorName = IndicatorName.CorrectedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Double Exponential Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateDoubleExponentialMovingAverage(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14)
+    {
+        List<decimal> demaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var ema1List = GetMovingAverageList(stockData, maType, length, inputList);
+        var ema2List = GetMovingAverageList(stockData, maType, length, ema1List);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentEma = ema1List.ElementAtOrDefault(i);
+            decimal currentEma2 = ema2List.ElementAtOrDefault(i);
+
+            decimal prevDema = demaList.LastOrDefault();
+            decimal dema = (2 * currentEma) - currentEma2;
+            demaList.Add(dema);
+
+            var signal = GetCompareSignal(currentValue - dema, prevValue - prevDema);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Dema", demaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = demaList;
+        stockData.IndicatorName = IndicatorName.DoubleExponentialMovingAverage;
 
         return stockData;
     }

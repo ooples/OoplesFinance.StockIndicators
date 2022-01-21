@@ -1307,7 +1307,7 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal er = Pow(erList.ElementAtOrDefault(i), (double)stdDevFactor);
+            decimal er = Pow(erList.ElementAtOrDefault(i), stdDevFactor);
             decimal currentValue = inputList.ElementAtOrDefault(i);
             decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
 
