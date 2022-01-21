@@ -50,13 +50,47 @@
 
 [Bull Power Indicator](https://www.tradingview.com/script/K0wF9cV8-Bull-Power-Indicator/)
 
+[CCT Stochastic Relative Strength Index](https://www.tradingview.com/script/T1IH3ijF-CCT-StochRSI-LazyBear/)
+
+[Center Of Linearity](https://www.tradingview.com/script/ArjrmqwF-Center-Of-Linearity-A-More-Efficient-Alternative-To-Elhers-CG/)
+
+[Chande Composite Momentum Index](https://www.tradingview.com/script/BkHytNuJ-Composite-Momentum-Index-LazyBear/)
+
+[Chande Forecast Oscillator](https://www.tradingview.com/script/SGUK2MxG-Chande-Forecast-Oscillator/)
+
+[Chande Intraday Momentum Index](https://www.tradingview.com/script/3CufgHsc-Indicator-Intrady-Momentum-Index/)
+
+[Chande Kroll RSquared Index](https://www.tradingview.com/script/m9rq1HYz-Chande-Kroll-R-Squared-Index/)
+
 [Chande Momentum Oscillator](https://www.motivewave.com/studies/chande_momentum_oscillator.htm)
+
+[Chande Momentum Oscillator Absolute](https://www.motivewave.com/studies/cmo_abs.htm)
+
+[Chande Momentum Oscillator Absolute Average](https://www.motivewave.com/studies/cmo_abs_average.htm)
+
+[Chande Momentum Oscillator Average](https://www.motivewave.com/studies/cmo_average.htm)
+
+[Chande Momentum Oscillator Average Disparity Index](https://www.tradingview.com/script/DyrpuvfS-Disparity-Index/)
+
+[Chande Momentum Oscillator Filter](https://www.motivewave.com/studies/cmo_filter.htm)
+
+[Chande Quick Stick](https://www.tradingview.com/script/ssL68jQu-Indicator-Chande-s-QStick-Indicator/)
+
+[Chartmill Value Indicator](https://www.motivewave.com/studies/chartmill_value_indicator.htm)
 
 [Choppiness Index](https://www.incrediblecharts.com/indicators/choppiness-index.php)
 
 [Commodity Channel Index](https://www.investopedia.com/terms/c/commoditychannelindex.asp)
 
+[Compare Price Momentum Oscillator](https://www.tradingview.com/script/TwZsCdcl-Compare-Price-Momentum-Oscillator-CC/)
+
+[Confluence Indicator](https://www.tradingview.com/script/vpHfwJmp-Confluence-script/)
+
 [Connors Relative Strength Index](https://school.stockcharts.com/doku.php?id=technical_indicators:connorsrsi)
+
+[Constance Brown Composite Index](https://www.tradingview.com/script/qcmM1Ocn-Indicators-Constance-Brown-Composite-Index-RSI-Avgs/)
+
+[Coppock Curve](https://school.stockcharts.com/doku.php?id=technical_indicators:coppock_curve)
 
 [Detrended Price Oscillator](https://www.tradingview.com/script/yMRm9CPq-Detrended-Price-Oscillator/)
 
@@ -239,6 +273,10 @@
 [Zweig Market Breadth Indicator](https://www.tradingview.com/script/NcNA4SUf-Zweig-Market-Breadth-Thrust-Indicator-LazyBear/)
         
 ## Support And Resistance
+[Camarilla Pivot Points](https://www.babypips.com/forexpedia/camarilla-pivot-points)
+
+[Contract High Low](https://www.motivewave.com/studies/contract_hi_low.htm)
+
 [Donchian Channels](https://www.investopedia.com/terms/d/donchianchannels.asp)
 
 [Fibonacci Pivot Points](https://www.tradingview.com/script/vDWxTZCv-Fibonacci-Pivot-Points/)
@@ -328,7 +366,25 @@ Atr Filtered Exponential Moving Average
 
 [Buff Average](https://www.motivewave.com/studies/buff_averages.htm)
 
+[Chande Trend Score](https://www.tradingview.com/script/AwtE5NG5-Trendscore/)
+
+[Chande Volatility Index Dynamic Average Indicator](https://www.motivewave.com/studies/vidya2_indicator.htm)
+
 [Chandelier Exit](https://school.stockcharts.com/doku.php?id=technical_indicators:chandelier_exit)
+
+[Chop Zone](https://dgmtech.solutions/2021/02/15/chop-zone-indicator-indicator-series/)
+
+[Compound Ratio Moving Average](https://www.tradingview.com/script/NgLjvBWA-RedK-Compound-Ratio-Moving-Average-CoRa-Wave/)
+
+[Conditional Accumulator](https://www.motivewave.com/studies/conditional_accumulator.htm)
+
+[Coral Trend Indicator](https://www.tradingview.com/script/qyUwc2Al-Coral-Trend-Indicator-LazyBear/)
+
+[Corrected Moving Average](https://www.tradingview.com/script/0nfmHG29-Corrected-Moving-Average/)
+
+[Cubed Weighted Moving Average](https://www.tradingview.com/script/X4xeRngN-Cubed-Weighted-Moving-Average/)
+
+[Double Exponential Moving Average](https://www.investopedia.com/terms/d/double-exponential-moving-average.asp)
 
 [Elder Ray Index](https://www.investopedia.com/terms/e/elderray.asp)
 
@@ -524,6 +580,14 @@ Atr Filtered Exponential Moving Average
 [Bollinger Bands Width](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/bollinger-band-width)
 
 [Bollinger Bands With Atr Pct](https://www.tradingview.com/script/RUCy4Kfk-Bollinger-Bands-with-ATR-Percent/)
+
+[Calmar Ratio](https://www.motivewave.com/studies/calmar_ratio.htm)
+
+[Chaikin Volatility](https://www.tradingview.com/script/QAjxTT0J-Chaikin-Volatility/)
+
+[Closed Form Distance Volatility](https://www.tradingview.com/script/poxlj9bL-Closed-Form-Distance-Volatility/)
+
+[Commodity Selection Index](https://www.investopedia.com/terms/c/commodityselectionindex.asp)
 
 [Firefly Oscillator](https://www.tradingview.com/script/pgvRuoUi-Firefly-Oscillator-LazyBear/)
 
