@@ -8,5 +8,5 @@ tidelift: # Replace with a single Tidelift platform-name/package-name e.g., npm/
 community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
 liberapay: cheatcountry
 issuehunt: ooples
-otechie: # Replace with a single Otechie username
+otechie: cheatcountry
 custom: ["https://www.paypal.me/cheatcountry", "https://www.buymeacoffee.com/cheatcountry"]
