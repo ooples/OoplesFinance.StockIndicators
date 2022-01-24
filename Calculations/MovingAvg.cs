@@ -3586,7 +3586,7 @@ public static partial class Calculations
             decimal output = 0;
             for (int j = 1; j <= length; j++)
             {
-                decimal sign = (0.5m * (1 - Cos(MinOrMax(j / length * Pi, 0.99m, 0.01m))));
+                decimal sign = (0.5m * (1 - Cos(MinOrMax((decimal)j / length * Pi, 0.99m, 0.01m))));
                 decimal d = sign - (0.5m * (1 - Cos(MinOrMax((decimal)(j - 1) / length, 0.99m, 0.01m))));
                 decimal prevValue = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
                 output += ((sign * prevOutput) + ((1 - sign) * prevValue)) * d;
@@ -4300,7 +4300,7 @@ public static partial class Calculations
             int vLength = (int)Math.Round(Math.Max(kRescaled, 1));
 
             decimal sum = 0, weightedSum = 0;
-            for (int j = 0; i <= vLength - 1; i++)
+            for (int j = 0; j <= vLength - 1; j++)
             {
                 decimal weight = vLength - j;
                 decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
