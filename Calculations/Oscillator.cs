@@ -7771,13 +7771,13 @@ public static partial class Calculations
             decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
 
             decimal fastF1x = (decimal)(i + 1) / length;
-            decimal fastF1b = 1 / (i + 1) * Sin(fastF1x * (i + 1) * Pi);
+            decimal fastF1b = 1m / (i + 1) * Sin(fastF1x * (i + 1) * Pi);
             fastF1bList.Add(fastF1b);
 
             decimal fastF1bSum = fastF1bList.TakeLastExt(fastLength).Sum();
             decimal fastF1pol = (fastF1x * fastF1x) + fastF1bSum;
             decimal fastF2x = (decimal)i / length;
-            decimal fastF2b = 1 / (i + 1) * Sin(fastF2x * (i + 1) * Pi);
+            decimal fastF2b = 1m / (i + 1) * Sin(fastF2x * (i + 1) * Pi);
             fastF2bList.Add(fastF2b);
 
             decimal fastF2bSum = fastF2bList.TakeLastExt(fastLength).Sum();
@@ -7788,13 +7788,13 @@ public static partial class Calculations
 
             decimal fastVWSum = fastVWList.TakeLastExt(length).Sum();
             decimal slowF1x = (decimal)(i + 1) / length;
-            decimal slowF1b = 1 / (i + 1) * Sin(slowF1x * (i + 1) * Pi);
+            decimal slowF1b = 1m / (i + 1) * Sin(slowF1x * (i + 1) * Pi);
             slowF1bList.Add(slowF1b);
 
             decimal slowF1bSum = slowF1bList.TakeLastExt(slowLength).Sum();
             decimal slowF1pol = (slowF1x * slowF1x) + slowF1bSum;
             decimal slowF2x = (decimal)i / length;
-            decimal slowF2b = 1 / (i + 1) * Sin(slowF2x * (i + 1) * Pi);
+            decimal slowF2b = 1m / (i + 1) * Sin(slowF2x * (i + 1) * Pi);
             slowF2bList.Add(slowF2b);
 
             decimal slowF2bSum = slowF2bList.TakeLastExt(slowLength).Sum();
