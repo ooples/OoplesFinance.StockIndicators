@@ -184,6 +184,8 @@
 
 [Moving Average Convergence Divergence](https://www.investopedia.com/terms/m/macd.asp)
 
+[Moving Average Convergence Divergence Leader](https://www.tradingview.com/script/y9HCZoQi-MACD-Leader-LazyBear/)
+
 [Narrow Bandpass Filter](https://www.tradingview.com/script/7u7lTclV-Narrow-Bandpass-Filter/)
 
 [Natural Directional Combo](https://www.tradingview.com/script/GBaq1yp8-Natural-Directional-Combo-CC/)
@@ -212,9 +214,35 @@
 
 [Oscar Indicator](https://www.motivewave.com/studies/oscar.htm)
 
+[Percent Change Oscillator](https://www.motivewave.com/studies/percent_change.htm)
+
 [Percentage Price Oscillator](https://www.investopedia.com/terms/p/ppo.asp)
 
+[Percentage Price Oscillator Leader](https://www.tradingview.com/script/y9HCZoQi-MACD-Leader-LazyBear/)
+
+[Percentage Volume Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:percentage_volume_oscillator_pvo)
+
+[Phase Change Index](https://www.tradingview.com/script/OT1P5jVQ-Phase-Change-Index/)
+
+[Pivot Detector Oscillator](https://www.tradingview.com/script/zU4cAFKE-Pivot-Detector-Oscillator-by-Giorgos-E-Siligardos/)
+
+[Polarized Fractal Efficiency](https://www.motivewave.com/studies/polarized_fractal_efficiency.htm)
+
+[Premier Stochastic Oscillator](https://www.tradingview.com/script/xewuyTA1-Indicator-Premier-Stochastic-Oscillator/)
+
+[Pretty Good Oscillator](https://www.tradingview.com/script/fdN71ozY-Pretty-Good-Oscillator/)
+
+[Price Cycle Oscillator](https://www.motivewave.com/studies/price_cycle_oscillator.htm)
+
 [Price Momentum Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:dppmo)
+
+[Price Zone Oscillator](https://www.tradingview.com/script/eM057Bu5-Indicators-Volume-Zone-Indicator-Price-Zone-Indicator/)
+
+[Prime Number Oscillator](https://www.tradingview.com/script/JH11jVlD-Prime-Number-Oscillator/)
+
+[Pring Special K](https://school.stockcharts.com/doku.php?id=technical_indicators:pring_s_special_k)
+
+[Psychological Line](https://www.tradingview.com/script/iSa5IoN4-Psychological-line/)
 
 [Quantitative Qualitative Estimation](https://www.tradingview.com/script/0vn4HZ7O-Quantitative-Qualitative-Estimation-QQE/)
 
@@ -309,7 +337,15 @@
 
 [Moving Average Envelope](https://www.investopedia.com/articles/trading/08/moving-average-envelope.asp)
 
+[Percentage Trailing Stops](https://www.motivewave.com/studies/percentage_trailing_stops.htm)
+
+[Periodic Channel](https://www.tradingview.com/script/JxnqrkRI-Periodic-Channel/)
+
 [Price Channel](https://www.investopedia.com/terms/p/price-channel.asp)
+
+[Projected Support And Resistance](https://www.tradingview.com/script/uZGJx4eI-Projected-Support-And-Resistance-CC/)
+
+[Projection Bands](https://www.motivewave.com/studies/projection_band_ul.htm)
 
 [Standard Pivot Points](https://school.stockcharts.com/doku.php?id=technical_indicators:pivot_points)
 
@@ -385,6 +421,8 @@ Atr Filtered Exponential Moving Average
 [Cubed Weighted Moving Average](https://www.tradingview.com/script/X4xeRngN-Cubed-Weighted-Moving-Average/)
 
 [Double Exponential Moving Average](https://www.investopedia.com/terms/d/double-exponential-moving-average.asp)
+
+[Ehlers Phase Calculation](https://www.tradingview.com/script/Zy7ZBrmZ-Phase-Calculation/)
 
 [Elder Ray Index](https://www.investopedia.com/terms/e/elderray.asp)
 
@@ -483,6 +521,26 @@ Atr Filtered Exponential Moving Average
 [Overshoot Reduction Moving Average](https://www.tradingview.com/script/k5rO6xlR-Least-Squares-Moving-Average-With-Overshoot-Reduction/)
 
 [Parabolic SAR](https://www.investopedia.com/trading/introduction-to-parabolic-sar/)
+
+[Parabolic Weighted Moving Average](https://www.tradingview.com/script/U8JJOl1b-Parabolic-Weighted-Moving-Average/)
+
+[Parametric Corrective Linear Moving Average](https://www.tradingview.com/script/G2A80wRF-Parametric-Corrective-Linear-Moving-Averages/)
+
+[Parametric Kalman Filter](https://www.tradingview.com/script/FGj9MKB1-One-Dimensional-Parametric-Kalman-Filter/)
+
+[Peak Valley Estimation](https://www.tradingview.com/script/ZsyxtjUC-Peak-Valley-Estimation/)
+
+[Pentuple Exponential Moving Average](https://www.tradingview.com/script/JuOKYZOJ-Pentuple-Exponential-Moving-Average-PEMA/)
+
+[Percentage Trend](https://www.motivewave.com/studies/percentage_trend.htm)
+
+[Performance Index](https://www.tradingview.com/script/8BIQPHe0-Perfomance-index/)
+
+[Pivot Point Average](https://www.motivewave.com/studies/pivot_point_average.htm)
+
+[Polynomial Least Squares Moving Average](https://www.tradingview.com/script/E8oTinWM-Polynomial-LSMA-Estimation-Estimating-An-LSMA-Of-Any-Degree/)
+
+[Powered Kaufman Adaptive Moving Average](https://www.tradingview.com/script/Jh0YGJr0-Powered-Kaufman-Adaptive-Moving-Average/)
 
 [Quadratic Least Squares Moving Average](https://www.tradingview.com/script/JXdhlosm-Quadratic-Least-Squares-Moving-Average-Smoothing-Forecast/)
 
@@ -621,6 +679,20 @@ Atr Filtered Exponential Moving Average
 
 [Omega Ratio](https://www.motivewave.com/studies/omega_ratio.htm)
 
+[Price Curve Channel](https://www.tradingview.com/script/mPTMEXay-Price-Curve-Channel/)
+
+[Price Headley Acceleration Bands](https://www.tradingview.com/script/wM2yTTOq-Indicator-Price-Headley-Accelaration-Bands-LazyBear/)
+
+[Price Line Channel](https://www.tradingview.com/script/defW91cM-Price-Line-Channel-A-Friendly-Support-And-Resistance-Indicator/)
+
+[Prime Number Bands](https://www.tradingview.com/script/SvB0p6OY-Prime-Number-Bands/)
+
+[Projection Bandwidth](https://www.motivewave.com/studies/projection_bandwidth.htm)
+
+[Projection Oscillator](https://www.motivewave.com/studies/projection_oscillator.htm)
+
+[Pseudo Polynomial Channel](https://www.tradingview.com/script/qusoEeMf-Pseudo-Polynomial-Channel/)
+
 [Qma Sma Difference](https://www.tradingview.com/script/Iw3FtbxG-QMA-SMA-Difference/)
 
 [Quasi White Noise](https://www.tradingview.com/script/UWKXaj5O-RESEARCH-Quasi-White-Noise/)
@@ -703,6 +775,12 @@ Atr Filtered Exponential Moving Average
 [Percentage Volume Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:percentage_volume_oscillator_pvo)
 
 [Positive Volume Index](https://www.investopedia.com/terms/p/pvi.asp)
+
+[Price Volume Oscillator](https://www.tradingview.com/script/6xq77hRx-Price-Volume-Normalized-Oscillator/)
+
+[Price Volume Rank](https://www.tradingview.com/script/vho8gnBR-Price-Volume-Rank-LazyBear/)
+
+[Price Volume  Trend](https://www.tradingview.com/script/3Ah2ALck-Price-Volume-Trend/)
 
 [Relative Volume Indicator](https://www.tradingview.com/script/HT2zozvk-Indicator-Relative-Volume-Indicator-Freedom-Of-Movement/)
 
