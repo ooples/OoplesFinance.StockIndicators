@@ -3,19 +3,7 @@
 public static partial class Calculations
 {
     /// <summary>
-    /// Calculates the ehlers roofing filter.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateEhlersRoofingFilter(this StockData stockData)
-    {
-        int lowerLength = 10, upperLength = 48;
-
-        return CalculateEhlersRoofingFilter(stockData, lowerLength, upperLength);
-    }
-
-    /// <summary>
-    /// Calculates the ehlers roofing filter.
+    /// Calculates the Ehlers Roofing Filter
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="lowerLength">Length of the lower.</param>
@@ -71,6 +59,62 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = roofingFilterList;
         stockData.IndicatorName = IndicatorName.EhlersRoofingFilter;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Phase Calculation
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersPhaseCalculation(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
+        int length = 15)
+    {
+        List<decimal> phaseList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal realPart = 0, imagPart = 0;
+            for (int j = 0; j < length; j++)
+            {
+                decimal weight = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+                realPart += Cos(2 * Pi * (decimal)j / length) * weight;
+                imagPart += Sin(2 * Pi * (decimal)j / length) * weight;
+            }
+
+            decimal phase = Math.Abs(realPart) > 0.001m ? Atan(imagPart / realPart).ToDegrees() : 90 * Math.Sign(imagPart);
+            phase = realPart < 0 ? phase + 180 : phase;
+            phase += 90;
+            phase = phase < 0 ? phase + 360 : phase;
+            phase = phase > 360 ? phase - 360 : phase;
+            phaseList.AddRounded(phase);
+        }
+
+        var phaseEmaList = GetMovingAverageList(stockData, maType, length, phaseList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal phase = phaseList.ElementAtOrDefault(i);
+            decimal phaseEma = phaseEmaList.ElementAtOrDefault(i);
+            decimal prevPhase = i >= 1 ? phaseList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevPhaseEma = i >= 1 ? phaseEmaList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetCompareSignal(phase - phaseEma, prevPhase - prevPhaseEma, true);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Phase", phaseList },
+            { "Signal", phaseEmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = phaseList;
+        stockData.IndicatorName = IndicatorName.EhlersPhaseCalculation;
 
         return stockData;
     }

@@ -270,4 +270,78 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    public static StockData CalculateMovingAverageConvergenceDivergenceLeader(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int fastLength = 12, int slowLength = 26, int signalLength = 9)
+    {
+        List<decimal> macdList = new();
+        List<decimal> macdHistogramList = new();
+        List<decimal> diff12List = new();
+        List<decimal> diff26List = new();
+        List<decimal> i1List = new();
+        List<decimal> i2List = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var emaList = GetMovingAverageList(stockData, maType, fastLength, inputList);
+        var ema26List = GetMovingAverageList(stockData, maType, slowLength, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal ema12 = emaList.ElementAtOrDefault(i);
+            decimal ema26 = ema26List.ElementAtOrDefault(i);
+
+            decimal diff12 = currentValue - ema12;
+            diff12List.Add(diff12);
+
+            decimal diff26 = currentValue - ema26;
+            diff26List.Add(diff26);
+        }
+
+        var diff12EmaList = GetMovingAverageList(stockData, maType, fastLength, diff12List);
+        var diff26EmaList = GetMovingAverageList(stockData, maType, slowLength, diff26List);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal ema12 = emaList.ElementAtOrDefault(i);
+            decimal ema26 = ema26List.ElementAtOrDefault(i);
+            decimal diff12Ema = diff12EmaList.ElementAtOrDefault(i);
+            decimal diff26Ema = diff26EmaList.ElementAtOrDefault(i);
+
+            decimal i1 = ema12 + diff12Ema;
+            i1List.Add(i1);
+
+            decimal i2 = ema26 + diff26Ema;
+            i2List.Add(i2);
+
+            decimal macd = i1 - i2;
+            macdList.Add(macd);
+        }
+
+        var macdSignalLineList = GetMovingAverageList(stockData, maType, signalLength, macdList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal macd = macdList.ElementAtOrDefault(i);
+            decimal macdSignalLine = macdSignalLineList.ElementAtOrDefault(i);
+
+            decimal prevMacdHistogram = macdHistogramList.LastOrDefault();
+            decimal macdHistogram = macd - macdSignalLine;
+            macdHistogramList.Add(macdHistogram);
+
+            var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Macd", macdList },
+            { "I1", i1List },
+            { "I2", i2List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = macdList;
+        stockData.IndicatorName = IndicatorName.MovingAverageConvergenceDivergenceLeader;
+
+        return stockData;
+    }
 }

@@ -3586,7 +3586,7 @@ public static partial class Calculations
             decimal output = 0;
             for (int j = 1; j <= length; j++)
             {
-                decimal sign = (0.5m * (1 - Cos(MinOrMax(j / length * Pi, 0.99m, 0.01m))));
+                decimal sign = (0.5m * (1 - Cos(MinOrMax((decimal)j / length * Pi, 0.99m, 0.01m))));
                 decimal d = sign - (0.5m * (1 - Cos(MinOrMax((decimal)(j - 1) / length, 0.99m, 0.01m))));
                 decimal prevValue = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
                 output += ((sign * prevOutput) + ((1 - sign) * prevValue)) * d;
@@ -4300,7 +4300,7 @@ public static partial class Calculations
             int vLength = (int)Math.Round(Math.Max(kRescaled, 1));
 
             decimal sum = 0, weightedSum = 0;
-            for (int j = 0; i <= vLength - 1; i++)
+            for (int j = 0; j <= vLength - 1; j++)
             {
                 decimal weight = vLength - j;
                 decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
@@ -4626,6 +4626,290 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = demaList;
         stockData.IndicatorName = IndicatorName.DoubleExponentialMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Pentuple Exponential Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculatePentupleExponentialMovingAverage(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20)
+    {
+        List<decimal> pemaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var ema1List = GetMovingAverageList(stockData, maType, length, inputList);
+        var ema2List = GetMovingAverageList(stockData, maType, length, ema1List);
+        var ema3List = GetMovingAverageList(stockData, maType, length, ema2List);
+        var ema4List = GetMovingAverageList(stockData, maType, length, ema3List);
+        var ema5List = GetMovingAverageList(stockData, maType, length, ema4List);
+        var ema6List = GetMovingAverageList(stockData, maType, length, ema5List);
+        var ema7List = GetMovingAverageList(stockData, maType, length, ema6List);
+        var ema8List = GetMovingAverageList(stockData, maType, length, ema7List);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal ema1 = ema1List.ElementAtOrDefault(i);
+            decimal ema2 = ema2List.ElementAtOrDefault(i);
+            decimal ema3 = ema3List.ElementAtOrDefault(i);
+            decimal ema4 = ema4List.ElementAtOrDefault(i);
+            decimal ema5 = ema5List.ElementAtOrDefault(i);
+            decimal ema6 = ema6List.ElementAtOrDefault(i);
+            decimal ema7 = ema7List.ElementAtOrDefault(i);
+            decimal ema8 = ema8List.ElementAtOrDefault(i);
+
+            decimal prevPema = pemaList.LastOrDefault();
+            decimal pema = (8 * ema1) - (28 * ema2) + (56 * ema3) - (70 * ema4) + (56 * ema5) - (28 * ema6) + (8 * ema7) - ema8;
+            pemaList.Add(pema);
+
+            var signal = GetCompareSignal(currentValue - pema, prevValue - prevPema);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Pema", pemaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = pemaList;
+        stockData.IndicatorName = IndicatorName.PentupleExponentialMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Polynomial Least Squares Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculatePolynomialLeastSquaresMovingAverage(this StockData stockData, int length = 100)
+    {
+        List<decimal> sumPow3List = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal prevSumPow3 = sumPow3List.LastOrDefault();
+            decimal x1Pow1Sum = 0, x2Pow1Sum = 0, x1Pow2Sum = 0, x2Pow2Sum = 0, x1Pow3Sum = 0, x2Pow3Sum = 0, wPow1 = 0, wPow2 = 0, wPow3 = 0, 
+                sumPow1 = 0, sumPow2 = 0, sumPow3 = 0;
+            for (int j = 1; j <= length; j++)
+            {
+                decimal prevValue = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
+                decimal x1 = (decimal)j / length;
+                decimal x2 = (decimal)(j - 1) / length;
+                decimal ax1 = x1 * x1;
+                decimal ax2 = x2 * x2;
+
+                decimal b1Pow1Sum = 0, b2Pow1Sum = 0, b1Pow2Sum = 0, b2Pow2Sum = 0, b1Pow3Sum = 0, b2Pow3Sum = 0;
+                for (int k = 1; k <= 3; k++)
+                {
+                    decimal b1 = (decimal)1 / k * Sin(x1 * k * Pi);
+                    decimal b2 = (decimal)1 / k * Sin(x2 * k * Pi);
+
+                    b1Pow1Sum += k == 1 ? b1 : 0;
+                    b2Pow1Sum += k == 1 ? b2 : 0;
+                    b1Pow2Sum += k <= 2 ? b1 : 0;
+                    b2Pow2Sum += k <= 2 ? b2 : 0;
+                    b1Pow3Sum += k <= 3 ? b1 : 0;
+                    b2Pow3Sum += k <= 3 ? b2 : 0;
+                }
+
+                x1Pow1Sum = ax1 + b1Pow1Sum;
+                x2Pow1Sum = ax2 + b2Pow1Sum;
+                wPow1 = x1Pow1Sum - x2Pow1Sum;
+                sumPow1 += prevValue * wPow1;
+                x1Pow2Sum = ax1 + b1Pow2Sum;
+                x2Pow2Sum = ax2 + b2Pow2Sum;
+                wPow2 = x1Pow2Sum - x2Pow2Sum;
+                sumPow2 += prevValue * wPow2;
+                x1Pow3Sum = ax1 + b1Pow3Sum;
+                x2Pow3Sum = ax2 + b2Pow3Sum;
+                wPow3 = x1Pow3Sum - x2Pow3Sum;
+                sumPow3 += prevValue * wPow3;
+            }
+            sumPow3List.Add(sumPow3);
+
+            var signal = GetCompareSignal(currentValue - sumPow3, prevVal - prevSumPow3);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Plsma", sumPow3List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = sumPow3List;
+        stockData.IndicatorName = IndicatorName.PolynomialLeastSquaresMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Parametric Corrective Linear Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="alpha"></param>
+    /// <param name="per"></param>
+    /// <returns></returns>
+    public static StockData CalculateParametricCorrectiveLinearMovingAverage(this StockData stockData, int length = 50, decimal alpha = 1, 
+        decimal per = 35)
+    {
+        List<decimal> w1List = new();
+        List<decimal> w2List = new();
+        List<decimal> vw1List = new();
+        List<decimal> vw2List = new();
+        List<decimal> rrma1List = new();
+        List<decimal> rrma2List = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal prevValue = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+            decimal p1 = i + 1 - (per / 100 * length);
+            decimal p2 = i + 1 - ((100 - per) / 100 * length);
+
+            decimal w1 = p1 >= 0 ? p1 : alpha * p1;
+            w1List.Add(w1);
+
+            decimal w2 = p2 >= 0 ? p2 : alpha * p2;
+            w2List.Add(w2);
+
+            decimal vw1 = prevValue * w1;
+            vw1List.Add(vw1);
+
+            decimal vw2 = prevValue * w2;
+            vw2List.Add(vw2);
+
+            decimal wSum1 = w1List.TakeLastExt(length).Sum();
+            decimal wSum2 = w2List.TakeLastExt(length).Sum();
+            decimal sum1 = vw1List.TakeLastExt(length).Sum();
+            decimal sum2 = vw2List.TakeLastExt(length).Sum();
+
+            decimal prevRrma1 = rrma1List.LastOrDefault();
+            decimal rrma1 = wSum1 != 0 ? sum1 / wSum1 : 0;
+            rrma1List.Add(rrma1);
+
+            decimal prevRrma2 = rrma2List.LastOrDefault();
+            decimal rrma2 = wSum2 != 0 ? sum2 / wSum2 : 0;
+            rrma2List.Add(rrma2);
+
+            var signal = GetCompareSignal(rrma1 - rrma2, prevRrma1 - prevRrma2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Pclma", rrma1List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = rrma1List;
+        stockData.IndicatorName = IndicatorName.ParametricCorrectiveLinearMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Parabolic Weighted Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateParabolicWeightedMovingAverage(this StockData stockData, int length = 14)
+    {
+        List<decimal> pwmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal sum = 0, weightedSum = 0;
+            for (int j = 0; j <= length - 1; j++)
+            {
+                decimal weight = Pow(length - j, 2);
+                decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                sum += prevValue * weight;
+                weightedSum += weight;
+            }
+
+            decimal prevPwma = pwmaList.LastOrDefault();
+            decimal pwma = weightedSum != 0 ? sum / weightedSum : 0;
+            pwmaList.Add(pwma);
+
+            var signal = GetCompareSignal(currentValue - pwma, prevVal - prevPwma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Pwma", pwmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = pwmaList;
+        stockData.IndicatorName = IndicatorName.ParabolicWeightedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Parametric Kalman Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateParametricKalmanFilter(this StockData stockData, int length = 50)
+    {
+        List<decimal> errList = new();
+        List<decimal> estList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal priorEst = i >= length ? estList.ElementAtOrDefault(i - length) : prevValue;
+            decimal errMea = Math.Abs(priorEst - currentValue);
+            decimal errPrv = Math.Abs((currentValue - prevValue) * -1);
+            decimal prevErr = i >= 1 ? errList.ElementAtOrDefault(i - 1) : errPrv;
+            decimal kg = prevErr != 0 ? prevErr / (prevErr + errMea) : 0;
+            decimal prevEst = i >= 1 ? estList.ElementAtOrDefault(i - 1) : prevValue;
+
+            decimal est = prevEst + (kg * (currentValue - prevEst));
+            estList.AddRounded(est);
+
+            decimal err = (1 - kg) * errPrv;
+            errList.AddRounded(err);
+
+            Signal signal = GetCompareSignal(currentValue - est, prevValue - prevEst);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Pkf", estList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = estList;
+        stockData.IndicatorName = IndicatorName.ParametricKalmanFilter;
 
         return stockData;
     }

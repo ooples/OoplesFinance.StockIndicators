@@ -1655,4 +1655,585 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Price Headley Acceleration Bands
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="factor"></param>
+    /// <returns></returns>
+    public static StockData CalculatePriceHeadleyAccelerationBands(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 20, decimal factor = 0.001m)
+    {
+        List<decimal> ubList = new();
+        List<decimal> lbList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+        var middleBandList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentHigh = highList.ElementAtOrDefault(i);
+            decimal currentLow = lowList.ElementAtOrDefault(i);
+            decimal mult = currentHigh + currentLow != 0 ? 4 * factor * 1000 * (currentHigh - currentLow) / (currentHigh + currentLow) : 0;
+
+            decimal outerUb = currentHigh * (1 + mult);
+            ubList.Add(outerUb);
+
+            decimal outerLb = currentLow * (1 - mult);
+            lbList.Add(outerLb);
+        }
+
+        var suList = GetMovingAverageList(stockData, maType, length, ubList);
+        var slList = GetMovingAverageList(stockData, maType, length, lbList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal middleBand = middleBandList.ElementAtOrDefault(i);
+            decimal prevMiddleBand = i >= 1 ? middleBandList.ElementAtOrDefault(i - 1) : 0;
+            decimal outerUbSma = suList.ElementAtOrDefault(i);
+            decimal prevOuterUbSma = i >= 1 ? suList.ElementAtOrDefault(i - 1) : 0;
+            decimal outerLbSma = slList.ElementAtOrDefault(i);
+            decimal prevOuterLbSma = i >= 1 ? slList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetBollingerBandsSignal(currentValue - middleBand, prevValue - prevMiddleBand, currentValue, prevValue, 
+                outerUbSma, prevOuterUbSma, outerLbSma, prevOuterLbSma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", suList },
+            { "MiddleBand", middleBandList },
+            { "LowerBand", slList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.PriceHeadleyAccelerationBands;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Pseudo Polynomial Channel
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="morph"></param>
+    /// <returns></returns>
+    public static StockData CalculatePseudoPolynomialChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 14, decimal morph = 0.9m)
+    {
+        List<decimal> kList = new();
+        List<decimal> yK1List = new();
+        List<decimal> indexList = new();
+        List<decimal> middleBandList = new();
+        List<decimal> upperBandList = new();
+        List<decimal> lowerBandList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal y = inputList.ElementAtOrDefault(i);
+            decimal prevK = i >= length ? kList.ElementAtOrDefault(i - length) : y;
+            decimal prevK2 = i >= length * 2 ? kList.ElementAtOrDefault(i - (length * 2)) : y;
+            decimal prevIndex = i >= length ? indexList.ElementAtOrDefault(i - length) : 0;
+            decimal prevIndex2 = i >= length * 2 ? indexList.ElementAtOrDefault(i - (length * 2)) : 0;
+            decimal ky = (morph * prevK) + ((1 - morph) * y);
+            decimal ky2 = (morph * prevK2) + ((1 - morph) * y);
+
+            decimal index = i;
+            indexList.Add(i);
+
+            decimal k = prevIndex2 - prevIndex != 0 ? ky + ((index - prevIndex) / (prevIndex2 - prevIndex) * (ky2 - ky)) : 0;
+            kList.Add(k);
+        }
+
+        var k1List = GetMovingAverageList(stockData, maType, length, kList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal k1 = k1List.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal yk1 = Math.Abs(currentValue - k1);
+            yK1List.Add(yk1);
+
+            decimal er = i != 0 ? yK1List.Sum() / i : 0;
+            decimal prevUpperBand = upperBandList.LastOrDefault();
+            decimal upperBand = k1 + er;
+            upperBandList.Add(upperBand);
+
+            decimal prevLowerBand = lowerBandList.LastOrDefault();
+            decimal lowerBand = k1 - er;
+            lowerBandList.Add(lowerBand);
+
+            decimal prevMiddleBand = middleBandList.LastOrDefault();
+            decimal middleBand = (upperBand + lowerBand) / 2;
+            middleBandList.Add(middleBand);
+
+            var signal = GetBollingerBandsSignal(currentValue - middleBand, prevValue - prevMiddleBand, currentValue, prevValue, 
+                upperBand, prevUpperBand, lowerBand, prevLowerBand);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", upperBandList },
+            { "MiddleBand", middleBandList },
+            { "LowerBand", lowerBandList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.PseudoPolynomialChannel;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Projected Support and Resistance
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateProjectedSupportAndResistance(this StockData stockData, int length = 25)
+    {
+        List<decimal> support1List = new();
+        List<decimal> resistance1List = new();
+        List<decimal> support2List = new();
+        List<decimal> resistance2List = new();
+        List<decimal> middleList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal highestHigh = highestList.ElementAtOrDefault(i);
+            decimal lowestLow = lowestList.ElementAtOrDefault(i);
+            decimal range = highestHigh - lowestLow;
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal support1 = lowestLow - (0.25m * range);
+            support1List.Add(support1);
+
+            decimal support2 = lowestLow - (0.5m * range);
+            support2List.Add(support2);
+
+            decimal resistance1 = highestHigh + (0.25m * range);
+            resistance1List.Add(resistance1);
+
+            decimal resistance2 = highestHigh + (0.5m * range);
+            resistance2List.Add(resistance2);
+
+            decimal prevMiddle = middleList.LastOrDefault();
+            decimal middle = (support1 + support2 + resistance1 + resistance2) / 4;
+            middleList.Add(middle);
+
+            var signal = GetCompareSignal(currentValue - middle, prevValue - prevMiddle);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Support1", support1List },
+            { "Support2", support2List },
+            { "Resistance1", resistance1List },
+            { "Resistance2", resistance2List },
+            { "MiddleBand", middleList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.ProjectedSupportAndResistance;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Prime Number Bands
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculatePrimeNumberBands(this StockData stockData, int length = 5)
+    {
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+        stockData.CustomValuesList = highList;
+        var pnoUpBandList = CalculatePrimeNumberOscillator(stockData, length).CustomValuesList;
+        stockData.CustomValuesList = lowList;
+        var pnoDnBandList = CalculatePrimeNumberOscillator(stockData, length).CustomValuesList;
+        var (upperBandList, _) = GetMaxAndMinValuesList(pnoUpBandList, length);
+        var (_, lowerBandList) = GetMaxAndMinValuesList(pnoDnBandList, length);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal close = inputList.ElementAtOrDefault(i);
+            decimal prevUpBand1 = i >= 1 ? upperBandList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevUpBand2 = i >= 2 ? upperBandList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevDnBand1 = i >= 1 ? lowerBandList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevDnBand2 = i >= 2 ? lowerBandList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetBullishBearishSignal(close - prevUpBand1, prevClose - prevUpBand2, close - prevDnBand1, prevClose - prevDnBand2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", upperBandList },
+            { "LowerBand", lowerBandList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.PrimeNumberBands;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Periodic Channel
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
+    public static StockData CalculatePeriodicChannel(this StockData stockData, int length1 = 500, int length2 = 2)
+    {
+        List<decimal> tempList = new();
+        List<decimal> indexList = new();
+        List<decimal> corrList = new();
+        List<decimal> absIndexCumDiffList = new();
+        List<decimal> sinList = new();
+        List<decimal> inSinList = new();
+        List<decimal> absSinCumDiffList = new();
+        List<decimal> absInSinCumDiffList = new();
+        List<decimal> absDiffList = new();
+        List<decimal> kList = new();
+        List<decimal> absKDiffList = new();
+        List<decimal> osList = new();
+        List<decimal> apList = new();
+        List<decimal> bpList = new();
+        List<decimal> cpList = new();
+        List<decimal> alList = new();
+        List<decimal> blList = new();
+        List<decimal> clList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal prevValue = tempList.LastOrDefault();
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            tempList.Add(currentValue);
+
+            decimal index = i;
+            indexList.Add(index);
+
+            decimal indexCum = i != 0 ? indexList.Sum() / i : 0;
+            decimal indexCumDiff = i - indexCum;
+            decimal absIndexCumDiff = Math.Abs(i - indexCum);
+            absIndexCumDiffList.Add(absIndexCumDiff);
+
+            decimal absIndexCum = i != 0 ? absIndexCumDiffList.Sum() / i : 0;
+            decimal z = absIndexCum != 0 ? indexCumDiff / absIndexCum : 0;
+
+            var corr = GoodnessOfFit.R(indexList.TakeLastExt(length2).Select(x => (double)x), tempList.TakeLastExt(length2).Select(x => (double)x));
+            corr = IsValueNullOrInfinity(corr) ? 0 : corr;
+            corrList.Add((decimal)corr);
+
+            decimal s = i * Math.Sign(corrList.Sum());
+            decimal sin = Sin(s / length1);
+            sinList.Add(sin);
+
+            decimal inSin = Sin(s / length1) * -1;
+            inSinList.Add(inSin);
+
+            decimal sinCum = i != 0 ? sinList.Sum() / i : 0;
+            decimal inSinCum = i != 0 ? inSinList.Sum() / i : 0;
+            decimal sinCumDiff = sin - sinCum;
+            decimal inSinCumDiff = inSin - inSinCum;
+
+            decimal absSinCumDiff = Math.Abs(sin - sinCum);
+            absSinCumDiffList.Add(absSinCumDiff);
+
+            decimal absSinCum = i != 0 ? absSinCumDiffList.Sum() / i : 0;
+            decimal absInSinCumDiff = Math.Abs(inSin - inSinCum);
+            absInSinCumDiffList.Add(absInSinCumDiff);
+
+            decimal absInSinCum = i != 0 ? absInSinCumDiffList.Sum() / i : 0;
+            decimal zs = absSinCum != 0 ? sinCumDiff / absSinCum : 0;
+            decimal inZs = absInSinCum != 0 ? inSinCumDiff / absInSinCum : 0;
+            decimal cum = i != 0 ? tempList.Sum() / i : 0;
+
+            decimal absDiff = Math.Abs(currentValue - cum);
+            absDiffList.Add(absDiff);
+
+            decimal absDiffCum = i != 0 ? absDiffList.Sum() / i : 0;
+            decimal prevK = kList.LastOrDefault();
+            decimal k = cum + ((z + zs) * absDiffCum);
+            kList.Add(k);
+
+            decimal inK = cum + ((z + inZs) * absDiffCum);
+            decimal absKDiff = Math.Abs(currentValue - k);
+            absKDiffList.Add(absKDiff);
+
+            decimal absInKDiff = Math.Abs(currentValue - inK);
+            decimal os = i != 0 ? absKDiffList.Sum() / i : 0;
+            osList.Add(os);
+
+            decimal ap = k + os;
+            apList.Add(ap);
+
+            decimal bp = ap + os;
+            bpList.Add(bp);
+
+            decimal cp = bp + os;
+            cpList.Add(cp);
+
+            decimal al = k - os;
+            alList.Add(al);
+
+            decimal bl = al - os;
+            blList.Add(bl);
+
+            decimal cl = bl - os;
+            clList.Add(cl);
+
+            var signal = GetCompareSignal(currentValue - k, prevValue - prevK);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "K", kList },
+            { "Os", osList },
+            { "Ap", apList },
+            { "Bp", bpList },
+            { "Cp", cpList },
+            { "Al", alList },
+            { "Bl", blList },
+            { "Cl", clList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.PeriodicChannel;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Price Line Channel
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculatePriceLineChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+        int length = 100)
+    {
+        List<decimal> aList = new();
+        List<decimal> bList = new();
+        List<decimal> sizeAList = new();
+        List<decimal> sizeBList = new();
+        List<decimal> sizeCList = new();
+        List<decimal> midList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var atrList = CalculateAverageTrueRange(stockData, maType, length).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal atr = atrList.ElementAtOrDefault(i);
+            decimal prevA1 = i >= 1 ? aList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevB1 = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevA2 = i >= 2 ? aList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevB2 = i >= 2 ? bList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevSizeA = i >= 1 ? sizeAList.ElementAtOrDefault(i - 1) : atr / length;
+            decimal prevSizeB = i >= 1 ? sizeBList.ElementAtOrDefault(i - 1) : atr / length;
+            decimal prevSizeC = i >= 1 ? sizeCList.ElementAtOrDefault(i - 1) : atr / length;
+
+            decimal sizeA = prevA1 - prevA2 > 0 ? atr : prevSizeA;
+            sizeAList.Add(sizeA);
+
+            decimal sizeB = prevB1 - prevB2 < 0 ? atr : prevSizeB;
+            sizeBList.Add(sizeB);
+
+            decimal sizeC = prevA1 - prevA2 > 0 || prevB1 - prevB2 < 0 ? atr : prevSizeC;
+            sizeCList.Add(sizeC);
+
+            decimal a = Math.Max(currentValue, prevA1) - (sizeA / length);
+            aList.Add(a);
+
+            decimal b = Math.Min(currentValue, prevB1) + (sizeB / length);
+            bList.Add(b);
+
+            decimal prevMid = midList.LastOrDefault();
+            decimal mid = (a + b) / 2;
+            midList.Add(mid);
+
+            var signal = GetCompareSignal(currentValue - mid, prevValue - prevMid);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", aList },
+            { "MiddleBand", midList },
+            { "LowerBand", bList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.PriceLineChannel;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Price Curve Channel
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculatePriceCurveChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+        int length = 100)
+    {
+        List<decimal> aList = new();
+        List<decimal> bList = new();
+        List<decimal> sizeList = new();
+        List<decimal> aChgList = new();
+        List<decimal> bChgList = new();
+        List<decimal> midList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var atrList = CalculateAverageTrueRange(stockData, maType, length).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal atr = atrList.ElementAtOrDefault(i);
+            decimal prevA1 = i >= 1 ? aList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevB1 = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevA2 = i >= 2 ? aList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevB2 = i >= 2 ? bList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevSize = i >= 1 ? sizeList.ElementAtOrDefault(i - 1) : atr / length;
+
+            decimal size = prevA1 - prevA2 > 0 || prevB1 - prevB2 < 0 ? atr : prevSize;
+            sizeList.Add(size);
+
+            decimal aChg = prevA1 > prevA2 ? 1 : 0;
+            aChgList.Add(aChg);
+
+            decimal bChg = prevB1 < prevB2 ? 1 : 0;
+            bChgList.Add(bChg);
+
+            int maxIndexA = aChgList.LastIndexOf(1);
+            int maxIndexB = bChgList.LastIndexOf(1);
+            int barsSinceA = aChgList.Count - 1 - maxIndexA;
+            int barsSinceB = bChgList.Count - 1 - maxIndexB;
+
+            decimal a = Math.Max(currentValue, prevA1) - (size / Pow(length, 2) * (barsSinceA + 1));
+            aList.Add(a);
+
+            decimal b = Math.Min(currentValue, prevB1) + (size / Pow(length, 2) * (barsSinceB + 1));
+            bList.Add(b);
+
+            decimal prevMid = midList.LastOrDefault();
+            decimal mid = (a + b) / 2;
+            midList.Add(mid);
+
+            var signal = GetCompareSignal(currentValue - mid, prevValue - prevMid);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", aList },
+            { "MiddleBand", midList },
+            { "LowerBand", bList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.PriceCurveChannel;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Projection Bands
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateProjectionBands(this StockData stockData, int length = 14)
+    {
+        List<decimal> puList = new();
+        List<decimal> plList = new();
+        List<decimal> middleBandList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+        stockData.CustomValuesList = lowList;
+        var lowSlopeList = CalculateLinearRegression(stockData, length).OutputValues["Slope"];
+        stockData.CustomValuesList = highList;
+        var highSlopeList = CalculateLinearRegression(stockData, length).OutputValues["Slope"];
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentHigh = highList.ElementAtOrDefault(i);
+            decimal currentLow = lowList.ElementAtOrDefault(i);
+            decimal prevPu = i >= 1 ? puList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevPl = i >= 1 ? plList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal pu = currentHigh, pl = currentLow;
+            for (int j = 0; j < length; j++)
+            {
+                decimal highSlope = i >= j ? highSlopeList.ElementAtOrDefault(i - j) : 0;
+                decimal lowSlope = i >= j ? lowSlopeList.ElementAtOrDefault(i - j) : 0;
+                decimal pHigh = i >= j + 1 ? highList.ElementAtOrDefault(i - (j + 1)) : 0;
+                decimal pLow = i >= j + 1 ? lowList.ElementAtOrDefault(i - (j + 1)) : 0;
+                decimal vHigh = pHigh + (highSlope * j);
+                decimal vLow = pLow + (lowSlope * j);
+                pu = Math.Max(pu, vHigh);
+                pl = Math.Min(pl, vLow);
+            }
+            puList.Add(pu);
+            plList.Add(pl);
+
+            decimal prevMiddleBand = middleBandList.LastOrDefault();
+            decimal middleBand = (pu + pl) / 2;
+            middleBandList.Add(middleBand);
+
+            var signal = GetBollingerBandsSignal(currentValue - middleBand, prevValue - prevMiddleBand, currentValue, prevValue, pu, prevPu, pl, prevPl);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", puList },
+            { "MiddleBand", middleBandList },
+            { "LowerBand", plList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.ProjectionBands;
+
+        return stockData;
+    }
 }

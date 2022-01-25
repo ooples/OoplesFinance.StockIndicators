@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netstandard2.0;netstandard2.1;net48;net472;net471;net47;net462;net461</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
 	<LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>Largest C# library of stock indicators and easiest to use with abilities such as making an indicator out of any other indicator or using any moving average with any indicator. </Description>
-    <Version>1.0.19</Version>
+    <Version>1.0.20</Version>
     <Authors>ooples</Authors>
     <Company>Ooples Finance</Company>
     <RepositoryUrl>https://github.com/ooples/OoplesFinance.StockIndicators</RepositoryUrl>
@@ -125,7 +125,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alpaca.Markets" Version="5.2.7" />
     <PackageReference Include="LinqOptimizer.CSharp" Version="0.7.0" />
     <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
   </ItemGroup>

@@ -205,6 +205,8 @@ public enum IndicatorName
     EaseOfMovement,
     [Category(IndicatorType.Trend)]
     EhlersMotherOfAdaptiveMovingAverages,
+    [Category(IndicatorType.Trend)]
+    EhlersPhaseCalculation,
     [Category(IndicatorType.Momentum)]
     EhlersRoofingFilter,
     [Category(IndicatorType.Trend)]
@@ -453,6 +455,8 @@ public enum IndicatorName
     MovingAverageChannel,
     [Category(IndicatorType.Momentum)]
     MovingAverageConvergenceDivergence,
+    [Category(IndicatorType.Momentum)]
+    MovingAverageConvergenceDivergenceLeader,
     [Category(IndicatorType.SupportAndResistance)]
     MovingAverageEnvelope,
     [Category(IndicatorType.Momentum)]
@@ -511,18 +515,88 @@ public enum IndicatorName
     OvershootReductionMovingAverage,
     [Category(IndicatorType.Trend)]
     ParabolicSAR,
+    [Category(IndicatorType.Trend)]
+    ParabolicWeightedMovingAverage,
+    [Category(IndicatorType.Trend)]
+    ParametricCorrectiveLinearMovingAverage,
+    [Category(IndicatorType.Trend)]
+    ParametricKalmanFilter,
+    [Category(IndicatorType.Trend)]
+    PeakValleyEstimation,
+    [Category(IndicatorType.Trend)]
+    PentupleExponentialMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    PercentChangeOscillator,
     [Category(IndicatorType.Momentum)]
     PercentagePriceOscillator,
     [Category(IndicatorType.Momentum)]
     PercentageVolumeOscillator,
+    [Category(IndicatorType.Momentum)]
+    PercentagePriceOscillatorLeader,
+    [Category(IndicatorType.SupportAndResistance)]
+    PercentageTrailingStops,
+    [Category(IndicatorType.Trend)]
+    PercentageTrend,
+    [Category(IndicatorType.Momentum)]
+    PerformanceIndex,
+    [Category(IndicatorType.SupportAndResistance)]
+    PeriodicChannel,
+    [Category(IndicatorType.Momentum)]
+    PhaseChangeIndex,
+    [Category(IndicatorType.Momentum)]
+    PivotDetectorOscillator,
+    [Category(IndicatorType.Trend)]
+    PivotPointAverage,
+    [Category(IndicatorType.Momentum)]
+    PolarizedFractalEfficiency,
+    [Category(IndicatorType.Trend)]
+    PolynomialLeastSquaresMovingAverage,
     [Category(IndicatorType.Volume)]
     PositiveVolumeIndex,
     [Category(IndicatorType.Trend)]
     PoweredKaufmanAdaptiveMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    PremierStochasticOscillator,
+    [Category(IndicatorType.Momentum)]
+    PrettyGoodOscillator,
     [Category(IndicatorType.SupportAndResistance)]
     PriceChannel,
+    [Category(IndicatorType.Volatility)]
+    PriceCurveChannel,
+    [Category(IndicatorType.Momentum)]
+    PriceCycleOscillator,
+    [Category(IndicatorType.Volatility)]
+    PriceHeadleyAccelerationBands,
+    [Category(IndicatorType.Volatility)]
+    PriceLineChannel,
     [Category(IndicatorType.Momentum)]
     PriceMomentumOscillator,
+    [Category(IndicatorType.Volume)]
+    PriceVolumeOscillator,
+    [Category(IndicatorType.Volume)]
+    PriceVolumeRank,
+    [Category(IndicatorType.Volume)]
+    PriceVolumeTrend,
+    [Category(IndicatorType.Momentum)]
+    PriceZoneOscillator,
+    [Category(IndicatorType.Volatility)]
+    PrimeNumberBands,
+    [Category(IndicatorType.Momentum)]
+    PrimeNumberOscillator,
+    [Category(IndicatorType.Momentum)]
+    PringSpecialK,
+    [Category(IndicatorType.SupportAndResistance)]
+    ProjectedSupportAndResistance,
+    [Category(IndicatorType.Volatility)]
+    ProjectionBands,
+    [Category(IndicatorType.Momentum)]
+    ProjectionBandwidth,
+    [Category(IndicatorType.Momentum)]
+    ProjectionOscillator,
+    [Category(IndicatorType.Volatility)]
+    PseudoPolynomialChannel,
+    [Category(IndicatorType.Momentum)]
+    PsychologicalLine,
     [Category(IndicatorType.Volatility)]
     QmaSmaDifference,
     [Category(IndicatorType.Trend)]

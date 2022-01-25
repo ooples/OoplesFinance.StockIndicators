@@ -762,4 +762,53 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Percentage Trailing Stops
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="pct"></param>
+    /// <returns></returns>
+    public static StockData CalculatePercentageTrailingStops(this StockData stockData, int length = 100, decimal pct = 10)
+    {
+        List<decimal> stopSList = new();
+        List<decimal> stopLList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentHigh = highList.ElementAtOrDefault(i);
+            decimal currentLow = lowList.ElementAtOrDefault(i);
+            decimal currentClose = inputList.ElementAtOrDefault(i);
+            decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevHH = i >= 1 ? highestList.ElementAtOrDefault(i - 1) : currentClose;
+            decimal prevLL = i >= 1 ? lowestList.ElementAtOrDefault(i - 1) : currentClose;
+            decimal pSS = i >= 1 ? stopSList.LastOrDefault() : currentClose;
+            decimal pSL = i >= 1 ? stopLList.LastOrDefault() : currentClose;
+
+            decimal stopL = currentHigh > prevHH ? currentHigh - (pct * currentHigh) : pSL;
+            stopLList.Add(stopL);
+
+            decimal stopS = currentLow < prevLL ? currentLow + (pct * currentLow) : pSS;
+            stopSList.Add(stopS);
+
+            var signal = GetConditionSignal(prevHigh < stopS && currentHigh > stopS, prevLow > stopL && currentLow < stopL);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "LongStop", stopLList },
+            { "ShortStop", stopSList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.PercentageTrailingStops;
+
+        return stockData;
+    }
 }

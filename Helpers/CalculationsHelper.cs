@@ -187,6 +187,21 @@ public static class CalculationsHelper
             case MovingAvgType.OvershootReductionMovingAverage:
                 movingAvgList = stockData.CalculateOvershootReductionMovingAverage(length: length).CustomValuesList;
                 break;
+            case MovingAvgType.ParabolicWeightedMovingAverage:
+                movingAvgList = stockData.CalculateParabolicWeightedMovingAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.ParametricCorrectiveLinearMovingAverage:
+                movingAvgList = stockData.CalculateParametricCorrectiveLinearMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.ParametricKalmanFilter:
+                movingAvgList = stockData.CalculateParametricKalmanFilter(length).CustomValuesList;
+                break;
+            case MovingAvgType.PentupleExponentialMovingAverage:
+                movingAvgList = stockData.CalculatePentupleExponentialMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.PolynomialLeastSquaresMovingAverage:
+                movingAvgList = stockData.CalculatePolynomialLeastSquaresMovingAverage(length).CustomValuesList;
+                break;
             case MovingAvgType.PoweredKaufmanAdaptiveMovingAverage:
                 movingAvgList = stockData.CalculatePoweredKaufmanAdaptiveMovingAverage(length: length).CustomValuesList;
                 break;

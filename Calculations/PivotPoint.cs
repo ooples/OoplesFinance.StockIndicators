@@ -519,4 +519,66 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Pivot Point Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculatePivotPointAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 3)
+    {
+        List<decimal> pp1List = new();
+        List<decimal> pp2List = new();
+        List<decimal> pp3List = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentOpen = openList.ElementAtOrDefault(i);
+            decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal pp1 = (prevHigh + prevLow + prevClose) / 3;
+            pp1List.Add(pp1);
+
+            decimal pp2 = (prevHigh + prevLow + prevClose + currentOpen) / 4;
+            pp2List.Add(pp2);
+
+            decimal pp3 = (prevHigh + prevLow + currentOpen) / 3;
+            pp3List.Add(pp3);
+        }
+
+        var ppav1List = GetMovingAverageList(stockData, maType, length, pp1List);
+        var ppav2List = GetMovingAverageList(stockData, maType, length, pp2List);
+        var ppav3List = GetMovingAverageList(stockData, maType, length, pp3List);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal pp1 = pp1List.ElementAtOrDefault(i);
+            decimal ppav1 = ppav1List.ElementAtOrDefault(i);
+            decimal prevPp1 = i >= 1 ? pp1List.ElementAtOrDefault(i - 1) : 0;
+            decimal prevPpav1 = i >= 1 ? ppav1List.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetCompareSignal(pp1 - ppav1, prevPp1 - prevPpav1);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Pivot1", pp1List },
+            { "Signal1", ppav1List },
+            { "Pivot2", pp2List },
+            { "Signal2", ppav2List },
+            { "Pivot3", pp3List },
+            { "Signal3", ppav3List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = pp1List;
+        stockData.IndicatorName = IndicatorName.PivotPointAverage;
+
+        return stockData;
+    }
 }
