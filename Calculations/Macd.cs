@@ -271,6 +271,15 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Moving Average Convergence Divergence Leader
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
+    /// <param name="signalLength"></param>
+    /// <returns></returns>
     public static StockData CalculateMovingAverageConvergenceDivergenceLeader(this StockData stockData, 
         MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int fastLength = 12, int slowLength = 26, int signalLength = 9)
     {
@@ -341,6 +350,62 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = macdList;
         stockData.IndicatorName = IndicatorName.MovingAverageConvergenceDivergenceLeader;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the TFS Mbo Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
+    /// <param name="signalLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateTFSMboIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
+        int fastLength = 25, int slowLength = 200, int signalLength = 18)
+    {
+        List<decimal> tfsMobList = new();
+        List<decimal> tfsMobHistogramList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var mob1List = GetMovingAverageList(stockData, maType, fastLength, inputList);
+        var mob2List = GetMovingAverageList(stockData, maType, slowLength, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal mob1 = mob1List.ElementAtOrDefault(i);
+            decimal mob2 = mob2List.ElementAtOrDefault(i);
+
+            decimal tfsMob = mob1 - mob2;
+            tfsMobList.Add(tfsMob);
+        }
+
+        var tfsMobSignalLineList = GetMovingAverageList(stockData, maType, signalLength, tfsMobList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal tfsMob = tfsMobList.ElementAtOrDefault(i);
+            decimal tfsMobSignalLine = tfsMobSignalLineList.ElementAtOrDefault(i);
+
+            decimal prevTfsMobHistogram = tfsMobHistogramList.LastOrDefault();
+            decimal tfsMobHistogram = tfsMob - tfsMobSignalLine;
+            tfsMobHistogramList.Add(tfsMobHistogram);
+
+            var signal = GetCompareSignal(tfsMobHistogram, prevTfsMobHistogram);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "TfsMob", tfsMobList },
+            { "Signal", tfsMobSignalLineList },
+            { "Histogram", tfsMobHistogramList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = tfsMobList;
+        stockData.IndicatorName = IndicatorName.TFSMboIndicator;
 
         return stockData;
     }

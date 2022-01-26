@@ -229,6 +229,12 @@ public static class CalculationsHelper
             case MovingAvgType.T3MovingAverage:
                 movingAvgList = stockData.CalculateT3MovingAverage(length: length).CustomValuesList;
                 break;
+            case MovingAvgType.TStepLeastSquaresMovingAverage:
+                movingAvgList = stockData.CalculateTStepLeastSquaresMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.TilsonIE2:
+                movingAvgList = stockData.CalculateTilsonIE2(length: length).CustomValuesList;
+                break;
             case MovingAvgType.TriangularMovingAverage:
                 movingAvgList = stockData.CalculateTriangularMovingAverage(length: length).CustomValuesList;
                 break;

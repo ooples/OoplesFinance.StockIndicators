@@ -35,7 +35,7 @@ public static class MathHelper
     }
 
     /// <summary>
-    /// Sins the specified value.
+    /// Calculates the Sine of a given value
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns></returns>
@@ -45,7 +45,7 @@ public static class MathHelper
     }
 
     /// <summary>
-    /// Coses the specified value.
+    /// Calculates the Cosine for a given value
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns></returns>
@@ -55,7 +55,7 @@ public static class MathHelper
     }
 
     /// <summary>
-    /// Atans the specified value.
+    /// Calculates the Arc Tangent for a given value
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns></returns>
@@ -65,7 +65,17 @@ public static class MathHelper
     }
 
     /// <summary>
-    /// Calculates the Acos for the specified value
+    /// Calculates the Arc Sine for a given value
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static decimal Asin(decimal value)
+    {
+        return (decimal)Math.Asin((double)value);
+    }
+
+    /// <summary>
+    /// Calculates the Arc Cosine for a given value
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
@@ -75,7 +85,7 @@ public static class MathHelper
     }
 
     /// <summary>
-    /// Convert to Degrees.
+    /// Convert to Degrees From Radians
     /// </summary>
     /// <param name="val">The value to convert to degrees</param>
     /// <returns>The value in degrees</returns>
@@ -85,17 +95,17 @@ public static class MathHelper
     }
 
     /// <summary>
-    /// Convert to Radians.
+    /// Convert to Radians From Degrees
     /// </summary>
     /// <param name="val">The value to convert to radians</param>
     /// <returns>The value in radians</returns>
-    public static decimal ToRadians(this decimal val)
+    public static decimal ToRadians(this decimal degreeValue)
     {
-        return Pi / 180 * val;
+        return Pi / 180 * degreeValue;
     }
 
     /// <summary>
-    /// Pows the specified value.
+    /// Calculates the value raised to a certain power
     /// </summary>
     /// <param name="value">The value.</param>
     /// <param name="power">The power.</param>
@@ -117,7 +127,7 @@ public static class MathHelper
     }
 
     /// <summary>
-    /// Exps the specified value.
+    /// Calculates E raised to a certain power
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns></returns>

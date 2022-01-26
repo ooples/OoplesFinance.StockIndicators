@@ -4913,4 +4913,129 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the T Step Least Squares Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="sc"></param>
+    /// <returns></returns>
+    public static StockData CalculateTStepLeastSquaresMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
+        int length = 100, decimal sc = 0.5m)
+    {
+        List<decimal> lsList = new();
+        List<decimal> bList = new();
+        List<decimal> chgList = new();
+        List<decimal> tempList = new();
+        List<decimal> corrList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var efRatioList = CalculateKaufmanAdaptiveMovingAverage(stockData, length: length).OutputValues["Er"];
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            tempList.Add(currentValue);
+
+            decimal efRatio = efRatioList.ElementAtOrDefault(i);
+            decimal prevB = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal er = 1 - efRatio;
+
+            decimal chg = Math.Abs(currentValue - prevB);
+            chgList.Add(chg);
+
+            decimal a = chgList.Average() * (1 + er);
+            decimal b = currentValue > prevB + a ? currentValue : currentValue < prevB - a ? currentValue : prevB;
+            bList.Add(b);
+
+            var corr = GoodnessOfFit.R(bList.TakeLastExt(length).Select(x => (double)x), tempList.TakeLastExt(length).Select(x => (double)x));
+            corr = IsValueNullOrInfinity(corr) ? 0 : corr;
+            corrList.Add((decimal)corr);
+        }
+
+        stockData.CustomValuesList = bList;
+        var bStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var bSmaList = GetMovingAverageList(stockData, maType, length, bList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal corr = corrList.ElementAtOrDefault(i);
+            decimal stdDev = stdDevList.ElementAtOrDefault(i);
+            decimal bStdDev = bStdDevList.ElementAtOrDefault(i);
+            decimal bSma = bSmaList.ElementAtOrDefault(i);
+            decimal sma = smaList.ElementAtOrDefault(i);
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevLs = i >= 1 ? lsList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal b = bList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal tslsma = (sc * currentValue) + ((1 - sc) * prevLs);
+            decimal alpha = bStdDev != 0 ? corr * stdDev / bStdDev : 0;
+            decimal beta = sma - (alpha * bSma);
+
+            decimal ls = (alpha * b) + beta;
+            lsList.Add(ls);
+
+            var signal = GetCompareSignal(currentValue - ls, prevValue - prevLs);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Tslsma", lsList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = lsList;
+        stockData.IndicatorName = IndicatorName.TStepLeastSquaresMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Tilson IE2
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateTilsonIE2(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 15)
+    {
+        List<decimal> ie2List = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+        var linRegList = CalculateLinearRegression(stockData, length).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal sma = smaList.ElementAtOrDefault(i);
+            decimal a0 = linRegList.ElementAtOrDefault(i);
+            decimal a1 = i >= 1 ? linRegList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal m = a0 - a1 + sma;
+
+            decimal prevIe2 = ie2List.LastOrDefault();
+            decimal ie2 = (m + a0) / 2;
+            ie2List.Add(ie2);
+
+            var signal = GetCompareSignal(currentValue - ie2, prevValue - prevIe2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ie2", ie2List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = ie2List;
+        stockData.IndicatorName = IndicatorName.TilsonIE2;
+
+        return stockData;
+    }
 }

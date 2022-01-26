@@ -449,6 +449,8 @@ public enum IndicatorName
     McNichollMovingAverage,
     [Category(IndicatorType.Trend)]
     MedianPrice,
+    [Category(IndicatorType.Momentum)]
+    MomentumOscillator,
     [Category(IndicatorType.Volume)]
     MoneyFlowIndex,
     [Category(IndicatorType.SupportAndResistance)]
@@ -587,11 +589,11 @@ public enum IndicatorName
     PringSpecialK,
     [Category(IndicatorType.SupportAndResistance)]
     ProjectedSupportAndResistance,
-    [Category(IndicatorType.Volatility)]
+    [Category(IndicatorType.SupportAndResistance)]
     ProjectionBands,
-    [Category(IndicatorType.Momentum)]
+    [Category(IndicatorType.Volatility)]
     ProjectionBandwidth,
-    [Category(IndicatorType.Momentum)]
+    [Category(IndicatorType.Volatility)]
     ProjectionOscillator,
     [Category(IndicatorType.Volatility)]
     PseudoPolynomialChannel,
@@ -646,7 +648,79 @@ public enum IndicatorName
     [Category(IndicatorType.Trend)]
     T3MovingAverage,
     [Category(IndicatorType.Trend)]
+    TStepLeastSquaresMovingAverage,
+    [Category(IndicatorType.Trend)]
+    TechnicalRank,
+    [Category(IndicatorType.Trend)]
+    TechnicalRatings,
+    [Category(IndicatorType.Momentum)]
+    TFSMboIndicator,
+    [Category(IndicatorType.Momentum)]
+    TFSMboPercentagePriceOscillator,
+    [Category(IndicatorType.Trend)]
+    TFSTetherLineIndicator,
+    [Category(IndicatorType.Volume)]
+    TFSVolumeOscillator,
+    [Category(IndicatorType.Momentum)]
+    TheRangeIndicator,
+    [Category(IndicatorType.Momentum)]
+    TickLineMomentumOscillator,
+    [Category(IndicatorType.Trend)]
+    TilsonIE2,
+    [Category(IndicatorType.SupportAndResistance)]
+    TimeAndMoneyChannel,
+    [Category(IndicatorType.Trend)]
+    TimePriceIndicator,
+    [Category(IndicatorType.SupportAndResistance)]
+    TimeSeriesForecast,
+    [Category(IndicatorType.SupportAndResistance)]
+    TironeLevels,
+    [Category(IndicatorType.Trend)]
+    TopsAndBottomsFinder,
+    [Category(IndicatorType.Trend)]
+    TotalPowerIndicator,
+    [Category(IndicatorType.Volume)]
+    TradeVolumeIndex,
+    [Category(IndicatorType.Trend)]
+    TraderPressureIndex,
+    [Category(IndicatorType.Volatility)]
+    TradersDynamicIndex,
+    [Category(IndicatorType.Momentum)]
+    TradingMadeMoreSimplerOscillator,
+    [Category(IndicatorType.Trend)]
+    TrendAnalysisIndex,
+    [Category(IndicatorType.Trend)]
+    TrendAnalysisIndicator,
+    [Category(IndicatorType.Trend)]
+    TrendContinuationFactor,
+    [Category(IndicatorType.Trend)]
+    TrendDetectionIndex,
+    [Category(IndicatorType.Trend)]
+    TrendDirectionForceIndex,
+    [Category(IndicatorType.Trend)]
+    TrendExhaustionIndicator,
+    [Category(IndicatorType.Trend)]
+    TrendForceHistogram,
+    [Category(IndicatorType.Trend)]
+    TrendImpulseFilter,
+    [Category(IndicatorType.Trend)]
+    TrendIntensityIndex,
+    [Category(IndicatorType.Trend)]
+    TrendPersistenceRate,
+    [Category(IndicatorType.Trend)]
+    TrendStep,
+    [Category(IndicatorType.Volatility)]
+    TrendTraderBands,
+    [Category(IndicatorType.Momentum)]
+    TrendTriggerFactor,
+    [Category(IndicatorType.Trend)]
+    Trender,
+    [Category(IndicatorType.Volatility)]
+    TreynorRatio,
+    [Category(IndicatorType.Trend)]
     TriangularMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    TrigonometricOscillator,
     [Category(IndicatorType.Trend)]
     Trimean,
     [Category(IndicatorType.Trend)]
@@ -655,6 +729,18 @@ public enum IndicatorName
     Trix,
     [Category(IndicatorType.Momentum)]
     TrueStrengthIndex,
+    [Category(IndicatorType.Trend)]
+    TTMScalperIndicator,
+    [Category(IndicatorType.Momentum)]
+    TurboScaler,
+    [Category(IndicatorType.Momentum)]
+    TurboStochasticsFast,
+    [Category(IndicatorType.Momentum)]
+    TurboStochasticsSlow,
+    [Category(IndicatorType.Trend)]
+    TurboTrigger,
+    [Category(IndicatorType.Volume)]
+    TwiggsMoneyFlow,
     [Category(IndicatorType.Trend)]
     TypicalPrice,
     [Category(IndicatorType.Trend)]

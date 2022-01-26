@@ -68,6 +68,8 @@ public enum MovingAvgType
     SimpleMovingAverage,
     SymmetricallyWeightedMovingAverage,
     T3MovingAverage,
+    TStepLeastSquaresMovingAverage,
+    TilsonIE2,
     TriangularMovingAverage,
     Trimean,
     TripleExponentialMovingAverage,
