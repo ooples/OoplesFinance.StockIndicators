@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net5.0;netstandard2.0;netstandard2.1;net48;net472;net471;net47;net462;net461;net46;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
 	<LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
@@ -127,6 +127,8 @@
   <ItemGroup>
     <PackageReference Include="LinqOptimizer.CSharp" Version="0.7.0" />
     <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
 </Project>
