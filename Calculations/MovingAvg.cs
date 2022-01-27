@@ -6,18 +6,6 @@ public static partial class Calculations
     /// Calculates the simple moving average.
     /// </summary>
     /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateSimpleMovingAverage(this StockData stockData)
-    {
-        int length = 14;
-
-        return CalculateSimpleMovingAverage(stockData, length);
-    }
-
-    /// <summary>
-    /// Calculates the simple moving average.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
     public static StockData CalculateSimpleMovingAverage(this StockData stockData, int length)
@@ -29,7 +17,7 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal prevValue = tempList.LastOrDefault();
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
             decimal currentValue = inputList.ElementAtOrDefault(i);
             tempList.AddRounded(currentValue);
 
@@ -56,21 +44,9 @@ public static partial class Calculations
     /// Calculates the weighted moving average.
     /// </summary>
     /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateWeightedMovingAverage(this StockData stockData)
-    {
-        int length = 14;
-
-        return CalculateWeightedMovingAverage(stockData, length);
-    }
-
-    /// <summary>
-    /// Calculates the weighted moving average.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateWeightedMovingAverage(this StockData stockData, int length)
+    public static StockData CalculateWeightedMovingAverage(this StockData stockData, int length = 14)
     {
         List<decimal> wmaList = new();
         List<Signal> signalsList = new();
@@ -114,21 +90,9 @@ public static partial class Calculations
     /// Calculates the exponential moving average.
     /// </summary>
     /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateExponentialMovingAverage(this StockData stockData)
-    {
-        int length = 14;
-
-        return CalculateExponentialMovingAverage(stockData, length);
-    }
-
-    /// <summary>
-    /// Calculates the exponential moving average.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateExponentialMovingAverage(this StockData stockData, int length)
+    public static StockData CalculateExponentialMovingAverage(this StockData stockData, int length = 14)
     {
         List<decimal> emaList = new();
         List<Signal> signalsList = new();
@@ -156,19 +120,6 @@ public static partial class Calculations
         stockData.IndicatorName = IndicatorName.ExponentialMovingAverage;
 
         return stockData;
-    }
-
-    /// <summary>
-    /// Calculates the triangular moving average.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateTriangularMovingAverage(this StockData stockData)
-    {
-        var maType = MovingAvgType.SimpleMovingAverage;
-        var length = 20;
-
-        return CalculateTriangularMovingAverage(stockData, maType, length);
     }
 
     /// <summary>
@@ -206,19 +157,6 @@ public static partial class Calculations
         stockData.IndicatorName = IndicatorName.TriangularMovingAverage;
 
         return stockData;
-    }
-
-    /// <summary>
-    /// Calculates the hull moving average.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateHullMovingAverage(this StockData stockData)
-    {
-        var maType = MovingAvgType.WeightedMovingAverage;
-        var length = 20;
-
-        return CalculateHullMovingAverage(stockData, maType, length);
     }
 
     /// <summary>

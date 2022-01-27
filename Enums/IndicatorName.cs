@@ -615,16 +615,90 @@ public enum IndicatorName
     QuasiWhiteNoise,
     [Category(IndicatorType.Trend)]
     QuickMovingAverage,
+    [Category(IndicatorType.Trend)]
+    R2AdaptiveRegression,
+    [Category(IndicatorType.Momentum)]
+    RahulMohindarOscillator,
+    [Category(IndicatorType.Momentum)]
+    RainbowOscillator,
+    [Category(IndicatorType.Trend)]
+    RandomWalkIndex,
+    [Category(IndicatorType.Momentum)]
+    RangeActionVerificationIndex,
+    [Category(IndicatorType.Volatility)]
+    RangeBands,
+    [Category(IndicatorType.SupportAndResistance)]
+    RangeIdentifier,
+    [Category(IndicatorType.Momentum)]
+    RapidRelativeStrengthIndex,
     [Category(IndicatorType.Momentum)]
     RateOfChange,
+    [Category(IndicatorType.Volatility)]
+    RateOfChangeBands,
+    [Category(IndicatorType.Trend)]
+    RatioOCHLAverager,
+    [Category(IndicatorType.Momentum)]
+    ReallySimpleIndicator,
+    [Category(IndicatorType.Momentum)]
+    RecursiveDifferenciator,
+    [Category(IndicatorType.Trend)]
+    RecursiveMovingTrendAverage,
+    [Category(IndicatorType.Momentum)]
+    RecursiveRelativeStrengthIndex,
+    [Category(IndicatorType.Momentum)]
+    RecursiveStochastic,
+    [Category(IndicatorType.Momentum)]
+    RegressionOscillator,
+    [Category(IndicatorType.Trend)]
+    RegularizedExponentialMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    RelativeDifferenceOfSquaresOscillator,
+    [Category(IndicatorType.Momentum)]
+    RelativeMomentumIndex,
+    [Category(IndicatorType.Volatility)]
+    RelativeNormalizedVolatility,
+    [Category(IndicatorType.Momentum)]
+    RelativeSpreadStrength,
+    [Category(IndicatorType.Momentum)]
+    RelativeStrength3DIndicator,
     [Category(IndicatorType.Momentum)]
     RelativeStrengthIndex,
+    [Category(IndicatorType.Trend)]
+    RelativeVigorIndex,
     [Category(IndicatorType.Volatility)]
     RelativeVolatilityIndexV1,
     [Category(IndicatorType.Volatility)]
     RelativeVolatilityIndexV2,
     [Category(IndicatorType.Volume)]
     RelativeVolumeIndicator,
+    [Category(IndicatorType.Momentum)]
+    Repulse,
+    [Category(IndicatorType.Trend)]
+    RepulsionMovingAverage,
+    [Category(IndicatorType.Trend)]
+    RetentionAccelerationFilter,
+    [Category(IndicatorType.Trend)]
+    RetrospectiveCandlestickChart,
+    [Category(IndicatorType.Volatility)]
+    ReversalPoints,
+    [Category(IndicatorType.Momentum)]
+    ReverseEngineeringRelativeStrengthIndex,
+    [Category(IndicatorType.Momentum)]
+    ReverseMovingAverageConvergenceDivergence,
+    [Category(IndicatorType.Momentum)]
+    RexOscillator,
+    [Category(IndicatorType.Trend)]
+    RightSidedRickerMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    RobustWeightingOscillator,
+    [Category(IndicatorType.Volatility)]
+    RootMovingAverageSquaredErrorBands,
+    [Category(IndicatorType.Momentum)]
+    RSINGIndicator,
+    [Category(IndicatorType.Momentum)]
+    RSMKIndicator,
+    [Category(IndicatorType.Trend)]
+    RunningEquity,
     [Category(IndicatorType.Momentum)]
     SchaffTrendCycle,
     [Category(IndicatorType.Trend)]

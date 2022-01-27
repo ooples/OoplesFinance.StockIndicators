@@ -550,17 +550,17 @@ public static class CalculationsHelper
         if (0 == count)
             yield break;
 
-        if (source is ICollection<T> collection)
+        if (source is ICollection<T>)
         {
-            foreach (T item in source.Skip(collection.Count))
+            foreach (T item in source.Skip(Math.Max(0, ((ICollection<T>)source).Count - count)))
                 yield return item;
 
             yield break;
         }
 
-        if (source is IReadOnlyCollection<T> collection1)
+        if (source is IReadOnlyCollection<T>)
         {
-            foreach (T item in source.Skip(collection1.Count))
+            foreach (T item in source.Skip(Math.Max(0, ((IReadOnlyCollection<T>)source).Count - count)))
                 yield return item;
 
             yield break;

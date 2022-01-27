@@ -6,16 +6,6 @@ public static partial class Calculations
     /// Calculates the bollinger bands.
     /// </summary>
     /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateBollingerBands(this StockData stockData)
-    {
-        return CalculateBollingerBands(stockData, MovingAvgType.SimpleMovingAverage, 20, 2);
-    }
-
-    /// <summary>
-    /// Calculates the bollinger bands.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
     /// <param name="stdDevMult">The standard dev mult.</param>
     /// <param name="movingAvgType">Average type of the moving.</param>
     /// <param name="length">The length.</param>

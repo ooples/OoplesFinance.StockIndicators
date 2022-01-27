@@ -6,18 +6,6 @@ public static partial class Calculations
     /// Calculates the relative strength index.
     /// </summary>
     /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateRelativeStrengthIndex(this StockData stockData)
-    {
-        int length = 14, signalLength = 3;
-
-        return CalculateRelativeStrengthIndex(stockData, MovingAvgType.WildersSmoothingMethod, length, signalLength);
-    }
-
-    /// <summary>
-    /// Calculates the relative strength index.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
     /// <param name="movingAvgType">Average type of the moving.</param>
     /// <param name="length">The length.</param>
     /// <param name="signalLength">Length of the signal.</param>
