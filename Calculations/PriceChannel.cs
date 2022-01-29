@@ -2534,4 +2534,229 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Range Bands
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="stdDevFactor"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateRangeBands(this StockData stockData, decimal stdDevFactor = 1, 
+        MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 14)
+    {
+        List<decimal> upperBandList = new();
+        List<decimal> lowerBandList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(smaList, length);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal middleBand = smaList.ElementAtOrDefault(i);
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal highest = highestList.ElementAtOrDefault(i);
+            decimal lowest = lowestList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevMiddleBand = i >= 1 ? smaList.ElementAtOrDefault(i - 1) : 0;
+            decimal rangeDev = highest - lowest;
+
+            decimal prevUpperBand = upperBandList.LastOrDefault();
+            decimal upperBand = middleBand + (rangeDev * stdDevFactor);
+            upperBandList.Add(upperBand);
+
+            decimal prevLowerBand = lowerBandList.LastOrDefault();
+            decimal lowerBand = middleBand - (rangeDev * stdDevFactor);
+            lowerBandList.Add(lowerBand);
+
+            var signal = GetBollingerBandsSignal(currentValue - middleBand, prevValue - prevMiddleBand, currentValue, prevValue, 
+                upperBand, prevUpperBand, lowerBand, prevLowerBand);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", upperBandList },
+            { "MiddleBand", smaList },
+            { "LowerBand", lowerBandList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.RangeBands;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Range Identifier
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateRangeIdentifier(this StockData stockData, int length = 34)
+    {
+        List<decimal> upList = new();
+        List<decimal> downList = new();
+        List<decimal> midList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentHigh = highList.ElementAtOrDefault(i);
+            decimal currentLow = lowList.ElementAtOrDefault(i);
+            decimal prevUp = upList.LastOrDefault();
+            decimal prevDown = downList.LastOrDefault();
+
+            decimal up = currentValue < prevUp && currentValue > prevDown ? prevUp : currentHigh;
+            upList.Add(up);
+
+            decimal down = currentValue < prevUp && currentValue > prevDown ? prevDown : currentLow;
+            downList.Add(down);
+
+            decimal prevMid = midList.LastOrDefault();
+            decimal mid = (up + down) / 2;
+            midList.Add(mid);
+
+            var signal = GetCompareSignal(currentValue - mid, prevValue - prevMid);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", upList },
+            { "MiddleBand", midList },
+            { "LowerBand", downList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.RangeIdentifier;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Rate Of Change Bands
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="smoothLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateRateOfChangeBands(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length = 12, int smoothLength = 3)
+    {
+        List<decimal> rocSquaredList = new();
+        List<decimal> upperBandList = new();
+        List<decimal> lowerBandList = new();
+        List<Signal> signalsList = new();
+
+        var rocList = CalculateRateOfChange(stockData, length).CustomValuesList;
+        var middleBandList = GetMovingAverageList(stockData, maType, smoothLength, rocList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal roc = rocList.ElementAtOrDefault(i);
+            decimal middleBand = middleBandList.ElementAtOrDefault(i);
+            decimal prevMiddleBand1 = i >= 1 ? middleBandList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevMiddleBand2 = i >= 2 ? middleBandList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal rocSquared = Pow(roc, 2);
+            rocSquaredList.Add(rocSquared);
+
+            decimal squaredAvg = rocSquaredList.TakeLastExt(length).Average();
+            decimal prevUpperBand = upperBandList.LastOrDefault();
+            decimal upperBand = Sqrt(squaredAvg);
+            upperBandList.Add(upperBand);
+
+            decimal prevLowerBand = lowerBandList.LastOrDefault();
+            decimal lowerBand = -upperBand;
+            lowerBandList.Add(lowerBand);
+
+            var signal = GetBollingerBandsSignal(middleBand - prevMiddleBand1, prevMiddleBand1 - prevMiddleBand2, middleBand, prevMiddleBand1, 
+                upperBand, prevUpperBand, lowerBand, prevLowerBand);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", upperBandList },
+            { "MiddleBand", middleBandList },
+            { "LowerBand", lowerBandList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.RateOfChangeBands;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Root Moving Average Squared Error Bands
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="stdDevFactor"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateRootMovingAverageSquaredErrorBands(this StockData stockData, decimal stdDevFactor = 1, 
+        MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 14)
+    {
+        List<decimal> upperBandList = new();
+        List<decimal> lowerBandList = new();
+        List<decimal> powList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal sma = smaList.ElementAtOrDefault(i);
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+
+            decimal pow = Pow(currentValue - sma, 2);
+            powList.Add(pow);
+        }
+
+        var powSmaList = GetMovingAverageList(stockData, maType, length, powList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal middleBand = smaList.ElementAtOrDefault(i);
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal powSma = powSmaList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevMiddleBand = i >= 1 ? smaList.ElementAtOrDefault(i - 1) : 0;
+            decimal rmaseDev = Sqrt(powSma);
+
+            decimal prevUpperBand = upperBandList.LastOrDefault();
+            decimal upperBand = middleBand + (rmaseDev * stdDevFactor);
+            upperBandList.Add(upperBand);
+
+            decimal prevLowerBand = lowerBandList.LastOrDefault();
+            decimal lowerBand = middleBand - (rmaseDev * stdDevFactor);
+            lowerBandList.Add(lowerBand);
+
+            var signal = GetBollingerBandsSignal(currentValue - middleBand, prevValue - prevMiddleBand, currentValue, prevValue, 
+                upperBand, prevUpperBand, lowerBand, prevLowerBand);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", upperBandList },
+            { "MiddleBand", smaList },
+            { "LowerBand", lowerBandList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.RootMovingAverageSquaredErrorBands;
+
+        return stockData;
+    }
 }

@@ -596,4 +596,141 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Rapid Relative Strength Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateRapidRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
+        int length = 14)
+    {
+        List<decimal> upChgList = new();
+        List<decimal> downChgList = new();
+        List<decimal> rapidRsiList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal chg = currentValue - prevValue;
+
+            decimal upChg = chg > 0 ? chg : 0;
+            upChgList.Add(upChg);
+
+            decimal downChg = chg < 0 ? Math.Abs(chg) : 0;
+            downChgList.Add(downChg);
+
+            decimal upChgSum = upChgList.TakeLastExt(length).Sum();
+            decimal downChgSum = downChgList.TakeLastExt(length).Sum();
+            decimal rs = downChgSum != 0 ? upChgSum / downChgSum : 0;
+
+            decimal rapidRsi = downChgSum == 0 ? 100 : upChgSum == 0 ? 0 : MinOrMax(100 - (100 / (1 + rs)), 100, 0);
+            rapidRsiList.Add(rapidRsi);
+        }
+
+        var rrsiEmaList = GetMovingAverageList(stockData, maType, length, rapidRsiList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal rapidRsi = rrsiEmaList.ElementAtOrDefault(i);
+            decimal prevRapidRsi1 = i >= 1 ? rrsiEmaList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevRapidRsi2 = i >= 2 ? rrsiEmaList.ElementAtOrDefault(i - 2) : 0;
+
+            var signal = GetRsiSignal(rapidRsi - prevRapidRsi1, prevRapidRsi1 - prevRapidRsi2, rapidRsi, prevRapidRsi1, 70, 30);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Rrsi", rapidRsiList },
+            { "Signal", rrsiEmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = rapidRsiList;
+        stockData.IndicatorName = IndicatorName.RapidRelativeStrengthIndex;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Recursive Relative Strength Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateRecursiveRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 14)
+    {
+        List<decimal> chgList = new();
+        List<decimal> bList = new();
+        List<decimal> avgRsiList = new();
+        List<decimal> avgList = new();
+        List<decimal> gainList = new();
+        List<decimal> lossList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+
+            decimal chg = currentValue - prevValue;
+            chgList.Add(chg);
+        }
+
+        var srcList = GetMovingAverageList(stockData, maType, length, chgList);
+        stockData.CustomValuesList = srcList;
+        var rsiList = CalculateRelativeStrengthIndex(stockData, length: length).CustomValuesList;
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal rsi = rsiList.ElementAtOrDefault(i);
+            decimal src = srcList.ElementAtOrDefault(i);
+            decimal prevB1 = i >= 1 ? bList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevB2 = i >= 2 ? bList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal b = 0, avg = 0, gain = 0, loss = 0, avgRsi = 0;
+            for (int j = 1; j <= length; j++)
+            {
+                decimal prevB = i >= j ? bList.ElementAtOrDefault(i - j) : src;
+                decimal prevAvg = i >= j ? avgList.ElementAtOrDefault(i - j) : 0;
+                decimal prevGain = i >= j ? gainList.ElementAtOrDefault(i - j) : 0;
+                decimal prevLoss = i >= j ? lossList.ElementAtOrDefault(i - j) : 0;
+                decimal k = (decimal)j / length;
+                decimal a = rsi * (decimal)length / j;
+                avg = (a + prevB) / 2;
+                decimal avgChg = avg - prevAvg;
+                gain = avgChg > 0 ? avgChg : 0;
+                loss = avgChg < 0 ? Math.Abs(avgChg) : 0;
+                decimal avgGain = (gain * k) + (prevGain * (1 - k));
+                decimal avgLoss = (loss * k) + (prevLoss * (1 - k));
+                decimal rs = avgLoss != 0 ? avgGain / avgLoss : 0;
+                avgRsi = avgLoss == 0 ? 100 : avgGain == 0 ? 0 : MinOrMax(100 - (100 / (1 + rs)), 1, 0);
+                b = avgRsiList.Count >= length ? avgRsiList.TakeLastExt(length).Average() : avgRsi;
+            }
+            bList.Add(b);
+            avgList.Add(avg);
+            gainList.Add(gain);
+            lossList.Add(loss);
+            avgRsiList.Add(avgRsi);
+
+            var signal = GetRsiSignal(b - prevB1, prevB1 - prevB2, b, prevB1, 0.8m, 0.2m);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Rrsi", bList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = bList;
+        stockData.IndicatorName = IndicatorName.RecursiveRelativeStrengthIndex;
+
+        return stockData;
+    }
 }

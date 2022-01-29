@@ -196,6 +196,8 @@ public enum IndicatorName
     [Category(IndicatorType.Trend)]
     CubedWeightedMovingAverage,
     [Category(IndicatorType.Momentum)]
+    DemarkRangeExpansionIndex,
+    [Category(IndicatorType.Momentum)]
     DetrendedPriceOscillator,
     [Category(IndicatorType.SupportAndResistance)]
     DonchianChannels,

@@ -31,7 +31,14 @@ public static class MathHelper
     /// <returns></returns>
     public static decimal Sqrt(decimal value)
     {
-        return (decimal)Math.Sqrt((double)value);
+        if (value < 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return (decimal)Math.Sqrt((double)value);
+        }
     }
 
     /// <summary>

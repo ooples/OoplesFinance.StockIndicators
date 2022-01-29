@@ -6,18 +6,6 @@ public static partial class Calculations
     /// Calculates the moving average convergence divergence.
     /// </summary>
     /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateMovingAverageConvergenceDivergence(this StockData stockData)
-    {
-        int fastLength = 12, slowLength = 26, signalLength = 9;
-
-        return CalculateMovingAverageConvergenceDivergence(stockData, MovingAvgType.ExponentialMovingAverage, fastLength, slowLength, signalLength);
-    }
-
-    /// <summary>
-    /// Calculates the moving average convergence divergence.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
     /// <param name="movingAvgType">Average type of the moving.</param>
     /// <param name="fastLength">Length of the fast.</param>
     /// <param name="slowLength">Length of the slow.</param>

@@ -220,6 +220,33 @@ public static class CalculationsHelper
             case MovingAvgType.QuickMovingAverage:
                 movingAvgList = stockData.CalculateQuickMovingAverage(length).CustomValuesList;
                 break;
+            case MovingAvgType.R2AdaptiveRegression:
+                movingAvgList = stockData.CalculateR2AdaptiveRegression(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.RatioOCHLAverager:
+                movingAvgList = stockData.CalculateRatioOCHLAverager().CustomValuesList;
+                break;
+            case MovingAvgType.RecursiveMovingTrendAverage:
+                movingAvgList = stockData.CalculateRecursiveMovingTrendAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.RegularizedExponentialMovingAverage:
+                movingAvgList = stockData.CalculateRegularizedExponentialMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.RepulsionMovingAverage:
+                movingAvgList = stockData.CalculateRepulsionMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.RetentionAccelerationFilter:
+                movingAvgList = stockData.CalculateRetentionAccelerationFilter(length).CustomValuesList;
+                break;
+            case MovingAvgType.ReverseEngineeringRelativeStrengthIndex:
+                movingAvgList = stockData.CalculateReverseEngineeringRelativeStrengthIndex(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.ReverseMovingAverageConvergenceDivergence:
+                movingAvgList = stockData.CalculateReverseMovingAverageConvergenceDivergence().CustomValuesList;
+                break;
+            case MovingAvgType.RightSidedRickerMovingAverage:
+                movingAvgList = stockData.CalculateRightSidedRickerMovingAverage(length: length).CustomValuesList;
+                break;
             case MovingAvgType.SimpleMovingAverage:
                 movingAvgList = stockData.CalculateSimpleMovingAverage(length).CustomValuesList;
                 break;

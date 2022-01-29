@@ -2,20 +2,6 @@
 
 public static partial class Calculations
 {
-
-    /// <summary>
-    /// Calculates the average true range.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateAverageTrueRange(this StockData stockData)
-    {
-        var maType = MovingAvgType.WildersSmoothingMethod;
-        var length = 14;
-
-        return CalculateAverageTrueRange(stockData, maType, length);
-    }
-
     /// <summary>
     /// Calculates the average true range.
     /// </summary>
@@ -23,7 +9,7 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateAverageTrueRange(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod,
+    public static StockData CalculateAverageTrueRange(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
         int length = 14)
     {
         List<decimal> trList = new();
@@ -66,19 +52,6 @@ public static partial class Calculations
         stockData.IndicatorName = IndicatorName.AverageTrueRange;
 
         return stockData;
-    }
-
-    /// <summary>
-    /// Calculates the average index of the directional.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateAverageDirectionalIndex(this StockData stockData)
-    {
-        var maType = MovingAvgType.ExponentialMovingAverage;
-        int length = 14;
-
-        return CalculateAverageDirectionalIndex(stockData, maType, length);
     }
 
     /// <summary>
