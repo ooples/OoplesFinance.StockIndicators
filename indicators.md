@@ -92,6 +92,8 @@
 
 [Coppock Curve](https://school.stockcharts.com/doku.php?id=technical_indicators:coppock_curve)
 
+[Demark Range Expansion Index](https://www.tradingview.com/script/9yWlMoVE-Demark-Range-Expansion-Index/)
+
 [Detrended Price Oscillator](https://www.tradingview.com/script/yMRm9CPq-Detrended-Price-Oscillator/)
 
 [Ehlers Roofing Filter](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersRoofingFilter)
@@ -248,9 +250,45 @@
 
 [Quantitative Qualitative Estimation](https://www.tradingview.com/script/0vn4HZ7O-Quantitative-Qualitative-Estimation-QQE/)
 
+[Rahul Mohindar Oscillator](https://www.tradingview.com/script/efHJsedw-Indicator-Rahul-Mohindar-Oscillator-RMO/)
+
+[Rainbow Oscillator](https://www.motivewave.com/studies/rainbow_oscillator.htm)
+
+[Range Action Verification Index](https://www.tradingpedia.com/forex-trading-indicators/chandes-range-action-verification-index)
+
+[Rapid Relative Strength Index](https://www.tradingview.com/script/jaGhXmgT-Rapid-RSI/)
+
 [Rate Of Change](https://www.investopedia.com/terms/r/rateofchange.asp)
 
+[Really Simple Indicator](https://www.tradingview.com/script/SkO2zea5-Webby-s-RSI-Really-Simple-Indicator/)
+
+[Recursive Differenciator](https://www.tradingview.com/script/lSrwydn9-Recursive-Differenciator/)
+
+[Recursive Relative Strength Index](https://www.tradingview.com/script/e7LrnuKz-Recursive-Rsi/)
+
+[Recursive Stochastic](https://www.tradingview.com/script/p41QWmFs-Recursive-Stochastic/)
+
+[Regression Oscillator](https://www.tradingview.com/script/vo9NNern-Regression-Oscillator/)
+
+[Relative Difference Of Squares Oscillator](https://www.tradingview.com/script/5XeEgRr1-Relative-Difference-Of-Squares-Oscillator-CC/)
+
+[Relative Momentum Index](https://www.motivewave.com/studies/relative_momentum_index.htm)
+
+[Relative Spread Strength](https://www.tradingview.com/script/gwZJx775-Relative-Spread-Strength/)
+
+[Relative Strength 3D Indicator](https://www.tradingview.com/script/fymjZirH-Relative-Strength-3D-Indicator-CC/)
+
 [Relative Strength Index](https://www.investopedia.com/terms/r/rsi.asp)
+
+[Repulse](https://www.tradingview.com/script/WXLkPkpr-Repulse/)
+
+[Rex Oscillator](https://www.tradingview.com/script/NVuVU5Rd-Rex-Oscillator-CC/)
+
+[Robust Weighting Oscillator](https://www.tradingview.com/script/RxPA5LDt-Robust-Weighting-Oscillator/)
+
+[RSING Indicator](https://www.tradingview.com/script/fYHERjpE-RSING-Indicator-CC/)
+
+[RSMK Indicator](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/R-S/RSMK)
 
 [Schaff Trend Cycle](https://www.tradingpedia.com/forex-trading-indicators/schaff-trend-cycle)
 
@@ -368,6 +406,8 @@
 [Projected Support And Resistance](https://www.tradingview.com/script/uZGJx4eI-Projected-Support-And-Resistance-CC/)
 
 [Projection Bands](https://www.motivewave.com/studies/projection_band_ul.htm)
+
+[Range Identifier](https://www.tradingview.com/script/FnFOxVIY-Range-Identifier-LazyBear/)
 
 [Standard Pivot Points](https://school.stockcharts.com/doku.php?id=technical_indicators:pivot_points)
 
@@ -580,6 +620,32 @@ Atr Filtered Exponential Moving Average
 
 [Quick Moving Average](https://www.tradingview.com/script/fKinbRjG-Quick-Moving-Average/)
 
+[R2 Adaptive Regression](https://www.tradingview.com/script/x0BRu9QG-R2-Adaptive-Regression/)
+
+[Random Walk Index](https://www.investopedia.com/terms/r/random-walk-index.asp)
+
+[Ratio OCHL Averager](https://www.tradingview.com/script/RGAtOI6h-Ratio-OCHL-Averager-An-Alternative-to-VWAP/)
+
+[Recursive Moving Trend Average](https://www.tradingview.com/script/TTYuhwQN-Recursive-Moving-Trend-Average/)
+
+[Regularized Exponential Moving Average](https://www.tradingview.com/script/Y233oS7z-Regularized-Exponential-Moving-Average/)
+
+[Relative Vigor Index](https://www.investopedia.com/terms/r/relative_vigor_index.asp)
+
+[Repulsion Moving Average](https://www.tradingview.com/script/zWxWTq1l-Repulsion-Moving-Average-Least-Crosses-MA/)
+
+[Retention Acceleration Filter](https://www.tradingview.com/script/MIXINpu0-Retention-Acceleration-Filter/)
+
+[Retrospective Candlestick Chart](https://www.tradingview.com/script/BwZAaXUg-Retrospective-Candlestick-Chart/)
+
+[Reverse Engineering Relative Strength Index](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/R-S/ReverseEngineeringRSI)
+
+[Reverse Moving Average Convergence Divergence](https://www.motivewave.com/studies/reversing_macd.htm)
+
+[Right Sided Ricker Moving Average](https://www.tradingview.com/script/KXuoylZi-Right-Sided-Ricker-Moving-Average-And-The-Gaussian-Derivatives/)
+
+[Running Equity](https://www.tradingview.com/script/BqLZ8fp7-Running-Equity-A-New-Indicator-For-Optimal-Markets-Detection/)
+
 [Simple Moving Average](https://www.investopedia.com/terms/s/sma.asp)
 
 [SuperTrend](https://www.elearnmarkets.com/blog/supertrend-indicator-strategy-trading/)
@@ -771,9 +837,19 @@ Atr Filtered Exponential Moving Average
 
 [Quasi White Noise](https://www.tradingview.com/script/UWKXaj5O-RESEARCH-Quasi-White-Noise/)
 
+[Range Bands](https://www.tradingview.com/script/VlOHNzPy-Bands-Trailing-Stop-Utility/)
+
+[Rate Of Change Bands](https://www.tradingview.com/script/QtEaCoVJ-Rate-Of-Change-Bands-CC/)
+
+[Relative Normalized Volatility](https://www.tradingview.com/script/1xbPOzsU-Relative-Normalized-Volatility/)
+
 [Relative Volatility Index V1](https://www.tradingview.com/script/mLZJqxKn-Relative-Volatility-Index/)
 
 [Relative Volatility Index V2](https://www.tradingview.com/script/mLZJqxKn-Relative-Volatility-Index/)
+
+[Reversal Points](https://www.tradingview.com/script/ql9EiWBH-Reversal-Points/)
+
+[Root Moving Average Squared Error Bands](https://www.tradingview.com/script/VlOHNzPy-Bands-Trailing-Stop-Utility/)
 
 [Standard Deviation Channel](https://www.motivewave.com/studies/standard_deviation_channel.htm)
 
