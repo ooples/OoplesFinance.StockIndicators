@@ -800,8 +800,6 @@ public enum IndicatorName
     [Category(IndicatorType.Trend)]
     SymmetricallyWeightedMovingAverage,
     [Category(IndicatorType.Trend)]
-    T3MovingAverage,
-    [Category(IndicatorType.Trend)]
     TStepLeastSquaresMovingAverage,
     [Category(IndicatorType.Trend)]
     TechnicalRank,
@@ -820,7 +818,9 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     TickLineMomentumOscillator,
     [Category(IndicatorType.Trend)]
-    TilsonIE2,
+    TillsonIE2,
+    [Category(IndicatorType.Trend)]
+    TillsonT3MovingAverage,
     [Category(IndicatorType.SupportAndResistance)]
     TimeAndMoneyChannel,
     [Category(IndicatorType.Trend)]

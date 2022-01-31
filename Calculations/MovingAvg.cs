@@ -568,14 +568,14 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the t3 moving average.
+    /// Calculates the Tillson T3 Moving Average
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="vFactor">The v factor.</param>
     /// <returns></returns>
-    public static StockData CalculateT3MovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+    public static StockData CalculateTillsonT3MovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
         int length = 5, decimal vFactor = 0.7m)
     {
         List<decimal> t3List = new();
@@ -617,7 +617,7 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = t3List;
-        stockData.IndicatorName = IndicatorName.T3MovingAverage;
+        stockData.IndicatorName = IndicatorName.TillsonT3MovingAverage;
 
         return stockData;
     }
@@ -4934,13 +4934,13 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the Tilson IE2
+    /// Calculates the Tillson IE2
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="maType"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    public static StockData CalculateTilsonIE2(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 15)
+    public static StockData CalculateTillsonIE2(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 15)
     {
         List<decimal> ie2List = new();
         List<Signal> signalsList = new();
@@ -4972,7 +4972,7 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = ie2List;
-        stockData.IndicatorName = IndicatorName.TilsonIE2;
+        stockData.IndicatorName = IndicatorName.TillsonIE2;
 
         return stockData;
     }
