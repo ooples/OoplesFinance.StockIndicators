@@ -24,7 +24,6 @@
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     <UseWindowsForms>False</UseWindowsForms>
     <UseWPF>False</UseWPF>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <SignAssembly>True</SignAssembly>
   </PropertyGroup>
@@ -39,10 +38,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net5.0|AnyCPU'">
@@ -129,7 +130,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Favicon.jpg">
+    <Folder Include="Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\cheat\Downloads\Favicon.jpg">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
