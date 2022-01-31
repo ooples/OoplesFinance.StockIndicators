@@ -396,4 +396,75 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Mirrored Percentage Price Oscillator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="signalLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateMirroredPercentagePriceOscillator(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20, int signalLength = 9)
+    {
+        List<decimal> ppoList = new();
+        List<decimal> ppoHistogramList = new();
+        List<decimal> ppoMirrorList = new();
+        List<decimal> ppoMirrorHistogramList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, openList, _) = GetInputValuesList(stockData);
+
+        var emaOpenList = GetMovingAverageList(stockData, maType, length, openList);
+        var emaCloseList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal mao = emaOpenList.ElementAtOrDefault(i);
+            decimal mac = emaCloseList.ElementAtOrDefault(i);
+            decimal macd = mac - mao;
+            decimal macdMirror = mao - mac;
+
+            decimal ppo = mao != 0 ? macd / mao * 100 : 0;
+            ppoList.Add(ppo);
+
+            decimal ppoMirror = mac != 0 ? macdMirror / mac * 100 : 0;
+            ppoMirrorList.Add(ppoMirror);
+        }
+
+        var ppoSignalLineList = GetMovingAverageList(stockData, maType, signalLength, ppoList);
+        var ppoMirrorSignalLineList = GetMovingAverageList(stockData, maType, signalLength, ppoMirrorList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal ppo = ppoList.ElementAtOrDefault(i);
+            decimal ppoSignalLine = ppoSignalLineList.ElementAtOrDefault(i);
+            decimal ppoMirror = ppoMirrorList.ElementAtOrDefault(i);
+            decimal ppoMirrorSignalLine = ppoMirrorSignalLineList.ElementAtOrDefault(i);
+
+            decimal prevPpoHistogram = ppoHistogramList.LastOrDefault();
+            decimal ppoHistogram = ppo - ppoSignalLine;
+            ppoHistogramList.Add(ppoHistogram);
+
+            decimal ppoMirrorHistogram = ppoMirror - ppoMirrorSignalLine;
+            ppoMirrorHistogramList.Add(ppoMirrorHistogram);
+
+            var signal = GetCompareSignal(ppoHistogram, prevPpoHistogram);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ppo", ppoList },
+            { "Signal", ppoSignalLineList },
+            { "Histogram", ppoHistogramList },
+            { "MirrorPpo", ppoMirrorList },
+            { "MirrorSignal", ppoMirrorSignalLineList },
+            { "MirrorHistogram", ppoMirrorHistogramList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = ppoList;
+        stockData.IndicatorName = IndicatorName.MirroredPercentagePriceOscillator;
+
+        return stockData;
+    }
 }

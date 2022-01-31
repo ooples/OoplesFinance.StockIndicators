@@ -172,11 +172,32 @@ public static class CalculationsHelper
             case MovingAvgType.LinearWeightedMovingAverage:
                 movingAvgList = stockData.CalculateLinearWeightedMovingAverage(length).CustomValuesList;
                 break;
+            case MovingAvgType.McGinleyDynamicIndicator:
+                movingAvgList = stockData.CalculateMcGinleyDynamicIndicator(length: length).CustomValuesList;
+                break;
             case MovingAvgType.McNichollMovingAverage:
                 movingAvgList = stockData.CalculateMcNichollMovingAverage(length: length).CustomValuesList;
                 break;
+            case MovingAvgType.MedianAverageAdaptiveFilter:
+                movingAvgList = stockData.CalculateMedianAverageAdaptiveFilter(length: length).CustomValuesList;
+                break;
             case MovingAvgType.MesaAdaptiveMovingAverage:
                 movingAvgList = stockData.CalculateEhlersMotherOfAdaptiveMovingAverages().CustomValuesList;
+                break;
+            case MovingAvgType.MiddleHighLowMovingAverage:
+                movingAvgList = stockData.CalculateMiddleHighLowMovingAverage(length1: length).CustomValuesList;
+                break;
+            case MovingAvgType.ModularFilter:
+                movingAvgList = stockData.CalculateModularFilter(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.MovingAverageAdaptiveQ:
+                movingAvgList = stockData.CalculateMovingAverageAdaptiveQ(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.MovingAverageV3:
+                movingAvgList = stockData.CalculateMovingAverageV3(length1: length).CustomValuesList;
+                break;
+            case MovingAvgType.MultiDepthZeroLagExponentialMovingAverage:
+                movingAvgList = stockData.CalculateMultiDepthZeroLagExponentialMovingAverage(length).CustomValuesList;
                 break;
             case MovingAvgType.NaturalMovingAverage:
                 movingAvgList = stockData.CalculateNaturalMovingAverage(length).CustomValuesList;
@@ -362,6 +383,8 @@ public static class CalculationsHelper
             InputName.WeightedClose => stockData.CalculateWeightedClose().CustomValuesList,
             InputName.Open => stockData.OpenPrices,
             InputName.AdjustedClose => stockData.ClosePrices,
+            InputName.Midpoint => stockData.CalculateMidpoint().CustomValuesList,
+            InputName.Midprice => stockData.CalculateMidprice().CustomValuesList,
             _ => stockData.ClosePrices,
         };
 
@@ -399,8 +422,10 @@ public static class CalculationsHelper
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <returns></returns>
-    /// <exception cref="OoplesFinance.StockIndicators.Exceptions.CalculationException">Calculations based off of {stockData.IndicatorName} can't be completed because this indicator doesn't have a single output.</exception>
-    public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> volumeList) GetInputValuesList(StockData stockData)
+    /// <exception cref="OoplesFinance.StockIndicators.Exceptions.CalculationException">Calculations based off of 
+    /// {stockData.IndicatorName} can't be completed because this indicator doesn't have a single output.</exception>
+    public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> volumeList) 
+        GetInputValuesList(StockData stockData)
     {
         List<decimal> inputList;
         List<decimal> highList;

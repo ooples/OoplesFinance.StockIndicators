@@ -149,4 +149,82 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Midpoint
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateMidpoint(this StockData stockData, int length = 14)
+    {
+        List<decimal> midpointList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(inputList, length);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal highest = highestList.ElementAtOrDefault(i);
+            decimal lowest = lowestList.ElementAtOrDefault(i);
+
+            decimal prevMidPoint = midpointList.LastOrDefault();
+            decimal midpoint = (highest + lowest) / 2;
+            midpointList.Add(midpoint);
+
+            var signal = GetCompareSignal(currentValue - midpoint, prevValue - prevMidPoint);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "HCLC2", midpointList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = midpointList;
+        stockData.IndicatorName = IndicatorName.Midpoint;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Midprice
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateMidprice(this StockData stockData, int length = 14)
+    {
+        List<decimal> midpriceList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal highest = highestList.ElementAtOrDefault(i);
+            decimal lowest = lowestList.ElementAtOrDefault(i);
+
+            decimal prevMidPrice = midpriceList.LastOrDefault();
+            decimal midPrice = (highest + lowest) / 2;
+            midpriceList.Add(midPrice);
+
+            var signal = GetCompareSignal(currentValue - midPrice, prevValue - prevMidPrice);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "HHLL2", midpriceList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = midpriceList;
+        stockData.IndicatorName = IndicatorName.Midprice;
+
+        return stockData;
+    }
 }

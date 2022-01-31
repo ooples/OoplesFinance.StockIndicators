@@ -206,6 +206,8 @@ public enum IndicatorName
     [Category(IndicatorType.Volume)]
     EaseOfMovement,
     [Category(IndicatorType.Trend)]
+    EhlersMedianAverageAdaptiveFilter,
+    [Category(IndicatorType.Trend)]
     EhlersMotherOfAdaptiveMovingAverages,
     [Category(IndicatorType.Trend)]
     EhlersPhaseCalculation,
@@ -446,15 +448,79 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     LogisticCorrelation,
     [Category(IndicatorType.Momentum)]
+    MacZIndicator,
+    [Category(IndicatorType.Volume)]
+    MacZVwapIndicator,
+    [Category(IndicatorType.Momentum)]
+    MarketDirectionIndicator,
+    [Category(IndicatorType.Volume)]
+    MarketFacilitationIndex,
+    [Category(IndicatorType.Volatility)]
+    MartinRatio,
+    [Category(IndicatorType.Momentum)]
+    MassIndex,
+    [Category(IndicatorType.Trend)]
+    MassThrustIndicator,
+    [Category(IndicatorType.Momentum)]
+    MassThrustOscillator,
+    [Category(IndicatorType.Volatility)]
+    MayerMultiple,
+    [Category(IndicatorType.Momentum)]
     McClellanOscillator,
     [Category(IndicatorType.Trend)]
+    McGinleyDynamicIndicator,
+    [Category(IndicatorType.Trend)]
     McNichollMovingAverage,
+    [Category(IndicatorType.Volatility)]
+    MeanAbsoluteDeviationBands,
+    [Category(IndicatorType.Volatility)]
+    MeanAbsoluteErrorBands,
     [Category(IndicatorType.Trend)]
     MedianPrice,
+    [Category(IndicatorType.Trend)]
+    MiddleHighLowMovingAverage,
+    [Category(IndicatorType.Trend)]
+    Midpoint,
+    [Category(IndicatorType.Momentum)]
+    MidpointOscillator,
+    [Category(IndicatorType.Trend)]
+    Midprice,
+    [Category(IndicatorType.Momentum)]
+    MirroredMovingAverageConvergenceDivergence,
+    [Category(IndicatorType.Momentum)]
+    MirroredPercentagePriceOscillator,
+    [Category(IndicatorType.Momentum)]
+    MobilityOscillator,
+    [Category(IndicatorType.Trend)]
+    ModifiedGannHiloActivator,
+    [Category(IndicatorType.Volume)]
+    ModifiedPriceVolumeTrend,
+    [Category(IndicatorType.Trend)]
+    ModularFilter,
+    [Category(IndicatorType.Momentum)]
+    MomentaRelativeStrengthIndex,
     [Category(IndicatorType.Momentum)]
     MomentumOscillator,
     [Category(IndicatorType.Volume)]
     MoneyFlowIndex,
+    [Category(IndicatorType.Momentum)]
+    MorphedSineWave,
+    [Category(IndicatorType.Volatility)]
+    MotionSmoothnessIndex,
+    [Category(IndicatorType.SupportAndResistance)]
+    MotionToAttractionChannels,
+    [Category(IndicatorType.Trend)]
+    MotionToAttractionTrailingStop,
+    [Category(IndicatorType.Momentum)]
+    MoveTracker,
+    [Category(IndicatorType.Volatility)]
+    MovingAverageAdaptiveFilter,
+    [Category(IndicatorType.Trend)]
+    MovingAverageAdaptiveQ,
+    [Category(IndicatorType.Volatility)]
+    MovingAverageBandWidth,
+    [Category(IndicatorType.Volatility)]
+    MovingAverageBands,
     [Category(IndicatorType.SupportAndResistance)]
     MovingAverageChannel,
     [Category(IndicatorType.Momentum)]
@@ -462,7 +528,19 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     MovingAverageConvergenceDivergenceLeader,
     [Category(IndicatorType.SupportAndResistance)]
+    MovingAverageDisplacedEnvelope,
+    [Category(IndicatorType.SupportAndResistance)]
     MovingAverageEnvelope,
+    [Category(IndicatorType.SupportAndResistance)]
+    MovingAverageSupportResistance,
+    [Category(IndicatorType.Trend)]
+    MovingAverageV3,
+    [Category(IndicatorType.Trend)]
+    MultiDepthZeroLagExponentialMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    MultiLevelIndicator,
+    [Category(IndicatorType.Volume)]
+    MultiVoteOnBalanceVolume,
     [Category(IndicatorType.Momentum)]
     NarrowBandpassFilter,
     [Category(IndicatorType.Volatility)]

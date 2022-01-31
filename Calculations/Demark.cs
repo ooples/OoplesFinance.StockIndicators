@@ -2,6 +2,12 @@
 
 public static partial class Calculations
 {
+    /// <summary>
+    /// Calculates the Demark Range Expansion Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public static StockData CalculateDemarkRangeExpansionIndex(this StockData stockData, int length = 5)
     {
         List<decimal> s2List = new();

@@ -733,4 +733,71 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Momenta Relative Strength Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
+    public static StockData CalculateMomentaRelativeStrengthIndex(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 2, int length2 = 14)
+    {
+        List<decimal> rsiList = new();
+        List<decimal> srcLcList = new();
+        List<decimal> hcSrcList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(inputList, length1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal hc = highestList.ElementAtOrDefault(i);
+            decimal lc = lowestList.ElementAtOrDefault(i);
+
+            decimal srcLc = currentValue - lc;
+            srcLcList.Add(srcLc);
+
+            decimal hcSrc = hc - currentValue;
+            hcSrcList.Add(hcSrc);
+        }
+
+        var topList = GetMovingAverageList(stockData, maType, length2, srcLcList);
+        var botList = GetMovingAverageList(stockData, maType, length2, hcSrcList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal top = topList.ElementAtOrDefault(i);
+            decimal bot = botList.ElementAtOrDefault(i);
+            decimal rs = bot != 0 ? MinOrMax(top / bot, 1, 0) : 0;
+
+            decimal rsi = bot == 0 ? 100 : top == 0 ? 0 : MinOrMax(100 - (100 / (1 + rs)), 100, 0);
+            rsiList.Add(rsi);
+        }
+
+        var rsiEmaList = GetMovingAverageList(stockData, maType, length2, rsiList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal rsi = rsiList.ElementAtOrDefault(i);
+            decimal rsiEma = rsiEmaList.ElementAtOrDefault(i);
+            decimal prevRsi = i >= 1 ? rsiList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevRsiEma = i >= 1 ? rsiEmaList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetRsiSignal(rsi - rsiEma, prevRsi - prevRsiEma, rsi, prevRsi, 80, 20);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Mrsi", rsiList },
+            { "Signal", rsiEmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = rsiList;
+        stockData.IndicatorName = IndicatorName.MomentaRelativeStrengthIndex;
+
+        return stockData;
+    }
 }

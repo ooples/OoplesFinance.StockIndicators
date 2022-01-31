@@ -8,6 +8,8 @@ public enum InputName
     High,
     Low,
     MedianPrice,
+    Midpoint,
+    Midprice,
     Open,
     TypicalPrice,
     Volume,

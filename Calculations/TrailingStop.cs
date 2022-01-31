@@ -811,4 +811,53 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Motion To Attraction Trailing Stop
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateMotionToAttractionTrailingStop(this StockData stockData, int length = 14)
+    {
+        List<decimal> osList = new();
+        List<decimal> tsList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var mtaList = CalculateMotionToAttractionChannels(stockData, length);
+        var aList = mtaList.OutputValues["UpperBand"];
+        var bList = mtaList.OutputValues["LowerBand"];
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevA = i >= 1 ? aList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevB = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal a = aList.ElementAtOrDefault(i);
+            decimal b = bList.ElementAtOrDefault(i);
+
+            decimal prevOs = osList.LastOrDefault();
+            decimal os = currentValue > prevA ? 1 : currentValue < prevB ? 0 : prevOs;
+            osList.Add(os);
+
+            decimal prevTs = tsList.LastOrDefault();
+            decimal ts = (os * b) + ((1 - os) * a);
+            tsList.Add(ts);
+
+            var signal = GetCompareSignal(currentValue - ts, prevValue - prevTs);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ts", tsList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = tsList;
+        stockData.IndicatorName = IndicatorName.MotionToAttractionTrailingStop;
+
+        return stockData;
+    }
 }

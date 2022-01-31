@@ -902,7 +902,6 @@ public static partial class Calculations
             decimal top = decSum != 0 ? advSum / decSum : 0;
             decimal bot = decVolSum != 0 ? advVolSum / decVolSum : 0;
             decimal ut = bot != 0 ? top / bot : 0;
-            decimal utRev = top != 0 ? -1 * bot / top : 0;
 
             decimal uti = ut + 1 != 0 ? (ut - 1) / (ut + 1) : 0;
             utiList.Add(uti);
@@ -1356,4 +1355,53 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Modified Price Volume Trend
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateModifiedPriceVolumeTrend(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
+        int length = 23)
+    {
+        List<decimal> mpvtList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentVolume = volumeList.ElementAtOrDefault(i);
+            decimal rv = currentVolume / 50000;
+
+            decimal prevMpvt = mpvtList.LastOrDefault();
+            decimal mpvt = prevValue != 0 ? prevMpvt + (rv * (currentValue - prevValue) / prevValue) : 0;
+            mpvtList.Add(mpvt);
+        }
+
+        var mpvtSignalList = GetMovingAverageList(stockData, maType, length, mpvtList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal mpvt = mpvtList.ElementAtOrDefault(i);
+            decimal mpvtSignal = mpvtSignalList.ElementAtOrDefault(i);
+            decimal prevMpvt = i >= 1 ? mpvtList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevMpvtSignal = i >= 1 ? mpvtSignalList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetCompareSignal(mpvt - mpvtSignal, prevMpvt - prevMpvtSignal);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Mpvt", mpvtList },
+            { "Signal", mpvtSignalList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = mpvtList;
+        stockData.IndicatorName = IndicatorName.ModifiedPriceVolumeTrend;
+
+        return stockData;
+    }
 }

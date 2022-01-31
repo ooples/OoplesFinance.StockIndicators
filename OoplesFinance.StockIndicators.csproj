@@ -118,6 +118,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Calculations\eladq3fp.fhq~" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\..\Downloads\Favicon.jpg">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

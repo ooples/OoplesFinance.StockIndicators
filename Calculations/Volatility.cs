@@ -6,19 +6,9 @@ public static partial class Calculations
     /// Calculates the standard deviation volatility.
     /// </summary>
     /// <param name="stockData">The stock data.</param>
-    /// <returns></returns>
-    public static StockData CalculateStandardDeviationVolatility(this StockData stockData)
-    {
-        return CalculateStandardDeviationVolatility(stockData, 20);
-    }
-
-    /// <summary>
-    /// Calculates the standard deviation volatility.
-    /// </summary>
-    /// <param name="stockData">The stock data.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateStandardDeviationVolatility(this StockData stockData, int length)
+    public static StockData CalculateStandardDeviationVolatility(this StockData stockData, int length = 20)
     {
         List<decimal> stdDevVolatilityList = new();
         List<decimal> deviationSquaredList = new();
@@ -126,70 +116,115 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the linear regression.
+    /// Calculates the Moving Average BandWidth
     /// </summary>
-    /// <param name="stockData">The stock data.</param>
-    /// <param name="length">The length.</param>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
+    /// <param name="mult"></param>
     /// <returns></returns>
-    public static StockData CalculateLinearRegression(this StockData stockData, int length = 14)
+    public static StockData CalculateMovingAverageBandWidth(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int fastLength = 10, int slowLength = 50, decimal mult = 1)
     {
-        List<decimal> slopeList = new();
-        List<decimal> interceptList = new();
-        List<decimal> predictedTomorrowList = new();
-        List<decimal> predictedTodayList = new();
-        List<decimal> xList = new();
-        List<decimal> yList = new();
-        List<decimal> xyList = new();
-        List<decimal> x2List = new();
+        List<decimal> mabwList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
+        var mabList = CalculateMovingAverageBands(stockData, maType, fastLength, slowLength, mult);
+        var ubList = mabList.OutputValues["UpperBand"];
+        var lbList = mabList.OutputValues["LowerBand"];
+        var maList = mabList.OutputValues["MiddleBand"];
+
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal prevValue = yList.LastOrDefault();
+            decimal mb = maList.ElementAtOrDefault(i);
+            decimal ub = ubList.ElementAtOrDefault(i);
+            decimal lb = lbList.ElementAtOrDefault(i);
             decimal currentValue = inputList.ElementAtOrDefault(i);
-            yList.Add(currentValue);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevMb = i >= 1 ? maList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevUb = i >= 1 ? ubList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevLb = i >= 1 ? lbList.ElementAtOrDefault(i - 1) : 0;
 
-            decimal x = i;
-            xList.Add(x);
+            decimal mabw = mb != 0 ? (ub - lb) / mb * 100 : 0;
+            mabwList.Add(mabw);
 
-            decimal xy = x * currentValue;
-            xyList.Add(xy);
-
-            decimal sumX = xList.TakeLastExt(length).Sum();
-            decimal sumY = yList.TakeLastExt(length).Sum();
-            decimal sumXY = xyList.TakeLastExt(length).Sum();
-            decimal sumX2 = x2List.TakeLastExt(length).Sum();
-            decimal top = (length * sumXY) - (sumX * sumY);
-            decimal bottom = (length * sumX2) - Pow(sumX, 2);
-
-            decimal b = bottom != 0 ? top / bottom : 0;
-            slopeList.Add(b);
-
-            decimal a = (sumY - (b * sumX)) / length;
-            interceptList.Add(a);
-
-            decimal predictedToday = a + (b * x);
-            predictedTodayList.Add(predictedToday);
-
-            decimal prevPredictedNextDay = predictedTomorrowList.LastOrDefault();
-            decimal predictedNextDay = a + (b * (x + 1));
-            predictedTomorrowList.Add(predictedNextDay);
-
-            var signal = GetCompareSignal(currentValue - predictedNextDay, prevValue - prevPredictedNextDay, true);
+            var signal = GetBollingerBandsSignal(currentValue - mb, prevValue - prevMb, currentValue, prevValue, ub, prevUb, lb, prevLb);
             signalsList.Add(signal);
         }
 
         stockData.OutputValues = new()
         {
-            { "LinearRegression", predictedTodayList },
-            { "PredictedTomorrow", predictedTomorrowList },
-            { "Slope", slopeList },
-            { "Intercept", interceptList }
+            { "Mabw", mabwList }
         };
         stockData.SignalsList = signalsList;
-        stockData.CustomValuesList = predictedTodayList;
-        stockData.IndicatorName = IndicatorName.LinearRegression;
+        stockData.CustomValuesList = mabwList;
+        stockData.IndicatorName = IndicatorName.MovingAverageBandWidth;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Moving Average Adaptive Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="filter"></param>
+    /// <param name="fastAlpha"></param>
+    /// <param name="slowAlpha"></param>
+    /// <returns></returns>
+    public static StockData CalculateMovingAverageAdaptiveFilter(this StockData stockData, int length = 10, decimal filter = 0.15m, 
+        decimal fastAlpha = 0.667m, decimal slowAlpha = 0.0645m)
+    {
+        List<decimal> amaList = new();
+        List<decimal> amaDiffList = new();
+        List<decimal> maafList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var erList = CalculateKaufmanAdaptiveMovingAverage(stockData, length: length).OutputValues["Er"];
+        var emaList = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevAma = i >= 1 ? amaList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal er = erList.ElementAtOrDefault(i);
+            decimal sm = Pow((er * (fastAlpha - slowAlpha)) + slowAlpha, 2);
+
+            decimal ama = prevAma + (sm * (currentValue - prevAma));
+            amaList.Add(ama);
+
+            decimal amaDiff = ama - prevAma;
+            amaDiffList.Add(amaDiff);
+        }
+
+        stockData.CustomValuesList = amaDiffList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal stdDev = stdDevList.ElementAtOrDefault(i);
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal ema = emaList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevEma = i >= 1 ? emaList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal prevMaaf = maafList.LastOrDefault();
+            decimal maaf = stdDev * filter;
+            maafList.Add(maaf);
+
+            var signal = GetVolatilitySignal(currentValue - ema, prevValue - prevEma, maaf, prevMaaf);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Maaf", maafList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = maafList;
+        stockData.IndicatorName = IndicatorName.MovingAverageAdaptiveFilter;
 
         return stockData;
     }

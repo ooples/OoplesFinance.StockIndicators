@@ -5441,4 +5441,450 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the linear regression.
+    /// </summary>
+    /// <param name="stockData">The stock data.</param>
+    /// <param name="length">The length.</param>
+    /// <returns></returns>
+    public static StockData CalculateLinearRegression(this StockData stockData, int length = 14)
+    {
+        List<decimal> slopeList = new();
+        List<decimal> interceptList = new();
+        List<decimal> predictedTomorrowList = new();
+        List<decimal> predictedTodayList = new();
+        List<decimal> xList = new();
+        List<decimal> yList = new();
+        List<decimal> xyList = new();
+        List<decimal> x2List = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal prevValue = yList.LastOrDefault();
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            yList.Add(currentValue);
+
+            decimal x = i;
+            xList.Add(x);
+
+            decimal xy = x * currentValue;
+            xyList.Add(xy);
+
+            decimal sumX = xList.TakeLastExt(length).Sum();
+            decimal sumY = yList.TakeLastExt(length).Sum();
+            decimal sumXY = xyList.TakeLastExt(length).Sum();
+            decimal sumX2 = x2List.TakeLastExt(length).Sum();
+            decimal top = (length * sumXY) - (sumX * sumY);
+            decimal bottom = (length * sumX2) - Pow(sumX, 2);
+
+            decimal b = bottom != 0 ? top / bottom : 0;
+            slopeList.Add(b);
+
+            decimal a = (sumY - (b * sumX)) / length;
+            interceptList.Add(a);
+
+            decimal predictedToday = a + (b * x);
+            predictedTodayList.Add(predictedToday);
+
+            decimal prevPredictedNextDay = predictedTomorrowList.LastOrDefault();
+            decimal predictedNextDay = a + (b * (x + 1));
+            predictedTomorrowList.Add(predictedNextDay);
+
+            var signal = GetCompareSignal(currentValue - predictedNextDay, prevValue - prevPredictedNextDay, true);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "LinearRegression", predictedTodayList },
+            { "PredictedTomorrow", predictedTomorrowList },
+            { "Slope", slopeList },
+            { "Intercept", interceptList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = predictedTodayList;
+        stockData.IndicatorName = IndicatorName.LinearRegression;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Moving Average Adaptive Q
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="fastAlpha"></param>
+    /// <param name="slowAlpha"></param>
+    /// <returns></returns>
+    public static StockData CalculateMovingAverageAdaptiveQ(this StockData stockData, int length = 10, decimal fastAlpha = 0.667m, 
+        decimal slowAlpha = 0.0645m)
+    {
+        List<decimal> maaqList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var erList = CalculateKaufmanAdaptiveMovingAverage(stockData, length: length).OutputValues["Er"];
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevMaaq = i >= 1 ? maaqList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal er = erList.ElementAtOrDefault(i);
+            decimal temp = (er * fastAlpha) + slowAlpha;
+
+            decimal maaq = prevMaaq + (Pow(temp, 2) * (currentValue - prevMaaq));
+            maaqList.Add(maaq);
+
+            var signal = GetCompareSignal(currentValue - maaq, prevValue - prevMaaq);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Maaq", maaqList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = maaqList;
+        stockData.IndicatorName = IndicatorName.MovingAverageAdaptiveQ;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the McGinley Dynamic Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="k"></param>
+    /// <returns></returns>
+    public static StockData CalculateMcGinleyDynamicIndicator(this StockData stockData, int length = 14, decimal k = 0.6m)
+    {
+        List<decimal> mdiList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevMdi = i >= 1 ? mdiList.LastOrDefault() : currentValue;
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal ratio = prevMdi != 0 ? currentValue / prevMdi : 0;
+            decimal bottom = k * length * Pow(ratio, 4);
+
+            decimal mdi = bottom != 0 ? prevMdi + ((currentValue - prevMdi) / Math.Max(bottom, 1)) : currentValue;
+            mdiList.Add(mdi);
+
+            var signal = GetCompareSignal(currentValue - mdi, prevValue - prevMdi);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Mdi", mdiList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = mdiList;
+        stockData.IndicatorName = IndicatorName.McGinleyDynamicIndicator;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Median Average Adaptive Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="threshold"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersMedianAverageAdaptiveFilter(this StockData stockData, int length = 39, decimal threshold = 0.002m)
+    {
+        List<decimal> filterList = new();
+        List<decimal> value2List = new();
+        List<decimal> smthList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentPrice = inputList.ElementAtOrDefault(i);
+            decimal prevP1 = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevP2 = i >= 2 ? inputList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevP3 = i >= 3 ? inputList.ElementAtOrDefault(i - 3) : 0;
+
+            decimal smth = (currentPrice + (2 * prevP1) + (2 * prevP2) + prevP3) / 6;
+            smthList.Add(smth);
+
+            int len = length;
+            decimal value3 = 0.2m, value2 = 0, prevV2 = value2List.LastOrDefault(), alpha;
+            while (value3 > threshold && len > 0)
+            {
+                alpha = (decimal)2 / (len + 1);
+                decimal value1 = smthList.TakeLastExt(len).Median();
+                value2 = (alpha * smth) + ((1 - alpha) * prevV2);
+                value3 = value1 != 0 ? Math.Abs(value1 - value2) / value1 : value3;
+                len -= 2;
+            }
+            value2List.Add(value2);
+
+            len = len < 3 ? 3 : len;
+            alpha = (decimal)2 / (len + 1);
+
+            decimal prevFilter = filterList.LastOrDefault();
+            decimal filter = (alpha * smth) + ((1 - alpha) * prevFilter);
+            filterList.Add(filter);
+
+            var signal = GetCompareSignal(currentPrice - filter, prevP1 - prevFilter);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Maaf", filterList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = filterList;
+        stockData.IndicatorName = IndicatorName.EhlersMedianAverageAdaptiveFilter;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Middle High Low Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
+    public static StockData CalculateMiddleHighLowMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length1 = 14, int length2 = 10)
+    {
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var mhlList = CalculateMidpoint(stockData, length2).CustomValuesList;
+        var mhlMaList = GetMovingAverageList(stockData, maType, length1, mhlList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentMhlMa = mhlMaList.ElementAtOrDefault(i);
+            decimal prevMhlma = i >= 1 ? mhlMaList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetCompareSignal(currentValue - currentMhlMa, prevValue - prevMhlma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Mhlma", mhlMaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = mhlMaList;
+        stockData.IndicatorName = IndicatorName.MiddleHighLowMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Moving Average V3
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
+    public static StockData CalculateMovingAverageV3(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
+        int length1 = 14, int length2 = 3)
+    {
+        List<decimal> nmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal lamdaRatio = (decimal)length1 / length2;
+        decimal alpha = length1 - lamdaRatio != 0 ? lamdaRatio * (length1 - 1) / (length1 - lamdaRatio) : 0;
+
+        var ma1List = GetMovingAverageList(stockData, maType, length1, inputList);
+        var ma2List = GetMovingAverageList(stockData, maType, length2, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal ma1 = ma1List.ElementAtOrDefault(i);
+            decimal ma2 = ma2List.ElementAtOrDefault(i);
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal prevNma = nmaList.LastOrDefault();
+            decimal nma = ((1 + alpha) * ma1) - (alpha * ma2);
+            nmaList.Add(nma);
+
+            var signal = GetCompareSignal(currentValue - nma, prevValue - prevNma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Mav3", nmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = nmaList;
+        stockData.IndicatorName = IndicatorName.MovingAverageV3;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Multi Depth Zero Lag Exponential Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateMultiDepthZeroLagExponentialMovingAverage(this StockData stockData, int length = 50)
+    {
+        List<decimal> alpha1List = new();
+        List<decimal> beta1List = new();
+        List<decimal> alpha2List = new();
+        List<decimal> beta2List = new();
+        List<decimal> alpha3List = new();
+        List<decimal> beta3List = new();
+        List<decimal> mda1List = new();
+        List<decimal> mda2List = new();
+        List<decimal> mda3List = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal a1 = (decimal)2 / (length + 1);
+        decimal a2 = Exp(-Sqrt(2) * Pi / length);
+        decimal a3 = Exp(-Pi / length);
+        decimal b2 = 2 * a2 * Cos(Sqrt(2) * Pi / length);
+        decimal b3 = 2 * a3 * Cos(Sqrt(3) * Pi / length);
+        decimal c = Exp(-2 * Pi / length);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal prevAlpha1 = i >= 1 ? alpha1List.ElementAtOrDefault(i - 1) : currentValue;
+            decimal alpha1 = (a1 * currentValue) + ((1 - a1) * prevAlpha1);
+            alpha1List.Add(alpha1);
+
+            decimal prevAlpha2 = i >= 1 ? alpha2List.ElementAtOrDefault(i - 1) : currentValue;
+            decimal priorAlpha2 = i >= 2 ? alpha2List.ElementAtOrDefault(i - 2) : currentValue;
+            decimal alpha2 = (b2 * prevAlpha2) - (a2 * a2 * priorAlpha2) + ((1 - b2 + (a2 * a2)) * currentValue);
+            alpha2List.Add(alpha2);
+
+            decimal prevAlpha3 = i >= 1 ? alpha3List.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevAlpha3_2 = i >= 2 ? alpha3List.ElementAtOrDefault(i - 2) : currentValue;
+            decimal prevAlpha3_3 = i >= 3 ? alpha3List.ElementAtOrDefault(i - 3) : currentValue;
+            decimal alpha3 = ((b3 + c) * prevAlpha3) - ((c + (b3 * c)) * prevAlpha3_2) + (c * c * prevAlpha3_3) + ((1 - b3 + c) * (1 - c) * currentValue);
+            alpha3List.Add(alpha3);
+
+            decimal detrend1 = currentValue - alpha1;
+            decimal detrend2 = currentValue - alpha2;
+            decimal detrend3 = currentValue - alpha3;
+
+            decimal prevBeta1 = i >= 1 ? beta1List.ElementAtOrDefault(i - 1) : 0;
+            decimal beta1 = (a1 * detrend1) + ((1 - a1) * prevBeta1);
+            beta1List.Add(beta1);
+
+            decimal prevBeta2 = i >= 1 ? beta2List.ElementAtOrDefault(i - 1) : 0;
+            decimal prevBeta2_2 = i >= 2 ? beta2List.ElementAtOrDefault(i - 2) : 0;
+            decimal beta2 = (b2 * prevBeta2) - (a2 * a2 * prevBeta2_2) + ((1 - b2 + (a2 * a2)) * detrend2);
+            beta2List.Add(beta2);
+
+            decimal prevBeta3_2 = i >= 2 ? beta3List.ElementAtOrDefault(i - 2) : 0;
+            decimal prevBeta3_3 = i >= 3 ? beta3List.ElementAtOrDefault(i - 3) : 0;
+            decimal beta3 = ((b3 + c) * prevBeta3_2) - ((c + (b3 * c)) * prevBeta3_2) + (c * c * prevBeta3_3) + ((1 - b3 + c) * (1 - c) * detrend3);
+            beta3List.Add(beta3);
+
+            decimal mda1 = alpha1 + ((decimal)1 / 1 * beta1);
+            mda1List.Add(mda1);
+
+            decimal prevMda2 = mda2List.LastOrDefault();
+            decimal mda2 = alpha2 + ((decimal)1 / 2 * beta2);
+            mda2List.Add(mda2);
+
+            decimal mda3 = alpha3 + ((decimal)1 / 3 * beta3);
+            mda3List.Add(mda3);
+
+            var signal = GetCompareSignal(currentValue - mda2, prevValue - prevMda2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Md2Pole", mda2List },
+            { "Md1Pole", mda1List },
+            { "Md3Pole", mda3List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = mda2List;
+        stockData.IndicatorName = IndicatorName.MultiDepthZeroLagExponentialMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Modular Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="beta"></param>
+    /// <param name="z"></param>
+    /// <returns></returns>
+    public static StockData CalculateModularFilter(this StockData stockData, int length = 200, decimal beta = 0.8m, decimal z = 0.5m)
+    {
+        List<decimal> b2List = new();
+        List<decimal> c2List = new();
+        List<decimal> os2List = new();
+        List<decimal> ts2List = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal alpha = (decimal)2 / (length + 1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal prevB2 = i >= 1 ? b2List.ElementAtOrDefault(i - 1) : currentValue;
+            decimal b2 = currentValue > (alpha * currentValue) + ((1 - alpha) * prevB2) ? currentValue : (alpha * currentValue) + ((1 - alpha) * prevB2);
+            b2List.Add(b2);
+
+            decimal prevC2 = i >= 1 ? c2List.ElementAtOrDefault(i - 1) : currentValue;
+            decimal c2 = currentValue < (alpha * currentValue) + ((1 - alpha) * prevC2) ? currentValue : (alpha * currentValue) + ((1 - alpha) * prevC2);
+            c2List.Add(c2);
+
+            decimal prevOs2 = os2List.LastOrDefault();
+            decimal os2 = currentValue == b2 ? 1 : currentValue == c2 ? 0 : prevOs2;
+            os2List.Add(os2);
+
+            decimal upper2 = (beta * b2) + ((1 - beta) * c2);
+            decimal lower2 = (beta * c2) + ((1 - beta) * b2);
+
+            decimal prevTs2 = ts2List.LastOrDefault();
+            decimal ts2 = (os2 * upper2) + ((1 - os2) * lower2);
+            ts2List.Add(ts2);
+
+            var signal = GetCompareSignal(currentValue - ts2, prevValue - prevTs2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Mf", ts2List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = ts2List;
+        stockData.IndicatorName = IndicatorName.ModularFilter;
+
+        return stockData;
+    }
 }
