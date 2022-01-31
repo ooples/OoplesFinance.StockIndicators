@@ -182,13 +182,37 @@
 
 [Logistic Correlation](https://www.tradingview.com/script/Te01hBsi-Logistic-Correlation/)
 
+[MacZ Indicator](https://www.tradingview.com/script/IHuR4jre-MAC-Z-Indicator-LazyBear/)
+
+[Market Direction Indicator](https://www.tradingview.com/script/wGAhnKHS-Market-Direction-Indicator-LazyBear/)
+
+[Mass Index](https://en.wikipedia.org/wiki/Mass_index)
+
+[Mass Thrust Oscillator](https://www.tradingview.com/script/Aek4R54N-Mass-Thrust-Oscillator/)
+
 [McClellan Oscillator](https://www.investopedia.com/terms/m/mcclellanoscillator.asp)
 
+[Midpoint Oscillator](https://www.tradingview.com/script/XCBp669d-Midpoint-Oscillator/)
+
+[Mirrored Moving Average Convergence Divergence](https://www.tradingview.com/script/EchwZVoz-Mirrored-MACD-LazyBear/)
+
+[Mirrored Percentage Price Oscillator](https://www.tradingview.com/script/EchwZVoz-Mirrored-MACD-LazyBear/)
+
+[Mobility Oscillator](https://www.motivewave.com/studies/mobility_oscillator.htm)
+
+[Momenta Relative Strength Index](https://www.tradingview.com/script/QqrkkaEj-Momenta-Relative-Strength-Index/)
+
 [Momentum Oscillator](https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/momentum-oscillator)
+
+[Morphed Sine Wave](https://www.tradingview.com/script/ZyfG9uqV-Morphed-Sine-Wave/)
+
+[Move Tracker](https://www.motivewave.com/studies/move_tracker.htm)
 
 [Moving Average Convergence Divergence](https://www.investopedia.com/terms/m/macd.asp)
 
 [Moving Average Convergence Divergence Leader](https://www.tradingview.com/script/y9HCZoQi-MACD-Leader-LazyBear/)
+
+[Multi Level Indicator](https://www.motivewave.com/studies/multi_level_indicator.htm)
 
 [Narrow Bandpass Filter](https://www.tradingview.com/script/7u7lTclV-Narrow-Bandpass-Filter/)
 
@@ -393,9 +417,15 @@
 
 [Linear Channels](https://www.tradingview.com/script/J4ccCRMW-Linear-Channels/)
 
+[Motion To Attraction Channels](https://www.tradingview.com/script/ZNuL9Hfx-Motion-To-Attraction-Channels/)
+
 [Moving Average Channel](https://www.linnsoft.com/techind/moving-average-channels)
 
+[Moving Average Displaced Envelope](https://www.motivewave.com/studies/moving_average_displaced_envelope.htm)
+
 [Moving Average Envelope](https://www.investopedia.com/articles/trading/08/moving-average-envelope.asp)
+
+[Moving Average Support Resistance](https://www.motivewave.com/studies/moving_average_support_resistance.htm)
 
 [Percentage Trailing Stops](https://www.motivewave.com/studies/percentage_trailing_stops.htm)
 
@@ -572,11 +602,33 @@ Atr Filtered Exponential Moving Average
 
 [Linear Weighted Moving Average](https://www.fxcorporate.com/help/MS/NOTFIFO/i_LWMA.html)
 
+[Mass Thrust Indicator](https://www.tradingview.com/script/CtAWKun1-Mass-Thrust-Indicator/)
+
+[McGinley Dynamic Indicator](https://www.tradingview.com/script/Ru8W19kG-McGinley-Dynamic-Indicator/)
+
 [McNicholl Moving Average](https://www.tradingview.com/script/O7gCMT1q-McNicholl-Moving-Average/)
 
 [Median Price](https://www.metastock.com/customer/resources/taaz/?p=70)
 
+[Middle High Low Moving Average](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/M-N/MiddleHighLowMA)
+
+[Midpoint](https://www.tradingtechnologies.com/xtrader-help/x-study/technical-indicator-definitions/midpoint-midpnt/)
+
+[Midprice](https://www.tradingtechnologies.com/xtrader-help/x-study/technical-indicator-definitions/midprice-midpri/)
+
+[Modified Gann Hilo Activator](https://www.tradingview.com/script/MLF78z0u-Modified-Gann-HiLo-Activator/)
+
+[Modular Filter](https://www.tradingview.com/script/06pNDfyd-Modular-Filter-Spot-Trends-And-Smooth-Price/)
+
 [Mother Of Adaptive Moving Averages](https://www.prorealcode.com/prorealtime-indicators/john-ehlers-mama-the-mother-of-adaptive-moving-average/)
+
+[Motion To Attraction Trailing Stop](https://www.tradingview.com/script/aPEI1Y6z-MTA-Traling-Stop/)
+
+[Moving Average Adaptive Q](https://www.motivewave.com/studies/moving_average_adaptive_q.htm)
+
+[Moving Average V3](https://www.tradingview.com/script/is0c2vTu-Moving-Average-3-0-3rd-Generation/)
+
+[Multi Depth Zero Lag Exponential Moving Average](https://www.tradingview.com/script/RWGkjMvU-Multi-Poles-Zero-Lag-Exponential-Moving-Average/)
 
 [Natural Moving Average](https://www.tradingview.com/script/WkBFJbJD-Natural-Moving-Average-CC/)
 
@@ -815,6 +867,22 @@ Atr Filtered Exponential Moving Average
 
 [Kirshenbaum Bands](https://www.motivewave.com/studies/kirshenbaum_bands.htm)
 
+[Martin Ratio](https://www.motivewave.com/studies/martin_ratio.htm)
+
+[Mayer Multiple](https://www.tradingview.com/script/Ru56GH03-Mayer-Multiple/)
+
+[Mean Absolute Deviation Bands](https://www.tradingview.com/script/cNymC6nG-Mean-Absolute-Deviation-Bands/)
+
+[Mean Absolute Error Bands](https://www.tradingview.com/script/VlOHNzPy-Bands-Trailing-Stop-Utility/)
+
+[Motion Smoothness Index](https://www.tradingview.com/script/1MO6nRnd-Motion-Smoothness-Index/)
+
+[Moving Average Adaptive Filter](https://www.motivewave.com/studies/moving_avg_adaptive_filter.htm)
+
+[Moving Average Band Width](https://www.tradingview.com/script/azOftrFk-Moving-Average-Band-Width-CC/)
+
+[Moving Average Bands](https://www.tradingview.com/script/EjeoPSbI-Moving-Average-Bands-CC/)
+
 [Narrow Sideways Channel](https://www.motivewave.com/studies/narrow_sideways_channel.htm)
 
 [Omega Ratio](https://www.motivewave.com/studies/omega_ratio.htm)
@@ -914,7 +982,15 @@ Atr Filtered Exponential Moving Average
 
 [Klinger Volume Oscillator](https://www.investopedia.com/terms/k/klingeroscillator.asp)
 
+[MacZ Vwap Indicator](https://www.tradingview.com/script/HNrsbpJ2-MAC-Z-VWAP-Indicator-LazyBear/)
+
+[Market Facilitation Index](https://www.tradingview.com/script/0BANZQhK-Indicator-Market-Facilitation-Index-MFIndex/)
+
+[Modified Price Volume Trend](https://www.tradingview.com/script/6542nqC8-Modified-Price-Volume-Trend-Indicator/)
+
 [Money Flow Index](https://www.investopedia.com/terms/m/mfi.asp)
+
+[Multi Vote On Balance Volume](https://www.motivewave.com/studies/multi_vote_onbalance_volume.htm)
 
 [Negative Volume Disparity Indicator](https://www.motivewave.com/studies/negative_volume_disparity_indicator.htm)
 
