@@ -344,14 +344,13 @@ public static partial class Calculations
             decimal currentHigh = highList.ElementAtOrDefault(i);
             decimal currentLow = lowList.ElementAtOrDefault(i);
             decimal currentValue = inputList.ElementAtOrDefault(i);
-            decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
             decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
             decimal lh = currentHigh - currentLow;
-            decimal hc = Math.Abs(currentHigh - prevClose);
-            decimal lc = Math.Abs(currentLow - prevClose);
+            decimal hc = Math.Abs(currentHigh - prevValue);
+            decimal lc = Math.Abs(currentLow - prevValue);
             decimal mm = Math.Max(Math.Max(lh, hc), lc);
             decimal prevBasis = i >= 1 ? smaList.ElementAtOrDefault(i - 1) : 0;
-            decimal atrs = mm == hc ? hc / (prevClose + (hc / 2)) : mm == lc ? lc / (currentLow + (lc / 2)) : mm == lh ? lh /
+            decimal atrs = mm == hc ? hc / (prevValue + (hc / 2)) : mm == lc ? lc / (currentLow + (lc / 2)) : mm == lh ? lh /
                 (currentLow + (lh / 2)) : 0;
 
             decimal prevAptr = aptrList.LastOrDefault();

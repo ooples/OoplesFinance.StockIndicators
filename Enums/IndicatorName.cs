@@ -206,6 +206,8 @@ public enum IndicatorName
     [Category(IndicatorType.Volume)]
     EaseOfMovement,
     [Category(IndicatorType.Trend)]
+    EhlersFractalAdaptiveMovingAverage,
+    [Category(IndicatorType.Trend)]
     EhlersMedianAverageAdaptiveFilter,
     [Category(IndicatorType.Trend)]
     EhlersMotherOfAdaptiveMovingAverages,
@@ -259,8 +261,6 @@ public enum IndicatorName
     ForceIndex,
     [Category(IndicatorType.Momentum)]
     ForecastOscillator,
-    [Category(IndicatorType.Trend)]
-    FractalAdaptiveMovingAverage,
     [Category(IndicatorType.Volatility)]
     FractalChaosBands,
     [Category(IndicatorType.Momentum)]

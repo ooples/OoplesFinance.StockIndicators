@@ -82,6 +82,9 @@ public static class CalculationsHelper
             case MovingAvgType.DoubleExponentialMovingAverage:
                 movingAvgList = stockData.CalculateDoubleExponentialMovingAverage(length: length).CustomValuesList;
                 break;
+            case MovingAvgType.EhlersFractalAdaptiveMovingAverage:
+                movingAvgList = stockData.CalculateEhlersFractalAdaptiveMovingAverage(length).CustomValuesList;
+                break;
             case MovingAvgType.EhlersMedianAverageAdaptiveFilter:
                 movingAvgList = stockData.CalculateEhlersMedianAverageAdaptiveFilter(length: length).CustomValuesList;
                 break;
@@ -108,9 +111,6 @@ public static class CalculationsHelper
                 break;
             case MovingAvgType.FollowingAdaptiveMovingAverage:
                 movingAvgList = stockData.CalculateEhlersMotherOfAdaptiveMovingAverages().OutputValues["Fama"];
-                break;
-            case MovingAvgType.FractalAdaptiveMovingAverage:
-                movingAvgList = stockData.CalculateFractalAdaptiveMovingAverage(length).CustomValuesList;
                 break;
             case MovingAvgType.GeneralFilterEstimator:
                 movingAvgList = stockData.CalculateGeneralFilterEstimator(length: length).CustomValuesList;
@@ -698,7 +698,7 @@ public static class CalculationsHelper
     /// Note: specified list would be mutated in the process.
     /// </summary>
     public static T NthOrderStatistic<T>(this IList<T> list, int n, Random? rnd = null) where T : IComparable<T> =>
-        NthOrderStatistic(list, n, 0, list.Count - 1, rnd);
+        NthOrderStatistic(list, n, 0, list.Count - 1, rnd); //-V3106
     /// <summary>
     /// Gets Nth smallest element from a list
     /// </summary>

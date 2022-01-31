@@ -115,7 +115,7 @@ public static partial class Calculations
         }
 
         var macd1SignalLineList = GetMovingAverageList(stockData, maType, length1, macd1List);
-        var macd2SignalLineList = GetMovingAverageList(stockData, maType, length1, macd2List);
+        var macd2SignalLineList = GetMovingAverageList(stockData, maType, length1, macd2List); //-V3056
         var macd3SignalLineList = GetMovingAverageList(stockData, maType, length1, macd3List);
         var macd4SignalLineList = GetMovingAverageList(stockData, maType, length1, macd4List);
         for (int i = 0; i < stockData.Count; i++)

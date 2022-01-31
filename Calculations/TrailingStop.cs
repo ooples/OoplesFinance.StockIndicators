@@ -617,8 +617,7 @@ public static partial class Calculations
             decimal prevClose = i >= 2 ? closeList.ElementAtOrDefault(i - 2) : 0;
             decimal prevLow = i >= 2 ? lowList.ElementAtOrDefault(i - 2) : 0;
 
-            decimal dtr = Math.Max(Math.Max(currentHigh - prevLow, Math.Abs(currentHigh - prevClose)), Math.Max(Math.Abs(currentLow - prevClose),
-                Math.Abs(currentLow - prevClose)));
+            decimal dtr = Math.Max(Math.Max(currentHigh - prevLow, Math.Abs(currentHigh - prevClose)), Math.Abs(currentLow - prevClose));
             dtrList.Add(dtr);
         }
 

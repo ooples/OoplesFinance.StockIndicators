@@ -80,7 +80,7 @@ public static partial class Calculations
             decimal ctrPSum = ctrPList.TakeLastExt(length).Sum();
             decimal ctrMSum = ctrMList.TakeLastExt(length).Sum();
 
-            decimal tpr = Math.Abs(100 * (ctrPSum - ctrMSum) / length);
+            decimal tpr = length != 0 ? Math.Abs(100 * (ctrPSum - ctrMSum) / length) : 0;
             tprList.Add(tpr);
         }
 
@@ -1181,7 +1181,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        decimal di = ((length - 1) / 2) + 1;
+        decimal di = ((decimal)(length - 1) / 2) + 1;
         decimal c1 = 2 / (di + 1);
         decimal c2 = 1 - c1;
         decimal c3 = 3 * ((cd * cd) + (cd * cd * cd));

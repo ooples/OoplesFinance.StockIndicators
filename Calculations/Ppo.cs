@@ -175,7 +175,7 @@ public static partial class Calculations
         }
 
         var ppo1SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo1List);
-        var ppo2SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo2List);
+        var ppo2SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo2List); //-V3056
         var ppo3SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo3List);
         var ppo4SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo4List);
         for (int i = 0; i < stockData.Count; i++)

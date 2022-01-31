@@ -3662,12 +3662,12 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the Fractal Adaptive Moving Average
+    /// Calculates the Ehlers Fractal Adaptive Moving Average
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    public static StockData CalculateFractalAdaptiveMovingAverage(this StockData stockData, int length = 20)
+    public static StockData CalculateEhlersFractalAdaptiveMovingAverage(this StockData stockData, int length = 20)
     {
         List<decimal> filterList = new();
         List<Signal> signalsList = new();
@@ -3708,7 +3708,7 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = filterList;
-        stockData.IndicatorName = IndicatorName.FractalAdaptiveMovingAverage;
+        stockData.IndicatorName = IndicatorName.EhlersFractalAdaptiveMovingAverage;
 
         return stockData;
     }
@@ -4641,8 +4641,7 @@ public static partial class Calculations
             decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
 
             decimal prevSumPow3 = sumPow3List.LastOrDefault();
-            decimal x1Pow1Sum = 0, x2Pow1Sum = 0, x1Pow2Sum = 0, x2Pow2Sum = 0, x1Pow3Sum = 0, x2Pow3Sum = 0, wPow1 = 0, wPow2 = 0, wPow3 = 0, 
-                sumPow1 = 0, sumPow2 = 0, sumPow3 = 0;
+            decimal x1Pow1Sum, x2Pow1Sum, x1Pow2Sum, x2Pow2Sum, x1Pow3Sum, x2Pow3Sum, wPow1, wPow2, wPow3, sumPow1 = 0, sumPow2 = 0, sumPow3 = 0;
             for (int j = 1; j <= length; j++)
             {
                 decimal prevValue = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
@@ -4661,8 +4660,8 @@ public static partial class Calculations
                     b2Pow1Sum += k == 1 ? b2 : 0;
                     b1Pow2Sum += k <= 2 ? b1 : 0;
                     b2Pow2Sum += k <= 2 ? b2 : 0;
-                    b1Pow3Sum += k <= 3 ? b1 : 0;
-                    b2Pow3Sum += k <= 3 ? b2 : 0;
+                    b1Pow3Sum += k <= 3 ? b1 : 0; //-V3022
+                    b2Pow3Sum += k <= 3 ? b2 : 0; //-V3022
                 }
 
                 x1Pow1Sum = ax1 + b1Pow1Sum;
@@ -5483,7 +5482,7 @@ public static partial class Calculations
             decimal b = bottom != 0 ? top / bottom : 0;
             slopeList.Add(b);
 
-            decimal a = (sumY - (b * sumX)) / length;
+            decimal a = length != 0 ? (sumY - (b * sumX)) / length : 0;
             interceptList.Add(a);
 
             decimal predictedToday = a + (b * x);
