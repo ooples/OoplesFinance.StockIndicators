@@ -61,13 +61,12 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateAverageDirectionalIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod,
-        int length = 14)
+    public static StockData CalculateAverageDirectionalIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, int length = 14)
     {
         List<decimal> dmPlusList = new();
         List<decimal> dmMinusList = new();
-        List<decimal> diPlus14List = new();
-        List<decimal> diMinus14List = new();
+        List<decimal> diPlusList = new();
+        List<decimal> diMinusList = new();
         List<decimal> trList = new();
         List<decimal> diList = new();
         List<Signal> signalsList = new();
@@ -101,8 +100,13 @@ public static partial class Calculations
             decimal dmPlus14 = dmPlus14List.ElementAtOrDefault(i);
             decimal dmMinus14 = dmMinus14List.ElementAtOrDefault(i);
             decimal trueRange14 = tr14List.ElementAtOrDefault(i);
+
             decimal diPlus = trueRange14 != 0 ? MinOrMax(100 * dmPlus14 / trueRange14, 100, 0) : 0;
+            diPlusList.Add(diPlus);
+
             decimal diMinus = trueRange14 != 0 ? MinOrMax(100 * dmMinus14 / trueRange14, 100, 0) : 0;
+            diMinusList.Add(diMinus);
+
             decimal diDiff = Math.Abs(diPlus - diMinus);
             decimal diSum = diPlus + diMinus;
 
@@ -113,10 +117,10 @@ public static partial class Calculations
         var adxList = GetMovingAverageList(stockData, maType, length, diList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal diPlus = diPlus14List.ElementAtOrDefault(i);
-            decimal diMinus = diMinus14List.ElementAtOrDefault(i);
-            decimal prevDiPlus = i >= 1 ? diPlus14List.ElementAtOrDefault(i - 1) : 0;
-            decimal prevDiMinus = i >= 1 ? diMinus14List.ElementAtOrDefault(i - 1) : 0;
+            decimal diPlus = diPlusList.ElementAtOrDefault(i);
+            decimal diMinus = diMinusList.ElementAtOrDefault(i);
+            decimal prevDiPlus = i >= 1 ? diPlusList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevDiMinus = i >= 1 ? diMinusList.ElementAtOrDefault(i - 1) : 0;
 
             var signal = GetCompareSignal(diPlus - diMinus, prevDiPlus - prevDiMinus);
             signalsList.Add(signal);
@@ -124,8 +128,8 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "DiPlus", diPlus14List },
-            { "DiMinus", diMinus14List },
+            { "DiPlus", diPlusList },
+            { "DiMinus", diMinusList },
             { "Adx", adxList }
         };
         stockData.SignalsList = signalsList;

@@ -5886,4 +5886,256 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Damped Sine Wave Weighted Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateDampedSineWaveWeightedFilter(this StockData stockData, int length = 50)
+    {
+        List<decimal> dswwfList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal w, wSum = 0, wvSum = 0;
+            for (int j = 1; j <= length; j++)
+            {
+                decimal prevValue = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
+
+                w = Sin(MinOrMax(2 * Pi * (decimal)j / length, 0.99m, 0.01m)) / j;
+                wvSum += w * prevValue;
+                wSum += w;
+            }
+
+            decimal prevDswwf = dswwfList.LastOrDefault();
+            decimal dswwf = wSum != 0 ? wvSum / wSum : 0;
+            dswwfList.Add(dswwf);
+
+            var signal = GetCompareSignal(currentValue - dswwf, prevVal - prevDswwf);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Dswwf", dswwfList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = dswwfList;
+        stockData.IndicatorName = IndicatorName.DampedSineWaveWeightedFilter;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Double Exponential Smoothing
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="alpha"></param>
+    /// <param name="gamma"></param>
+    /// <returns></returns>
+    public static StockData CalculateDoubleExponentialSmoothing(this StockData stockData, decimal alpha = 0.01m, decimal gamma = 0.9m)
+    {
+        List<decimal> sList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal x = inputList.ElementAtOrDefault(i);
+            decimal prevX = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevS = i >= 1 ? sList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevS2 = i >= 2 ? sList.ElementAtOrDefault(i - 2) : 0;
+            decimal sChg = prevS - prevS2;
+
+            decimal s = (alpha * x) + ((1 - alpha) * (prevS + (gamma * (sChg + ((1 - gamma) * sChg)))));
+            sList.Add(s);
+
+            var signal = GetCompareSignal(x - s, prevX - prevS);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Des", sList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = sList;
+        stockData.IndicatorName = IndicatorName.DoubleExponentialSmoothing;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Distance Weighted Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateDistanceWeightedMovingAverage(this StockData stockData, int length = 14)
+    {
+        List<decimal> dwmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal sum = 0, weightedSum = 0;
+            for (int j = 0; j < length; j++)
+            {
+                decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                decimal distanceSum = 0;
+                for (int k = 0; k < length; k++)
+                {
+                    decimal prevValue2 = i >= k ? inputList.ElementAtOrDefault(i - k) : 0;
+
+                    distanceSum += Math.Abs(prevValue - prevValue2);
+                }
+
+                decimal weight = distanceSum != 0 ? 1 / distanceSum : 0;
+
+                sum += prevValue * weight;
+                weightedSum += weight;
+            }
+
+            decimal prevDwma = dwmaList.LastOrDefault();
+            decimal dwma = weightedSum != 0 ? sum / weightedSum : 0;
+            dwmaList.Add(dwma);
+
+            var signal = GetCompareSignal(currentValue - dwma, prevVal - prevDwma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Dwma", dwmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = dwmaList;
+        stockData.IndicatorName = IndicatorName.DistanceWeightedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Dynamically Adjustable Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateDynamicallyAdjustableFilter(this StockData stockData, int length = 14)
+    {
+        List<decimal> outList = new();
+        List<decimal> kList = new();
+        List<decimal> srcList = new();
+        List<decimal> srcDevList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevOut = i >= 1 ? outList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevK = i >= 1 ? kList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal src = currentValue + (currentValue - prevOut);
+            srcList.Add(src);
+
+            decimal outVal = prevOut + (prevK * (src - prevOut));
+            outList.Add(outVal);
+
+            decimal srcSma = srcList.TakeLastExt(length).Average();
+            decimal srcDev = Pow(src - srcSma, 2);
+            srcDevList.Add(srcDev);
+
+            decimal srcStdDev = Sqrt(srcDevList.TakeLastExt(length).Average());
+            decimal k = src - outVal != 0 ? Math.Abs(src - outVal) / (Math.Abs(src - outVal) + (srcStdDev * length)) : 0;
+            kList.Add(k);
+
+            var signal = GetCompareSignal(currentValue - outVal, prevValue - prevOut);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Daf", outList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = outList;
+        stockData.IndicatorName = IndicatorName.DynamicallyAdjustableFilter;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Dynamically Adjustable Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateDynamicallyAdjustableMovingAverage(this StockData stockData, int fastLength = 6, int slowLength = 200)
+    {
+        List<decimal> kList = new();
+        List<decimal> amaList = new();
+        List<decimal> tempList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var shortStdDevList = CalculateStandardDeviationVolatility(stockData, fastLength).CustomValuesList;
+        var longStdDevList = CalculateStandardDeviationVolatility(stockData, slowLength).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal a = shortStdDevList.ElementAtOrDefault(i);
+            decimal b = longStdDevList.ElementAtOrDefault(i);
+            decimal v = a != 0 ? (b / a) + fastLength : fastLength;
+
+            decimal prevValue = tempList.LastOrDefault();
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            tempList.Add(currentValue);
+
+            int p;
+            try
+            {
+                p = (int)Math.Round(v);
+            }
+            catch
+            {
+                p = slowLength;
+            }
+
+            decimal prevK = i >= p ? kList.ElementAtOrDefault(i - p) : 0;
+            decimal k = tempList.Sum();
+            kList.Add(k);
+
+            decimal prevAma = amaList.LastOrDefault();
+            decimal ama = p != 0 ? (k - prevK) / p : 0;
+            amaList.Add(ama);
+
+            var signal = GetCompareSignal(currentValue - ama, prevValue - prevAma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Dama", amaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = amaList;
+        stockData.IndicatorName = IndicatorName.DynamicallyAdjustableMovingAverage;
+
+        return stockData;
+    }
 }

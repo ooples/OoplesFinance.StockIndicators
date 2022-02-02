@@ -467,4 +467,59 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the DiNapoli Percentage Price Oscillator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="lc"></param>
+    /// <param name="sc"></param>
+    /// <param name="sp"></param>
+    /// <returns></returns>
+    public static StockData CalculateDiNapoliPercentagePriceOscillator(this StockData stockData, decimal lc = 17.5185m, decimal sc = 8.3896m, 
+        decimal sp = 9.0503m)
+    {
+        List<decimal> ppoList = new();
+        List<decimal> sList = new();
+        List<decimal> hList = new();
+        List<Signal> signalsList = new();
+
+        var dinapoliMacdList = CalculateDiNapoliMovingAverageConvergenceDivergence(stockData, lc, sc, sp);
+        var ssList = dinapoliMacdList.OutputValues["SlowS"];
+        var rList = dinapoliMacdList.OutputValues["Macd"];
+
+        decimal spAlpha = 2 / (1 + sp);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal ss = ssList.ElementAtOrDefault(i);
+            decimal r = rList.ElementAtOrDefault(i);
+
+            decimal ppo = ss != 0 ? 100 * r / ss : 0;
+            ppoList.Add(ppo);
+
+            decimal prevS = sList.LastOrDefault();
+            decimal s = prevS + (spAlpha * (ppo - prevS));
+            sList.Add(s);
+
+            decimal prevH = hList.LastOrDefault();
+            decimal h = ppo - s;
+            hList.Add(h);
+
+            var signal = GetCompareSignal(h, prevH);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ppo", ppoList },
+            { "Signal", sList },
+            { "Histogram", hList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = ppoList;
+        stockData.IndicatorName = IndicatorName.DiNapoliPercentagePriceOscillator;
+
+        return stockData;
+    }
 }
