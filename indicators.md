@@ -1,6 +1,8 @@
 ### Indicators List
 
 ## Cycle
+[Ehlers Adaptive Cyber Cycle](https://www.tradingview.com/script/6gycpjtF-Ehlers-Adaptive-Cyber-Cycle-CC/)
+
 [Grover Llorens Cycle Oscillator](https://www.tradingview.com/script/zZCpzplM-Grover-Llorens-Cycle-Oscillator-alexgrover-Luc%C3%ADa-Llorens/)
 
 [Hurst Cycle Channel](https://www.tradingview.com/script/QmgtSIj5-Hurst-Cycle-Channel-Clone-LazyBear/)
@@ -92,9 +94,55 @@
 
 [Coppock Curve](https://school.stockcharts.com/doku.php?id=technical_indicators:coppock_curve)
 
+[Decision Point Breadth Swenlin Trading Oscillator](https://www.tradingview.com/script/tSiv4FOr-DecisionPoint-Breadth-Swenlin-Trading-Oscillator-LazyBear/)
+
+[Decision Point Price Momentum Oscillator](https://school.stockcharts.com/doku.php?id=technical_indicators:dppmo)
+
+[Dema 2 Lines](https://www.motivewave.com/studies/dema_2lines.htm)
+
+[Demand Oscillator](https://www.tradingview.com/script/Uqlqj0JK-Demand-Oscillator/)
+
+[Demark Pressure Ratio V1](https://www.tradingview.com/script/gkRrBjNQ-Tom-Denmark-pressure-ratio/)
+
+[Demark Pressure Ratio V2](https://www.tradingview.com/script/gkRrBjNQ-Tom-Denmark-pressure-ratio/)
+
 [Demark Range Expansion Index](https://www.tradingview.com/script/9yWlMoVE-Demark-Range-Expansion-Index/)
 
+[Demarker](https://www.motivewave.com/studies/demarker.htm)
+
+[Derivative Oscillator](https://www.tradingview.com/script/6wfwJ6To-Indicator-Derivative-Oscillator/)
+
 [Detrended Price Oscillator](https://www.tradingview.com/script/yMRm9CPq-Detrended-Price-Oscillator/)
+
+[Detrended Synthetic Price](https://www.motivewave.com/studies/detrended_synthetic_price.htm)
+
+[DiNapoli Moving Average Convergence Divergence](https://www.tradingview.com/script/skgtULNh-DiNapoli-MACD-Stoch-LazyBear/)
+
+[DiNapoli Percentage Price Oscillator](https://www.tradingview.com/script/skgtULNh-DiNapoli-MACD-Stoch-LazyBear/)
+
+[DiNapoli Preferred Stochastic Oscillator](https://pastebin.com/zLjdA1Am)
+
+[Directional Trend Index](https://www.motivewave.com/studies/directional_trend_index.htm)
+
+[Disparity Index](https://www.tradingview.com/script/vn03FE5C-Disparity-Index/)
+
+[DMI Stochastic](https://www.motivewave.com/studies/dmi_stochastic.htm)
+
+[Dominant Cycle Tuned Relative Strength Index](https://www.tradingview.com/script/2PFgqF8p-Dominant-Cycle-Tuned-Rsi)
+
+[Double Smoothed Momenta](https://www.tradingview.com/script/WDGZQHGf-Double-Smoothed-Momenta/)
+
+[Double Smoothed Relative Strength Index](https://www.tradingview.com/script/Q3s6mDUY-Double-Smoothed-Relative-Strength-Index/)
+
+[Double Smoothed Stochastic](https://www.motivewave.com/studies/double_smooth_stochastic.htm)
+
+[Double Stochastic Oscillator](https://www.tradingview.com/script/zfxznY9A-Double-Stochastic-Oscillator/)
+
+[DT Oscillator](https://pastebin.com/c0sBYXyw)
+
+[Dynamic Momentum Index](https://www.motivewave.com/studies/dynamic_momentum_index.htm)
+
+[Dynamic Momentum Oscillator](https://www.tradingview.com/script/Lgi8r9GG-Dynamic-Momentum-Oscillator-Dynamo/)
 
 [Ehlers Roofing Filter](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersRoofingFilter)
 
@@ -389,7 +437,13 @@
 
 [Contract High Low](https://www.motivewave.com/studies/contract_hi_low.htm)
 
+[Demark Pivot Points](https://www.mypivots.com/dictionary/definition/57/demark-pivot-points)
+
 [Donchian Channels](https://www.investopedia.com/terms/d/donchianchannels.asp)
+
+[Dynamic Pivot Points](https://www.tradingview.com/script/SHv1ZErJ-Dynamic-Pivot-Point/)
+
+[Dynamic Support And Resistance](https://www.tradingview.com/script/pLrwJmT3-Dynamic-Support-And-Resistance-CC/)
 
 [Fibonacci Pivot Points](https://www.tradingview.com/script/vDWxTZCv-Fibonacci-Pivot-Points/)
 
@@ -518,7 +572,25 @@ Atr Filtered Exponential Moving Average
 
 [Cubed Weighted Moving Average](https://www.tradingview.com/script/X4xeRngN-Cubed-Weighted-Moving-Average/)
 
+[Damped Sine Wave Weighted Filter](https://www.tradingview.com/script/AezB8SSk-Damped-Sine-Wave-Weighted-Filter/)
+
+[Delta Moving Average](https://www.motivewave.com/studies/delta_ma.htm)
+
+[Demark Reversal Points](https://in.tradingview.com/script/y7OP3JmK-Demark-Reversal-Points-CC/)
+
+[Demark Setup Indicator](https://www.tradingview.com/script/KfIUhaJB-Demark-Setup-Indicator-CC/)
+
+[Didi Index](https://www.tradingview.com/script/HLMpIzEn-Didi-Index/)
+
+[Distance Weighted Moving Average](https://www.tradingview.com/script/HE2Fg4rc-Distance-Weighted-Moving-Average/)
+
 [Double Exponential Moving Average](https://www.investopedia.com/terms/d/double-exponential-moving-average.asp)
+
+[Double Exponential Smoothing](https://www.tradingview.com/script/TWCE62ty-Double-Exponential-Smoothing/)
+
+[Dynamically Adjustable Filter](https://www.tradingview.com/script/npffZE6r-Dynamically-Adjustable-Filter/)
+
+[Dynamically Adjustable Moving Average](https://www.tradingview.com/script/YOfG9Q8j-Dynamically-Adjustable-Moving-Average/)
 
 [Ehlers Phase Calculation](https://www.tradingview.com/script/Zy7ZBrmZ-Phase-Calculation/)
 
@@ -838,6 +910,16 @@ Atr Filtered Exponential Moving Average
 [Closed Form Distance Volatility](https://www.tradingview.com/script/poxlj9bL-Closed-Form-Distance-Volatility/)
 
 [Commodity Selection Index](https://www.investopedia.com/terms/c/commodityselectionindex.asp)
+
+[D Envelope](https://www.tradingview.com/script/dK1uhbN8-DEnvelope-Better-Bollinger-Bands/)
+
+[Daily Average Price Delta](https://www.tradingview.com/script/EzZso82F-DAPD-Daily-Average-Price-Delta/)
+
+[Damping Index](https://www.tradingview.com/script/HMackUqR-Damping-Index/)
+
+[Donchian Channel Width](https://www.barchart.com/education/technical-indicators/donchian_width)
+
+[Drunkard Walk](https://www.motivewave.com/studies/drunkard_walk.htm)
 
 [Firefly Oscillator](https://www.tradingview.com/script/pgvRuoUi-Firefly-Oscillator-LazyBear/)
 
