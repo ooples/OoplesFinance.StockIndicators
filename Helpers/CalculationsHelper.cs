@@ -79,8 +79,23 @@ public static class CalculationsHelper
             case MovingAvgType.CubedWeightedMovingAverage:
                 movingAvgList = stockData.CalculateCubedWeightedMovingAverage(length).CustomValuesList;
                 break;
+            case MovingAvgType.DampedSineWaveWeightedFilter:
+                movingAvgList = stockData.CalculateDampedSineWaveWeightedFilter(length).CustomValuesList;
+                break;
+            case MovingAvgType.DistanceWeightedMovingAverage:
+                movingAvgList = stockData.CalculateDistanceWeightedMovingAverage(length).CustomValuesList;
+                break;
             case MovingAvgType.DoubleExponentialMovingAverage:
                 movingAvgList = stockData.CalculateDoubleExponentialMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.DoubleExponentialSmoothing:
+                movingAvgList = stockData.CalculateDoubleExponentialSmoothing().CustomValuesList;
+                break;
+            case MovingAvgType.DynamicallyAdjustableFilter:
+                movingAvgList = stockData.CalculateDynamicallyAdjustableFilter(length).CustomValuesList;
+                break;
+            case MovingAvgType.DynamicallyAdjustableMovingAverage:
+                movingAvgList = stockData.CalculateDynamicallyAdjustableMovingAverage(fastLength: length).CustomValuesList;
                 break;
             case MovingAvgType.EhlersFractalAdaptiveMovingAverage:
                 movingAvgList = stockData.CalculateEhlersFractalAdaptiveMovingAverage(length).CustomValuesList;

@@ -800,4 +800,128 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Double Smoothed Relative Strength Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
+    public static StockData CalculateDoubleSmoothedRelativeStrengthIndex(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 2, int length2 = 5, int length3 = 25)
+    {
+        List<decimal> rsiList = new();
+        List<decimal> srcLcList = new();
+        List<decimal> hcSrcList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(inputList, length1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal hc = highestList.ElementAtOrDefault(i);
+            decimal lc = lowestList.ElementAtOrDefault(i);
+
+            decimal srcLc = currentValue - lc;
+            srcLcList.Add(srcLc);
+
+            decimal hcSrc = hc - currentValue;
+            hcSrcList.Add(hcSrc);
+        }
+
+        var topEma1List = GetMovingAverageList(stockData, maType, length2, srcLcList);
+        var topEma2List = GetMovingAverageList(stockData, maType, length3, topEma1List);
+        var botEma1List = GetMovingAverageList(stockData, maType, length2, hcSrcList);
+        var botEma2List = GetMovingAverageList(stockData, maType, length3, botEma1List);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal top = topEma2List.ElementAtOrDefault(i);
+            decimal bot = botEma2List.ElementAtOrDefault(i);
+            decimal rs = bot != 0 ? MinOrMax(top / bot, 1, 0) : 0;
+
+            decimal rsi = bot == 0 ? 100 : top == 0 ? 0 : MinOrMax(100 - (100 / (1 + rs)), 100, 0);
+            rsiList.Add(rsi);
+        }
+
+        var rsiEmaList = GetMovingAverageList(stockData, maType, length3, rsiList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal rsi = rsiList.ElementAtOrDefault(i);
+            decimal rsiEma = rsiEmaList.ElementAtOrDefault(i);
+            decimal prevRsi = i >= 1 ? rsiList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevRsiEma = i >= 1 ? rsiEmaList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetRsiSignal(rsi - rsiEma, prevRsi - prevRsiEma, rsi, prevRsi, 80, 20);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Dsrsi", rsiList },
+            { "Signal", rsiEmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = rsiList;
+        stockData.IndicatorName = IndicatorName.DoubleSmoothedRelativeStrengthIndex;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Dominant Cycle Tuned Relative Strength Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateDominantCycleTunedRelativeStrengthIndex(this StockData stockData, int length = 5)
+    {
+        List<decimal> aList = new();
+        List<decimal> bList = new();
+        List<decimal> rsiList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var v1List = CalculateEhlersAdaptiveCyberCycle(stockData, length).OutputValues["Period"];
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal v1 = v1List.ElementAtOrDefault(i);
+            decimal p = v1 != 0 ? 1 / v1 : 0.07m;
+            decimal price = inputList.ElementAtOrDefault(i);
+            decimal prevPrice = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal aChg = price > prevPrice ? Math.Abs(price - prevPrice) : 0;
+            decimal bChg = price < prevPrice ? Math.Abs(price - prevPrice) : 0;
+            decimal prevRsi1 = i >= 1 ? rsiList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevRsi2 = i >= 2 ? rsiList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal prevA = i >= 1 ? aList.ElementAtOrDefault(i - 1) : aChg;
+            decimal a = (p * aChg) + ((1 - p) * prevA);
+            aList.Add(a);
+
+            decimal prevB = i >= 1 ? bList.ElementAtOrDefault(i - 1) : bChg;
+            decimal b = (p * bChg) + ((1 - p) * prevB);
+            bList.Add(b);
+
+            decimal r = b != 0 ? a / b : 0;
+            decimal rsi = b == 0 ? 100 : a == 0 ? 0 : MinOrMax(100 - (100 / (1 + r)), 100, 0);
+            rsiList.Add(rsi);
+
+            var signal = GetRsiSignal(rsi - prevRsi1, prevRsi1 - prevRsi2, rsi, prevRsi1, 70, 30);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "DctRsi", rsiList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = rsiList;
+        stockData.IndicatorName = IndicatorName.DominantCycleTunedRelativeStrengthIndex;
+
+        return stockData;
+    }
 }

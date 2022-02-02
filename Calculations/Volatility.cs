@@ -1120,4 +1120,57 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Donchian Channel Width
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="smoothLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateDonchianChannelWidth(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 20,
+        int smoothLength = 22)
+    {
+        List<decimal> donchianWidthList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
+
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal upper = highestList.ElementAtOrDefault(i);
+            decimal lower = lowestList.ElementAtOrDefault(i);
+
+            decimal donchianWidth = upper - lower;
+            donchianWidthList.Add(donchianWidth);
+        }
+
+        var donchianWidthSmaList = GetMovingAverageList(stockData, maType, smoothLength, donchianWidthList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal currentSma = smaList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevSma = i >= 1 ? smaList.ElementAtOrDefault(i - 1) : 0;
+            decimal donchianWidth = donchianWidthList.ElementAtOrDefault(i);
+            decimal donchianWidthSma = donchianWidthSmaList.ElementAtOrDefault(i);
+
+            var signal = GetVolatilitySignal(currentValue - currentSma, prevValue - prevSma, donchianWidth, donchianWidthSma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Dcw", donchianWidthList },
+            { "Signal", donchianWidthSmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = donchianWidthList;
+        stockData.IndicatorName = IndicatorName.DonchianChannelWidth;
+
+        return stockData;
+    }
 }

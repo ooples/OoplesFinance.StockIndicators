@@ -620,4 +620,69 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the DiNapoli Moving Average Convergence Divergence
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="lc"></param>
+    /// <param name="sc"></param>
+    /// <param name="sp"></param>
+    /// <returns></returns>
+    public static StockData CalculateDiNapoliMovingAverageConvergenceDivergence(this StockData stockData, decimal lc = 17.5185m, decimal sc = 8.3896m, 
+        decimal sp = 9.0503m)
+    {
+        List<decimal> fsList = new();
+        List<decimal> ssList = new();
+        List<decimal> rList = new();
+        List<decimal> sList = new();
+        List<decimal> hList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal scAlpha = 2 / (1 + sc);
+        decimal lcAlpha = 2 / (1 + lc);
+        decimal spAlpha = 2 / (1 + sp);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+
+            decimal prevFs = fsList.LastOrDefault();
+            decimal fs = prevFs + (scAlpha * (currentValue - prevFs));
+            fsList.Add(fs);
+
+            decimal prevSs = ssList.LastOrDefault();
+            decimal ss = prevSs + (lcAlpha * (currentValue - prevSs));
+            ssList.Add(ss);
+
+            decimal r = fs - ss;
+            rList.Add(r);
+
+            decimal prevS = sList.LastOrDefault();
+            decimal s = prevS + (spAlpha * (r - prevS));
+            sList.Add(s);
+
+            decimal prevH = hList.LastOrDefault();
+            decimal h = r - s;
+            hList.Add(h);
+
+            var signal = GetCompareSignal(h, prevH);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "FastS", fsList },
+            { "SlowS", ssList },
+            { "Macd", rList },
+            { "Signal", sList },
+            { "Histogram", hList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = rList;
+        stockData.IndicatorName = IndicatorName.DiNapoliMovingAverageConvergenceDivergence;
+
+        return stockData;
+    }
 }

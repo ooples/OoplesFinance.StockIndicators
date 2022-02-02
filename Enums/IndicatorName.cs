@@ -195,16 +195,98 @@ public enum IndicatorName
     CorrectedMovingAverage,
     [Category(IndicatorType.Trend)]
     CubedWeightedMovingAverage,
+    [Category(IndicatorType.Volatility)]
+    DEnvelope,
+    [Category(IndicatorType.Trend)]
+    DampedSineWaveWeightedFilter,
+    [Category(IndicatorType.Volatility)]
+    DampingIndex,
+    [Category(IndicatorType.Volatility)]
+    DAPDIndicator,
+    [Category(IndicatorType.Momentum)]
+    DecisionPointBreadthSwenlinTradingOscillator,
+    [Category(IndicatorType.Momentum)]
+    DecisionPointPriceMomentumOscillator,
+    [Category(IndicatorType.Trend)]
+    DeltaMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    Dema2Lines,
+    [Category(IndicatorType.Momentum)]
+    DemandOscillator,
+    [Category(IndicatorType.SupportAndResistance)]
+    DemarkPivotPoints,
+    [Category(IndicatorType.Momentum)]
+    DemarkPressureRatioV1,
+    [Category(IndicatorType.Momentum)]
+    DemarkPressureRatioV2,
     [Category(IndicatorType.Momentum)]
     DemarkRangeExpansionIndex,
+    [Category(IndicatorType.Trend)]
+    DemarkReversalPoints,
+    [Category(IndicatorType.Trend)]
+    DemarkSetupIndicator,
+    [Category(IndicatorType.Momentum)]
+    Demarker,
+    [Category(IndicatorType.Momentum)]
+    DerivativeOscillator,
     [Category(IndicatorType.Momentum)]
     DetrendedPriceOscillator,
+    [Category(IndicatorType.Momentum)]
+    DetrendedSyntheticPrice,
+    [Category(IndicatorType.Trend)]
+    DidiIndex,
+    [Category(IndicatorType.Momentum)]
+    DiNapoliMovingAverageConvergenceDivergence,
+    [Category(IndicatorType.Momentum)]
+    DiNapoliPercentagePriceOscillator,
+    [Category(IndicatorType.Momentum)]
+    DiNapoliPreferredStochasticOscillator,
+    [Category(IndicatorType.Momentum)]
+    DirectionalTrendIndex,
+    [Category(IndicatorType.Momentum)]
+    DisparityIndex,
+    [Category(IndicatorType.Trend)]
+    DistanceWeightedMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    DMIStochastic,
+    [Category(IndicatorType.Momentum)]
+    DominantCycleTunedRelativeStrengthIndex,
+    [Category(IndicatorType.Volatility)]
+    DonchianChannelWidth,
     [Category(IndicatorType.SupportAndResistance)]
     DonchianChannels,
     [Category(IndicatorType.Trend)]
     DoubleExponentialMovingAverage,
+    [Category(IndicatorType.Trend)]
+    DoubleExponentialSmoothing,
+    [Category(IndicatorType.Momentum)]
+    DoubleSmoothedMomenta,
+    [Category(IndicatorType.Momentum)]
+    DoubleSmoothedRelativeStrengthIndex,
+    [Category(IndicatorType.Momentum)]
+    DoubleSmoothedStochastic,
+    [Category(IndicatorType.Momentum)]
+    DoubleStochasticOscillator,
+    [Category(IndicatorType.Volatility)]
+    DrunkardWalk,
+    [Category(IndicatorType.Momentum)]
+    DTOscillator,
+    [Category(IndicatorType.Momentum)]
+    DynamicMomentumIndex,
+    [Category(IndicatorType.Momentum)]
+    DynamicMomentumOscillator,
+    [Category(IndicatorType.SupportAndResistance)]
+    DynamicPivotPoints,
+    [Category(IndicatorType.SupportAndResistance)]
+    DynamicSupportAndResistance,
+    [Category(IndicatorType.Trend)]
+    DynamicallyAdjustableFilter,
+    [Category(IndicatorType.Trend)]
+    DynamicallyAdjustableMovingAverage,
     [Category(IndicatorType.Volume)]
     EaseOfMovement,
+    [Category(IndicatorType.Cycle)]
+    EhlersAdaptiveCyberCycle,
     [Category(IndicatorType.Trend)]
     EhlersFractalAdaptiveMovingAverage,
     [Category(IndicatorType.Trend)]

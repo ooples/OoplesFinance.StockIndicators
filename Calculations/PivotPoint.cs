@@ -581,4 +581,104 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Demark Pivot Points
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <returns></returns>
+    public static StockData CalculateDemarkPivotPoints(this StockData stockData)
+    {
+        List<decimal> pivotList = new();
+        List<decimal> resistanceLevel1List = new();
+        List<decimal> supportLevel1List = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentClose = inputList.ElementAtOrDefault(i);
+            decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevOpen = i >= 1 ? openList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+            decimal x = prevClose < prevOpen ? prevHigh + (2 * prevLow) + prevClose : prevClose > prevOpen ? (2 * prevHigh) + prevLow + prevClose :
+                prevClose == prevOpen ? prevHigh + prevLow + (2 * prevClose) : prevClose;
+
+            decimal prevPivot = pivotList.LastOrDefault();
+            decimal pivot = x / 4;
+            pivotList.Add(pivot);
+
+            decimal ratio = x / 2;
+            decimal supportLevel1 = ratio - prevHigh;
+            supportLevel1List.Add(supportLevel1);
+
+            decimal resistanceLevel1 = ratio - prevLow;
+            resistanceLevel1List.Add(resistanceLevel1);
+
+            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevPivot);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Pivot", pivotList },
+            { "S1", supportLevel1List },
+            { "R1", resistanceLevel1List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = pivotList;
+        stockData.IndicatorName = IndicatorName.DemarkPivotPoints;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Dynamic Pivot Points
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <returns></returns>
+    public static StockData CalculateDynamicPivotPoints(this StockData stockData)
+    {
+        List<decimal> resistanceLevel1List = new();
+        List<decimal> supportLevel1List = new();
+        List<decimal> pivotList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentClose = inputList.ElementAtOrDefault(i);
+            decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal pivot = (prevHigh + prevLow + prevClose) / 3;
+            pivotList.Add(pivot);
+
+            decimal prevSupportLevel1 = supportLevel1List.LastOrDefault();
+            decimal supportLevel1 = pivot - (prevHigh - pivot);
+            supportLevel1List.Add(supportLevel1);
+
+            decimal prevResistanceLevel1 = resistanceLevel1List.LastOrDefault();
+            decimal resistanceLevel1 = pivot + (pivot - prevLow);
+            resistanceLevel1List.Add(resistanceLevel1);
+
+            var signal = GetBullishBearishSignal(currentClose - resistanceLevel1, prevClose - prevResistanceLevel1, 
+                currentClose - supportLevel1, prevClose - prevSupportLevel1);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Pivot", pivotList },
+            { "S1", supportLevel1List },
+            { "R1", resistanceLevel1List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = pivotList;
+        stockData.IndicatorName = IndicatorName.DynamicPivotPoints;
+
+        return stockData;
+    }
 }
