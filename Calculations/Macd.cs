@@ -685,7 +685,7 @@ public static partial class Calculations
 
         return stockData;
     }
-
+  
     /// <summary>
     /// Calculates the Stochastic Moving Average Convergence Divergence Oscillator
     /// </summary>

@@ -10675,6 +10675,69 @@ public static partial class Calculations
     }
 
     /// <summary>
+    /// Calculates the Decision Point Price Momentum Oscillator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="signalLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateDecisionPointPriceMomentumOscillator(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 35, int length2 = 20, int signalLength = 10)
+    {
+        List<decimal> pmol2List = new();
+        List<decimal> pmolList = new();
+        List<decimal> dList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal smPmol2 = (decimal)2 / length1;
+        decimal smPmol = (decimal)2 / length2;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal ival = prevValue != 0 ? currentValue / prevValue * 100 : 100;
+            decimal prevPmol = pmolList.LastOrDefault();
+            decimal prevPmol2 = pmol2List.LastOrDefault();
+
+            decimal pmol2 = ((ival - 100 - prevPmol2) * smPmol2) + prevPmol2;
+            pmol2List.Add(pmol2);
+
+            decimal pmol = (((10 * pmol2) - prevPmol) * smPmol) + prevPmol;
+            pmolList.Add(pmol);
+        }
+
+        var pmolsList = GetMovingAverageList(stockData, maType, signalLength, pmolList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal pmol = pmolList.ElementAtOrDefault(i);
+            decimal pmols = pmolsList.ElementAtOrDefault(i);
+
+            decimal prevD = dList.LastOrDefault();
+            decimal d = pmol - pmols;
+            dList.Add(d);
+
+            var signal = GetCompareSignal(d, prevD);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Dppmo", pmolList },
+            { "Signal", pmolsList },
+            { "Histogram", dList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = pmolList;
+        stockData.IndicatorName = IndicatorName.DecisionPointPriceMomentumOscillator;
+
+        return stockData;
+    }
+
+    /// <summary>
     /// Calculates the Decision Point Breadth Swenlin Trading Oscillator
     /// </summary>
     /// <param name="stockData"></param>
@@ -11019,6 +11082,53 @@ public static partial class Calculations
     }
 
     /// <summary>
+    /// Calculates the DiNapoli Preferred Stochastic Oscillator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
+    public static StockData CalculateDiNapoliPreferredStochasticOscillator(this StockData stockData, int length1 = 8, int length2 = 3, int length3 = 3)
+    {
+        List<decimal> rList = new();
+        List<decimal> sList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal max = highestList.ElementAtOrDefault(i);
+            decimal min = lowestList.ElementAtOrDefault(i);
+            decimal fast = max - min != 0 ? MinOrMax((currentValue - min) / (max - min) * 100, 100, 0) : 0;
+
+            decimal prevR = rList.LastOrDefault();
+            decimal r = prevR + ((fast - prevR) / length2);
+            rList.Add(r);
+
+            decimal prevS = sList.LastOrDefault();
+            decimal s = prevS + ((r - prevS) / length3);
+            sList.Add(s);
+
+            var signal = GetRsiSignal(r - s, prevR - prevS, r, prevR, 70, 30);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Dpso", rList },
+            { "Signal", sList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = rList;
+        stockData.IndicatorName = IndicatorName.DiNapoliPreferredStochasticOscillator;
+
+        return stockData;
+    }
+
+    /// <summary>
     /// Calculates the Didi Index
     /// </summary>
     /// <param name="stockData"></param>
@@ -11105,6 +11215,76 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = disparityIndexList;
         stockData.IndicatorName = IndicatorName.DisparityIndex;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Double Smoothed Stochastic
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <param name="length4"></param>
+    /// <returns></returns>
+    public static StockData CalculateDoubleSmoothedStochastic(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 2,
+        int length2 = 3, int length3 = 15, int length4 = 3)
+    {
+        List<decimal> dssList = new();
+        List<decimal> numList = new();
+        List<decimal> denomList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal highestHigh = highestList.ElementAtOrDefault(i);
+            decimal lowestLow = lowestList.ElementAtOrDefault(i);
+
+            decimal num = currentValue - lowestLow;
+            numList.Add(num);
+
+            decimal denom = highestHigh - lowestLow;
+            denomList.Add(denom);
+        }
+
+        var ssNumList = GetMovingAverageList(stockData, maType, length2, numList);
+        var ssDenomList = GetMovingAverageList(stockData, maType, length2, denomList);
+        var dsNumList = GetMovingAverageList(stockData, maType, length3, ssNumList);
+        var dsDenomList = GetMovingAverageList(stockData, maType, length3, ssDenomList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal dsNum = dsNumList.ElementAtOrDefault(i);
+            decimal dsDenom = dsDenomList.ElementAtOrDefault(i);
+
+            decimal dss = dsDenom != 0 ? MinOrMax(100 * dsNum / dsDenom, 100, 0) : 0;
+            dssList.Add(dss);
+        }
+
+        var sdssList = GetMovingAverageList(stockData, maType, length4, dssList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal dss = dssList.ElementAtOrDefault(i);
+            decimal sdss = sdssList.ElementAtOrDefault(i);
+            decimal prevDss = i >= 1 ? dssList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevSdss = i >= 1 ? sdssList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetRsiSignal(dss - sdss, prevDss - prevSdss, dss, prevDss, 70, 30);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Dss", dssList },
+            { "Signal", sdssList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = dssList;
+        stockData.IndicatorName = IndicatorName.DoubleSmoothedStochastic;
 
         return stockData;
     }
@@ -11618,7 +11798,7 @@ public static partial class Calculations
 
         return stockData;
     }
-
+  
     /// <summary>
     /// Calculates the Spearman Indicator
     /// </summary>
