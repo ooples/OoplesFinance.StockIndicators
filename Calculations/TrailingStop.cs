@@ -625,7 +625,7 @@ public static partial class Calculations
         var smaSlowList = GetMovingAverageList(stockData, maType, slowLength, inputList);
         var smaFastList = GetMovingAverageList(stockData, maType, fastLength, inputList);
         stockData.CustomValuesList = dtrList;
-        var dtrStdList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var dtrStdList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal maFast = smaFastList.ElementAtOrDefault(i);
@@ -722,7 +722,7 @@ public static partial class Calculations
 
         var rangeAvgList = GetMovingAverageList(stockData, maType, length, rrangeList);
         stockData.CustomValuesList = rrangeList;
-        var rangeStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var rangeStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal price = priceList.ElementAtOrDefault(i);

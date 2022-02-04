@@ -934,9 +934,9 @@ public static partial class Calculations
         var obvList = CalculateOnBalanceVolume(stockData, maType, length).CustomValuesList;
         var obvSmaList = GetMovingAverageList(stockData, maType, length, obvList);
         var smaList = GetMovingAverageList(stockData, maType, length, inputList);
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         stockData.CustomValuesList = obvList;
-        var obvStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var obvStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -1006,9 +1006,9 @@ public static partial class Calculations
         var nviList = CalculateNegativeVolumeIndex(stockData, maType, length).CustomValuesList;
         var nviSmaList = GetMovingAverageList(stockData, maType, length, nviList);
         var smaList = GetMovingAverageList(stockData, maType, length, inputList);
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         stockData.CustomValuesList = nviList;
-        var nviStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var nviStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -1259,7 +1259,7 @@ public static partial class Calculations
 
         var smaVolumeList = GetMovingAverageList(stockData, maType, length, volumeList);
         stockData.CustomValuesList = volumeList;
-        var stdDevVolumeList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevVolumeList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -1341,7 +1341,7 @@ public static partial class Calculations
         }
 
         stockData.CustomValuesList = vBymList;
-        var sdfList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var sdfList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentValue = inputList.ElementAtOrDefault(i);
@@ -1633,7 +1633,7 @@ public static partial class Calculations
         }
 
         stockData.CustomValuesList = interList;
-        var vinterList = CalculateStandardDeviationVolatility(stockData, length2).CustomValuesList;
+        var vinterList = CalculateStandardDeviationVolatility(stockData, maType, length2).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal vinter = vinterList.ElementAtOrDefault(i);

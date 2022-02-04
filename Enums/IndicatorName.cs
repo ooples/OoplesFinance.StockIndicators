@@ -197,12 +197,12 @@ public enum IndicatorName
     CubedWeightedMovingAverage,
     [Category(IndicatorType.Volatility)]
     DEnvelope,
+    [Category(IndicatorType.Volatility)]
+    DailyAveragePriceDelta,
     [Category(IndicatorType.Trend)]
     DampedSineWaveWeightedFilter,
     [Category(IndicatorType.Volatility)]
     DampingIndex,
-    [Category(IndicatorType.Volatility)]
-    DAPDIndicator,
     [Category(IndicatorType.Momentum)]
     DecisionPointBreadthSwenlinTradingOscillator,
     [Category(IndicatorType.Momentum)]
@@ -861,10 +861,72 @@ public enum IndicatorName
     RSMKIndicator,
     [Category(IndicatorType.Trend)]
     RunningEquity,
+    [Category(IndicatorType.Volatility)]
+    ScalpersChannel,
     [Category(IndicatorType.Momentum)]
     SchaffTrendCycle,
+    [Category(IndicatorType.Momentum)]
+    SectorRotationModel,
+    [Category(IndicatorType.Momentum)]
+    SelfAdjustingRelativeStrengthIndex,
+    [Category(IndicatorType.Trend)]
+    SelfWeightedMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    SellGravitationIndex,
+    [Category(IndicatorType.Momentum)]
+    SentimentZoneOscillator,
+    [Category(IndicatorType.Trend)]
+    SequentiallyFilteredMovingAverage,
+    [Category(IndicatorType.Trend)]
+    SettingLessTrendStepFiltering,
+    [Category(IndicatorType.Trend)]
+    ShapeshiftingMovingAverage,
+    [Category(IndicatorType.Trend)]
+    SharpModifiedMovingAverage,
+    [Category(IndicatorType.Volatility)]
+    SharpeRatio,
+    [Category(IndicatorType.Trend)]
+    ShinoharaIntensityRatio,
+    [Category(IndicatorType.Volatility)]
+    SigmaSpikes,
+    [Category(IndicatorType.Cycle)]
+    SimpleCycle,
+    [Category(IndicatorType.Trend)]
+    SimpleLines,
     [Category(IndicatorType.Trend)]
     SimpleMovingAverage,
+    [Category(IndicatorType.Trend)]
+    SimplifiedLeastSquaresMovingAverage,
+    [Category(IndicatorType.Trend)]
+    SimplifiedWeightedMovingAverage,
+    [Category(IndicatorType.Trend)]
+    SineWeightedMovingAverage,
+    [Category(IndicatorType.Trend)]
+    SlowSmoothedMovingAverage,
+    [Category(IndicatorType.SupportAndResistance)]
+    SmartEnvelope,
+    [Category(IndicatorType.Momentum)]
+    SMIErgodicIndicator,
+    [Category(IndicatorType.Momentum)]
+    SmoothedDeltaRatioOscillator,
+    [Category(IndicatorType.Momentum)]
+    SmoothedRateOfChange,
+    [Category(IndicatorType.Volatility)]
+    SmoothedVolatilityBands,
+    [Category(IndicatorType.Momentum)]
+    SmoothedWilliamsAccumulationDistribution,
+    [Category(IndicatorType.Volatility)]
+    SortinoRatio,
+    [Category(IndicatorType.Momentum)]
+    SpearmanIndicator,
+    [Category(IndicatorType.Trend)]
+    Spencer15PointMovingAverage,
+    [Category(IndicatorType.Trend)]
+    Spencer21PointMovingAverage,
+    [Category(IndicatorType.Trend)]
+    SquareRootWeightedMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    SqueezeMomentumIndicator,
     [Category(IndicatorType.Volatility)]
     StandardDeviation,
     [Category(IndicatorType.Trend)]
@@ -873,12 +935,48 @@ public enum IndicatorName
     StandardDeviationVolatility,
     [Category(IndicatorType.SupportAndResistance)]
     StandardPivotPoints,
+    [Category(IndicatorType.Trend)]
+    StationaryExtrapolatedLevels,
+    [Category(IndicatorType.Momentum)]
+    StationaryExtrapolatedLevelsOscillator,
+    [Category(IndicatorType.Volatility)]
+    StatisticalVolatility,
+    [Category(IndicatorType.Volatility)]
+    StiffnessIndicator,
+    [Category(IndicatorType.Momentum)]
+    StochasticConnorsRelativeStrengthIndex,
+    [Category(IndicatorType.Momentum)]
+    StochasticCustomOscillator,
+    [Category(IndicatorType.Momentum)]
+    StochasticFastOscillator,
+    [Category(IndicatorType.Momentum)]
+    StochasticMomentumIndex,
+    [Category(IndicatorType.Momentum)]
+    StochasticMovingAverageConvergenceDivergenceOscillator,
     [Category(IndicatorType.Momentum)]
     StochasticOscillator,
+    [Category(IndicatorType.Momentum)]
+    StochasticRegular,
+    [Category(IndicatorType.Momentum)]
+    StochasticRelativeStrengthIndex,
     [Category(IndicatorType.Volatility)]
     StollerAverageRangeChannels,
+    [Category(IndicatorType.Momentum)]
+    StrengthOfMovement,
     [Category(IndicatorType.Trend)]
     SuperTrend,
+    [Category(IndicatorType.Trend)]
+    SuperTrendFilter,
+    [Category(IndicatorType.SupportAndResistance)]
+    SupportAndResistanceOscillator,
+    [Category(IndicatorType.SupportAndResistance)]
+    SupportResistance,
+    [Category(IndicatorType.Trend)]
+    SurfaceRoughnessEstimator,
+    [Category(IndicatorType.Trend)]
+    Svama,
+    [Category(IndicatorType.Momentum)]
+    SwamiStochastics,
     [Category(IndicatorType.Trend)]
     SymmetricallyWeightedMovingAverage,
     [Category(IndicatorType.Trend)]

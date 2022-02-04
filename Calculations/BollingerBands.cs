@@ -18,7 +18,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
         var smaList = GetMovingAverageList(stockData, maType, length, inputList);
-        var stdDeviationList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDeviationList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -530,7 +530,7 @@ public static partial class Calculations
 
         var zlhaTemaList = GetMovingAverageList(stockData, maType, smoothLength, zlhaList);
         stockData.CustomValuesList = zlhaTemaList;
-        var zlhaTemaStdDevList = CalculateStandardDeviationVolatility(stockData, length1).CustomValuesList;
+        var zlhaTemaStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length1).CustomValuesList;
         var wmaZlhaTemaList = GetMovingAverageList(stockData, MovingAvgType.WeightedMovingAverage, length1, zlhaTemaList);
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -543,7 +543,7 @@ public static partial class Calculations
         }
 
         stockData.CustomValuesList = percbList;
-        var percbStdDevList = CalculateStandardDeviationVolatility(stockData, length2).CustomValuesList;
+        var percbStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length2).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentValue = percbList.ElementAtOrDefault(i);

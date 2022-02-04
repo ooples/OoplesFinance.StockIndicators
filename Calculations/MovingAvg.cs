@@ -292,7 +292,7 @@ public static partial class Calculations
             for (int j = 0; j <= length - 1; j++)
             {
                 decimal weight = s != 0 ? Exp(-1 * Pow(j - m, 2) / (2 * Pow(s, 2))) : 0;
-                decimal prevValue = i >= length - 1 - j ? inputList.ElementAtOrDefault(length - 1 - j) : 0;
+                decimal prevValue = i >= length - 1 - j ? inputList.ElementAtOrDefault(i - (length - 1 - j)) : 0;
 
                 sum += prevValue * weight;
                 weightedSum += weight;
@@ -852,7 +852,7 @@ public static partial class Calculations
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         var smaList = GetMovingAverageList(stockData, maType, maxLength, inputList);
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, maxLength).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, maxLength).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -1424,7 +1424,7 @@ public static partial class Calculations
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         var yMaList = GetMovingAverageList(stockData, maType, length, inputList);
-        var devList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var devList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -1444,7 +1444,7 @@ public static partial class Calculations
 
         var xMaList = GetMovingAverageList(stockData, maType, length, xList);
         stockData.CustomValuesList = xList;
-        var mxList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var mxList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal my = devList.ElementAtOrDefault(i);
@@ -1489,7 +1489,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var devList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var devList = CalculateStandardDeviationVolatility(stockData, length: length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -1528,7 +1528,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, length: length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -1576,7 +1576,7 @@ public static partial class Calculations
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         var smaList = GetMovingAverageList(stockData, maType, length, inputList);
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -2335,9 +2335,9 @@ public static partial class Calculations
         }
 
         stockData.CustomValuesList = nList;
-        var nVarianceList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var nVarianceList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         stockData.CustomValuesList = n2List;
-        var n2VarianceList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var n2VarianceList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentValue = inputList.ElementAtOrDefault(i);
@@ -2612,9 +2612,9 @@ public static partial class Calculations
 
         var sma1List = GetMovingAverageList(stockData, maType, length, inputList);
         var sma2List = GetMovingAverageList(stockData, maType, length1, inputList);
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         stockData.CustomValuesList = indexList;
-        var indexStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var indexStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         var indexSmaList = GetMovingAverageList(stockData, maType, length, indexList);
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -2709,7 +2709,7 @@ public static partial class Calculations
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         var yMaList = GetMovingAverageList(stockData, maType, length, inputList);
-        var myList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var myList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -2726,7 +2726,7 @@ public static partial class Calculations
 
         var xMaList = GetMovingAverageList(stockData, maType, length, xList);
         stockData.CustomValuesList = xList;
-        var mxList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList; ;
+        var mxList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList; ;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal my = myList.ElementAtOrDefault(i);
@@ -3000,9 +3000,9 @@ public static partial class Calculations
 
         var indexSmaList = GetMovingAverageList(stockData, maType, length, indexList);
         var smaList = GetMovingAverageList(stockData, maType, length, inputList);
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         stockData.CustomValuesList = indexList;
-        var indexStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var indexStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentValue = inputList.ElementAtOrDefault(i);
@@ -3778,7 +3778,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var stdDevSrcList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevSrcList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         var smaSrcList = GetMovingAverageList(stockData, maType, length, inputList);
 
         for (int i = 0; i < stockData.Count; i++)
@@ -3788,7 +3788,7 @@ public static partial class Calculations
         }
 
         stockData.CustomValuesList = indexList;
-        var indexStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var indexStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         var indexSmaList = GetMovingAverageList(stockData, maType, length, indexList);
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -4010,7 +4010,7 @@ public static partial class Calculations
 
         int s = MinOrMax((int)Math.Ceiling(Sqrt(length)));
 
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -4214,7 +4214,7 @@ public static partial class Calculations
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         var smaList = GetMovingAverageList(stockData, maType, lbLength, inputList);
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, lbLength).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, lbLength).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -4484,7 +4484,7 @@ public static partial class Calculations
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         var smaList = GetMovingAverageList(stockData, maType, length, inputList);
-        var v1List = CalculateStandardDeviationVolatility(stockData, length).OutputValues["Variance"];
+        var v1List = CalculateStandardDeviationVolatility(stockData, maType, length).OutputValues["Variance"];
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -4871,7 +4871,7 @@ public static partial class Calculations
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         var efRatioList = CalculateKaufmanAdaptiveMovingAverage(stockData, length: length).OutputValues["Er"];
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         var smaList = GetMovingAverageList(stockData, maType, length, inputList);
 
         for (int i = 0; i < stockData.Count; i++)
@@ -4896,7 +4896,7 @@ public static partial class Calculations
         }
 
         stockData.CustomValuesList = bList;
-        var bStdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var bStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         var bSmaList = GetMovingAverageList(stockData, maType, length, bList);
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -4996,7 +4996,7 @@ public static partial class Calculations
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         var linregList = CalculateLinearRegression(stockData, length).CustomValuesList;
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         var smaList = GetMovingAverageList(stockData, maType, length, inputList);
 
         for (int i = 0; i < stockData.Count; i++)
@@ -6093,8 +6093,8 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var shortStdDevList = CalculateStandardDeviationVolatility(stockData, fastLength).CustomValuesList;
-        var longStdDevList = CalculateStandardDeviationVolatility(stockData, slowLength).CustomValuesList;
+        var shortStdDevList = CalculateStandardDeviationVolatility(stockData, length: fastLength).CustomValuesList;
+        var longStdDevList = CalculateStandardDeviationVolatility(stockData, length: slowLength).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -6135,6 +6135,675 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = amaList;
         stockData.IndicatorName = IndicatorName.DynamicallyAdjustableMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Spencer 21 Point Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <returns></returns>
+    public static StockData CalculateSpencer21PointMovingAverage(this StockData stockData)
+    {
+        List<decimal> spmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal sum = 0, weightedSum = 0;
+            for (int j = 0; j <= 20; j++)
+            {
+                var weight = j switch
+                {
+                    0 => -1,
+                    1 => -3,
+                    2 => -5,
+                    3 => -5,
+                    4 => -2,
+                    5 => 6,
+                    6 => 18,
+                    7 => 33,
+                    8 => 47,
+                    9 => 57,
+                    10 => 60,
+                    11 => 57,
+                    12 => 47,
+                    13 => 33,
+                    14 => 18,
+                    15 => 6,
+                    16 => -2,
+                    17 => -5,
+                    18 => -5,
+                    19 => -3,
+                    20 => -1,
+                    _ => 0,
+                };
+                decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                sum += prevValue * weight;
+                weightedSum += weight;
+            }
+
+            decimal prevSpma = spmaList.LastOrDefault();
+            decimal spma = weightedSum != 0 ? sum / weightedSum : 0;
+            spmaList.Add(spma);
+
+            var signal = GetCompareSignal(currentValue - spma, prevVal - prevSpma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "S21ma", spmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = spmaList;
+        stockData.IndicatorName = IndicatorName.Spencer21PointMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Spencer 15 Point Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <returns></returns>
+    public static StockData CalculateSpencer15PointMovingAverage(this StockData stockData)
+    {
+        List<decimal> spmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal sum = 0, weightedSum = 0;
+            for (int j = 0; j <= 14; j++)
+            {
+                var weight = j switch
+                {
+                    0 => -3,
+                    1 => -6,
+                    2 => -5,
+                    3 => 3,
+                    4 => 21,
+                    5 => 46,
+                    6 => 67,
+                    7 => 74,
+                    8 => 67,
+                    9 => 46,
+                    10 => 21,
+                    11 => 3,
+                    12 => -5,
+                    13 => -6,
+                    14 => -3,
+                    _ => 0,
+                };
+                decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                sum += prevValue * weight;
+                weightedSum += weight;
+            }
+
+            decimal prevSpma = spmaList.LastOrDefault();
+            decimal spma = weightedSum != 0 ? sum / weightedSum : 0;
+            spmaList.Add(spma);
+
+            var signal = GetCompareSignal(currentValue - spma, prevVal - prevSpma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "S15ma", spmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = spmaList;
+        stockData.IndicatorName = IndicatorName.Spencer15PointMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Square Root Weighted Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateSquareRootWeightedMovingAverage(this StockData stockData, int length = 14)
+    {
+        List<decimal> srwmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal sum = 0, weightedSum = 0;
+            for (int j = 0; j <= length - 1; j++)
+            {
+                decimal weight = Pow(length - j, 0.5m);
+                decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                sum += prevValue * weight;
+                weightedSum += weight;
+            }
+
+            decimal prevSrwma = srwmaList.LastOrDefault();
+            decimal srwma = weightedSum != 0 ? sum / weightedSum : 0;
+            srwmaList.Add(srwma);
+
+            var signal = GetCompareSignal(currentValue - srwma, prevVal - prevSrwma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Srwma", srwmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = srwmaList;
+        stockData.IndicatorName = IndicatorName.SquareRootWeightedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Shapeshifting Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateShapeshiftingMovingAverage(this StockData stockData, int length = 50)
+    {
+        List<decimal> filtXList = new();
+        List<decimal> filtNList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal sumX = 0, weightedSumX = 0, sumN = 0, weightedSumN = 0;
+            for (int j = 0; j <= length - 1; j++)
+            {
+                decimal x = (decimal)j / (length - 1);
+                decimal n = -1 + (x * 2);
+                decimal wx = 1 - (2 * x / (Pow(x, 4) + 1));
+                decimal wn = 1 - (2 * Pow(n, 2) / (Pow(n, 4 - (4 % 2)) + 1));
+                decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                sumX += prevValue * wx;
+                weightedSumX += wx;
+                sumN += prevValue * wn;
+                weightedSumN += wn;
+            }
+
+            decimal prevFiltX = filtXList.LastOrDefault();
+            decimal filtX = weightedSumX != 0 ? sumX / weightedSumX : 0;
+            filtXList.Add(filtX);
+
+            decimal filtN = weightedSumN != 0 ? sumN / weightedSumN : 0;
+            filtNList.Add(filtN);
+
+            var signal = GetCompareSignal(currentValue - filtX, prevVal - prevFiltX);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Sma", filtXList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = filtXList;
+        stockData.IndicatorName = IndicatorName.ShapeshiftingMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Self Weighted Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateSelfWeightedMovingAverage(this StockData stockData, int length = 14)
+    {
+        List<decimal> wmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal sum = 0, weightSum = 0;
+            for (int j = 0; j < length; j++)
+            {
+                decimal pValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+                decimal weight = i >= length + j ? inputList.ElementAtOrDefault(i - (length + j)) : 0;
+                weightSum += weight;
+                sum += weight * pValue;
+            }
+
+            decimal prevWma = wmaList.LastOrDefault();
+            decimal wma = weightSum != 0 ? sum / weightSum : 0;
+            wmaList.Add(wma);
+
+            var signal = GetCompareSignal(currentValue - wma, prevValue - prevWma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Swma", wmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = wmaList;
+        stockData.IndicatorName = IndicatorName.SelfWeightedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Sine Weighted Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateSineWeightedMovingAverage(this StockData stockData, int length = 14)
+    {
+        List<decimal> swmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal sum = 0, weightedSum = 0;
+            for (int j = 0; j <= length - 1; j++)
+            {
+                decimal weight = Sin((j + 1) * Pi / (length + 1));
+                decimal prevValue = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+
+                sum += prevValue * weight;
+                weightedSum += weight;
+            }
+
+            decimal prevSwma = swmaList.LastOrDefault();
+            decimal swma = weightedSum != 0 ? sum / weightedSum : 0;
+            swmaList.Add(swma);
+
+            var signal = GetCompareSignal(currentValue - swma, prevVal - prevSwma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Swma", swmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = swmaList;
+        stockData.IndicatorName = IndicatorName.SineWeightedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Simplified Weighted Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateSimplifiedWeightedMovingAverage(this StockData stockData, int length = 14)
+    {
+        List<decimal> wmaList = new();
+        List<decimal> cmlList = new();
+        List<decimal> cmlSumList = new();
+        List<decimal> tempList = new();
+        List<decimal> sumList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            tempList.Add(currentValue);
+
+            decimal cml = tempList.Sum();
+            cmlList.Add(cml);
+
+            decimal prevCmlSum = i >= length ? cmlSumList.ElementAtOrDefault(i - length) : 0;
+            decimal cmlSum = cmlList.Sum();
+            cmlSumList.Add(cmlSum);
+
+            decimal prevSum = sumList.LastOrDefault();
+            decimal sum = cmlSum - prevCmlSum;
+            sumList.Add(sum);
+
+            decimal prevWma = wmaList.LastOrDefault();
+            decimal wma = ((length * cml) - prevSum) / (length * (decimal)(length + 1) / 2);
+            wmaList.Add(wma);
+
+            var signal = GetCompareSignal(currentValue - wma, prevValue - prevWma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Swma", wmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = wmaList;
+        stockData.IndicatorName = IndicatorName.SimplifiedWeightedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Simplified Least Squares Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateSimplifiedLeastSquaresMovingAverage(this StockData stockData, int length = 14)
+    {
+        List<decimal> cmlList = new();
+        List<decimal> cmlSumList = new();
+        List<decimal> tempList = new();
+        List<decimal> sumList = new();
+        List<decimal> lsmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            tempList.Add(currentValue);
+
+            decimal prevCml = i >= length ? cmlList.ElementAtOrDefault(i - length) : 0;
+            decimal cml = tempList.Sum();
+            cmlList.Add(cml);
+
+            decimal prevCmlSum = i >= length ? cmlSumList.ElementAtOrDefault(i - length) : 0;
+            decimal cmlSum = cmlList.Sum();
+            cmlSumList.Add(cmlSum);
+
+            decimal prevSum = sumList.LastOrDefault();
+            decimal sum = cmlSum - prevCmlSum;
+            sumList.Add(sum);
+
+            decimal wma = ((length * cml) - prevSum) / (length * (decimal)(length + 1) / 2);
+            decimal prevLsma = lsmaList.LastOrDefault();
+            decimal lsma = length != 0 ? (3 * wma) - (2 * (cml - prevCml) / length) : 0;
+            lsmaList.Add(lsma);
+
+            var signal = GetCompareSignal(currentValue - lsma, prevValue - prevLsma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Slsma", lsmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = lsmaList;
+        stockData.IndicatorName = IndicatorName.SimplifiedLeastSquaresMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Sharp Modified Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateSharpModifiedMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 14)
+    {
+        List<decimal> shmmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal currentSma = smaList.ElementAtOrDefault(i);
+            decimal prevVal = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal slope = 0;
+            for (int j = 1; j <= length; j++)
+            {
+                decimal prevValue = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
+                decimal factor = 1 + (2 * (j - 1));
+                slope += prevValue * (length - factor) / 2;
+            }
+
+            decimal prevShmma = shmmaList.LastOrDefault();
+            decimal shmma = currentSma + (6 * slope / ((length + 1) * length));
+            shmmaList.Add(shmma);
+
+            var signal = GetCompareSignal(currentValue - shmma, prevVal - prevShmma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Smma", shmmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = shmmaList;
+        stockData.IndicatorName = IndicatorName.SharpModifiedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Slow Smoothed Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateSlowSmoothedMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, int length = 15)
+    {
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        int w2 = MinOrMax((int)Math.Ceiling((decimal)length / 3));
+        int w1 = MinOrMax((int)Math.Ceiling((decimal)(length - w2) / 2));
+        int w3 = MinOrMax((int)Math.Floor((decimal)(length - w2) / 2));
+
+        var l1List = GetMovingAverageList(stockData, maType, w1, inputList);
+        var l2List = GetMovingAverageList(stockData, maType, w2, l1List);
+        var l3List = GetMovingAverageList(stockData, maType, w3, l2List);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal l3 = l3List.ElementAtOrDefault(i);
+            decimal prevL3 = i >= 1 ? l3List.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetCompareSignal(currentValue - l3, prevValue - prevL3);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ssma", l3List }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = l3List;
+        stockData.IndicatorName = IndicatorName.SlowSmoothedMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Sequentially Filtered Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateSequentiallyFilteredMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 50)
+    {
+        List<decimal> sfmaList = new();
+        List<decimal> signList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal sma = smaList.ElementAtOrDefault(i);
+            decimal prevSma = i >= 1 ? smaList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal a = Math.Sign(sma - prevSma);
+            signList.Add(a);
+
+            decimal sum = signList.TakeLastExt(length).Sum();
+            decimal alpha = Math.Abs(sum) == length ? 1 : 0;
+            decimal prevSfma = i >= 1 ? sfmaList.ElementAtOrDefault(i - 1) : sma;
+            decimal sfma = (alpha * sma) + ((1 - alpha) * prevSfma);
+            sfmaList.Add(sfma);
+
+            var signal = GetCompareSignal(currentValue - sfma, prevValue - prevSfma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Sfma", sfmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = sfmaList;
+        stockData.IndicatorName = IndicatorName.SequentiallyFilteredMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Svama
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateSvama(this StockData stockData, int length = 14)
+    {
+        List<decimal> hList = new();
+        List<decimal> lList = new();
+        List<decimal> cMaxList = new();
+        List<decimal> cMinList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal a = volumeList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal prevH = i >= 1 ? hList.ElementAtOrDefault(i - 1) : a;
+            decimal h = a > prevH ? a : prevH;
+            hList.Add(h);
+
+            decimal prevL = i >= 1 ? lList.ElementAtOrDefault(i - 1) : a;
+            decimal l = a < prevL ? a : prevL;
+            lList.Add(l);
+
+            decimal bMax = h != 0 ? a / h : 0;
+            decimal bMin = a != 0 ? l / a : 0;
+
+            decimal prevCMax = i >= 1 ? cMaxList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal cMax = (bMax * currentValue) + ((1 - bMax) * prevCMax);
+            cMaxList.Add(cMax);
+
+            decimal prevCMin = i >= 1 ? cMinList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal cMin = (bMin * currentValue) + ((1 - bMin) * prevCMin);
+            cMinList.Add(cMin);
+
+            var signal = GetCompareSignal(currentValue - cMax, prevValue - prevCMax);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Svama", cMaxList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = cMaxList;
+        stockData.IndicatorName = IndicatorName.Svama;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Setting Less Trend Step Filtering
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <returns></returns>
+    public static StockData CalculateSettingLessTrendStepFiltering(this StockData stockData)
+    {
+        List<decimal> chgList = new();
+        List<decimal> aList = new();
+        List<decimal> bList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevB = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevA = aList.LastOrDefault();
+            decimal sc = Math.Abs(currentValue - prevB) + prevA != 0 ? Math.Abs(currentValue - prevB) / (Math.Abs(currentValue - prevB) + prevA) : 0;
+            decimal sltsf = (sc * currentValue) + ((1 - sc) * prevB);
+
+            decimal chg = Math.Abs(sltsf - prevB);
+            chgList.Add(chg);
+
+            decimal a = chgList.Average() * (1 + sc);
+            aList.Add(a);
+
+            decimal b = sltsf > prevB + a ? sltsf : sltsf < prevB - a ? sltsf : prevB;
+            bList.Add(b);
+
+            var signal = GetCompareSignal(currentValue - b, prevValue - prevB);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Sltsf", bList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = bList;
+        stockData.IndicatorName = IndicatorName.SettingLessTrendStepFiltering;
 
         return stockData;
     }

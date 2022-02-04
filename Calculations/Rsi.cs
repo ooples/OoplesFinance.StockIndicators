@@ -81,12 +81,12 @@ public static partial class Calculations
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
-    /// <param name="streakLength">Length of the streak.</param>
-    /// <param name="rsiLength">Length of the rsi.</param>
-    /// <param name="rocLength">Length of the roc.</param>
+    /// <param name="length1">Length of the streak.</param>
+    /// <param name="length2">Length of the rsi.</param>
+    /// <param name="length3">Length of the roc.</param>
     /// <returns></returns>
     public static StockData CalculateConnorsRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod,
-        int streakLength = 2, int rsiLength = 3, int rocLength = 100)
+        int length1 = 2, int length2 = 3, int length3 = 100)
     {
         List<decimal> streakList = new();
         List<decimal> tempList = new();
@@ -95,8 +95,8 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var rsiList = CalculateRelativeStrengthIndex(stockData, maType, rsiLength, rsiLength).CustomValuesList;
-        var rocList = CalculateRateOfChange(stockData, rocLength).CustomValuesList;
+        var rsiList = CalculateRelativeStrengthIndex(stockData, maType, length2, length2).CustomValuesList;
+        var rocList = CalculateRateOfChange(stockData, length3).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -106,9 +106,9 @@ public static partial class Calculations
             decimal roc = rocList.ElementAtOrDefault(i);
             tempList.Add(roc);
 
-            var lookBackList = tempList.TakeLastExt(rocLength).Take(rocLength - 1).ToList();
+            var lookBackList = tempList.TakeLastExt(length3).Take(length3 - 1).ToList();
             int count = lookBackList.Where(x => x <= roc).Count();
-            decimal pctRank = MinOrMax((decimal)count / rocLength * 100, 100, 0);
+            decimal pctRank = MinOrMax((decimal)count / length3 * 100, 100, 0);
             pctRankList.Add(pctRank);
 
             decimal prevStreak = streakList.LastOrDefault();
@@ -118,7 +118,7 @@ public static partial class Calculations
         }
 
         stockData.CustomValuesList = streakList;
-        var rsiStreakList = CalculateRelativeStrengthIndex(stockData, maType, streakLength, streakLength).CustomValuesList;
+        var rsiStreakList = CalculateRelativeStrengthIndex(stockData, maType, length1, length1).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentRsi = rsiList.ElementAtOrDefault(i);
@@ -921,6 +921,280 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = rsiList;
         stockData.IndicatorName = IndicatorName.DominantCycleTunedRelativeStrengthIndex;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Self Adjusting Relative Strength Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="smoothingLength"></param>
+    /// <param name="mult"></param>
+    /// <returns></returns>
+    public static StockData CalculateSelfAdjustingRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 14, int smoothingLength = 21, decimal mult = 2)
+    {
+        List<decimal> obList = new();
+        List<decimal> osList = new();
+        List<Signal> signalsList = new();
+
+        var rsiList = CalculateRelativeStrengthIndex(stockData, maType, length: length).CustomValuesList;
+        stockData.CustomValuesList = rsiList;
+        var rsiStdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
+        var rsiSmaList = GetMovingAverageList(stockData, maType, smoothingLength, rsiList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal rsiStdDev = rsiStdDevList.ElementAtOrDefault(i);
+            decimal rsi = rsiList.ElementAtOrDefault(i);
+            decimal prevRsi = i >= 1 ? rsiList.ElementAtOrDefault(i - 1) : 0;
+            decimal adjustingStdDev = mult * rsiStdDev;
+            decimal rsiSma = rsiSmaList.ElementAtOrDefault(i);
+            decimal prevRsiSma = i >= 1 ? rsiSmaList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal obStdDev = 50 + adjustingStdDev;
+            obList.Add(obStdDev);
+
+            decimal osStdDev = 50 - adjustingStdDev;
+            osList.Add(osStdDev);
+
+            var signal = GetRsiSignal(rsi - rsiSma, prevRsi - prevRsiSma, rsi, prevRsi, obStdDev, osStdDev);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "SaRsi", rsiList },
+            { "Signal", rsiSmaList },
+            { "ObLevel", obList },
+            { "OsLevel", osList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = rsiList;
+        stockData.IndicatorName = IndicatorName.SelfAdjustingRelativeStrengthIndex;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Stochastic Connors Relative Strength Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <param name="smoothLength1"></param>
+    /// <param name="smoothLength2"></param>
+    /// <returns></returns>
+    public static StockData CalculateStochasticConnorsRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+        int length1 = 2, int length2 = 3, int length3 = 100, int smoothLength1 = 3, int smoothLength2 = 3)
+    {
+        List<Signal> signalsList = new();
+
+        var connorsRsiList = CalculateConnorsRelativeStrengthIndex(stockData, maType, length1, length2, length3).CustomValuesList;
+        stockData.CustomValuesList = connorsRsiList;
+        var stochasticList = CalculateStochasticOscillator(stockData, maType, length2, smoothLength1, smoothLength2);
+        var fastDList = stochasticList.OutputValues["FastD"];
+        var slowDList = stochasticList.OutputValues["SlowD"];
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal smaK = fastDList.ElementAtOrDefault(i);
+            decimal smaD = slowDList.ElementAtOrDefault(i);
+            decimal prevSmak = i >= 1 ? fastDList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevSmad = i >= 1 ? slowDList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetRsiSignal(smaK - smaD, prevSmak - prevSmad, smaK, prevSmak, 70, 30);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "SaRsi", fastDList },
+            { "Signal", slowDList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = fastDList;
+        stockData.IndicatorName = IndicatorName.StochasticConnorsRelativeStrengthIndex;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the CCT Stochastic Relative Strength Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <param name="length4"></param>
+    /// <param name="length5"></param>
+    /// <param name="smoothLength1"></param>
+    /// <param name="smoothLength2"></param>
+    /// <param name="signalLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateCCTStochRSI(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
+        int length1 = 5, int length2 = 8, int length3 = 13, int length4 = 14, int length5 = 21, int smoothLength1 = 3, int smoothLength2 = 8,
+        int signalLength = 9)
+    {
+        List<decimal> type1List = new();
+        List<decimal> type2List = new();
+        List<decimal> type3List = new();
+        List<decimal> type4List = new();
+        List<decimal> type5List = new();
+        List<decimal> type6List = new();
+        List<decimal> tempRsi21List = new();
+        List<decimal> tempRsi14List = new();
+        List<decimal> tempRsi13List = new();
+        List<decimal> tempRsi5List = new();
+        List<decimal> tempRsi8List = new();
+        List<decimal> typeCustomList = new();
+        List<Signal> signalsList = new();
+
+        var rsi5List = CalculateRelativeStrengthIndex(stockData, maType, length: length1).CustomValuesList;
+        var rsi8List = CalculateRelativeStrengthIndex(stockData, maType, length: length2).CustomValuesList;
+        var rsi13List = CalculateRelativeStrengthIndex(stockData, maType, length: length3).CustomValuesList;
+        var rsi14List = CalculateRelativeStrengthIndex(stockData, maType, length: length4).CustomValuesList;
+        var rsi21List = CalculateRelativeStrengthIndex(stockData, maType, length: length5).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentRSI5 = rsi5List.ElementAtOrDefault(i);
+            tempRsi5List.Add(currentRSI5);
+
+            decimal currentRSI8 = rsi8List.ElementAtOrDefault(i);
+            tempRsi8List.Add(currentRSI8);
+
+            decimal currentRSI13 = rsi13List.ElementAtOrDefault(i);
+            tempRsi13List.Add(currentRSI13);
+
+            decimal currentRSI14 = rsi14List.ElementAtOrDefault(i);
+            tempRsi14List.Add(currentRSI14);
+
+            decimal currentRSI21 = rsi21List.ElementAtOrDefault(i);
+            tempRsi21List.Add(currentRSI21);
+
+            decimal lowestX1 = tempRsi21List.TakeLastExt(length2).Min();
+            decimal lowestZ1 = tempRsi21List.TakeLastExt(length3).Min();
+            decimal highestY1 = tempRsi21List.TakeLastExt(length3).Max();
+            decimal lowestX2 = tempRsi21List.TakeLastExt(length5).Min();
+            decimal lowestZ2 = tempRsi21List.TakeLastExt(length5).Min();
+            decimal highestY2 = tempRsi21List.TakeLastExt(length5).Max();
+            decimal lowestX3 = tempRsi14List.TakeLastExt(length4).Min();
+            decimal lowestZ3 = tempRsi14List.TakeLastExt(length4).Min();
+            decimal highestY3 = tempRsi14List.TakeLastExt(length4).Max();
+            decimal lowestX4 = tempRsi21List.TakeLastExt(length3).Min();
+            decimal lowestZ4 = tempRsi21List.TakeLastExt(length3).Min();
+            decimal highestY4 = tempRsi21List.TakeLastExt(length2).Max();
+            decimal lowestX5 = tempRsi5List.TakeLastExt(length1).Min();
+            decimal lowestZ5 = tempRsi5List.TakeLastExt(length1).Min();
+            decimal highestY5 = tempRsi5List.TakeLastExt(length1).Max();
+            decimal lowestX6 = tempRsi13List.TakeLastExt(length3).Min();
+            decimal lowestZ6 = tempRsi13List.TakeLastExt(length3).Min();
+            decimal highestY6 = tempRsi13List.TakeLastExt(length3).Max();
+            decimal lowestCustom = tempRsi8List.TakeLastExt(length2).Min();
+            decimal highestCustom = tempRsi8List.TakeLastExt(length2).Max();
+
+            decimal stochRSI1 = highestY1 - lowestZ1 != 0 ? (currentRSI21 - lowestX1) / (highestY1 - lowestZ1) * 100 : 0;
+            type1List.Add(stochRSI1);
+
+            decimal stochRSI2 = highestY2 - lowestZ2 != 0 ? (currentRSI21 - lowestX2) / (highestY2 - lowestZ2) * 100 : 0;
+            type2List.Add(stochRSI2);
+
+            decimal stochRSI3 = highestY3 - lowestZ3 != 0 ? (currentRSI14 - lowestX3) / (highestY3 - lowestZ3) * 100 : 0;
+            type3List.Add(stochRSI3);
+
+            decimal stochRSI4 = highestY4 - lowestZ4 != 0 ? (currentRSI21 - lowestX4) / (highestY4 - lowestZ4) * 100 : 0;
+            type4List.Add(stochRSI4);
+
+            decimal stochRSI5 = highestY5 - lowestZ5 != 0 ? (currentRSI5 - lowestX5) / (highestY5 - lowestZ5) * 100 : 0;
+            type5List.Add(stochRSI5);
+
+            decimal stochRSI6 = highestY6 - lowestZ6 != 0 ? (currentRSI13 - lowestX6) / (highestY6 - lowestZ6) * 100 : 0;
+            type6List.Add(stochRSI6);
+
+            decimal stochCustom = highestCustom - lowestCustom != 0 ? (currentRSI8 - lowestCustom) / (highestCustom - lowestCustom) * 100 : 0;
+            typeCustomList.Add(stochCustom);
+        }
+
+        var rsiEma4List = GetMovingAverageList(stockData, maType, smoothLength2, type4List);
+        var rsiEma5List = GetMovingAverageList(stockData, maType, smoothLength1, type5List);
+        var rsiEma6List = GetMovingAverageList(stockData, maType, smoothLength1, type6List);
+        var rsiEmaCustomList = GetMovingAverageList(stockData, maType, smoothLength1, typeCustomList);
+        var rsiSignalList = GetMovingAverageList(stockData, maType, signalLength, type1List);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            var rsi = type1List.ElementAtOrDefault(i);
+            var prevRsi = i >= 1 ? type1List.ElementAtOrDefault(i - 1) : 0;
+            var rsiSignal = rsiSignalList.ElementAtOrDefault(i);
+            var prevRsiSignal = i >= 1 ? rsiSignalList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetRsiSignal(rsi - rsiSignal, prevRsi - prevRsiSignal, rsi, prevRsi, 90, 10);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Type1", type1List },
+            { "Type2", type2List },
+            { "Type3", type3List },
+            { "Type4", rsiEma4List },
+            { "Type5", rsiEma5List },
+            { "Type6", rsiEma6List },
+            { "TypeCustom", rsiEmaCustomList },
+            { "Signal", rsiSignalList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = type1List;
+        stockData.IndicatorName = IndicatorName.CCTStochRelativeStrengthIndex;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Stochastic Relative Strength Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="smoothLength1"></param>
+    /// <param name="smoothLength2"></param>
+    /// <returns></returns>
+    public static StockData CalculateStochasticRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+        int length = 14, int smoothLength1 = 3, int smoothLength2 = 3)
+    {
+        List<Signal> signalsList = new();
+
+        var rsiList = CalculateRelativeStrengthIndex(stockData, maType, length: length).CustomValuesList;
+        stockData.CustomValuesList = rsiList;
+        var stoRsiList = CalculateStochasticOscillator(stockData, maType, length, smoothLength1, smoothLength2);
+        var stochRsiList = stoRsiList.OutputValues["FastD"];
+        var stochRsiSignalList = stoRsiList.OutputValues["SlowD"];
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentRSI = stochRsiList.ElementAtOrDefault(i);
+            decimal prevStochRsi = i >= 1 ? stochRsiList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentRsiSignal = stochRsiSignalList.ElementAtOrDefault(i);
+            decimal prevRsiSignal = i >= 1 ? stochRsiSignalList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetRsiSignal(currentRSI - currentRsiSignal, prevStochRsi - prevRsiSignal, currentRSI, prevStochRsi, 80, 20);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "StochRsi", stochRsiList },
+            { "Signal", stochRsiSignalList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = stochRsiList;
+        stockData.IndicatorName = IndicatorName.StochasticRelativeStrengthIndex;
 
         return stockData;
     }
