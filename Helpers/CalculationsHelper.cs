@@ -6,6 +6,7 @@ global using static OoplesFinance.StockIndicators.Helpers.SignalHelper;
 global using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
 global using MathNet.Numerics;
 global using MathNet.Numerics.Statistics;
+global using Nessos.LinqOptimizer.CSharp;
 
 namespace OoplesFinance.StockIndicators.Helpers;
 
@@ -283,8 +284,47 @@ public static class CalculationsHelper
             case MovingAvgType.RightSidedRickerMovingAverage:
                 movingAvgList = stockData.CalculateRightSidedRickerMovingAverage(length: length).CustomValuesList;
                 break;
+            case MovingAvgType.SelfWeightedMovingAverage:
+                movingAvgList = stockData.CalculateSelfWeightedMovingAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.SequentiallyFilteredMovingAverage:
+                movingAvgList = stockData.CalculateSequentiallyFilteredMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.SettingLessTrendStepFiltering:
+                movingAvgList = stockData.CalculateSettingLessTrendStepFiltering().CustomValuesList;
+                break;
+            case MovingAvgType.ShapeshiftingMovingAverage:
+                movingAvgList = stockData.CalculateShapeshiftingMovingAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.SharpModifiedMovingAverage:
+                movingAvgList = stockData.CalculateSharpModifiedMovingAverage(length: length).CustomValuesList;
+                break;
             case MovingAvgType.SimpleMovingAverage:
                 movingAvgList = stockData.CalculateSimpleMovingAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.SimplifiedLeastSquaresMovingAverage:
+                movingAvgList = stockData.CalculateSimplifiedLeastSquaresMovingAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.SimplifiedWeightedMovingAverage:
+                movingAvgList = stockData.CalculateSimplifiedWeightedMovingAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.SineWeightedMovingAverage:
+                movingAvgList = stockData.CalculateSineWeightedMovingAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.SlowSmoothedMovingAverage:
+                movingAvgList = stockData.CalculateSlowSmoothedMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.Spencer15PointMovingAverage:
+                movingAvgList = stockData.CalculateSpencer15PointMovingAverage().CustomValuesList;
+                break;
+            case MovingAvgType.Spencer21PointMovingAverage:
+                movingAvgList = stockData.CalculateSpencer21PointMovingAverage().CustomValuesList;
+                break;
+            case MovingAvgType.SquareRootWeightedMovingAverage:
+                movingAvgList = stockData.CalculateSquareRootWeightedMovingAverage(length).CustomValuesList;
+                break;
+            case MovingAvgType.Svama:
+                movingAvgList = stockData.CalculateSvama(length).CustomValuesList;
                 break;
             case MovingAvgType.SymmetricallyWeightedMovingAverage:
                 movingAvgList = stockData.CalculateSymmetricallyWeightedMovingAverage(length).CustomValuesList;

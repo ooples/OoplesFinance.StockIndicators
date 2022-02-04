@@ -290,9 +290,9 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length1).CustomValuesList;
-        var stdDev10List = CalculateStandardDeviationVolatility(stockData, length2).CustomValuesList;
-        var stdDev20List = CalculateStandardDeviationVolatility(stockData, length3).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length1).CustomValuesList;
+        var stdDev10List = CalculateStandardDeviationVolatility(stockData, maType, length2).CustomValuesList;
+        var stdDev20List = CalculateStandardDeviationVolatility(stockData, maType, length3).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -481,7 +481,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         var stdDevEmaList = GetMovingAverageList(stockData, maType, length, stdDevList);
 
         for (int i = 0; i < stockData.Count; i++)

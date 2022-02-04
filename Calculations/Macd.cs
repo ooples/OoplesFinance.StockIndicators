@@ -423,7 +423,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length2).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length2).CustomValuesList;
         var fastSmaList = GetMovingAverageList(stockData, maType, fastLength, inputList);
         var slowSmaList = GetMovingAverageList(stockData, maType, slowLength, inputList);
         var zScoreList = CalculateZDistanceFromVwapIndicator(stockData, length: length1).CustomValuesList;
@@ -506,7 +506,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         var fastSmaList = GetMovingAverageList(stockData, maType, fastLength, inputList);
         var slowSmaList = GetMovingAverageList(stockData, maType, slowLength, inputList);
         var wilderMovingAvgList = GetMovingAverageList(stockData, MovingAvgType.WildersSmoothingMethod, length, inputList);
@@ -682,6 +682,75 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = rList;
         stockData.IndicatorName = IndicatorName.DiNapoliMovingAverageConvergenceDivergence;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Stochastic Moving Average Convergence Divergence Oscillator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
+    /// <param name="signalLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateStochasticMovingAverageConvergenceDivergenceOscillator(this StockData stockData, 
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 45, int fastLength = 12, int slowLength = 26, int signalLength = 9)
+    {
+        List<decimal> macdStochasticHistogramList = new();
+        List<decimal> fastStochasticList = new();
+        List<decimal> slowStochasticList = new();
+        List<decimal> macdStochasticList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
+
+        var fastEmaList = GetMovingAverageList(stockData, maType, fastLength, inputList);
+        var slowEmaList = GetMovingAverageList(stockData, maType, slowLength, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal fastEma = fastEmaList.ElementAtOrDefault(i);
+            decimal slowEma = slowEmaList.ElementAtOrDefault(i);
+            decimal hh = highestList.ElementAtOrDefault(i);
+            decimal ll = lowestList.ElementAtOrDefault(i);
+            decimal range = hh - ll;
+
+            decimal fastStochastic = range != 0 ? (fastEma - ll) / range : 0;
+            fastStochasticList.Add(fastStochastic);
+
+            decimal slowStochastic = range != 0 ? (slowEma - ll) / range : 0;
+            slowStochasticList.Add(slowStochastic);
+
+            decimal macdStochastic = 10 * (fastStochastic - slowStochastic);
+            macdStochasticList.Add(macdStochastic);
+        }
+
+        var macdStochasticSignalLineList = GetMovingAverageList(stockData, maType, signalLength, macdStochasticList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal macdStochastic = macdStochasticList.ElementAtOrDefault(i);
+            decimal macdStochasticSignalLine = macdStochasticSignalLineList.ElementAtOrDefault(i);
+
+            decimal prevMacdHistogram = macdStochasticHistogramList.LastOrDefault();
+            decimal macdHistogram = macdStochastic - macdStochasticSignalLine;
+            macdStochasticHistogramList.Add(macdHistogram);
+
+            var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Macd", macdStochasticList },
+            { "Signal", macdStochasticSignalLineList },
+            { "Histogram", macdStochasticHistogramList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = macdStochasticList;
+        stockData.IndicatorName = IndicatorName.StochasticMovingAverageConvergenceDivergenceOscillator;
 
         return stockData;
     }

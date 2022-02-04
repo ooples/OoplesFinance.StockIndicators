@@ -147,7 +147,7 @@ public static partial class Calculations
         }
 
         stockData.CustomValuesList = retList;
-        var stdDevList = CalculateStandardDeviationVolatility(stockData, length).CustomValuesList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
         var retSmaList = GetMovingAverageList(stockData, maType, length, retList);
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -372,6 +372,191 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = treynorList;
         stockData.IndicatorName = IndicatorName.TreynorRatio;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Sortino Ratio
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="bmk"></param>
+    /// <returns></returns>
+    public static StockData CalculateSortinoRatio(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 30, 
+        decimal bmk = 0.02m)
+    {
+        List<decimal> sortinoList = new();
+        List<decimal> retList = new();
+        List<decimal> deviationSquaredList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal minPerYr = 60 * 24 * 30 * 12, barMin = 60 * 24, barsPerYr = minPerYr / barMin;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+            decimal bench = Pow(1 + bmk, length / barsPerYr) - 1;
+
+            decimal ret = prevValue != 0 ? (currentValue / prevValue) - 1 - bench : 0;
+            retList.Add(ret);
+        }
+
+        var retSmaList = GetMovingAverageList(stockData, maType, length, retList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal ret = retList.ElementAtOrDefault(i);
+            decimal retSma = retSmaList.ElementAtOrDefault(i);
+            decimal currentDeviation = Math.Min(ret - retSma, 0);
+
+            decimal deviationSquared = Pow(currentDeviation, 2);
+            deviationSquaredList.Add(deviationSquared);
+        }
+
+        var divisionOfSumList = GetMovingAverageList(stockData, maType, length, deviationSquaredList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal divisionOfSum = divisionOfSumList.ElementAtOrDefault(i);
+            decimal stdDeviation = Sqrt(divisionOfSum);
+            decimal retSma = retSmaList.ElementAtOrDefault(i);
+
+            decimal prevSortino = sortinoList.LastOrDefault();
+            decimal sortino = stdDeviation != 0 ? retSma / stdDeviation : 0;
+            sortinoList.Add(sortino);
+
+            var signal = GetCompareSignal(sortino - 2, prevSortino - 2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Sr", sortinoList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = sortinoList;
+        stockData.IndicatorName = IndicatorName.SortinoRatio;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Sharpe Ratio
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="bmk"></param>
+    /// <returns></returns>
+    public static StockData CalculateSharpeRatio(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 30, 
+        decimal bmk = 0.02m)
+    {
+        List<decimal> sharpeList = new();
+        List<decimal> retList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal minPerYr = 60 * 24 * 30 * 12, barMin = 60 * 24, barsPerYr = minPerYr / barMin;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+            decimal bench = Pow(1 + bmk, length / barsPerYr) - 1;
+
+            decimal ret = prevValue != 0 ? (currentValue / prevValue) - 1 - bench : 0;
+            retList.Add(ret);
+        }
+
+        var retSmaList = GetMovingAverageList(stockData, maType, length, retList);
+        stockData.CustomValuesList = retList;
+        var stdDevList = CalculateStandardDeviationVolatility(stockData, maType, length).CustomValuesList;
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal stdDeviation = stdDevList.ElementAtOrDefault(i);
+            decimal retSma = retSmaList.ElementAtOrDefault(i);
+
+            decimal prevSharpe = sharpeList.LastOrDefault();
+            decimal sharpe = stdDeviation != 0 ? retSma / stdDeviation : 0;
+            sharpeList.Add(sharpe);
+
+            var signal = GetCompareSignal(sharpe - 2, prevSharpe - 2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Sr", sharpeList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = sharpeList;
+        stockData.IndicatorName = IndicatorName.SharpeRatio;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Shinohara Intensity Ratio
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateShinoharaIntensityRatio(this StockData stockData, int length = 14)
+    {
+        List<decimal> tempOpenList = new();
+        List<decimal> tempLowList = new();
+        List<decimal> tempHighList = new();
+        List<decimal> prevCloseList = new();
+        List<decimal> ratioAList = new();
+        List<decimal> ratioBList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal high = highList.ElementAtOrDefault(i);
+            tempHighList.Add(high);
+
+            decimal low = lowList.ElementAtOrDefault(i);
+            tempLowList.Add(low);
+
+            decimal open = openList.ElementAtOrDefault(i);
+            tempOpenList.Add(open);
+
+            decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            prevCloseList.Add(prevClose);
+
+            decimal highSum = tempHighList.TakeLastExt(length).Sum();
+            decimal lowSum = tempLowList.TakeLastExt(length).Sum();
+            decimal openSum = openList.TakeLastExt(length).Sum();
+            decimal prevCloseSum = prevCloseList.TakeLastExt(length).Sum();
+            decimal bullA = highSum - openSum;
+            decimal bearA = openSum - lowSum;
+            decimal bullB = highSum - prevCloseSum;
+            decimal bearB = prevCloseSum - lowSum;
+
+            decimal prevRatioA = ratioAList.LastOrDefault();
+            decimal ratioA = bearA != 0 ? bullA / bearA * 100 : 0;
+            ratioAList.Add(ratioA);
+
+            decimal prevRatioB = ratioBList.LastOrDefault();
+            decimal ratioB = bearB != 0 ? bullB / bearB * 100 : 0;
+            ratioBList.Add(ratioB);
+
+            var signal = GetCompareSignal(ratioA - ratioB, prevRatioA - prevRatioB);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "ARatio", ratioAList },
+            { "BRatio", ratioBList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.ShinoharaIntensityRatio;
 
         return stockData;
     }
