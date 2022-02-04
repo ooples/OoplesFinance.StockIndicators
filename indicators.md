@@ -6,6 +6,8 @@
 [Grover Llorens Cycle Oscillator](https://www.tradingview.com/script/zZCpzplM-Grover-Llorens-Cycle-Oscillator-alexgrover-Luc%C3%ADa-Llorens/)
 
 [Hurst Cycle Channel](https://www.tradingview.com/script/QmgtSIj5-Hurst-Cycle-Channel-Clone-LazyBear/)
+
+[Simple Cycle](https://www.tradingview.com/script/dWAJkHVR-Simple-Cycle/)
         
 ## Momentum
 [4 Moving Average Convergence Divergence](https://www.tradingview.com/script/nbx4UFZ6-Indicator-4MACD/)
@@ -364,7 +366,49 @@
 
 [Schaff Trend Cycle](https://www.tradingpedia.com/forex-trading-indicators/schaff-trend-cycle)
 
+[Sector Rotation Model](https://www.motivewave.com/studies/sector_rotation_model.htm)
+
+[Self Adjusting Relative Strength Index](https://www.tradingview.com/script/M3rE7rre-Self-Adjusting-RSI/)
+
+[Sell Gravitation Index](https://www.tradingview.com/script/DhtCKFtr-Sell-Gravitation-Index/)
+
+[Sentiment Zone Oscillator](https://www.motivewave.com/studies/sentiment_zone_oscillator.htm)
+
+[SMI Ergodic Indicator](https://www.motivewave.com/studies/smi_ergodic_indicator.htm)
+
+[Smoothed Delta Ratio Oscillator](https://www.tradingview.com/script/iF1q6qeg-Smoothed-Delta-s-Ratio-Oscillator/)
+
+[Smoothed Rate Of Change](https://www.tradingview.com/script/rnlM3SYP-Smoothed-Rate-of-Change/)
+
+[Smoothed Williams Accumulation Distribution](https://www.tradingview.com/script/UVh3Ka7n-Smoothened-Williams-Accumulation-Distribution-Williams-AD/)
+
+[Spearman Indicator](https://www.motivewave.com/studies/spearman_indicator.htm)
+
+[Squeeze Momentum Indicator](https://www.tradingview.com/script/nqQ1DT5a-Squeeze-Momentum-Indicator-LazyBear/)
+
+[Stationary Extrapolated Levels Oscillator](https://www.tradingview.com/script/4VsgFy9h-Stationary-Extrapolated-Levels-Oscillator/)
+
+[Stochastic Connors Relative Strength Index](https://www.tradingview.com/script/vWAPUAl9-Stochastic-Connors-RSI/)
+
+[Stochastic Custom Oscillator](https://www.motivewave.com/studies/stochastics_sc.htm)
+
+[Stochastic Fast Oscillator](https://www.motivewave.com/studies/stochastic_fast.htm)
+
+[Stochastic Momentum Index](https://www.tradingview.com/script/NULg8CIG-Stochastic-Momentum-Index/)
+
+[Stochastic Moving Average Convergence Divergence Oscillator](https://www.tradingview.com/script/yk1S0tkn-Modified-Stochastic-MACD-Oscillator-Vitali-Apirine)
+
 [Stochastic Oscillator](https://www.investopedia.com/terms/s/stochasticoscillator.asp)
+
+[Stochastic Regular](https://www.motivewave.com/studies/stochastic_regular.htm)
+
+[Stochastic Relative Strength Index](https://www.motivewave.com/studies/stochastic_rsi.htm)
+
+[Strength Of Movement](https://www.tradingview.com/script/68tp4goW-RedK-Strength-of-Movement/)
+
+[Support And Resistance Oscillator](https://www.motivewave.com/studies/supportandresistance_oscillator.htm)
+
+[Swami Stochastics](https://www.motivewave.com/studies/swami_stochastics.htm)
 
 [TFS Mbo Indicator](https://www.tradingview.com/script/luSbg9Gi-TFS-MBO-indicator/)
 
@@ -493,7 +537,13 @@
 
 [Range Identifier](https://www.tradingview.com/script/FnFOxVIY-Range-Identifier-LazyBear/)
 
+[Smart Envelope](https://www.tradingview.com/script/avycDZy2-Smart-Envelope-Running-Away-From-The-Trend/)
+
 [Standard Pivot Points](https://school.stockcharts.com/doku.php?id=technical_indicators:pivot_points)
+
+[Support And Resistance Oscillator](https://www.motivewave.com/studies/supportandresistance_oscillator.htm)
+
+[Support Resistance](https://www.motivewave.com/studies/support_resistance.htm)
 
 [Time And Money Channel](https://www.tradingview.com/script/qOdWLAxG-Indicators-Time-and-Money-Chart-Channel-Demark-Pressure-Ratio/)
 
@@ -770,9 +820,45 @@ Atr Filtered Exponential Moving Average
 
 [Running Equity](https://www.tradingview.com/script/BqLZ8fp7-Running-Equity-A-New-Indicator-For-Optimal-Markets-Detection/)
 
+[Self Weighted Moving Average](https://www.tradingview.com/script/727DvbJE-Self-Weighted-Moving-Average/)
+
+[Sequentially Filtered Moving Average](https://www.tradingview.com/script/4pjBlh4c-Sequentially-Filtered-Moving-Average)
+
+[Setting Less Trend Step Filtering](https://www.tradingview.com/script/UoXQCBPA-Setting-Less-Trend-Step-Filtering/)
+
+[Shapeshifting Moving Average](https://www.tradingview.com/script/8fHSdRd4-Shapeshifting-Moving-Average-Switching-From-Low-Lag-To-Smooth/)
+
+[Sharp Modified Moving Average](https://www.tradingview.com/script/e120lIKf-Sharp-Modified-Moving-Average/)
+
+[Shinohara Intensity Ratio](https://www.tradingview.com/script/WqDQjQmB/)
+
+[Simple Lines](https://www.tradingview.com/script/61YkzUNL-Simple-Lines/)
+
 [Simple Moving Average](https://www.investopedia.com/terms/s/sma.asp)
 
-[SuperTrend](https://www.elearnmarkets.com/blog/supertrend-indicator-strategy-trading/)
+[Simplified Least Squares Moving Average](https://www.tradingview.com/script/tQ2tpvNn-WMA-LSMA-Simplified-Calculations/)
+
+[Simplified Weighted Moving Average](https://www.tradingview.com/script/tQ2tpvNn-WMA-LSMA-Simplified-Calculations/)
+
+[Sine Weighted Moving Average](https://www.tradingview.com/script/6MWFvnPO-Sine-Weighted-Moving-Average/)
+
+[Slow Smoothed Moving Average](https://www.tradingview.com/script/4nmGHAnL-RedK-Slow-Smooth-Average-RSS-WMA/)
+
+[Spencer 15 Point Moving Average](https://www.tradingview.com/script/Tl5fNDvN-Spencer-15-Point-Moving-Average/)
+
+[Spencer 21 Point Moving Average](https://www.tradingview.com/script/CfFyFamg-Spencer-21-Point-Moving-Average/)]
+
+[Square Root Weighted Moving Average](https://www.tradingview.com/script/Tu8lPRdC-Square-Root-Weighted-Moving-Average/)
+
+[Stationary Extrapolated Levels](https://www.tradingview.com/script/JKDkgoo5-Stationary-Extrapolated-Levels/)
+
+[Super Trend](https://www.elearnmarkets.com/blog/supertrend-indicator-strategy-trading/)
+
+[Super Trend Filter](https://www.tradingview.com/script/2raJpSpw-Supertrend-Filter/)
+
+[Surface Roughness Estimator](https://www.tradingview.com/script/AOOMPcio-Surface-Roughness-Estimator/)
+
+[Svama](https://www.tradingview.com/script/YRmrChmW-SVAMA-A-Non-Parametric-Adaptive-Moving-Average-Based-On-Volume/)
 
 [Symmetrically Weighted Moving Average](https://www.tradingview.com/script/MjrqeXd0-Symmetrically-Weighted-Moving-Average/)
 
@@ -1001,9 +1087,25 @@ Atr Filtered Exponential Moving Average
 
 [Root Moving Average Squared Error Bands](https://www.tradingview.com/script/VlOHNzPy-Bands-Trailing-Stop-Utility/)
 
+[Scalpers Channel](https://www.tradingview.com/script/hmfZ7SUf-Scalper-s-Channel/)
+
+[Sharpe Ratio](https://www.motivewave.com/studies/sharpe_ratio.htm)
+
+[Sigma Spikes](https://www.tradingview.com/script/LjsiL67g-Sigma-Spikes-CC/)
+
+[Smoothed Volatility Bands](https://www.tradingview.com/script/48APYjSE-Smoothed-Volatility-Bands-CC/)
+
+[Sortino Ratio](https://www.motivewave.com/studies/sortino_ratio.htm)
+
+[Standard Deviation](https://www.tradingview.com/script/mhhoMvXp-Standard-Deviation-Sum-Of-The-Squares-Minus-Square-Of-The-Sums/)
+
 [Standard Deviation Channel](https://www.motivewave.com/studies/standard_deviation_channel.htm)
 
 [Standard Deviation Volatility](https://www.investopedia.com/terms/s/standarddeviation.asp)
+
+[Statistical Volatility](https://www.tradingview.com/script/uS4tA0u2-Statistical-Volatility-Extreme-Value-Method/)
+
+[Stiffness Indicator](https://www.tradingview.com/script/Ds1akUBu-Stiffness-Indicator/)
 
 [Stoller Average Range Channels](https://www.investopedia.com/terms/s/starc.asp)
 
