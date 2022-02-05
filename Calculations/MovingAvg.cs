@@ -6807,4 +6807,226 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Elastic Volume Weighted Moving Average V1
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="mult"></param>
+    /// <returns></returns>
+    public static StockData CalculateElasticVolumeWeightedMovingAverageV1(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 40, decimal mult = 20)
+    {
+        List<decimal> evwmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
+
+        var volumeSmaList = GetMovingAverageList(stockData, maType, length, volumeList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentAvgVolume = volumeSmaList.ElementAtOrDefault(i);
+            decimal currentVolume = volumeList.ElementAtOrDefault(i);
+            decimal n = currentAvgVolume * mult;
+
+            decimal prevEVWMA = i >= 1 ? evwmaList.LastOrDefault() : currentValue;
+            decimal evwma = n > 0 ? (((n - currentVolume) * prevEVWMA) + (currentVolume * currentValue)) / n : 0; ;
+            evwmaList.Add(evwma);
+
+            var signal = GetCompareSignal(currentValue - evwma, prevValue - prevEVWMA);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Evwma", evwmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = evwmaList;
+        stockData.IndicatorName = IndicatorName.ElasticVolumeWeightedMovingAverageV1;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Elastic Volume Weighted Moving Average V2
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateElasticVolumeWeightedMovingAverageV2(this StockData stockData, int length = 14)
+    {
+        List<decimal> tempList = new();
+        List<decimal> evwmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal currentVolume = volumeList.ElementAtOrDefault(i);
+            tempList.Add(currentVolume);
+
+            decimal volumeSum = tempList.TakeLastExt(length).Sum();
+            decimal prevEvwma = evwmaList.LastOrDefault();
+            decimal evwma = volumeSum != 0 ? (((volumeSum - currentVolume) * prevEvwma) + (currentVolume * currentValue)) / volumeSum : 0;
+            evwmaList.Add(evwma);
+
+            var signal = GetCompareSignal(currentValue - evwma, prevValue - prevEvwma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Evwma", evwmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = evwmaList;
+        stockData.IndicatorName = IndicatorName.ElasticVolumeWeightedMovingAverageV2;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Equity Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateEquityMovingAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 14)
+    {
+        List<decimal> chgXList = new();
+        List<decimal> chgXCumList = new();
+        List<decimal> xList = new();
+        List<decimal> eqmaList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal sma = smaList.ElementAtOrDefault(i);
+            decimal prevEqma = i >= 1 ? eqmaList.ElementAtOrDefault(i - 1) : currentValue;
+
+            decimal prevX = xList.LastOrDefault();
+            decimal x = Math.Sign(currentValue - sma);
+            xList.Add(x);
+
+            decimal chgX = (currentValue - prevValue) * prevX;
+            chgXList.Add(chgX);
+
+            decimal chgXCum = (currentValue - prevValue) * x;
+            chgXCumList.Add(chgXCum);
+
+            decimal opteq = chgXCumList.Sum();
+            decimal req = chgXList.TakeLastExt(length).Sum();
+            decimal alpha = opteq != 0 ? MinOrMax(req / opteq, 0.99m, 0.01m) : 0.99m;
+
+            decimal eqma = (alpha * currentValue) + ((1 - alpha) * prevEqma);
+            eqmaList.Add(eqma);
+
+            var signal = GetCompareSignal(currentValue - eqma, prevValue - prevEqma);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Eqma", eqmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = eqmaList;
+        stockData.IndicatorName = IndicatorName.EquityMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Edge Preserving Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="smoothLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateEdgePreservingFilter(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 200, 
+        int smoothLength = 50)
+    {
+        List<decimal> osList = new();
+        List<decimal> absOsList = new();
+        List<decimal> hList = new();
+        List<decimal> aList = new();
+        List<decimal> bList = new();
+        List<decimal> cList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var smaList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal sma = smaList.ElementAtOrDefault(i);
+
+            decimal os = currentValue - sma;
+            osList.Add(os);
+
+            decimal absOs = Math.Abs(os);
+            absOsList.Add(absOs);
+        }
+
+        stockData.CustomValuesList = absOsList;
+        var pList = CalculateLinearRegression(stockData, smoothLength).CustomValuesList;
+        var (highestList, _) = GetMaxAndMinValuesList(pList, length);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal p = pList.ElementAtOrDefault(i);
+            decimal highest = highestList.ElementAtOrDefault(i);
+            decimal os = osList.ElementAtOrDefault(i);
+
+            decimal prevH = hList.LastOrDefault();
+            decimal h = highest != 0 ? p / highest : 0;
+            hList.Add(h);
+
+            decimal cnd = h == 1 && prevH != 1 ? 1 : 0;
+            decimal sign = cnd == 1 && os < 0 ? 1 : cnd == 1 && os > 0 ? -1 : 0;
+            bool condition = sign != 0;
+
+            decimal prevA = i >= 1 ? aList.ElementAtOrDefault(i - 1) : 1;
+            decimal a = condition ? 1 : prevA + 1;
+            aList.Add(a);
+
+            decimal prevB = i >= 1 ? bList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal b = a == 1 ? currentValue : prevB + currentValue;
+            bList.Add(b);
+
+            decimal prevC = cList.LastOrDefault();
+            decimal c = a != 0 ? b / a : 0;
+            cList.Add(c);
+
+            var signal = GetCompareSignal(currentValue - c, prevValue - prevC);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Epf", cList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = cList;
+        stockData.IndicatorName = IndicatorName.EdgePreservingFilter;
+
+        return stockData;
+    }
 }

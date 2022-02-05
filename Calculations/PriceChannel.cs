@@ -807,12 +807,12 @@ public static partial class Calculations
         var upperBandList = GetMovingAverageList(stockData, maType, length, highestList);
         var lowerBandList = GetMovingAverageList(stockData, maType, length, lowestList);
 
-        for (int j = 0; j < stockData.Count; j++)
+        for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList.ElementAtOrDefault(j);
-            decimal prevValue = j >= 1 ? inputList.ElementAtOrDefault(j - 1) : 0;
-            decimal upperBand = upperBandList.ElementAtOrDefault(j);
-            decimal lowerBand = lowerBandList.ElementAtOrDefault(j);
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal upperBand = upperBandList.ElementAtOrDefault(i);
+            decimal lowerBand = lowerBandList.ElementAtOrDefault(i);
 
             decimal prevMiddleBand = middleBandList.LastOrDefault();
             decimal middleBand = (upperBand + lowerBand) / 2;
@@ -3600,6 +3600,125 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = new List<decimal>();
         stockData.IndicatorName = IndicatorName.SmoothedVolatilityBands;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Extended Recursive Bands
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateExtendedRecursiveBands(this StockData stockData, int length = 100)
+    {
+        List<decimal> aClassicList = new();
+        List<decimal> bClassicList = new();
+        List<decimal> cClassicList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal sc = (decimal)2 / (length + 1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevAClassic = i >= 1 ? aClassicList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevBClassic = i >= 1 ? bClassicList.ElementAtOrDefault(i - 1) : currentValue;
+
+            decimal aClassic = Math.Max(prevAClassic, currentValue) - (sc * Math.Abs(currentValue - prevAClassic));
+            aClassicList.Add(aClassic);
+
+            decimal bClassic = Math.Min(prevBClassic, currentValue) + (sc * Math.Abs(currentValue - prevBClassic));
+            bClassicList.Add(bClassic);
+
+            decimal prevCClassic = cClassicList.LastOrDefault();
+            decimal cClassic = (aClassic + bClassic) / 2;
+            cClassicList.Add(cClassic);
+
+            var signal = GetCompareSignal(currentValue - cClassic, prevValue - prevCClassic);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", aClassicList },
+            { "MiddleBand", cClassicList },
+            { "LowerBand", bClassicList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.ExtendedRecursiveBands;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Efficient Trend Step Channel
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateEfficientTrendStepChannel(this StockData stockData, int length = 100, int fastLength = 50, int slowLength = 200)
+    {
+        List<decimal> val2List = new();
+        List<decimal> upperList = new();
+        List<decimal> lowerList = new();
+        List<decimal> aList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var erList = CalculateKaufmanAdaptiveMovingAverage(stockData, length).OutputValues["Er"];
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+
+            decimal val2 = currentValue * 2;
+            val2List.Add(val2);
+        }
+
+        stockData.CustomValuesList = val2List;
+        var stdDevFastList = CalculateStandardDeviationVolatility(stockData, length: fastLength).CustomValuesList;
+        stockData.CustomValuesList = val2List;
+        var stdDevSlowList = CalculateStandardDeviationVolatility(stockData, length: slowLength).CustomValuesList;
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal er = erList.ElementAtOrDefault(i);
+            decimal fastStdDev = stdDevFastList.ElementAtOrDefault(i);
+            decimal slowStdDev = stdDevSlowList.ElementAtOrDefault(i);
+            decimal prevA = i >= 1 ? aList.ElementAtOrDefault(i - 1) : currentValue;
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal dev = (er * fastStdDev) + ((1 - er) * slowStdDev);
+
+            decimal a = currentValue > prevA + dev ? currentValue : currentValue < prevA - dev ? currentValue : prevA;
+            aList.Add(a);
+
+            decimal prevUpper = upperList.LastOrDefault();
+            decimal upper = a + dev;
+            upperList.Add(upper);
+
+            decimal prevLower = lowerList.LastOrDefault();
+            decimal lower = a - dev;
+            lowerList.Add(lower);
+
+            var signal = GetBollingerBandsSignal(currentValue - a, prevValue - prevA, currentValue, prevValue, upper, prevUpper, lower, prevLower);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", upperList },
+            { "MiddleBand", aList },
+            { "LowerBand", lowerList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = new List<decimal>();
+        stockData.IndicatorName = IndicatorName.EfficientTrendStepChannel;
 
         return stockData;
     }

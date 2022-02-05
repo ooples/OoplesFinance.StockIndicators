@@ -754,4 +754,60 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Ergodic Moving Average Convergence Divergence
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
+    public static StockData CalculateErgodicMovingAverageConvergenceDivergence(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
+        int length1 = 32, int length2 = 5, int length3 = 5)
+    {
+        List<decimal> macdList = new();
+        List<decimal> macdHistogramList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var period1EmaList = GetMovingAverageList(stockData, maType, length1, inputList);
+        var period2EmaList = GetMovingAverageList(stockData, maType, length2, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal ema1 = period1EmaList.ElementAtOrDefault(i);
+            decimal ema2 = period2EmaList.ElementAtOrDefault(i);
+
+            decimal macd = ema1 - ema2;
+            macdList.Add(macd);
+        }
+
+        var macdSignalLineList = GetMovingAverageList(stockData, maType, length3, macdList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal macd = macdList.ElementAtOrDefault(i);
+            decimal macdSignalLine = macdSignalLineList.ElementAtOrDefault(i);
+
+            decimal prevMacdHistogram = macdHistogramList.LastOrDefault();
+            decimal macdHistogram = macd - macdSignalLine;
+            macdHistogramList.Add(macdHistogram);
+
+            var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Macd", macdList },
+            { "Signal", macdSignalLineList },
+            { "Histogram", macdHistogramList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = macdList;
+        stockData.IndicatorName = IndicatorName.ErgodicMovingAverageConvergenceDivergence;
+
+        return stockData;
+    }
 }
