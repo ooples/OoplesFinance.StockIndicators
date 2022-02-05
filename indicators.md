@@ -148,6 +148,26 @@
 
 [Ehlers Roofing Filter](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersRoofingFilter)
 
+[Elliott Wave Oscillator](https://www.motivewave.com/studies/elliott_wave_oscillator.htm)
+
+[Ema Wave Indicator](https://www.tradingview.com/script/5sofTZ6c-EMA-Wave-Indicator-LazyBear/)
+
+[Enhanced Index](https://www.tradingview.com/script/aAjBxcjP-Enhanced-Index-LazyBear/)
+
+[Enhanced Williams %R](https://www.tradingview.com/script/YoQEIYT8-Enhanced-Williams-R/)
+
+[Ergodic Candlestick Oscillator](https://www.tradingview.com/script/W7zYMP7U-ECO-Blau-s-Ergodic-Candlestick-Oscillator/)
+
+[Ergodic Mean Deviation Indicator](https://www.motivewave.com/studies/ergodic_mean_deviation_ind.htm)
+
+[Ergodic Moving Average Convergence Divergence](https://www.motivewave.com/studies/ergodic_macd.htm)
+
+[Ergodic Percentage Price Oscillator](https://www.motivewave.com/studies/ergodic_macd.htm)
+
+[Ergodic True Strength Index V1](https://www.motivewave.com/studies/ergodic_true_strength_index.htm)
+
+[Ergodic True Strength Index V2](https://www.motivewave.com/studies/ergodic_tsi2.htm)
+
 [Fast and Slow Kurtosis Oscillator](https://www.motivewave.com/studies/fast_and_slow_kurtosis.htm)
 
 [Fast and Slow Relative Strength Index](https://www.motivewave.com/studies/fast_and_slow_rsi.htm)
@@ -489,6 +509,10 @@
 
 [Dynamic Support And Resistance](https://www.tradingview.com/script/pLrwJmT3-Dynamic-Support-And-Resistance-CC/)
 
+[Earning Support Resistance Levels](https://www.tradingview.com/script/fhhMS2b5-Earnings-S-R-Levels-LazyBear/)
+
+[Efficient Trend Step Channel](https://www.tradingview.com/script/nXhuJpwr-Efficient-Trend-Step-Channel/)
+
 [Fibonacci Pivot Points](https://www.tradingview.com/script/vDWxTZCv-Fibonacci-Pivot-Points/)
 
 [Fibonacci Retrace](https://www.motivewave.com/studies/fibonacci_retrace.htm)
@@ -642,11 +666,25 @@ Atr Filtered Exponential Moving Average
 
 [Dynamically Adjustable Moving Average](https://www.tradingview.com/script/YOfG9Q8j-Dynamically-Adjustable-Moving-Average/)
 
+[Edge Preserving Filter](https://www.tradingview.com/script/GH8zovJJ-Edge-Preserving-Filter/)
+
+[Efficient Auto Line](https://www.tradingview.com/script/wV7iGbpX-Efficient-Auto-Line/)
+
+[Efficient Price](https://www.tradingview.com/script/oQnoJgjd-Efficient-Price/)
+
 [Ehlers Phase Calculation](https://www.tradingview.com/script/Zy7ZBrmZ-Phase-Calculation/)
+
+[Elastic Volume Weighted Moving Average V1](https://www.motivewave.com/studies/elastic_volume_weighted_moving_average.htm)
+
+[Elastic Volume Weighted Moving Average V2](https://www.tradingview.com/script/XKkNwhR7-Elastic-Volume-Weighted-Moving-Average/)
 
 [Elder Ray Index](https://www.investopedia.com/terms/e/elderray.asp)
 
+[Elder Safe Zone Stops](https://www.motivewave.com/studies/elders_safezone_stops.htm)
+
 [End Point Moving Average](https://tickeron.com/trading-investing-101/what-epma)
+
+[Equity Moving Average](https://www.tradingview.com/script/nBuZZu8q-EQma-Adaptive-Smoothing-Based-On-Optimal-Markets-Detection/)
 
 [Exponential Moving Average](https://www.investopedia.com/terms/e/ema.asp)
 
@@ -1006,6 +1044,12 @@ Atr Filtered Exponential Moving Average
 [Donchian Channel Width](https://www.barchart.com/education/technical-indicators/donchian_width)
 
 [Drunkard Walk](https://www.motivewave.com/studies/drunkard_walk.htm)
+
+[Elder Market Thermometer](https://www.motivewave.com/studies/elders_thermometer.htm)
+
+[Ergodic Commodity Selection Index](https://www.tradingview.com/script/EjMPMY95-Ergodic-CSI/)
+
+[Extended Recursive Bands](https://www.tradingview.com/script/ZkxYgPTT-Extended-Recursive-Bands-Maximum-Efficiency-With-Extra-Options/)
 
 [Firefly Oscillator](https://www.tradingview.com/script/pgvRuoUi-Firefly-Oscillator-LazyBear/)
 
