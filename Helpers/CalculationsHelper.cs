@@ -98,6 +98,9 @@ public static class CalculationsHelper
             case MovingAvgType.DynamicallyAdjustableMovingAverage:
                 movingAvgList = stockData.CalculateDynamicallyAdjustableMovingAverage(fastLength: length).CustomValuesList;
                 break;
+            case MovingAvgType.EdgePreservingFilter:
+                movingAvgList = stockData.CalculateEdgePreservingFilter(length: length).CustomValuesList;
+                break;
             case MovingAvgType.EhlersFractalAdaptiveMovingAverage:
                 movingAvgList = stockData.CalculateEhlersFractalAdaptiveMovingAverage(length).CustomValuesList;
                 break;
@@ -107,8 +110,17 @@ public static class CalculationsHelper
             case MovingAvgType.EhlersMesaAdaptiveMovingAverage:
                 movingAvgList = stockData.CalculateEhlersMotherOfAdaptiveMovingAverages().CustomValuesList;
                 break;
+            case MovingAvgType.ElasticVolumeWeightedMovingAverageV1:
+                movingAvgList = stockData.CalculateElasticVolumeWeightedMovingAverageV1(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.ElasticVolumeWeightedMovingAverageV2:
+                movingAvgList = stockData.CalculateElasticVolumeWeightedMovingAverageV2(length).CustomValuesList;
+                break;
             case MovingAvgType.EndPointWeightedMovingAverage:
                 movingAvgList = stockData.CalculateEndPointMovingAverage(length: length).CustomValuesList;
+                break;
+            case MovingAvgType.EquityMovingAverage:
+                movingAvgList = stockData.CalculateEquityMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.ExponentialMovingAverage:
                 movingAvgList = stockData.CalculateExponentialMovingAverage(length).CustomValuesList;

@@ -522,4 +522,61 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Ergodic Percentage Price Oscillator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
+    public static StockData CalculateErgodicPercentagePriceOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
+        int length1 = 32, int length2 = 5, int length3 = 5)
+    {
+        List<decimal> ppoList = new();
+        List<decimal> ppoHistogramList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var period1EmaList = GetMovingAverageList(stockData, maType, length1, inputList);
+        var period2EmaList = GetMovingAverageList(stockData, maType, length2, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal ema1 = period1EmaList.ElementAtOrDefault(i);
+            decimal ema2 = period2EmaList.ElementAtOrDefault(i);
+            decimal macd = ema1 - ema2;
+
+            decimal ppo = ema2 != 0 ? macd / ema2 * 100 : 0;
+            ppoList.Add(ppo);
+        }
+
+        var ppoSignalLineList = GetMovingAverageList(stockData, maType, length3, ppoList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal ppo = ppoList.ElementAtOrDefault(i);
+            decimal ppoSignalLine = ppoSignalLineList.ElementAtOrDefault(i);
+
+            decimal prevPpoHistogram = ppoHistogramList.LastOrDefault();
+            decimal ppoHistogram = ppo - ppoSignalLine;
+            ppoHistogramList.Add(ppoHistogram);
+
+            var signal = GetCompareSignal(ppoHistogram, prevPpoHistogram);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ppo", ppoList },
+            { "Signal", ppoSignalLineList },
+            { "Histogram", ppoHistogramList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = ppoList;
+        stockData.IndicatorName = IndicatorName.ErgodicPercentagePriceOscillator;
+
+        return stockData;
+    }
 }

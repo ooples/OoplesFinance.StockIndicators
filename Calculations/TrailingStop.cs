@@ -859,4 +859,88 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Elder Safe Zone Stops
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <param name="factor"></param>
+    /// <returns></returns>
+    public static StockData CalculateElderSafeZoneStops(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
+        int length1 = 63, int length2 = 22, int length3 = 3, decimal factor = 2.5m)
+    {
+        List<decimal> safeZPlusList = new();
+        List<decimal> safeZMinusList = new();
+        List<decimal> dmPlusCountList = new();
+        List<decimal> dmMinusCountList = new();
+        List<decimal> dmMinusList = new();
+        List<decimal> dmPlusList = new();
+        List<decimal> stopList = new();
+        List<Signal> signalsList = new();
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+
+        var emaList = GetMovingAverageList(stockData, maType, length1, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal currentLow = lowList.ElementAtOrDefault(i);
+            decimal currentHigh = highList.ElementAtOrDefault(i);
+            decimal currentEma = emaList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevHigh = i >= 1 ? highList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevLow = i >= 1 ? lowList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevEma = i >= 1 ? emaList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal dmMinus = prevLow > currentLow ? prevLow - currentLow : 0;
+            dmMinusList.Add(dmMinus);
+
+            decimal dmMinusCount = prevLow > currentLow ? 1 : 0;
+            dmMinusCountList.Add(dmMinusCount);
+
+            decimal dmPlus = currentHigh > prevHigh ? currentHigh - prevHigh : 0;
+            dmPlusList.Add(dmPlus);
+
+            decimal dmPlusCount = currentHigh > prevHigh ? 1 : 0;
+            dmPlusCountList.Add(dmPlusCount);
+
+            decimal countM = dmMinusCountList.TakeLastExt(length2).Sum();
+            decimal dmMinusSum = dmMinusList.TakeLastExt(length2).Sum();
+            decimal dmAvgMinus = countM != 0 ? dmMinusSum / countM : 0;
+            decimal countP = dmPlusCountList.TakeLastExt(length2).Sum();
+            decimal dmPlusSum = dmPlusList.TakeLastExt(length2).Sum();
+            decimal dmAvgPlus = countP != 0 ? dmPlusSum / countP : 0;
+
+            decimal safeZMinus = prevLow - (factor * dmAvgMinus);
+            safeZMinusList.Add(safeZMinus);
+
+            decimal safeZPlus = prevHigh + (factor * dmAvgPlus);
+            safeZPlusList.Add(safeZPlus);
+
+            decimal highest = safeZMinusList.TakeLastExt(length3).Max();
+            decimal lowest = safeZPlusList.TakeLastExt(length3).Min();
+
+            decimal prevStop = stopList.LastOrDefault();
+            decimal stop = currentValue >= currentEma ? highest : lowest;
+            stopList.Add(stop);
+
+            var signal = GetBullishBearishSignal(currentValue - Math.Max(currentEma, stop), prevValue - Math.Max(prevEma, prevStop),
+                currentValue - Math.Min(currentEma, stop), prevValue - Math.Min(prevEma, prevStop));
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Eszs", stopList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = stopList;
+        stockData.IndicatorName = IndicatorName.ElderSafeZoneStops;
+
+        return stockData;
+    }
 }

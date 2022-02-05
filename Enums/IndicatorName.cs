@@ -283,8 +283,18 @@ public enum IndicatorName
     DynamicallyAdjustableFilter,
     [Category(IndicatorType.Trend)]
     DynamicallyAdjustableMovingAverage,
+    [Category(IndicatorType.SupportAndResistance)]
+    EarningSupportResistanceLevels,
     [Category(IndicatorType.Volume)]
     EaseOfMovement,
+    [Category(IndicatorType.Trend)]
+    EdgePreservingFilter,
+    [Category(IndicatorType.Trend)]
+    EfficientAutoLine,
+    [Category(IndicatorType.Trend)]
+    EfficientPrice,
+    [Category(IndicatorType.SupportAndResistance)]
+    EfficientTrendStepChannel,
     [Category(IndicatorType.Cycle)]
     EhlersAdaptiveCyberCycle,
     [Category(IndicatorType.Trend)]
@@ -298,11 +308,47 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     EhlersRoofingFilter,
     [Category(IndicatorType.Trend)]
+    ElasticVolumeWeightedMovingAverageV1,
+    [Category(IndicatorType.Trend)]
+    ElasticVolumeWeightedMovingAverageV2,
+    [Category(IndicatorType.Volatility)]
+    ElderMarketThermometer,
+    [Category(IndicatorType.Trend)]
     ElderRayIndex,
     [Category(IndicatorType.Trend)]
+    ElderSafeZoneStops,
+    [Category(IndicatorType.Momentum)]
+    ElliottWaveOscillator,
+    [Category(IndicatorType.Trend)]
+    EmaTrapIndicator,
+    [Category(IndicatorType.Momentum)]
+    EmaWaveIndicator,
+    [Category(IndicatorType.Trend)]
     EndPointMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    EnhancedIndex,
+    [Category(IndicatorType.Momentum)]
+    EnhancedWilliamsR,
+    [Category(IndicatorType.Trend)]
+    EquityMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    ErgodicCandlestickOscillator,
+    [Category(IndicatorType.Volatility)]
+    ErgodicCommoditySelectionIndex,
+    [Category(IndicatorType.Momentum)]
+    ErgodicMeanDeviationIndicator,
+    [Category(IndicatorType.Momentum)]
+    ErgodicMovingAverageConvergenceDivergence,
+    [Category(IndicatorType.Trend)]
+    ErgodicPercentagePriceOscillator,
+    [Category(IndicatorType.Momentum)]
+    ErgodicTrueStrengthIndexV1,
+    [Category(IndicatorType.Momentum)]
+    ErgodicTrueStrengthIndexV2,
     [Category(IndicatorType.Trend)]
     ExponentialMovingAverage,
+    [Category(IndicatorType.Volatility)]
+    ExtendedRecursiveBands,
     [Category(IndicatorType.Trend)]
     FallingRisingFilter,
     [Category(IndicatorType.Trend)]
