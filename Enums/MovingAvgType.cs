@@ -1,4 +1,4 @@
-﻿namespace OoplesFinance.StockIndicators.Enums;
+namespace OoplesFinance.StockIndicators.Enums;
 
 public enum MovingAvgType
 {
@@ -160,4 +160,3 @@ public enum MovingAvgType
     ZeroLagTripleExponentialMovingAverage,
     ZeroLowLagMovingAverage
 }
-
