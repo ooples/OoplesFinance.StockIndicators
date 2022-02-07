@@ -61,7 +61,8 @@ public static partial class Calculations
     /// <param name="length">The length.</param>
     /// <param name="pct">The PCT.</param>
     /// <returns></returns>
-    public static StockData CalculateAdaptivePriceZoneIndicator(this StockData stockData, MovingAvgType maType, int length = 20, decimal pct = 2)
+    public static StockData CalculateAdaptivePriceZoneIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length = 20, decimal pct = 2)
     {
         List<decimal> xHLList = new();
         List<decimal> outerUpBandList = new();
@@ -124,14 +125,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the automatic dispersion bands.
+    /// Calculates the Auto Dispersion Bands
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="smoothLength">Length of the smooth.</param>
     /// <returns></returns>
-    public static StockData CalculateAutoDispersionBands(this StockData stockData, MovingAvgType maType, int length = 90, int smoothLength = 140)
+    public static StockData CalculateAutoDispersionBands(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, 
+        int length = 90, int smoothLength = 140)
     {
         List<decimal> middleBandList = new();
         List<decimal> aList = new();
@@ -274,8 +276,8 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="stdDevMult"></param>
     /// <returns></returns>
-    public static StockData CalculateBollingerBandsAvgTrueRange(this StockData stockData, MovingAvgType maType, int atrLength = 22, int length = 55,
-        decimal stdDevMult = 2)
+    public static StockData CalculateBollingerBandsAvgTrueRange(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int atrLength = 22, int length = 55, decimal stdDevMult = 2)
     {
         List<decimal> atrDevList = new();
         List<Signal> signalsList = new();

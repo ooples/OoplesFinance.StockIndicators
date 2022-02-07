@@ -108,8 +108,8 @@ public static partial class Calculations
     /// <param name="slowLength">Length of the slow.</param>
     /// <param name="signalLength">Length of the signal.</param>
     /// <returns></returns>
-    public static StockData CalculateKlingerVolumeOscillator(this StockData stockData, MovingAvgType maType, int fastLength = 34, int slowLength = 55,
-        int signalLength = 13)
+    public static StockData CalculateKlingerVolumeOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int fastLength = 34, int slowLength = 55, int signalLength = 13)
     {
         List<decimal> kvoList = new();
         List<decimal> trendList = new();
@@ -191,7 +191,7 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateOnBalanceVolume(this StockData stockData, MovingAvgType maType, int length = 20)
+    public static StockData CalculateOnBalanceVolume(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20)
     {
         List<decimal> obvList = new();
         List<Signal> signalsList = new();
@@ -239,7 +239,7 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateNegativeVolumeIndex(this StockData stockData, MovingAvgType maType, int length = 255)
+    public static StockData CalculateNegativeVolumeIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 255)
     {
         List<decimal> nviList = new();
         List<Signal> signalsList = new();
@@ -289,7 +289,7 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculatePositiveVolumeIndex(this StockData stockData, MovingAvgType maType, int length = 255)
+    public static StockData CalculatePositiveVolumeIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 255)
     {
         List<decimal> pviList = new();
         List<Signal> signalsList = new();
@@ -390,7 +390,8 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateAccumulationDistributionLine(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData CalculateAccumulationDistributionLine(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length = 14)
     {
         List<decimal> adlList = new();
         List<Signal> signalsList = new();
@@ -443,7 +444,8 @@ public static partial class Calculations
     /// <param name="length">The length.</param>
     /// <param name="smoothLength">Length of the smooth.</param>
     /// <returns></returns>
-    public static StockData CalculateAverageMoneyFlowOscillator(this StockData stockData, MovingAvgType maType, int length = 5, int smoothLength = 3)
+    public static StockData CalculateAverageMoneyFlowOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, 
+        int length = 5, int smoothLength = 3)
     {
         List<decimal> chgList = new();
         List<decimal> rList = new();

@@ -3,14 +3,15 @@
 public static partial class Calculations
 {
     /// <summary>
-    /// Calculates the price channel.
+    /// Calculates the Price Channel
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="pct">The PCT.</param>
     /// <returns></returns>
-    public static StockData CalculatePriceChannel(this StockData stockData, MovingAvgType maType, int length = 21, decimal pct = 0.06m)
+    public static StockData CalculatePriceChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 21, 
+        decimal pct = 0.06m)
     {
         List<decimal> upperPriceChannelList = new();
         List<decimal> lowerPriceChannelList = new();
@@ -158,7 +159,8 @@ public static partial class Calculations
     /// <param name="length">The length.</param>
     /// <param name="atrMult">The atr mult.</param>
     /// <returns></returns>
-    public static StockData CalculateStollerAverageRangeChannels(this StockData stockData, MovingAvgType maType, int length = 14, decimal atrMult = 2)
+    public static StockData CalculateStollerAverageRangeChannels(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 14, decimal atrMult = 2)
     {
         List<decimal> upperBandList = new();
         List<decimal> lowerBandList = new();
@@ -202,13 +204,13 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the moving average channel.
+    /// Calculates the Moving Average Channel
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateMovingAverageChannel(this StockData stockData, MovingAvgType maType, int length = 20)
+    public static StockData CalculateMovingAverageChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 20)
     {
         List<decimal> midChannelList = new();
         List<Signal> signalsList = new();
@@ -246,14 +248,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the moving average envelope.
+    /// Calculates the Moving Average Envelope
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="mult">The mult.</param>
     /// <returns></returns>
-    public static StockData CalculateMovingAverageEnvelope(this StockData stockData, MovingAvgType maType, int length = 20, decimal mult = 0.025m)
+    public static StockData CalculateMovingAverageEnvelope(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 20, decimal mult = 0.025m)
     {
         List<decimal> upperEnvelopeList = new();
         List<decimal> lowerEnvelopeList = new();
@@ -351,14 +354,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the average true range channel.
+    /// Calculates the Average True Range Channel
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="mult">The mult.</param>
     /// <returns></returns>
-    public static StockData CalculateAverageTrueRangeChannel(this StockData stockData, MovingAvgType maType, int length = 14, decimal mult = 2.5m)
+    public static StockData CalculateAverageTrueRangeChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 14, decimal mult = 2.5m)
     {
         List<decimal> innerTopAtrChannelList = new();
         List<decimal> innerBottomAtrChannelList = new();

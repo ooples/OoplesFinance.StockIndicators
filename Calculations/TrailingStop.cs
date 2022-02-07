@@ -237,14 +237,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the chandelier exit.
+    /// Calculates the Chandelier Exit
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="mult">The mult.</param>
     /// <returns></returns>
-    public static StockData CalculateChandelierExit(this StockData stockData, MovingAvgType maType, int length = 22, decimal mult = 3)
+    public static StockData CalculateChandelierExit(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, int length = 22, 
+        decimal mult = 3)
     {
         List<decimal> chandelierExitLongList = new();
         List<decimal> chandelierExitShortList = new();
@@ -287,7 +288,7 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the average true range trailing stops.
+    /// Calculates the Average True Range Trailing Stops
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
@@ -295,8 +296,8 @@ public static partial class Calculations
     /// <param name="length2">The length2.</param>
     /// <param name="factor">The factor.</param>
     /// <returns></returns>
-    public static StockData CalculateAverageTrueRangeTrailingStops(this StockData stockData, MovingAvgType maType, int length1 = 63,
-        int length2 = 21, decimal factor = 3)
+    public static StockData CalculateAverageTrueRangeTrailingStops(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length1 = 63, int length2 = 21, decimal factor = 3)
     {
         List<decimal> atrtsList = new();
         List<Signal> signalsList = new();

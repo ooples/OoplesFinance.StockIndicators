@@ -65,7 +65,7 @@ public static partial class Calculations
     /// <param name="length2">The length2.</param>
     /// <param name="signalLength">Length of the signal.</param>
     /// <returns></returns>
-    public static StockData CalculatePriceMomentumOscillator(this StockData stockData, MovingAvgType maType, int length1 = 35,
+    public static StockData CalculatePriceMomentumOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 35,
         int length2 = 20, int signalLength = 10)
     {
         List<decimal> pmoList = new();
@@ -124,7 +124,7 @@ public static partial class Calculations
     /// <param name="signalLength">Length of the signal.</param>
     /// <param name="momentumLength">Length of the momentum.</param>
     /// <returns></returns>
-    public static StockData CalculateAnchoredMomentum(this StockData stockData, MovingAvgType maType, int smoothLength = 7,
+    public static StockData CalculateAnchoredMomentum(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int smoothLength = 7,
         int signalLength = 8, int momentumLength = 10)
     {
         List<decimal> tempList = new();

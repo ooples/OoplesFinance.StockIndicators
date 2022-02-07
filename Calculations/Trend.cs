@@ -749,14 +749,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the super trend.
+    /// Calculates the Super Trend
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="atrMult">The atr mult.</param>
     /// <returns></returns>
-    public static StockData CalculateSuperTrend(this StockData stockData, MovingAvgType maType, int length = 22, decimal atrMult = 3)
+    public static StockData CalculateSuperTrend(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+        int length = 22, decimal atrMult = 3)
     {
         List<decimal> longStopList = new();
         List<decimal> shortStopList = new();
@@ -808,7 +809,7 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the schaff trend cycle.
+    /// Calculates the Schaff Trend Cycle
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
@@ -816,8 +817,8 @@ public static partial class Calculations
     /// <param name="slowLength">Length of the slow.</param>
     /// <param name="cycleLength">Length of the cycle.</param>
     /// <returns></returns>
-    public static StockData CalculateSchaffTrendCycle(this StockData stockData, MovingAvgType maType, int fastLength = 23, int slowLength = 50,
-        int cycleLength = 10)
+    public static StockData CalculateSchaffTrendCycle(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int fastLength = 23, int slowLength = 50, int cycleLength = 10)
     {
         List<decimal> macdList = new();
         List<Signal> signalsList = new();
