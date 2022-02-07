@@ -72,7 +72,7 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateHistoricalVolatility(this StockData stockData, MovingAvgType maType, int length = 20)
+    public static StockData CalculateHistoricalVolatility(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20)
     {
         List<decimal> hvList = new();
         List<decimal> tempLogList = new();
@@ -529,7 +529,8 @@ public static partial class Calculations
     /// <param name="maType"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    public static StockData CalculateUltimateVolatilityIndicator(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData CalculateUltimateVolatilityIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length = 14)
     {
         List<decimal> uviList = new();
         List<decimal> absList = new();

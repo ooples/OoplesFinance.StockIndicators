@@ -204,4 +204,100 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Ehlers Simple Decycler
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="upperPct"></param>
+    /// <param name="lowerPct"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersSimpleDecycler(this StockData stockData, int length = 125, decimal upperPct = 0.5m, decimal lowerPct = 0.5m)
+    {
+        List<decimal> decyclerList = new();
+        List<decimal> upperBandList = new();
+        List<decimal> lowerBandList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var hpList = CalculateEhlersHighPassFilterV1(stockData, length, 1).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal hp = hpList.ElementAtOrDefault(i);
+
+            decimal prevDecycler = decyclerList.LastOrDefault();
+            decimal decycler = currentValue - hp;
+            decyclerList.Add(decycler);
+
+            decimal upperBand = (1 + (upperPct / 100)) * decycler;
+            upperBandList.Add(upperBand);
+
+            decimal lowerBand = (1 - (lowerPct / 100)) * decycler;
+            lowerBandList.Add(lowerBand);
+
+            var signal = GetCompareSignal(currentValue - decycler, prevValue - prevDecycler);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", upperBandList },
+            { "MiddleBand", decyclerList },
+            { "LowerBand", lowerBandList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = decyclerList;
+        stockData.IndicatorName = IndicatorName.EhlersSimpleDecycler;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers High Pass Filter V1
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="mult"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersHighPassFilterV1(this StockData stockData, int length = 125, decimal mult = 1)
+    {
+        List<decimal> highPassList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal alphaArg = MinOrMax(2 * Pi / (mult * length * Sqrt(2)), 0.99m, 0.01m);
+        decimal alphaCos = Cos(alphaArg);
+        decimal alpha = alphaCos != 0 ? (alphaCos + Sin(alphaArg) - 1) / alphaCos : 0;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue1 = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevValue2 = i >= 2 ? inputList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevHp1 = i >= 1 ? highPassList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevHp2 = i >= 2 ? highPassList.ElementAtOrDefault(i - 2) : 0;
+            decimal pow1 = Pow(1 - (alpha / 2), 2);
+            decimal pow2 = Pow(1 - alpha, 2);
+
+            decimal highPass = (pow1 * (currentValue - (2 * prevValue1) + prevValue2)) + (2 * (1 - alpha) * prevHp1) - (pow2 * prevHp2);
+            highPassList.Add(highPass);
+
+            var signal = GetCompareSignal(highPass, prevHp1);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Hp", highPassList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = highPassList;
+        stockData.IndicatorName = IndicatorName.EhlersHighPassFilterV1;
+
+        return stockData;
+    }
 }

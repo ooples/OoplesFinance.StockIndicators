@@ -1,4 +1,4 @@
-﻿global using OoplesFinance.StockIndicators.Helpers;
+global using OoplesFinance.StockIndicators.Helpers;
 
 namespace OoplesFinance.StockIndicators.Enums;
 
@@ -295,18 +295,80 @@ public enum IndicatorName
     EfficientPrice,
     [Category(IndicatorType.SupportAndResistance)]
     EfficientTrendStepChannel,
+    [Category(IndicatorType.Trend)]
+    Ehlers2PoleButterworthFilterV1,
+    [Category(IndicatorType.Trend)]
+    Ehlers2PoleButterworthFilterV2,
+    [Category(IndicatorType.Trend)]
+    Ehlers2PoleSuperSmootherFilterV1,
+    [Category(IndicatorType.Trend)]
+    Ehlers2PoleSuperSmootherFilterV2,
+    [Category(IndicatorType.Trend)]
+    Ehlers3PoleButterworthFilterV1,
+    [Category(IndicatorType.Trend)]
+    Ehlers3PoleButterworthFilterV2,
+    [Category(IndicatorType.Trend)]
+    Ehlers3PoleSuperSmootherFilter,
     [Category(IndicatorType.Cycle)]
     EhlersAdaptiveCyberCycle,
     [Category(IndicatorType.Trend)]
+    EhlersAdaptiveLaguerreFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersAllPassPhaseShifter,
+    [Category(IndicatorType.Trend)]
+    EhlersAverageErrorFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersBetterExponentialMovingAverage,
+    [Category(IndicatorType.Trend)]
+    EhlersChebyshevLowPassFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersDeviationScaledMovingAverage,
+    [Category(IndicatorType.Trend)]
+    EhlersDeviationScaledSuperSmoother,
+    [Category(IndicatorType.Trend)]
+    EhlersDistanceCoefficientFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersFiniteImpulseResponseFilter,
+    [Category(IndicatorType.Trend)]
     EhlersFractalAdaptiveMovingAverage,
+    [Category(IndicatorType.Trend)]
+    EhlersGaussianFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersHannMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    EhlersHighPassFilterV1,
+    [Category(IndicatorType.Trend)]
+    EhlersInfiniteImpulseResponseFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersKaufmanAdaptiveMovingAverage,
+    [Category(IndicatorType.Trend)]
+    EhlersLaguerreFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersLeadingIndicator,
     [Category(IndicatorType.Trend)]
     EhlersMedianAverageAdaptiveFilter,
     [Category(IndicatorType.Trend)]
+    EhlersModifiedOptimumEllipticFilter,
+    [Category(IndicatorType.Trend)]
     EhlersMotherOfAdaptiveMovingAverages,
     [Category(IndicatorType.Trend)]
+    EhlersOptimumEllipticFilter,
+    [Category(IndicatorType.Trend)]
     EhlersPhaseCalculation,
+    [Category(IndicatorType.Trend)]
+    EhlersRecursiveMedianFilter,
     [Category(IndicatorType.Momentum)]
     EhlersRoofingFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersSimpleDecycler,
+    [Category(IndicatorType.Trend)]
+    EhlersSuperSmootherFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersVariableIndexDynamicAverage,
+    [Category(IndicatorType.Trend)]
+    EhlersZeroLagExponentialMovingAverage,
     [Category(IndicatorType.Trend)]
     ElasticVolumeWeightedMovingAverageV1,
     [Category(IndicatorType.Trend)]
@@ -319,8 +381,6 @@ public enum IndicatorName
     ElderSafeZoneStops,
     [Category(IndicatorType.Momentum)]
     ElliottWaveOscillator,
-    [Category(IndicatorType.Trend)]
-    EmaTrapIndicator,
     [Category(IndicatorType.Momentum)]
     EmaWaveIndicator,
     [Category(IndicatorType.Trend)]

@@ -209,13 +209,14 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the index of the adaptive relative strength.
+    /// Calculates the Adaptive Relative Strength Index
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateAdaptiveRelativeStrengthIndex(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData CalculateAdaptiveRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+        int length = 14)
     {
         List<decimal> arsiList = new();
         List<Signal> signalsList = new();
@@ -302,15 +303,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the index of the apirine slow relative strength.
+    /// Calculates the Apirine Slow Relative Strength Index
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="smoothLength">Length of the smooth.</param>
     /// <returns></returns>
-    public static StockData CalculateApirineSlowRelativeStrengthIndex(this StockData stockData, MovingAvgType maType, int length = 14,
-        int smoothLength = 6)
+    public static StockData CalculateApirineSlowRelativeStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
+        int length = 14, int smoothLength = 6)
     {
         List<decimal> r2List = new();
         List<decimal> r3List = new();

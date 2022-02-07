@@ -1,4 +1,4 @@
-﻿namespace OoplesFinance.StockIndicators.Enums;
+namespace OoplesFinance.StockIndicators.Enums;
 
 public enum MovingAvgType
 {
@@ -25,9 +25,38 @@ public enum MovingAvgType
     DynamicallyAdjustableFilter,
     DynamicallyAdjustableMovingAverage,
     EdgePreservingFilter,
+    Ehlers2PoleButterworthFilterV1,
+    Ehlers2PoleButterworthFilterV2,
+    Ehlers3PoleButterworthFilterV1,
+    Ehlers3PoleButterworthFilterV2,
+    Ehlers2PoleSuperSmootherFilterV1,
+    Ehlers2PoleSuperSmootherFilterV2,
+    Ehlers3PoleSuperSmootherFilter,
+    EhlersAdaptiveLaguerreFilter,
+    EhlersAllPassPhaseShifter,
+    EhlersAverageErrorFilter,
+    EhlersBetterExponentialMovingAverage,
+    EhlersChebyshevLowPassFilter,
+    EhlersDeviationScaledMovingAverage,
+    EhlersDeviationScaledSuperSmoother,
+    EhlersDistanceCoefficientFilter,
+    EhlersFilter,
+    EhlersFiniteImpulseResponseFilter,
     EhlersFractalAdaptiveMovingAverage,
+    EhlersGaussianFilter,
+    EhlersHannMovingAverage,
+    EhlersInfiniteImpulseResponseFilter,
+    EhlersKaufmanAdaptiveMovingAverage,
+    EhlersLaguerreFilter,
+    EhlersLeadingIndicator,
     EhlersMedianAverageAdaptiveFilter,
     EhlersMesaAdaptiveMovingAverage,
+    EhlersModifiedOptimumEllipticFilter,
+    EhlersOptimumEllipticFilter,
+    EhlersRecursiveMedianFilter,
+    EhlersSuperSmootherFilter,
+    EhlersVariableIndexDynamicAverage,
+    EhlersZeroLagExponentialMovingAverage,
     ElasticVolumeWeightedMovingAverageV1,
     ElasticVolumeWeightedMovingAverageV2,
     EndPointWeightedMovingAverage,
@@ -131,4 +160,3 @@ public enum MovingAvgType
     ZeroLagTripleExponentialMovingAverage,
     ZeroLowLagMovingAverage
 }
-

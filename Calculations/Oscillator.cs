@@ -58,7 +58,7 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the awesome oscillator.
+    /// Calculates the Awesome Oscillator
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
@@ -101,7 +101,7 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the accelerator oscillator.
+    /// Calculates the Accelerator Oscillator
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
@@ -110,8 +110,8 @@ public static partial class Calculations
     /// <param name="slowLength">Length of the slow.</param>
     /// <param name="smoothLength">Length of the smooth.</param>
     /// <returns></returns>
-    public static StockData CalculateAcceleratorOscillator(this StockData stockData, MovingAvgType maType, InputName inputName,
-        int fastLength, int slowLength, int smoothLength)
+    public static StockData CalculateAcceleratorOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, InputName inputName = InputName.MedianPrice,
+        int fastLength = 5, int slowLength = 34, int smoothLength = 5)
     {
         List<decimal> acList = new();
         List<Signal> signalsList = new();
@@ -194,7 +194,7 @@ public static partial class Calculations
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateBalanceOfPower(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData CalculateBalanceOfPower(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14)
     {
         List<decimal> balanceOfPowerList = new();
         List<Signal> signalsList = new();
@@ -273,14 +273,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the chaikin oscillator.
+    /// Calculates the Chaikin Oscillator
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="fastLength">Length of the fast.</param>
     /// <param name="slowLength">Length of the slow.</param>
     /// <returns></returns>
-    public static StockData CalculateChaikinOscillator(this StockData stockData, MovingAvgType maType, int fastLength = 3, int slowLength = 10)
+    public static StockData CalculateChaikinOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int fastLength = 3, int slowLength = 10)
     {
         List<decimal> chaikinOscillatorList = new();
         List<Signal> signalsList = new();
@@ -388,8 +389,9 @@ public static partial class Calculations
     /// <param name="lipsLength">Length of the lips.</param>
     /// <param name="lipsOffset">The lips offset.</param>
     /// <returns></returns>
-    public static StockData CalculateAlligatorIndex(this StockData stockData, InputName inputName, MovingAvgType maType, int iawLength = 13,
-        int iawOffset = 8, int teethLength = 8, int teethOffset = 5, int lipsLength = 5, int lipsOffset = 3)
+    public static StockData CalculateAlligatorIndex(this StockData stockData, InputName inputName = InputName.MedianPrice, 
+        MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, int jawLength = 13, int jawOffset = 8, int teethLength = 8, int teethOffset = 5, 
+        int lipsLength = 5, int lipsOffset = 3)
     {
         List<decimal> displacedJawList = new();
         List<decimal> displacedTeethList = new();
@@ -397,14 +399,14 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        var iawList = GetMovingAverageList(stockData, maType, iawLength, inputList);
+        var jawList = GetMovingAverageList(stockData, maType, jawLength, inputList);
         var teethList = GetMovingAverageList(stockData, maType, teethLength, inputList);
         var lipsList = GetMovingAverageList(stockData, maType, lipsLength, inputList);
 
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal prevJaw = displacedJawList.LastOrDefault();
-            decimal displacedJaw = i >= iawOffset ? iawList.ElementAtOrDefault(i - iawOffset) : 0;
+            decimal displacedJaw = i >= jawOffset ? jawList.ElementAtOrDefault(i - jawOffset) : 0;
             displacedJawList.Add(displacedJaw);
 
             decimal prevTeeth = displacedTeethList.LastOrDefault();
@@ -439,34 +441,34 @@ public static partial class Calculations
     /// <param name="stockData">The stock data.</param>
     /// <param name="inputName">Name of the input.</param>
     /// <param name="maType">Type of the ma.</param>
-    /// <param name="iawLength">Length of the iaw.</param>
-    /// <param name="iawOffset">The iaw offset.</param>
+    /// <param name="jawLength">Length of the jaw.</param>
+    /// <param name="jawOffset">The jaw offset.</param>
     /// <param name="teethLength">Length of the teeth.</param>
     /// <param name="teethOffset">The teeth offset.</param>
     /// <param name="lipsLength">Length of the lips.</param>
     /// <param name="lipsOffset">The lips offset.</param>
     /// <returns></returns>
-    public static StockData CalculateGatorOscillator(this StockData stockData, InputName inputName, MovingAvgType maType, int iawLength = 13,
-        int iawOffset = 8, int teethLength = 8, int teethOffset = 5, int lipsLength = 5, int lipsOffset = 3)
+    public static StockData CalculateGatorOscillator(this StockData stockData, InputName inputName = InputName.MedianPrice, 
+        MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, int jawLength = 13, int jawOffset = 8, int teethLength = 8, int teethOffset = 5, 
+        int lipsLength = 5, int lipsOffset = 3)
     {
         List<decimal> topList = new();
         List<decimal> bottomList = new();
         List<Signal> signalsList = new();
 
-        var alligatorList = CalculateAlligatorIndex(stockData, inputName, maType, iawLength, iawOffset, teethLength, teethOffset, lipsLength,
-            lipsOffset).OutputValues;
-        var iawList = alligatorList["Jaw"];
+        var alligatorList = CalculateAlligatorIndex(stockData, inputName, maType, jawLength, jawOffset, teethLength, teethOffset, lipsLength, lipsOffset).OutputValues;
+        var jawList = alligatorList["Jaw"];
         var teethList = alligatorList["Teeth"];
         var lipsList = alligatorList["Lips"];
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal iaw = iawList.ElementAtOrDefault(i);
+            decimal jaw = jawList.ElementAtOrDefault(i);
             decimal teeth = teethList.ElementAtOrDefault(i);
             decimal lips = lipsList.ElementAtOrDefault(i);
 
             decimal prevTop = topList.LastOrDefault();
-            decimal top = Math.Abs(iaw - teeth);
+            decimal top = Math.Abs(jaw - teeth);
             topList.AddRounded(top);
 
             decimal prevBottom = bottomList.LastOrDefault();
@@ -612,14 +614,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the trix.
+    /// Calculates the Trix Indicator
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="signalLength">Length of the signal.</param>
     /// <returns></returns>
-    public static StockData CalculateTrix(this StockData stockData, MovingAvgType maType, int length = 15, int signalLength = 9)
+    public static StockData CalculateTrix(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length = 15, int signalLength = 9)
     {
         List<decimal> trixList = new();
         List<Signal> signalsList = new();
@@ -701,7 +704,7 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the index of the true strength.
+    /// Calculates the True Strength Index
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
@@ -709,8 +712,8 @@ public static partial class Calculations
     /// <param name="length2">The length2.</param>
     /// <param name="signalLength">Length of the signal.</param>
     /// <returns></returns>
-    public static StockData CalculateTrueStrengthIndex(this StockData stockData, MovingAvgType maType, int length1 = 25, int length2 = 13,
-        int signalLength = 7)
+    public static StockData CalculateTrueStrengthIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length1 = 25, int length2 = 13, int signalLength = 7)
     {
         List<decimal> pcList = new();
         List<decimal> absPCList = new();
@@ -815,14 +818,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the absolute price oscillator.
+    /// Calculates the Absolute Price Oscillator
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="fastLength">Length of the fast.</param>
     /// <param name="slowLength">Length of the slow.</param>
     /// <returns></returns>
-    public static StockData CalculateAbsolutePriceOscillator(this StockData stockData, MovingAvgType maType, int fastLength = 10, int slowLength = 20)
+    public static StockData CalculateAbsolutePriceOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int fastLength = 10, int slowLength = 20)
     {
         List<decimal> apoList = new();
         List<Signal> signalsList = new();
@@ -975,13 +979,13 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the index of the accumulative swing.
+    /// Calculates the Accumulative Swing Index
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static StockData CalculateAccumulativeSwingIndex(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData CalculateAccumulativeSwingIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 14)
     {
         List<decimal> accumulativeSwingIndexList = new();
         List<Signal> signalsList = new();
@@ -1046,8 +1050,8 @@ public static partial class Calculations
     /// <param name="stochLength">Length of the stoch.</param>
     /// <param name="signalLength">Length of the signal.</param>
     /// <returns></returns>
-    public static StockData CalculateAdaptiveErgodicCandlestickOscillator(this StockData stockData, MovingAvgType maType, int smoothLength = 5,
-        int stochLength = 14, int signalLength = 9)
+    public static StockData CalculateAdaptiveErgodicCandlestickOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int smoothLength = 5, int stochLength = 14, int signalLength = 9)
     {
         List<decimal> came1List = new();
         List<decimal> came2List = new();
@@ -1116,14 +1120,15 @@ public static partial class Calculations
     }
 
     /// <summary>
-    /// Calculates the absolute strength MTF indicator.
+    /// Calculates the Absolute Strength MTF Indicator
     /// </summary>
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
     /// <param name="smoothLength">Length of the smooth.</param>
     /// <returns></returns>
-    public static StockData CalculateAbsoluteStrengthMTFIndicator(this StockData stockData, MovingAvgType maType, int length = 50, int smoothLength = 25)
+    public static StockData CalculateAbsoluteStrengthMTFIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int length = 50, int smoothLength = 25)
     {
         List<decimal> prevValuesList = new();
         List<decimal> bulls0List = new();
@@ -1807,7 +1812,7 @@ public static partial class Calculations
     /// <param name="maType"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    public static StockData CalculateBearPowerIndicator(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData CalculateBearPowerIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14)
     {
         List<decimal> bpiList = new();
         List<Signal> signalsList = new();
@@ -1860,7 +1865,7 @@ public static partial class Calculations
     /// <param name="maType"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    public static StockData CalculateBullPowerIndicator(this StockData stockData, MovingAvgType maType, int length = 14)
+    public static StockData CalculateBullPowerIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14)
     {
         List<decimal> bpiList = new();
         List<Signal> signalsList = new();
@@ -2176,8 +2181,8 @@ public static partial class Calculations
     /// <param name="fastLength"></param>
     /// <param name="slowLength"></param>
     /// <returns></returns>
-    public static StockData CalculateWoodieCommodityChannelIndex(this StockData stockData, MovingAvgType maType, int fastLength = 6,
-        int slowLength = 14)
+    public static StockData CalculateWoodieCommodityChannelIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
+        int fastLength = 6, int slowLength = 14)
     {
         List<decimal> histogramList = new();
         List<Signal> signalsList = new();
@@ -5895,7 +5900,8 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="smoothLength"></param>
     /// <returns></returns>
-    public static StockData CalculateKwanIndicator(this StockData stockData, MovingAvgType maType, int length = 9, int smoothLength = 2)
+    public static StockData CalculateKwanIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, int length = 9, 
+        int smoothLength = 2)
     {
         List<decimal> vrList = new();
         List<decimal> prevList = new();
