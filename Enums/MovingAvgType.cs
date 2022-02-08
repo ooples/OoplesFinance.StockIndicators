@@ -160,4 +160,3 @@ public enum MovingAvgType
     ZeroLagTripleExponentialMovingAverage,
     ZeroLowLagMovingAverage
 }
-
