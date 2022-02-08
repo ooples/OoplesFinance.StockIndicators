@@ -146,6 +146,8 @@
 
 [Dynamic Momentum Oscillator](https://www.tradingview.com/script/Lgi8r9GG-Dynamic-Momentum-Oscillator-Dynamo/)
 
+[Ehlers High Pass Filter V1](https://www.tradingview.com/script/ZuIZPR4q-Ehlers-Simple-Decycler/)
+
 [Ehlers Roofing Filter](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersRoofingFilter)
 
 [Elliott Wave Oscillator](https://www.motivewave.com/studies/elliott_wave_oscillator.htm)
@@ -672,7 +674,71 @@ Atr Filtered Exponential Moving Average
 
 [Efficient Price](https://www.tradingview.com/script/oQnoJgjd-Efficient-Price/)
 
+[Ehlers 2 Pole Butterworth Filter V1](https://www.tradingview.com/script/8fi2pAIB-Ehlers-2-Pole-Butterworth-Filter-V1-CC/)
+
+[Ehlers 2 Pole Butterworth Filter V2](https://www.tradingview.com/script/Pp8BJxjf-Ehlers-2-Pole-Butterworth-Filter-V2-CC/)
+
+[Ehlers 2 Pole Super Smoother Filter V1](https://www.tradingview.com/script/Dv287ikx-Ehlers-2-Pole-Super-Smoother-Filter-V1-CC/)
+
+[Ehlers 2 Pole Super Smoother Filter V2](https://www.tradingview.com/script/PAIrISU7-Ehlers-2-Pole-Super-Smoother-Filter-V2-CC/)
+
+[Ehlers 3 Pole Butterworth Filter V1](https://www.tradingview.com/script/2rIBjckU-Ehlers-3-Pole-Butterworth-Filter-CC/)
+
+[Ehlers 3 Pole Butterworth Filter V2](https://www.tradingview.com/script/cGeKRX1C-Ehlers-3-Pole-Butterworth-Filter-V2-CC/)
+
+[Ehlers 3 Pole Super Smoother Filter](https://www.tradingview.com/script/XjpRuIum-Ehlers-3-Pole-Super-Smoother-Filter-CC/)
+
+[Ehlers Adaptive Laguerre Filter](https://www.tradingview.com/script/sAt8FpH5-Adaptive-Laguerre-Filter/)
+
+Ehlers All Pass Phase Shifter
+
+[Ehlers Average Error Filter](https://www.tradingview.com/script/keu8LfCM-Ehlers-Average-Error-Filter-CC/)
+
+Ehlers Better Exponential Moving Average
+
+Ehlers Chebyshev Low Pass Filter
+
+[Ehlers Deviation Scaled Moving Average](https://www.tradingview.com/script/Vsa2HTzq-Ehlers-Deviation-Scaled-Moving-Average-DSMA/)
+
+[Ehlers Deviation Scaled Super Smoother](https://www.tradingview.com/script/Qhl4sfk4-Ehlers-Deviation-Scaled-Super-Smoother-CC/)
+
+[Ehlers Distance Coefficient Filter](https://www.tradingview.com/script/LacHcaRi-Ehlers-Distance-Coefficient-Filter-CC/)
+
+[Ehlers Filter](https://www.motivewave.com/studies/ehlers_filter.htm)
+
+[Ehlers Finite Impulse Response Filter](https://www.tradingview.com/script/mvXfI6Yf-Finite-Impulse-Response-FIR-Filter/)
+
+[Ehlers Fractal Adaptive Moving Average](https://www.motivewave.com/studies/fractal_adaptive_moving_average.htm)
+
+[Ehlers Gaussian Filter](https://www.tradingview.com/script/rbAqS8EX-Gaussian-Filter/)
+
+[Ehlers Hann Moving Average](https://tr.tradingview.com/script/fM45ewpp-Ehlers-Hann-Moving-Average-CC/)
+
+[Ehlers Infinite Impulse Response Filter](https://www.tradingview.com/script/WF4SheKj-Infinite-Impulse-Response-IIR-Filter/)
+
+[Ehlers Kaufman Adaptive Moving Average](https://www.tradingview.com/script/52f7Z7fN-Ehlers-Kaufman-Adaptive-Moving-Average-CC/)
+
+[Ehlers Laguerre Filter](https://www.tradingview.com/script/6aMJzwII-Ehlers-Laguerre-Filter-CC/)
+
+[Ehlers Leading Indicator](https://www.tradingview.com/script/6Dl0db4S-Ehlers-Leading-Indicator-CC/)
+
+[Ehlers Median Average Adaptive Filter](https://www.tradingview.com/script/pq6FWb3Y-Ehlers-Median-Average-Adaptive-Filter-CC/)
+
+[Ehlers Modified Optimum Elliptic Filter](https://www.tradingview.com/script/OGToVsFd-Ehlers-Modified-Optimum-Elliptic-Filter/)
+
+[Ehlers Optimum Elliptic Filter](https://www.tradingview.com/script/oXVueGay-Ehlers-Optimum-Elliptic-Filter/)
+
 [Ehlers Phase Calculation](https://www.tradingview.com/script/Zy7ZBrmZ-Phase-Calculation/)
+
+[Ehlers Recursive Median Filter](https://www.tradingview.com/script/rjXrLov2-Recursive-Median-Filter/)
+
+[Ehlers Simple Decycler](https://www.tradingview.com/script/ZuIZPR4q-Ehlers-Simple-Decycler/)
+
+[Ehlers Super Smoother Filter](https://www.tradingview.com/script/VdJy0yBJ-Ehlers-Super-Smoother-Filter/)
+
+[Ehlers Variable Index Dynamic Average](https://www.tradingview.com/script/rUu1lfnZ-Ehlers-Variable-Index-Dynamic-Average-CC/)
+
+[Ehlers Zero Lag Exponential Moving Average](https://www.tradingview.com/script/Oxizu1k7-Zero-Lag-Exponential-Moving-Average/)
 
 [Elastic Volume Weighted Moving Average V1](https://www.motivewave.com/studies/elastic_volume_weighted_moving_average.htm)
 
@@ -695,8 +761,6 @@ Atr Filtered Exponential Moving Average
 [Fibonacci Weighted Moving Average](https://www.tradingview.com/script/gObTdd4J-Fibonacci-Weighted-Moving-Average/)
 
 [Fisher Least Squares Moving Average](https://www.tradingview.com/script/ZZ1LjoJC-Fisher-Least-Squares-Moving-Average/)
-
-[Fractal Adaptive Moving Average](https://www.motivewave.com/studies/fractal_adaptive_moving_average.htm)
 
 [Full Typical Price](https://tlc.thinkorswim.com/center/reference/thinkScript/Functions/Fundamentals/ohlc4)
 
