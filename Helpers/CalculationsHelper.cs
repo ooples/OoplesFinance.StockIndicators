@@ -1,4 +1,4 @@
-﻿global using OoplesFinance.StockIndicators.Enums;
+global using OoplesFinance.StockIndicators.Enums;
 global using OoplesFinance.StockIndicators.Exceptions;
 global using OoplesFinance.StockIndicators.Models;
 global using static OoplesFinance.StockIndicators.Helpers.MathHelper;

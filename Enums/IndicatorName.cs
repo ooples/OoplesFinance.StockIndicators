@@ -1,4 +1,4 @@
-﻿global using OoplesFinance.StockIndicators.Helpers;
+global using OoplesFinance.StockIndicators.Helpers;
 
 namespace OoplesFinance.StockIndicators.Enums;
 

@@ -1,4 +1,4 @@
-﻿namespace OoplesFinance.StockIndicators;
+namespace OoplesFinance.StockIndicators;
 
 public static partial class Calculations
 {
