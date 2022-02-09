@@ -309,66 +309,286 @@ public enum IndicatorName
     Ehlers3PoleButterworthFilterV2,
     [Category(IndicatorType.Trend)]
     Ehlers3PoleSuperSmootherFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveBandPassFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveCenterOfGravityOscillator,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveCommodityChannelIndexV1,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveCommodityChannelIndexV2,
     [Category(IndicatorType.Cycle)]
     EhlersAdaptiveCyberCycle,
     [Category(IndicatorType.Trend)]
     EhlersAdaptiveLaguerreFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveRelativeStrengthIndexV1,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveRelativeStrengthIndexV2,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveRsiV1FisherTransform,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveRsiV2FisherTransform,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveStochasticIndicatorV1,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveStochasticIndicatorV2,
+    [Category(IndicatorType.Momentum)]
+    EhlersAdaptiveStochasticInverseFisherTransform,
     [Category(IndicatorType.Trend)]
     EhlersAllPassPhaseShifter,
+    [Category(IndicatorType.Volatility)]
+    EhlersAlternateSignalToNoiseRatio,
+    [Category(IndicatorType.Volatility)]
+    EhlersAMDetector,
+    [Category(IndicatorType.Volatility)]
+    EhlersAnticipateIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersAutoCorrelationIndicator,
+    [Category(IndicatorType.Cycle)]
+    EhlersAutoCorrelationPeriodogram,
+    [Category(IndicatorType.Trend)]
+    EhlersAutoCorrelationReversals,
     [Category(IndicatorType.Trend)]
     EhlersAverageErrorFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersBandPassFilterV1,
+    [Category(IndicatorType.Momentum)]
+    EhlersBandPassFilterV2,
     [Category(IndicatorType.Trend)]
     EhlersBetterExponentialMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    EhlersCenterofGravityOscillator,
     [Category(IndicatorType.Trend)]
     EhlersChebyshevLowPassFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersClassicHilbertTransformer,
+    [Category(IndicatorType.Cycle)]
+    EhlersCombFilterSpectralEstimate,
+    [Category(IndicatorType.Momentum)]
+    EhlersConvolutionIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersCorrelationAngleIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersCorrelationCycleIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersCorrelationTrendIndicator,
+    [Category(IndicatorType.Cycle)]
+    EhlersCyberCycle,
+    [Category(IndicatorType.Cycle)]
+    EhlersCycleAmplitude,
+    [Category(IndicatorType.Cycle)]
+    EhlersCycleBandPassFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersDecycler,
+    [Category(IndicatorType.Momentum)]
+    EhlersDecyclerOscillatorV1,
+    [Category(IndicatorType.Momentum)]
+    EhlersDecyclerOscillatorV2,
+    [Category(IndicatorType.Momentum)]
+    EhlersDetrendedLeadingIndicator,
     [Category(IndicatorType.Trend)]
     EhlersDeviationScaledMovingAverage,
     [Category(IndicatorType.Trend)]
     EhlersDeviationScaledSuperSmoother,
+    [Category(IndicatorType.Cycle)]
+    EhlersDiscreteFourierTransform,
+    [Category(IndicatorType.Cycle)]
+    EhlersDiscreteFourierTransformSpectralEstimate,
     [Category(IndicatorType.Trend)]
     EhlersDistanceCoefficientFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersDominantCycleTunedBypassFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersDualDifferentiatorDominantCycle,
+    [Category(IndicatorType.Momentum)]
+    EhlersEarlyOnsetTrendIndicator,
+    [Category(IndicatorType.Volatility)]
+    EhlersEmpiricalModeDecomposition,
+    [Category(IndicatorType.Volatility)]
+    EhlersEnhancedSignalToNoiseRatio,
+    [Category(IndicatorType.Cycle)]
+    EhlersEvenBetterSineWaveIndicator,
     [Category(IndicatorType.Trend)]
     EhlersFilter,
     [Category(IndicatorType.Trend)]
     EhlersFiniteImpulseResponseFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersFisherTransform,
+    [Category(IndicatorType.Momentum)]
+    EhlersFisherizedDeviationScaledOscillator,
+    [Category(IndicatorType.Momentum)]
+    EhlersFMDemodulatorIndicator,
+    [Category(IndicatorType.Cycle)]
+    EhlersFourierSeriesAnalysis,
     [Category(IndicatorType.Trend)]
     EhlersFractalAdaptiveMovingAverage,
     [Category(IndicatorType.Trend)]
     EhlersGaussianFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersHammingWindowIndicator,
     [Category(IndicatorType.Trend)]
     EhlersHannMovingAverage,
     [Category(IndicatorType.Momentum)]
+    EhlersHannWindowIndicator,
+    [Category(IndicatorType.Momentum)]
     EhlersHighPassFilterV1,
+    [Category(IndicatorType.Momentum)]
+    EhlersHighPassFilterV2,
+    [Category(IndicatorType.Momentum)]
+    EhlersHilbertOscillator,
+    [Category(IndicatorType.Momentum)]
+    EhlersHilbertTransformIndicator,
+    [Category(IndicatorType.Trend)]
+    EhlersHilbertTransformer,
+    [Category(IndicatorType.Trend)]
+    EhlersHilbertTransformerIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersHomodyneDominantCycle,
+    [Category(IndicatorType.Momentum)]
+    EhlersHpLpRoofingFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersHurstCoefficient,
+    [Category(IndicatorType.Momentum)]
+    EhlersImpulseReaction,
+    [Category(IndicatorType.Momentum)]
+    EhlersImpulseResponse,
     [Category(IndicatorType.Trend)]
     EhlersInfiniteImpulseResponseFilter,
+    [Category(IndicatorType.Cycle)]
+    EhlersInstantaneousPhaseIndicator,
+    [Category(IndicatorType.Trend)]
+    EhlersInstantaneousTrendline,
+    [Category(IndicatorType.Trend)]
+    EhlersInstantaneousTrendlineV2,
+    [Category(IndicatorType.Momentum)]
+    EhlersInverseFisherTransform,
+    [Category(IndicatorType.Momentum)]
+    EhlersInverseFisherTransformCommodityChannelIndex,
+    [Category(IndicatorType.Momentum)]
+    EhlersInverseFisherTransformRelativeStrengthIndex,
     [Category(IndicatorType.Trend)]
     EhlersKaufmanAdaptiveMovingAverage,
     [Category(IndicatorType.Trend)]
     EhlersLaguerreFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersLaguerreRelativeStrengthIndex,
+    [Category(IndicatorType.Momentum)]
+    EhlersLaguerreRelativeStrengthIndexWithSelfAdjustingAlpha,
     [Category(IndicatorType.Trend)]
     EhlersLeadingIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersMarketStateIndicator,
     [Category(IndicatorType.Trend)]
     EhlersMedianAverageAdaptiveFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersMesaPredictIndicatorV1,
+    [Category(IndicatorType.Momentum)]
+    EhlersMesaPredictIndicatorV2,
     [Category(IndicatorType.Trend)]
     EhlersModifiedOptimumEllipticFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersModifiedRelativeStrengthIndex,
+    [Category(IndicatorType.Momentum)]
+    EhlersModifiedStochasticIndicator,
     [Category(IndicatorType.Trend)]
     EhlersMotherOfAdaptiveMovingAverages,
+    [Category(IndicatorType.Momentum)]
+    EhlersMovingAverageDifferenceIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersNoiseEliminationTechnology,
     [Category(IndicatorType.Trend)]
     EhlersOptimumEllipticFilter,
+    [Category(IndicatorType.Cycle)]
+    EhlersPhaseAccumulationDominantCycle,
     [Category(IndicatorType.Trend)]
     EhlersPhaseCalculation,
     [Category(IndicatorType.Trend)]
     EhlersRecursiveMedianFilter,
     [Category(IndicatorType.Momentum)]
-    EhlersRoofingFilter,
+    EhlersRecursiveMedianOscillator,
+    [Category(IndicatorType.Momentum)]
+    EhlersReflexIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersRelativeVigorIndex,
+    [Category(IndicatorType.Volume)]
+    EhlersRestoringPullIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersReverseExponentialMovingAverageIndicator,
+    [Category(IndicatorType.Trend)]
+    EhlersReverseExponentialMovingAverageIndicatorV2,
+    [Category(IndicatorType.Momentum)]
+    EhlersRocketRelativeStrengthIndex,
+    [Category(IndicatorType.Momentum)]
+    EhlersRoofingFilterV1,
+    [Category(IndicatorType.Momentum)]
+    EhlersRoofingFilterV2,
+    [Category(IndicatorType.Momentum)]
+    EhlersRoofingFilterIndicator,
+    [Category(IndicatorType.Volatility)]
+    EhlersSignalToNoiseRatio,
+    [Category(IndicatorType.Volatility)]
+    EhlersSignalToNoiseRatioV2,
+    [Category(IndicatorType.Momentum)]
+    EhlersSimpleClipIndicator,
+    [Category(IndicatorType.Cycle)]
+    EhlersSimpleCycleIndicator,
     [Category(IndicatorType.Trend)]
     EhlersSimpleDecycler,
+    [Category(IndicatorType.Momentum)]
+    EhlersSimpleDerivIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersSimpleWindowIndicator,
+    [Category(IndicatorType.Cycle)]
+    EhlersSineWaveIndicator,
+    [Category(IndicatorType.Cycle)]
+    EhlersSineWaveIndicatorV2,
+    [Category(IndicatorType.Momentum)]
+    EhlersSmoothedAdaptiveMomentumIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersSnakeUniversalTradingFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersSpearmanRankIndicator,
+    [Category(IndicatorType.Cycle)]
+    EhlersSpectrumDerivedFilterBank,
+    [Category(IndicatorType.Cycle)]
+    EhlersSquelchIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersStochastic,
+    [Category(IndicatorType.Momentum)]
+    EhlersStochasticCenterOfGravityOscillator,
+    [Category(IndicatorType.Cycle)]
+    EhlersStochasticCyberCycle,
+    [Category(IndicatorType.Volatility)]
+    EhlersSuperPassbandFilter,
     [Category(IndicatorType.Trend)]
     EhlersSuperSmootherFilter,
     [Category(IndicatorType.Trend)]
+    EhlersSwissArmyKnifeIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersTrendExtraction,
+    [Category(IndicatorType.Momentum)]
+    EhlersTrendflexIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersTriangleWindowIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersTripleDelayLineDetrender,
+    [Category(IndicatorType.Momentum)]
+    EhlersTruncatedBandPassFilter,
+    [Category(IndicatorType.Momentum)]
+    EhlersUniversalOscillator,
+    [Category(IndicatorType.Momentum)]
+    EhlersUniversalTradingFilter,
+    [Category(IndicatorType.Trend)]
     EhlersVariableIndexDynamicAverage,
+    [Category(IndicatorType.Momentum)]
+    EhlersVossPredictiveFilter,
+    [Category(IndicatorType.Cycle)]
+    EhlersZeroCrossingsDominantCycle,
     [Category(IndicatorType.Trend)]
     EhlersZeroLagExponentialMovingAverage,
+    [Category(IndicatorType.Momentum)]
+    EhlersZeroMeanRoofingFilter,
     [Category(IndicatorType.Trend)]
     ElasticVolumeWeightedMovingAverageV1,
     [Category(IndicatorType.Trend)]

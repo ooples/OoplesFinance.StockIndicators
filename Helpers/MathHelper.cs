@@ -11,7 +11,14 @@ public static class MathHelper
     /// <returns></returns>
     public static decimal Log(decimal value)
     {
-        return (decimal)Math.Log((double)value);
+        if (value > 0)
+        {
+            return (decimal)Math.Log((double)value);
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     /// <summary>
