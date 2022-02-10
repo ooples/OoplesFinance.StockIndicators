@@ -8091,7 +8091,7 @@ public static partial class Calculations
             for (int j = 1; j <= length; j++)
             {
                 decimal prevV = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
-                decimal cos = 1 - Cos(2 * Pi * (decimal)j / (length + 1));
+                decimal cos = 1 - Cos(2 * Pi * ((decimal)j / (length + 1)));
                 filtSum += cos * prevV;
                 coefSum += cos;
             }
@@ -8567,6 +8567,99 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = bEmaList;
         stockData.IndicatorName = IndicatorName.EhlersBetterExponentialMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Hamming Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="pedestal"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersHammingMovingAverage(this StockData stockData, int length = 20, decimal pedestal = 3)
+    {
+        List<decimal> filtList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevFilt = i >= 1 ? filtList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal filtSum = 0, coefSum = 0;
+            for (int j = 0; j < length; j++)
+            {
+                decimal prevV = i >= j ? inputList.ElementAtOrDefault(i - j) : 0;
+                decimal sine = Sin(pedestal + ((Pi - (2 * pedestal)) * ((decimal)j / (length - 1))));
+                filtSum += sine * prevV;
+                coefSum += sine;
+            }
+
+            decimal filt = coefSum != 0 ? filtSum / coefSum : 0;
+            filtList.Add(filt);
+
+            var signal = GetCompareSignal(currentValue - filt, prevValue - prevFilt);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ehma", filtList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = filtList;
+        stockData.IndicatorName = IndicatorName.EhlersHammingMovingAverage;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Triangle Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersTriangleMovingAverage(this StockData stockData, int length = 20)
+    {
+        List<decimal> filtList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal l2 = (decimal)length / 2;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevFilt = i >= 1 ? filtList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+
+            decimal filtSum = 0, coefSum = 0;
+            for (int j = 1; j <= length; j++)
+            {
+                decimal prevV = i >= j - 1 ? inputList.ElementAtOrDefault(i - (j - 1)) : 0;
+                decimal c = j < l2 ? j : j > l2 ? length + 1 - j : l2;
+                filtSum += c * prevV;
+                coefSum += c;
+            }
+
+            decimal filt = coefSum != 0 ? filtSum / coefSum : 0;
+            filtList.Add(filt);
+
+            var signal = GetCompareSignal(currentValue - filt, prevValue - prevFilt);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Etma", filtList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = filtList;
+        stockData.IndicatorName = IndicatorName.EhlersTriangleMovingAverage;
 
         return stockData;
     }
