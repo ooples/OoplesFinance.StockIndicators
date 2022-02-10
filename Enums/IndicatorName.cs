@@ -425,6 +425,8 @@ public enum IndicatorName
     EhlersFractalAdaptiveMovingAverage,
     [Category(IndicatorType.Trend)]
     EhlersGaussianFilter,
+    [Category(IndicatorType.Trend)]
+    EhlersHammingMovingAverage,
     [Category(IndicatorType.Momentum)]
     EhlersHammingWindowIndicator,
     [Category(IndicatorType.Trend)]
@@ -514,7 +516,7 @@ public enum IndicatorName
     [Category(IndicatorType.Volume)]
     EhlersRestoringPullIndicator,
     [Category(IndicatorType.Momentum)]
-    EhlersReverseExponentialMovingAverageIndicator,
+    EhlersReverseExponentialMovingAverageIndicatorV1,
     [Category(IndicatorType.Trend)]
     EhlersReverseExponentialMovingAverageIndicatorV2,
     [Category(IndicatorType.Momentum)]
@@ -526,7 +528,7 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     EhlersRoofingFilterIndicator,
     [Category(IndicatorType.Volatility)]
-    EhlersSignalToNoiseRatio,
+    EhlersSignalToNoiseRatioV1,
     [Category(IndicatorType.Volatility)]
     EhlersSignalToNoiseRatioV2,
     [Category(IndicatorType.Momentum)]
@@ -569,6 +571,8 @@ public enum IndicatorName
     EhlersTrendExtraction,
     [Category(IndicatorType.Momentum)]
     EhlersTrendflexIndicator,
+    [Category(IndicatorType.Trend)]
+    EhlersTriangleMovingAverage,
     [Category(IndicatorType.Momentum)]
     EhlersTriangleWindowIndicator,
     [Category(IndicatorType.Momentum)]

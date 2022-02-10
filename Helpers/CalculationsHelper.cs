@@ -13,15 +13,17 @@ namespace OoplesFinance.StockIndicators.Helpers;
 public static class CalculationsHelper
 {
     /// <summary>
-    /// Gets the moving average list.
+    /// Calculates the user chosen moving average with user's custom settings
     /// </summary>
-    /// <param name="stockData">The stock data.</param>
-    /// <param name="movingAvgType">Average type of the moving.</param>
-    /// <param name="length">The length.</param>
-    /// <param name="customValuesList">The custom values list.</param>
+    /// <param name="stockData"></param>
+    /// <param name="movingAvgType"></param>
+    /// <param name="length"></param>
+    /// <param name="customValuesList"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
     /// <returns></returns>
-    public static List<decimal> GetMovingAverageList(StockData stockData, MovingAvgType movingAvgType, int length,
-        List<decimal>? customValuesList = null)
+    public static List<decimal> GetMovingAverageList(StockData stockData, MovingAvgType movingAvgType, int length, List<decimal>? customValuesList = null, 
+        int? fastLength = null, int? slowLength = null)
     {
         List<decimal> movingAvgList = new();
 
@@ -48,7 +50,7 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateAdaptiveLeastSquares(length: length).CustomValuesList;
                 break;
             case MovingAvgType.AdaptiveMovingAverage:
-                movingAvgList = stockData.CalculateAdaptiveMovingAverage(slowLength: length, length: length).CustomValuesList;
+                movingAvgList = stockData.CalculateAdaptiveMovingAverage(fastLength ?? default, slowLength ?? length, length).CustomValuesList;
                 break;
             case MovingAvgType.AhrensMovingAverage:
                 movingAvgList = stockData.CalculateAhrensMovingAverage(length).CustomValuesList;
@@ -96,7 +98,7 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateDynamicallyAdjustableFilter(length).CustomValuesList;
                 break;
             case MovingAvgType.DynamicallyAdjustableMovingAverage:
-                movingAvgList = stockData.CalculateDynamicallyAdjustableMovingAverage(fastLength: length).CustomValuesList;
+                movingAvgList = stockData.CalculateDynamicallyAdjustableMovingAverage(fastLength ?? default, slowLength ?? length).CustomValuesList;
                 break;
             case MovingAvgType.EdgePreservingFilter:
                 movingAvgList = stockData.CalculateEdgePreservingFilter(length: length).CustomValuesList;
@@ -123,7 +125,7 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateEhlers3PoleSuperSmootherFilter(length).CustomValuesList;
                 break;
             case MovingAvgType.EhlersAdaptiveLaguerreFilter:
-                movingAvgList = stockData.CalculateEhlersAdaptiveLaguerreFilter(length1: length).CustomValuesList;
+                movingAvgList = stockData.CalculateEhlersAdaptiveLaguerreFilter(slowLength ?? length, fastLength ?? default).CustomValuesList;
                 break;
             case MovingAvgType.EhlersAllPassPhaseShifter:
                 movingAvgList = stockData.CalculateEhlersAllPassPhaseShifter(length: length).CustomValuesList;
@@ -138,16 +140,17 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateEhlersChebyshevLowPassFilter().CustomValuesList;
                 break;
             case MovingAvgType.EhlersDeviationScaledMovingAverage:
-                movingAvgList = stockData.CalculateEhlersDeviationScaledMovingAverage(fastLength: length, slowLength: length * 2).CustomValuesList;
+                movingAvgList = stockData.CalculateEhlersDeviationScaledMovingAverage(
+                    fastLength: fastLength ?? length, slowLength: slowLength ?? length * 2).CustomValuesList;
                 break;
             case MovingAvgType.EhlersDeviationScaledSuperSmoother:
-                movingAvgList = stockData.CalculateEhlersDeviationScaledSuperSmoother(length1: length).CustomValuesList;
+                movingAvgList = stockData.CalculateEhlersDeviationScaledSuperSmoother(length1: fastLength ?? length, length2: slowLength ?? default).CustomValuesList;
                 break;
             case MovingAvgType.EhlersDistanceCoefficientFilter:
                 movingAvgList = stockData.CalculateEhlersDistanceCoefficientFilter(length).CustomValuesList;
                 break;
             case MovingAvgType.EhlersFilter:
-                movingAvgList = stockData.CalculateEhlersFilter(length1: length).CustomValuesList;
+                movingAvgList = stockData.CalculateEhlersFilter(slowLength ?? length, fastLength ?? default).CustomValuesList;
                 break;
             case MovingAvgType.EhlersFiniteImpulseResponseFilter:
                 movingAvgList = stockData.CalculateEhlersFiniteImpulseResponseFilter().CustomValuesList;
@@ -157,6 +160,9 @@ public static class CalculationsHelper
                 break;
             case MovingAvgType.EhlersGaussianFilter:
                 movingAvgList = stockData.CalculateEhlersGaussianFilter(length).CustomValuesList;
+                break;
+            case MovingAvgType.EhlersHammingMovingAverage:
+                movingAvgList = stockData.CalculateEhlersHammingMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.EhlersHannMovingAverage:
                 movingAvgList = stockData.CalculateEhlersHannMovingAverage(length).CustomValuesList;
@@ -186,13 +192,17 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateEhlersOptimumEllipticFilter().CustomValuesList;
                 break;
             case MovingAvgType.EhlersRecursiveMedianFilter:
-                movingAvgList = stockData.CalculateEhlersRecursiveMedianFilter(length1: length).CustomValuesList;
+                movingAvgList = stockData.CalculateEhlersRecursiveMedianFilter(fastLength ?? default, slowLength ?? length).CustomValuesList;
                 break;
             case MovingAvgType.EhlersSuperSmootherFilter:
                 movingAvgList = stockData.CalculateEhlersSuperSmootherFilter(length).CustomValuesList;
                 break;
+            case MovingAvgType.EhlersTriangleMovingAverage:
+                movingAvgList = stockData.CalculateEhlersTriangleMovingAverage(length).CustomValuesList;
+                break;
             case MovingAvgType.EhlersVariableIndexDynamicAverage:
-                movingAvgList = stockData.CalculateEhlersVariableIndexDynamicAverage(fastLength: length).CustomValuesList;
+                movingAvgList = stockData.CalculateEhlersVariableIndexDynamicAverage(fastLength: fastLength ?? default, slowLength: slowLength ?? length)
+                    .CustomValuesList;
                 break;
             case MovingAvgType.EhlersZeroLagExponentialMovingAverage:
                 movingAvgList = stockData.CalculateEhlersZeroLagExponentialMovingAverage(length: length).CustomValuesList;
@@ -300,7 +310,7 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateMcNichollMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.MiddleHighLowMovingAverage:
-                movingAvgList = stockData.CalculateMiddleHighLowMovingAverage(length1: length).CustomValuesList;
+                movingAvgList = stockData.CalculateMiddleHighLowMovingAverage(length1: slowLength ?? length, length2: fastLength ?? default).CustomValuesList;
                 break;
             case MovingAvgType.ModularFilter:
                 movingAvgList = stockData.CalculateModularFilter(length: length).CustomValuesList;
@@ -378,7 +388,8 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateReverseEngineeringRelativeStrengthIndex(length: length).CustomValuesList;
                 break;
             case MovingAvgType.ReverseMovingAverageConvergenceDivergence:
-                movingAvgList = stockData.CalculateReverseMovingAverageConvergenceDivergence().CustomValuesList;
+                movingAvgList = stockData.CalculateReverseMovingAverageConvergenceDivergence(fastLength: fastLength ?? default, slowLength: slowLength ?? length)
+                    .CustomValuesList;
                 break;
             case MovingAvgType.RightSidedRickerMovingAverage:
                 movingAvgList = stockData.CalculateRightSidedRickerMovingAverage(length: length).CustomValuesList;
@@ -447,7 +458,7 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateTripleExponentialMovingAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.UltimateMovingAverage:
-                movingAvgList = stockData.CalculateUltimateMovingAverage().CustomValuesList;
+                movingAvgList = stockData.CalculateUltimateMovingAverage(minLength: fastLength ?? default, maxLength: slowLength ?? length).CustomValuesList;
                 break;
             case MovingAvgType.VariableAdaptiveMovingAverage:
                 movingAvgList = stockData.CalculateVariableAdaptiveMovingAverage(length: length).CustomValuesList;
@@ -456,7 +467,7 @@ public static class CalculationsHelper
                 movingAvgList = stockData.CalculateVariableIndexDynamicAverage(length: length).CustomValuesList;
                 break;
             case MovingAvgType.VariableLengthMovingAverage:
-                movingAvgList = stockData.CalculateVariableLengthMovingAverage().CustomValuesList;
+                movingAvgList = stockData.CalculateVariableLengthMovingAverage(minLength: fastLength ?? default, maxLength: slowLength ?? length).CustomValuesList;
                 break;
             case MovingAvgType.VariableMovingAverage:
                 movingAvgList = stockData.CalculateVariableMovingAverage(length).CustomValuesList;
