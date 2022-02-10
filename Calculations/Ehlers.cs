@@ -3183,6 +3183,15 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Adaptive Stochastic Indicator V2
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersAdaptiveStochasticIndicatorV2(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
         int length1 = 48, int length2 = 10, int length3 = 3)
     {
@@ -3246,6 +3255,15 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Adaptive Stochastic Inverse Fisher Transform
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersAdaptiveStochasticInverseFisherTransform(this StockData stockData, 
         MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 48, int length2 = 10, int length3 = 3)
     {
@@ -3284,6 +3302,15 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Adaptive Commodity Channel Index V2
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersAdaptiveCommodityChannelIndexV2(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
         int length1 = 48, int length2 = 10, int length3 = 3)
     {
@@ -3353,6 +3380,13 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Discrete Fourier Transform Spectral Estimate
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersDiscreteFourierTransformSpectralEstimate(this StockData stockData, int length1 = 48, int length2 = 10)
     {
         List<decimal> rList = new();
@@ -3409,59 +3443,16 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Comb Filter Spectral Estimate
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="bw"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersCombFilterSpectralEstimate(this StockData stockData, int length1 = 48, int length2 = 10, decimal bw = 0.3m)
     {
-        //@version=4
-        // Copyright (c) 2019-present, Franklin Moormann (cheatcountry)
-        // Ehlers Comb Filter Spectral Estimate [CC] script may be freely distributed under the MIT license.
-        //study("Ehlers Comb Filter Spectral Estimate [CC]", overlay = false)
-
-        //inp = input(title = "Source", type = input.source, defval = close)
-        //res = input(title = "Resolution", type = input.resolution, defval = "")
-        //rep = input(title = "Allow Repainting?", type = input.bool, defval = false)
-        //bar = input(title = "Allow Bar Color Change?", type = input.bool, defval = true)
-        //src = security(syminfo.tickerid, res, inp[rep ? 0 : barstate.isrealtime ? 1 : 0])[rep ? 0 : barstate.isrealtime ? 0 : 1]
-        //hpLength = input(title = "HPLength", type = input.integer, defval = 48, minval = 1)
-        //ssfLength = input(title = "SSFLength", type = input.integer, defval = 10, minval = 1)
-        //bw = input(title = "Bandwidth", type = input.float, defval = 0.3, minval = 0.01, step = 0.01)
-
-        //pi = 2 * asin(1)
-        //twoPiPrd = 0.707 * 2 * pi / hpLength
-        //a1 = (cos(twoPiPrd) + sin(twoPiPrd) - 1) / cos(twoPiPrd)
-        //a2 = exp(-1.414 * pi / ssfLength)
-        //b1 = 2 * a2 * cos(1.414 * pi / ssfLength)
-        //c2 = b1
-        //c3 = -a2 * a2
-        //c1 = 1 - c2 - c3
-
-        //hp = 0.0
-        //hp:= (pow(1 - (a1 / 2), 2) * (src - (2 * nz(src[1])) + nz(src[2]))) + (2 * (1 - a1) * nz(hp[1])) - (pow(1 - a1, 2) * nz(hp[2]))
-
-        //rfilt = 0.0
-        //rfilt:= (c1 * ((hp + nz(hp[1])) / 2)) + (c2 * nz(rfilt[1])) + (c3 * nz(rfilt[2]))
-
-        //maxPwr = 0.0, pwr = 0.0, spx = 0.0, sp = 0.0, bp = 0.0
-        //for i = ssfLength to hpLength
-        //    beta = cos(2 * pi / i)
-        //    gamma = 1 / cos(2 * pi * bw / i)
-        //    alpha = gamma - sqrt((gamma * gamma) - 1)
-        //    bp := (0.5 * (1 - alpha) * (rfilt - nz(rfilt[2]))) + (beta * (1 + alpha) * nz(bp[1])) - (alpha * nz(bp[2]))
-        //    pwr := pwr + pow(bp / i, 2)
-        //    maxPwr := pwr > maxPwr ? pwr : maxPwr
-        //    pwr := pwr / maxPwr
-
-        //    if pwr >= 0.5
-        //        spx:= spx + (i * pwr)
-        //        sp:= sp + pwr
-
-        //domCyc = sp != 0 ? spx / sp : 0
-
-        //sig = rfilt > 0 ? 1 : rfilt < 0 ? -1 : 0
-        //dftseColor = sig > 0 ? color.green : sig < 0 ? color.red : color.black
-        //alertcondition(crossover(sig, 0), "Buy Signal", "Bullish Change Detected")
-        //alertcondition(crossunder(sig, 0), "Sell Signal", "Bearish Change Detected")
-        //barcolor(bar ? dftseColor : na)
-        //plot(domCyc, title = "DominantCycle", color = dftseColor, linewidth = 2)
         List<decimal> domCycList = new();
         List<decimal> bpList = new();
         List<Signal> signalsList = new();
@@ -3520,6 +3511,15 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Auto Correlation Reversals
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersAutoCorrelationReversals(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
         int length1 = 48, int length2 = 10, int length3 = 3)
     {
@@ -3561,6 +3561,12 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Reverse Exponential Moving Average Indicator V1
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="alpha"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersReverseExponentialMovingAverageIndicatorV1(this StockData stockData, decimal alpha = 0.1m)
     {
         List<decimal> emaList = new();
@@ -3571,7 +3577,6 @@ public static partial class Calculations
         List<decimal> re5List = new();
         List<decimal> re6List = new();
         List<decimal> re7List = new();
-        List<decimal> re8List = new();
         List<decimal> waveList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
@@ -3614,10 +3619,7 @@ public static partial class Calculations
             decimal re7 = (Pow(cc, 64) * re6) + prevRe6;
             re7List.Add(re7);
 
-            decimal prevRe8 = re8List.LastOrDefault();
             decimal re8 = (Pow(cc, 128) * re7) + prevRe7;
-            re8List.Add(re8);
-
             decimal prevWave = waveList.LastOrDefault();
             decimal wave = ema - (alpha * re8);
             waveList.Add(wave);
@@ -3637,17 +3639,22 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Reverse Exponential Moving Average Indicator V2
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="trendAlpha"></param>
+    /// <param name="cycleAlpha"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersReverseExponentialMovingAverageIndicatorV2(this StockData stockData, decimal trendAlpha = 0.05m, decimal cycleAlpha = 0.3m)
     {
         List<Signal> signalsList = new();
-        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         var trendList = CalculateEhlersReverseExponentialMovingAverageIndicatorV1(stockData, trendAlpha).CustomValuesList;
         var cycleList = CalculateEhlersReverseExponentialMovingAverageIndicatorV1(stockData, cycleAlpha).CustomValuesList;
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList.ElementAtOrDefault(i);
             decimal waveCycle = cycleList.ElementAtOrDefault(i);
             decimal waveTrend = trendList.ElementAtOrDefault(i);
             decimal prevWaveCycle = i >= 1 ? cycleList.ElementAtOrDefault(i - 1) : 0;
@@ -3669,6 +3676,14 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Moving Average Difference Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersMovingAverageDifferenceIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage, 
         int fastLength = 8, int slowLength = 23)
     {
@@ -3704,6 +3719,14 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Fisherized Deviation Scaled Oscillator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersFisherizedDeviationScaledOscillator(this StockData stockData, 
         MovingAvgType maType = MovingAvgType.EhlersDeviationScaledMovingAverage, int fastLength = 20, int slowLength = 40)
     {
@@ -3738,6 +3761,14 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Hilbert Transform Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="iMult"></param>
+    /// <param name="qMult"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersHilbertTransformIndicator(this StockData stockData, int length = 7, decimal iMult = 0.635m, decimal qMult = 0.338m)
     {
         List<decimal> v1List = new();
@@ -3782,6 +3813,13 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Instantaneous Phase Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersInstantaneousPhaseIndicator(this StockData stockData, int length1 = 7, int length2 = 50)
     {
         List<decimal> phaseList = new();
@@ -3839,6 +3877,14 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Squelch Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersSquelchIndicator(this StockData stockData, int length1 = 6, int length2 = 20, int length3 = 40)
     {
         List<decimal> phaseList = new();
@@ -3914,6 +3960,13 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Classic Hilbert Transformer
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersClassicHilbertTransformer(this StockData stockData, int length1 = 48, int length2 = 10)
     {
         List<decimal> peakList = new();
@@ -3966,6 +4019,13 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Hilbert Transformer
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersHilbertTransformer(this StockData stockData, int length1 = 48, int length2 = 20)
     {
         List<decimal> peakList = new();
@@ -4014,6 +4074,14 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Hilbert Transformer Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersHilbertTransformerIndicator(this StockData stockData, int length1 = 48, int length2 = 20, int length3 = 10)
     {
         List<decimal> peakList = new();
@@ -4073,6 +4141,14 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Dual Differentiator Dominant Cycle
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersDualDifferentiatorDominantCycle(this StockData stockData, int length1 = 48, int length2 = 20, int length3 = 8)
     {
         List<decimal> periodList = new();
@@ -4124,6 +4200,15 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Phase Accumulation Dominant Cycle
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <param name="length4"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersPhaseAccumulationDominantCycle(this StockData stockData, int length1 = 48, int length2 = 20, int length3 = 10, 
         int length4 = 40)
     {
@@ -4197,6 +4282,14 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Homodyne Dominant Cycle
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersHomodyneDominantCycle(this StockData stockData, int length1 = 48, int length2 = 20, int length3 = 10)
     {
         List<decimal> periodList = new();
@@ -4248,6 +4341,13 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Signal To Noise Ratio V1
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersSignalToNoiseRatioV1(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
         int length = 7)
     {
@@ -4300,6 +4400,13 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Hann Window Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersHannWindowIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.EhlersHannMovingAverage, int length = 20)
     {
         List<decimal> rocList = new();
@@ -4342,6 +4449,14 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Hamming Window Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="pedestal"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersHammingWindowIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.EhlersHammingMovingAverage,
         int length = 20, decimal pedestal = 10)
     {
@@ -4386,6 +4501,13 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Triangle Window Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersTriangleWindowIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.EhlersTriangleMovingAverage,
         int length = 20)
     {
@@ -4429,6 +4551,13 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Simple Window Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersSimpleWindowIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 20)
     {
         List<decimal> rocList = new();

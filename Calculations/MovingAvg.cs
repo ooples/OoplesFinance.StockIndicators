@@ -8571,6 +8571,13 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Hamming Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <param name="pedestal"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersHammingMovingAverage(this StockData stockData, int length = 20, decimal pedestal = 3)
     {
         List<decimal> filtList = new();
@@ -8610,6 +8617,12 @@ public static partial class Calculations
         return stockData;
     }
 
+    /// <summary>
+    /// Calculates the Ehlers Triangle Moving Average
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public static StockData CalculateEhlersTriangleMovingAverage(this StockData stockData, int length = 20)
     {
         List<decimal> filtList = new();
