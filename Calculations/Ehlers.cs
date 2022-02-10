@@ -1964,4 +1964,1222 @@ public static partial class Calculations
 
         return stockData;
     }
+
+    /// <summary>
+    /// Calculates the Ehlers Snake Universal Trading Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="bw"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersSnakeUniversalTradingFilter(this StockData stockData, MovingAvgType maType = MovingAvgType.EhlersHannMovingAverage,
+        int length1 = 23, int length2 = 50, decimal bw = 1.4m)
+    {
+        List<decimal> bpList = new();
+        List<decimal> negRmsList = new();
+        List<decimal> filtPowList = new();
+        List<decimal> rmsList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal l1 = Cos(MinOrMax(2 * Pi / 2 * length1, 0.99m, 0.01m));
+        decimal g1 = Cos(MinOrMax(bw * 2 * Pi / 2 * length1, 0.99m, 0.01m));
+        decimal s1 = (1 / g1) - Sqrt(1 / Pow(g1, 2) - 1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue2 = i >= 2 ? inputList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevBp1 = i >= 1 ? bpList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevBp2 = i >= 2 ? bpList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal bp = i < 3 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue2)) + (l1 * (1 + s1) * prevBp1) - (s1 * prevBp2);
+            bpList.Add(bp);
+        }
+
+        var filtList = GetMovingAverageList(stockData, maType, length1, bpList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal filt = filtList.ElementAtOrDefault(i);
+            decimal prevFilt1 = i >= 1 ? filtList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevFilt2 = i >= 2 ? filtList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal filtPow = Pow(filt, 2);
+            filtPowList.Add(filtPow);
+
+            decimal filtPowMa = filtPowList.TakeLastExt(length2).Average();
+            decimal rms = Sqrt(filtPowMa);
+            rmsList.Add(rms);
+
+            decimal negRms = -rms;
+            negRmsList.Add(negRms);
+
+            var signal = GetCompareSignal(filt - prevFilt1, prevFilt1 - prevFilt2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "UpperBand", rmsList },
+            { "Erf", filtList },
+            { "LowerBand", negRmsList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = filtList;
+        stockData.IndicatorName = IndicatorName.EhlersSnakeUniversalTradingFilter;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Impulse Response
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="bw"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersImpulseResponse(this StockData stockData, MovingAvgType maType = MovingAvgType.EhlersHannMovingAverage,
+        int length = 20, decimal bw = 1)
+    {
+        List<decimal> bpList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        int hannLength = MinOrMax((int)Math.Ceiling(length / 1.4m));
+        decimal l1 = Cos(MinOrMax(2 * Pi / length, 0.99m, 0.01m));
+        decimal g1 = Cos(MinOrMax(bw * 2 * Pi / length, 0.99m, 0.01m));
+        decimal s1 = (1 / g1) - Sqrt(1 / Pow(g1, 2) - 1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue2 = i >= 2 ? inputList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevBp1 = i >= 1 ? bpList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevBp2 = i >= 2 ? bpList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal bp = i < 3 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue2)) + (l1 * (1 + s1) * prevBp1) - (s1 * prevBp2);
+            bpList.Add(bp);
+        }
+
+        var filtList = GetMovingAverageList(stockData, maType, hannLength, bpList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal filt = filtList.ElementAtOrDefault(i);
+            decimal prevFilt1 = i >= 1 ? filtList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevFilt2 = i >= 2 ? filtList.ElementAtOrDefault(i - 2) : 0;
+
+            var signal = GetCompareSignal(filt - prevFilt1, prevFilt1 - prevFilt2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Eir", filtList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = filtList;
+        stockData.IndicatorName = IndicatorName.EhlersImpulseResponse;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Mesa Predict Indicator V1
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <param name="lowerLength"></param>
+    /// <param name="upperLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersMesaPredictIndicatorV1(this StockData stockData, int length1 = 5, int length2 = 4, int length3 = 10, 
+        int lowerLength = 12, int upperLength = 54)
+    {
+        List<decimal> ssfList = new();
+        List<decimal> hpList = new();
+        List<decimal> prePredictList = new();
+        List<decimal> predictList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal a1 = Exp(MinOrMax(-1.414m * Pi / upperLength, -0.01m, -0.99m));
+        decimal b1 = 2 * a1 * Cos(MinOrMax(1.414m * Pi / upperLength, 0.99m, 0.01m));
+        decimal c2 = b1;
+        decimal c3 = -a1 * a1;
+        decimal c1 = (1 + c2 - c3) / 4;
+        decimal a = Exp(MinOrMax(-1.414m * Pi / lowerLength, -0.01m, -0.99m));
+        decimal b = 2 * a * Cos(MinOrMax(1.414m * Pi / lowerLength, 0.99m, 0.01m));
+        decimal coef2 = b;
+        decimal coef3 = -a * a;
+        decimal coef1 = 1 - coef2 - coef3;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue1 = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevValue2 = i >= 2 ? inputList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevHp1 = i >= 1 ? hpList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevHp2 = i >= 2 ? hpList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevSsf1 = i >= 1 ? ssfList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevSsf2 = i >= 2 ? ssfList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevPredict1 = i >= 1 ? predictList.ElementAtOrDefault(i - 1) : 0;
+            decimal priorSsf = i >= upperLength - 1 ? ssfList.ElementAtOrDefault(i - (upperLength - 1)) : 0;
+            var pArray = new decimal[500];
+            var bb1Array = new decimal[500];
+            var bb2Array = new decimal[500];
+            var coefArray = new decimal[500];
+            var coefAArray = new decimal[500];
+            var xxArray = new decimal[520];
+            var hCoefArray = new decimal[520];
+
+            decimal hp = i < 4 ? 0 : (c1 * (currentValue - (2 * prevValue1) + prevValue2)) + (c2 * prevHp1) + (c3 * prevHp2);
+            hpList.Add(hp);
+
+            decimal ssf = i < 3 ? hp : (coef1 * ((hp + prevHp1) / 2)) + (coef2 * prevSsf1) + (coef3 * prevSsf2);
+            ssfList.Add(ssf);
+
+            decimal pwrSum = 0;
+            for (int j = 0; j < upperLength; j++)
+            {
+                decimal prevSsf = i >= j ? ssfList.ElementAtOrDefault(i - j) : 0;
+                pwrSum += Pow(prevSsf, 2);
+            }
+
+            decimal pwr = pwrSum / upperLength;
+            bb1Array[1] = ssf;
+            bb2Array[upperLength - 1] = priorSsf;
+            for (int j = 2; j < upperLength; j++)
+            {
+                decimal prevSsf = i >= j - 1 ? ssfList.ElementAtOrDefault(i - (j - 1)) : 0;
+                bb1Array[j] = prevSsf;
+                bb2Array[j - 1] = prevSsf;
+            }
+
+            decimal num = 0, denom = 0;
+            for (int j = 1; j < upperLength; j++)
+            {
+                num += bb1Array[j] * bb2Array[j];
+                denom += Pow(bb1Array[j], 2) + Pow(bb2Array[j], 2);
+            }
+
+            decimal coef = denom != 0 ? 2 * num / denom : 0;
+            decimal p = pwr * (1 - Pow(coef, 2));
+            coefArray[1] = coef;
+            pArray[1] = p;
+            for (int j = 2; j <= length2; j++)
+            {
+                for (int k = 1; k < j; k++)
+                {
+                    coefAArray[k] = coefArray[k];
+                }
+
+                for (int k = 1; k < upperLength; k++)
+                {
+                    bb1Array[k] = bb1Array[k] - (coefAArray[j - 1] * bb2Array[k]);
+                    bb2Array[k] = bb2Array[k + 1] - (coefAArray[j - 1] * bb1Array[k + 1]);
+                }
+
+                decimal num1 = 0, denom1 = 0;
+                for (int k = 1; k <= upperLength - j; k++)
+                {
+                    num1 += bb1Array[k] * bb2Array[k];
+                    denom1 += Pow(bb1Array[k], 2) + Pow(bb2Array[k], 2);
+                }
+
+                coefArray[j] = denom1 != 0 ? 2 * num1 / denom1 : 0;
+                pArray[j] = pArray[j - 1] * (1 - Pow(coefArray[j], 2));
+                for (int k = 1; k < j; k++)
+                {
+                    coefArray[k] = coefAArray[k] - (coefArray[j] * coefAArray[j - k]);
+                }
+            }
+
+            var coef1Array = new decimal[500];
+            for (int j = 1; j <= length2; j++)
+            {
+                coef1Array[1] = coefArray[j];
+                for (int k = lowerLength; k >= 2; k--)
+                {
+                    coef1Array[k] = coef1Array[k - 1];
+                }
+            }
+
+            for (int j = 1; j <= length2; j++)
+            {
+                hCoefArray[j] = 0;
+                decimal cc = 0;
+                for (int k = 1; k <= lowerLength; k++)
+                {
+                    hCoefArray[j] = hCoefArray[j] + ((1 - Cos(MinOrMax(2 * Pi * ((decimal)k / (lowerLength + 1)), 0.99m, 0.01m))) * coef1Array[k]);
+                    cc += 1 - Cos(MinOrMax(2 * Pi * ((decimal)k / (lowerLength + 1)), 0.99m, 0.01m));
+                }
+                hCoefArray[j] = cc != 0 ? hCoefArray[j] / cc : 0;
+            }
+
+            for (int j = 1; j <= upperLength; j++)
+            {
+                xxArray[j] = i >= upperLength - j ? ssfList.ElementAtOrDefault(i - (upperLength - j)) : 0;
+            }
+
+            for (int j = 1; j <= length3; j++)
+            {
+                xxArray[upperLength + j] = 0;
+                for (int k = 1; k <= length2; k++)
+                {
+                    xxArray[upperLength + j] = xxArray[upperLength + j] + (hCoefArray[k] * xxArray[upperLength + j - k]);
+                }
+            }
+
+            decimal prevPrePredict = prePredictList.LastOrDefault();
+            decimal prePredict = xxArray[upperLength + length1];
+            prePredictList.Add(prePredict);
+
+            decimal predict = (prePredict + prevPrePredict) / 2;
+            predictList.Add(predict);
+
+            var signal = GetCompareSignal(ssf - predict, prevSsf1 - prevPredict1);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ssf", ssfList },
+            { "Predict", predictList },
+            { "PrePredict", prePredictList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = predictList;
+        stockData.IndicatorName = IndicatorName.EhlersMesaPredictIndicatorV1;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Mesa Predict Indicator V2
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <param name="length4"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersMesaPredictIndicatorV2(this StockData stockData, MovingAvgType maType = MovingAvgType.EhlersHannMovingAverage,
+        int length1 = 5, int length2 = 135, int length3 = 12, int length4 = 4)
+    {
+        List<decimal> ssfList = new();
+        List<decimal> hpList = new();
+        List<decimal> predictList = new();
+        List<decimal> extrapList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var coefArray = new decimal[5];
+        coefArray[0] = 4.525m;
+        coefArray[1] = -8.45m;
+        coefArray[2] = 8.145m;
+        coefArray[3] = -4.045m;
+        coefArray[4] = 0.825m;
+
+        decimal a1 = Exp(MinOrMax(-1.414m * Pi / length2, -0.01m, -0.99m));
+        decimal b1 = 2 * a1 * Cos(MinOrMax(1.414m * Pi / length2, 0.99m, 0.01m));
+        decimal c2 = b1;
+        decimal c3 = -a1 * a1;
+        decimal c1 = (1 + c2 - c3) / 4;
+        decimal a = Exp(MinOrMax(-1.414m * Pi / length3, -0.01m, -0.99m));
+        decimal b = 2 * a * Cos(MinOrMax(1.414m * Pi / length3, 0.99m, 0.01m));
+        decimal coef2 = b;
+        decimal coef3 = -a * a;
+        decimal coef1 = 1 - coef2 - coef3;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue1 = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevValue2 = i >= 2 ? inputList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevHp1 = i >= 1 ? hpList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevHp2 = i >= 2 ? hpList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevSsf1 = i >= 1 ? ssfList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevSsf2 = i >= 2 ? ssfList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal hp = i < 4 ? 0 : (c1 * (currentValue - (2 * prevValue1) + prevValue2)) + (c2 * prevHp1) + (c3 * prevHp2);
+            hpList.Add(hp);
+
+            decimal ssf = i < 3 ? hp : (coef1 * ((hp + prevHp1) / 2)) + (coef2 * prevSsf1) + (coef3 * prevSsf2);
+            ssfList.Add(ssf);
+        }
+
+        var filtList = GetMovingAverageList(stockData, maType, length3, ssfList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal prevPredict1 = i >= 1 ? predictList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevPredict2 = i >= 2 ? predictList.ElementAtOrDefault(i - 2) : 0;
+
+            var xxArray = new decimal[100];
+            var yyArray = new decimal[100];
+            for (int j = 1; j <= length1; j++)
+            {
+                decimal prevFilt = i >= length1 - j ? filtList.ElementAtOrDefault(i - (length1 - j)) : 0;
+                xxArray[j] = prevFilt;
+                yyArray[j] = prevFilt;
+            }
+
+            for (int j = 1; j <= length1; j++)
+            {
+                xxArray[length1 + j] = 0;
+                for (int k = 1; k <= 5; k++)
+                {
+                    xxArray[length1 + j] = xxArray[length1 + j] + (coefArray[k - 1] * xxArray[length1 + j - (k - 1)]);
+                }
+            }
+
+            for (int j = 0; j <= length1; j++)
+            {
+                yyArray[length1 + j + 1] = (2 * yyArray[length1 + j]) - yyArray[length1 + j - 1];
+            }
+
+            decimal predict = xxArray[length1 + length4];
+            predictList.Add(predict);
+
+            decimal extrap = yyArray[length1 + length4];
+            extrapList.Add(extrap);
+
+            var signal = GetCompareSignal(predict - prevPredict1, prevPredict1 - prevPredict2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ssf", filtList },
+            { "Predict", predictList },
+            { "Extrap", extrapList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = predictList;
+        stockData.IndicatorName = IndicatorName.EhlersMesaPredictIndicatorV2;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Anticipate Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="bw"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersAnticipateIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.EhlersHannMovingAverage,
+        int length = 14, decimal bw = 1)
+    {
+        List<decimal> predictList = new();
+        List<Signal> signalsList = new();
+
+        var hFiltList = CalculateEhlersImpulseResponse(stockData, maType, length, bw).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal maxCorr = -1, start = 0;
+            for (int j = 0; j < length; j++)
+            {
+                decimal sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
+                for (int k = 0; k < length; k++)
+                {
+                    decimal x = i >= k ? hFiltList.ElementAtOrDefault(i - k) : 0;
+                    decimal y = -Sin(MinOrMax(2 * Pi * ((decimal)(j + k) / length), 0.99m, 0.01m));
+                    sx += x;
+                    sy += y;
+                    sxx += Pow(x, 2);
+                    sxy += x * y;
+                    syy += Pow(y, 2);
+                }
+                decimal corr = ((length * sxx) - Pow(sx, 2)) * ((length * syy) - Pow(sy, 2)) > 0 ? ((length * sxy) - (sx * sy)) /
+                    Sqrt(((length * sxx) - Pow(sx, 2)) * ((length * syy) - Pow(sy, 2))) : 0;
+                start = corr > maxCorr ? length - j : 0;
+                maxCorr = corr > maxCorr ? corr : maxCorr;
+            }
+
+            decimal prevPredict = predictList.LastOrDefault();
+            decimal predict = Sin(MinOrMax(2 * Pi * start / length, 0.99m, 0.01m));
+            predictList.Add(predict);
+
+            var signal = GetCompareSignal(predict, prevPredict);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Predict", predictList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = predictList;
+        stockData.IndicatorName = IndicatorName.EhlersAnticipateIndicator;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Impulse Reaction
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="qq"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersImpulseReaction(this StockData stockData, int length1 = 2, int length2 = 20, decimal qq = 0.9m)
+    {
+        List<decimal> reactionList = new();
+        List<decimal> ireactList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal c2 = 2 * qq * Cos(2 * Pi / length2);
+        decimal c3 = -qq * qq;
+        decimal c1 = (1 + c3) / 2;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal priorValue = i >= length1 ? inputList.ElementAtOrDefault(i - length1) : 0;
+            decimal prevReaction1 = i >= 1 ? reactionList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevReaction2 = i >= 2 ? reactionList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevIReact1 = i >= 1 ? ireactList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevIReact2 = i >= 2 ? ireactList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal reaction = (c1 * (currentValue - priorValue)) + (c2 * prevReaction1) + (c3 * prevReaction2);
+            reactionList.Add(reaction);
+
+            decimal ireact = currentValue != 0 ? 100 * reaction / currentValue : 0;
+            ireactList.Add(ireact);
+
+            var signal = GetCompareSignal(ireact - prevIReact1, prevIReact1 - prevIReact2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Eir", ireactList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = ireactList;
+        stockData.IndicatorName = IndicatorName.EhlersImpulseReaction;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Universal Trading Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="mult"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersUniversalTradingFilter(this StockData stockData, MovingAvgType maType = MovingAvgType.EhlersHannMovingAverage,
+        int length1 = 16, int length2 = 50, decimal mult = 2)
+    {
+        List<decimal> momList = new();
+        List<decimal> negRmsList = new();
+        List<decimal> filtPowList = new();
+        List<decimal> rmsList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        int hannLength = (int)Math.Ceiling(mult * length1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal priorValue = i >= hannLength ? inputList.ElementAtOrDefault(i - hannLength) : 0;
+
+            decimal mom = currentValue - priorValue;
+            momList.Add(mom);
+        }
+
+        var filtList = GetMovingAverageList(stockData, maType, length1, momList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal filt = filtList.ElementAtOrDefault(i);
+            decimal prevFilt1 = i >= 1 ? filtList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevFilt2 = i >= 2 ? filtList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal filtPow = Pow(filt, 2);
+            filtPowList.Add(filtPow);
+
+            decimal filtPowMa = filtPowList.TakeLastExt(length2).Average();
+            decimal rms = filtPowMa > 0 ? Sqrt(filtPowMa) : 0;
+            rmsList.Add(rms);
+
+            decimal negRms = -rms;
+            negRmsList.Add(negRms);
+
+            var signal = GetCompareSignal(filt - prevFilt1, prevFilt1 - prevFilt2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Eutf", filtList },
+            { "UpperBand", rmsList },
+            { "LowerBand", negRmsList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = filtList;
+        stockData.IndicatorName = IndicatorName.EhlersUniversalTradingFilter;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Recursive Median Oscillator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersRecursiveMedianOscillator(this StockData stockData, int length1 = 5, int length2 = 12, int length3 = 30)
+    {
+        List<decimal> rmList = new();
+        List<decimal> tempList = new();
+        List<decimal> rmoList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal alpha1Arg = MinOrMax(2 * Pi / length2, 0.99m, 0.01m);
+        decimal alpha1ArgCos = Cos(alpha1Arg);
+        decimal alpha2Arg = MinOrMax(1 / Sqrt(2) * 2 * Pi / length3, 0.99m, 0.01m);
+        decimal alpha2ArgCos = Cos(alpha2Arg);
+        decimal alpha1 = alpha1ArgCos != 0 ? (alpha1ArgCos + Sin(alpha1Arg) - 1) / alpha1ArgCos : 0;
+        decimal alpha2 = alpha2ArgCos != 0 ? (alpha2ArgCos + Sin(alpha2Arg) - 1) / alpha2ArgCos : 0;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            tempList.Add(currentValue);
+
+            decimal median = tempList.TakeLastExt(length1).Median();
+            decimal prevRm1 = i >= 1 ? rmList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevRm2 = i >= 2 ? rmList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevRmo1 = i >= 1 ? rmoList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevRmo2 = i >= 2 ? rmoList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal rm = (alpha1 * median) + ((1 - alpha1) * prevRm1);
+            rmList.Add(rm);
+
+            decimal rmo = (Pow(1 - (alpha2 / 2), 2) * (rm - (2 * prevRm1) + prevRm2)) + (2 * (1 - alpha2) * prevRmo1) - (Pow(1 - alpha2, 2) * prevRmo2);
+            rmoList.Add(rmo);
+
+            var signal = GetCompareSignal(rmo, prevRmo1);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Ermo", rmoList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = rmoList;
+        stockData.IndicatorName = IndicatorName.EhlersRecursiveMedianOscillator;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Super Passband Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="fastLength"></param>
+    /// <param name="slowLength"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersSuperPassbandFilter(this StockData stockData, int fastLength = 40, int slowLength = 60, int length1 = 5, int length2 = 50)
+    {
+        List<decimal> espfList = new();
+        List<decimal> squareList = new();
+        List<decimal> rmsList = new();
+        List<decimal> negRmsList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal a1 = MinOrMax((decimal)length1 / fastLength, 0.99m, 0.01m);
+        decimal a2 = MinOrMax((decimal)length1 / slowLength, 0.99m, 0.01m);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue1 = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevEspf1 = i >= 1 ? espfList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevEspf2 = i >= 2 ? espfList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal espf = ((a1 - a2) * currentValue) + (((a2 * (1 - a1)) - (a1 * (1 - a2))) * prevValue1) + ((1 - a1 + (1 - a2)) * prevEspf1) - 
+                ((1 - a1) * (1 - a2) * prevEspf2);
+            espfList.Add(espf);
+
+            decimal espfPow = Pow(espf, 2);
+            squareList.Add(espfPow);
+
+            decimal squareAvg = squareList.TakeLastExt(length2).Average();
+            decimal prevRms = rmsList.LastOrDefault();
+            decimal rms = Sqrt(squareAvg);
+            rmsList.Add(rms);
+
+            decimal prevNegRms = negRmsList.LastOrDefault();
+            decimal negRms = -rms;
+            negRmsList.Add(negRms);
+
+            var signal = GetBullishBearishSignal(espf - rms, prevEspf1 - prevRms, espf - negRms, prevEspf1 - prevNegRms);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Espf", espfList },
+            { "UpperBand", rmsList },
+            { "LowerBand", negRmsList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = espfList;
+        stockData.IndicatorName = IndicatorName.EhlersSuperPassbandFilter;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Simple Deriv Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <param name="signalLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersSimpleDerivIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length = 2, int signalLength = 8)
+    {
+        List<decimal> derivList = new();
+        List<decimal> z3List = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= length ? inputList.ElementAtOrDefault(i - length) : 0;
+            decimal prevDeriv1 = i >= 1 ? derivList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevDeriv2 = i >= 2 ? derivList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevDeriv3 = i >= 3 ? derivList.ElementAtOrDefault(i - 3) : 0;
+
+            decimal deriv = currentValue - prevValue;
+            derivList.Add(deriv);
+
+            decimal z3 = deriv + prevDeriv1 + prevDeriv2 + prevDeriv3;
+            z3List.Add(z3);
+        }
+
+        var z3EmaList = GetMovingAverageList(stockData, maType, signalLength, z3List);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal z3Ema = z3EmaList.ElementAtOrDefault(i);
+            decimal prevZ3Ema = i >= 1 ? z3EmaList.ElementAtOrDefault(i - 1) : 0;
+
+            var signal = GetCompareSignal(z3Ema, prevZ3Ema);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Esdi", z3List },
+            { "Signal", z3EmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = z3List;
+        stockData.IndicatorName = IndicatorName.EhlersSimpleDerivIndicator;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Simple Clip Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <param name="signalLength"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersSimpleClipIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length1 = 2, int length2 = 10, int length3 = 50, int signalLength = 22)
+    {
+        List<decimal> derivList = new();
+        List<decimal> clipList = new();
+        List<decimal> z3List = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal prevValue = i >= length1 ? inputList.ElementAtOrDefault(i - length1) : 0;
+            decimal prevClip1 = i >= 1 ? clipList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevClip2 = i >= 2 ? clipList.ElementAtOrDefault(i - 2) : 0;
+            decimal prevClip3 = i >= 3 ? clipList.ElementAtOrDefault(i - 3) : 0;
+
+            decimal deriv = currentValue - prevValue;
+            derivList.Add(deriv);
+
+            decimal rms = 0;
+            for (int j = 0; j < length3; j++)
+            {
+                decimal prevDeriv = i >= j ? derivList.ElementAtOrDefault(i - j) : 0;
+                rms += Pow(prevDeriv, 2);
+            }
+
+            decimal clip = rms != 0 ? MinOrMax(2 * deriv / Sqrt(rms / length3), 1, -1) : 0;
+            clipList.Add(clip);
+
+            decimal z3 = clip + prevClip1 + prevClip2 + prevClip3;
+            z3List.Add(z3);
+        }
+
+        var z3EmaList = GetMovingAverageList(stockData, maType, signalLength, z3List);
+        for (int j = 0; j < stockData.Count; j++)
+        {
+            decimal z3Ema = z3EmaList.ElementAtOrDefault(j);
+            decimal prevZ3Ema = j >= 1 ? z3EmaList.ElementAtOrDefault(j - 1) : 0;
+
+            var signal = GetCompareSignal(z3Ema, prevZ3Ema);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Esci", z3List },
+            { "Signal", z3EmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = z3List;
+        stockData.IndicatorName = IndicatorName.EhlersSimpleClipIndicator;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Spearman Rank Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersSpearmanRankIndicator(this StockData stockData, int length = 20)
+    {
+        List<decimal> sriList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            var priceArray = new decimal[50];
+            var rankArray = new decimal[50];
+            for (int j = 0; j < length; j++)
+            {
+                var prevPrice = i >= j - 1 ? inputList.ElementAtOrDefault(i - j - 1) : 0;
+                priceArray[j] = prevPrice;
+                rankArray[j] = j;
+            }
+
+            for (int j = 0; j < length; j++)
+            {
+                var count = length + 1 - j;
+
+                for (int k = 0; k < length - count; k++)
+                {
+                    var array1 = priceArray[k + 1];
+
+                    if (array1 < priceArray[k])
+                    {
+                        var tempPrice = priceArray[k];
+                        var tempRank = rankArray[k];
+
+                        priceArray[k] = array1;
+                        rankArray[k] = rankArray[k + 1];
+                        priceArray[k + 1] = tempPrice;
+                        rankArray[k + 1] = tempRank;
+                    }
+                }
+            }
+
+            decimal sum = 0;
+            for (int j = 0; j < length; j++)
+            {
+                sum += Pow(j - rankArray[j], 2);
+            }
+
+            decimal prevSri = sriList.LastOrDefault();
+            decimal sri = 2 * (0.5m - (1 - (6 * sum / (length * (Pow(length, 2) - 1)))));
+            sriList.Add(sri);
+
+            var signal = GetCompareSignal(sri, prevSri);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Esri", sriList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = sriList;
+        stockData.IndicatorName = IndicatorName.EhlersSpearmanRankIndicator;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Noise Elimination Technology
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersNoiseEliminationTechnology(this StockData stockData, int length = 14)
+    {
+        List<decimal> netList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal denom = 0.5m * length * (length - 1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            var xArray = new decimal[50];
+            for (int j = 0; j < length; j++)
+            {
+                var prevPrice = i >= j - 1 ? inputList.ElementAtOrDefault(i - j - 1) : 0;
+                xArray[j] = prevPrice;
+            }
+
+            decimal num = 0;
+            for (int j = 1; j < length; j++)
+            {
+                for (int k = 0; k < j - 1; k++)
+                {
+                    num -= Math.Sign(xArray[j] - xArray[k]);
+                }
+            }
+
+            decimal prevNet = netList.LastOrDefault();
+            decimal net = denom != 0 ? num / denom : 0;
+            netList.Add(net);
+
+            var signal = GetCompareSignal(net, prevNet);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Enet", netList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = netList;
+        stockData.IndicatorName = IndicatorName.EhlersNoiseEliminationTechnology;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Truncated Bandpass Filter
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="bw"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersTruncatedBandPassFilter(this StockData stockData, int length1 = 20, int length2 = 10, decimal bw = 0.1m)
+    {
+        List<decimal> bptList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        decimal l1 = Cos(MinOrMax(2 * Pi / length1, 0.99m, 0.01m));
+        decimal g1 = Cos(bw * 2 * Pi / length1);
+        decimal s1 = (1 / g1) - Sqrt((1 / Pow(g1, 2)) - 1);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            var trunArray = new decimal[100];
+            for (int j = length2; j > 0; j--)
+            {
+                decimal prevValue1 = i >= j - 1 ? inputList.ElementAtOrDefault(i - j - 1) : 0;
+                decimal prevValue2 = i >= j + 1 ? inputList.ElementAtOrDefault(i - (j + 1)) : 0;
+                trunArray[j] = (0.5m * (1 - s1) * (prevValue1 - prevValue2)) + (l1 * (1 + s1) * trunArray[j + 1]) - (s1 * trunArray[j + 2]);
+            }
+
+            decimal prevBpt = bptList.LastOrDefault();
+            decimal bpt = trunArray[1];
+            bptList.Add(bpt);
+
+            var signal = GetCompareSignal(bpt, prevBpt);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Etbpf", bptList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = bptList;
+        stockData.IndicatorName = IndicatorName.EhlersTruncatedBandPassFilter;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Auto Correlation Indicator
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersAutoCorrelationIndicator(this StockData stockData, int length1 = 48, int length2 = 10)
+    {
+        List<decimal> corrList = new();
+        List<decimal> xList = new();
+        List<decimal> yList = new();
+        List<decimal> xxList = new();
+        List<decimal> yyList = new();
+        List<decimal> xyList = new();
+        List<Signal> signalsList = new();
+
+        var roofingFilterList = CalculateEhlersRoofingFilterV2(stockData, length1, length2).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal prevCorr1 = i >= 1 ? corrList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevCorr2 = i >= 2 ? corrList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal x = roofingFilterList.ElementAtOrDefault(i);
+            xList.Add(x);
+
+            decimal y = i >= length1 ? roofingFilterList.ElementAtOrDefault(i - length1) : 0;
+            yList.Add(y);
+
+            decimal xx = Pow(x, 2);
+            xxList.Add(xx);
+
+            decimal yy = Pow(y, 2);
+            yyList.Add(yy);
+
+            decimal xy = x * y;
+            xyList.Add(xy);
+
+            decimal sx = xList.TakeLastExt(length1).Sum();
+            decimal sy = yList.TakeLastExt(length1).Sum();
+            decimal sxx = xxList.TakeLastExt(length1).Sum();
+            decimal syy = yyList.TakeLastExt(length1).Sum();
+            decimal sxy = xyList.TakeLastExt(length1).Sum();
+
+            decimal corr = ((i * sxx) - (sx * sx)) * ((i * syy) - (sy * sy)) > 0 ? 0.5m * ((((i * sxy) - (sx * sy)) / 
+                Sqrt(((i * sxx) - (sx * sx)) * ((i * syy) - (sy * sy)))) + 1) : 0;
+            corrList.Add(corr);
+
+            var signal = GetCompareSignal(corr - prevCorr1, prevCorr1 - prevCorr2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Eaci", corrList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = corrList;
+        stockData.IndicatorName = IndicatorName.EhlersAutoCorrelationIndicator;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Auto Correlation Periodogram
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersAutoCorrelationPeriodogram(this StockData stockData, int length1 = 48, int length2 = 10, int length3 = 3)
+    {
+        List<decimal> domCycList = new();
+        List<decimal> rList = new();
+        List<Signal> signalsList = new();
+
+        var corrList = CalculateEhlersAutoCorrelationIndicator(stockData, length1, length2).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal corr = corrList.ElementAtOrDefault(i);
+            decimal prevCorr1 = i >= 1 ? corrList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevCorr2 = i >= 2 ? corrList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal maxPwr = 0, spx = 0, sp = 0;
+            for (int j = length2; j <= length1; j++)
+            {
+                decimal cosPart = 0, sinPart = 0;
+                for (int k = length3; k <= length1; k++)
+                {
+                    decimal prevCorr = i >= k ? corrList.ElementAtOrDefault(i - k) : 0;
+                    cosPart += prevCorr * Cos(2 * Pi * ((decimal)k / j));
+                    sinPart += prevCorr * Sin(2 * Pi * ((decimal)k / j));
+                }
+
+                decimal sqSum = Pow(cosPart, 2) + Pow(sinPart, 2);
+                decimal prevR = i >= j - 1 ? rList.ElementAtOrDefault(i - (j - 1)) : 0;
+                decimal r = (0.2m * Pow(sqSum, 2)) + (0.8m * prevR);
+                maxPwr = Math.Max(r, maxPwr);
+                decimal pwr = maxPwr != 0 ? r / maxPwr : 0;
+
+                if (pwr >= 0.5m)
+                {
+                    spx += j * pwr;
+                    sp += pwr;
+                }
+            }
+
+            decimal domCyc = sp != 0 ? spx / sp : 0;
+            domCycList.Add(domCyc);
+
+            var signal = GetCompareSignal(corr - prevCorr1, prevCorr1 - prevCorr2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Eacp", domCycList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = domCycList;
+        stockData.IndicatorName = IndicatorName.EhlersAutoCorrelationPeriodogram;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Adaptive Relative Strength Index V2
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersAdaptiveRelativeStrengthIndexV2(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
+        int length1 = 48, int length2 = 10, int length3 = 3)
+    {
+        List<decimal> upChgList = new();
+        List<decimal> denomList = new();
+        List<decimal> arsiList = new();
+        List<Signal> signalsList = new();
+
+        decimal a1 = Exp(-1.414m * Pi / length2);
+        decimal b1 = 2 * a1 * Cos(Math.Min(1.414m * Pi / length2, 0.99m));
+        decimal c2 = b1;
+        decimal c3 = -a1 * a1;
+        decimal c1 = 1 - c2 - c3;
+
+        var domCycList = CalculateEhlersAutoCorrelationPeriodogram(stockData, length1, length2, length3).CustomValuesList;
+        var roofingFilterList = CalculateEhlersRoofingFilterV2(stockData, length1, length2).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal domCyc = MinOrMax(domCycList.ElementAtOrDefault(i), length1, length2);
+            decimal prevArsi1 = i >= 1 ? arsiList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevArsi2 = i >= 2 ? arsiList.ElementAtOrDefault(i - 2) : 0;
+
+            decimal prevUpChg = upChgList.LastOrDefault();
+            decimal upChg = 0, dnChg = 0;
+            for (int j = 0; j < (int)Math.Ceiling(domCyc / 2); j++)
+            {
+                decimal filt = i >= j ? roofingFilterList.ElementAtOrDefault(i - j) : 0;
+                decimal prevFilt = i >= j + 1 ? roofingFilterList.ElementAtOrDefault(i - (j + 1)) : 0;
+                upChg += filt > prevFilt ? filt - prevFilt : 0;
+                dnChg += filt < prevFilt ? prevFilt - filt : 0;
+            }
+            upChgList.Add(upChg);
+
+            decimal prevDenom = denomList.LastOrDefault();
+            decimal denom = upChg + dnChg;
+            denomList.Add(denom);
+
+            decimal arsi = denom != 0 && prevDenom != 0 ? (c1 * ((upChg / denom) + (prevUpChg / prevDenom)) / 2) + (c2 * prevArsi1) + (c3 * prevArsi2) : 0;
+            arsiList.Add(arsi);
+        }
+
+        var arsiEmaList = GetMovingAverageList(stockData, maType, length2, arsiList);
+        for (int j = 0; j < stockData.Count; j++)
+        {
+            decimal arsi = arsiList.ElementAtOrDefault(j);
+            decimal arsiEma = arsiEmaList.ElementAtOrDefault(j);
+            decimal prevArsi = j >= 1 ? arsiList.ElementAtOrDefault(j - 1) : 0;
+            decimal prevArsiEma = j >= 1 ? arsiEmaList.ElementAtOrDefault(j - 1) : 0;
+
+            var signal = GetRsiSignal(arsi - arsiEma, prevArsi - prevArsiEma, arsi, prevArsi, 0.7m, 0.3m);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Earsi", arsiList },
+            { "Signal", arsiEmaList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = arsiList;
+        stockData.IndicatorName = IndicatorName.EhlersAdaptiveRelativeStrengthIndexV2;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Ehlers Adaptive Relative Strength Index Fisher Transform V2
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length1"></param>
+    /// <param name="length2"></param>
+    /// <param name="length3"></param>
+    /// <returns></returns>
+    public static StockData CalculateEhlersAdaptiveRsiV2FisherTransform(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
+        int length1 = 48, int length2 = 10, int length3 = 3)
+    {
+        List<decimal> fishList = new();
+        List<Signal> signalsList = new();
+
+        var arsiList = CalculateEhlersAdaptiveRelativeStrengthIndexV2(stockData, maType, length1, length2, length3).CustomValuesList;
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            decimal arsi = arsiList.ElementAtOrDefault(i) / 100;
+            decimal prevFish1 = i >= 1 ? fishList.ElementAtOrDefault(i - 1) : 0;
+            decimal prevFish2 = i >= 2 ? fishList.ElementAtOrDefault(i - 2) : 0;
+            decimal tranRsi = 2 * (arsi - 0.5m);
+            decimal ampRsi = MinOrMax(1.5m * tranRsi, 0.999m, -0.999m);
+
+            decimal fish = 0.5m * Log((1 + ampRsi) / (1 - ampRsi));
+            fishList.Add(fish);
+
+            var signal = GetRsiSignal(fish - prevFish1, prevFish1 - prevFish2, fish, prevFish1, 2, -2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Earsift", fishList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = fishList;
+        stockData.IndicatorName = IndicatorName.EhlersAdaptiveRsiV2FisherTransform;
+
+        return stockData;
+    }
 }
