@@ -542,7 +542,7 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     EhlersSimpleWindowIndicator,
     [Category(IndicatorType.Cycle)]
-    EhlersSineWaveIndicator,
+    EhlersSineWaveIndicatorV1,
     [Category(IndicatorType.Cycle)]
     EhlersSineWaveIndicatorV2,
     [Category(IndicatorType.Momentum)]

@@ -491,7 +491,7 @@ public static partial class Calculations
             imList.Add(im);
 
             var atan = re != 0 ? Atan(im / re) : 0;
-            decimal period = atan != 0 ? 2 * (decimal)Math.PI / atan : 0;
+            decimal period = atan != 0 ? 2 * Pi / atan : 0;
             period = MinOrMax(period, 1.5m * prevPeriod, 0.67m * prevPeriod);
             period = MinOrMax(period, 50, 6);
             period = (0.2m * period) + (0.8m * prevPeriod);
@@ -500,7 +500,7 @@ public static partial class Calculations
             decimal sPrd = (0.33m * period) + (0.67m * prevSprd);
             sPrdList.Add(sPrd);
 
-            decimal phase = i1 != 0 ? 180 / (decimal)Math.PI * Atan(q1 / i1) : 0;
+            decimal phase = i1 != 0 ? Atan(q1 / i1).ToDegrees() : 0;
             phaseList.Add(phase);
 
             decimal deltaPhase = prevPhase - phase < 1 ? 1 : prevPhase - phase;
@@ -520,7 +520,13 @@ public static partial class Calculations
         stockData.OutputValues = new()
         {
             { "Fama", famaList },
-            { "Mama", mamaList }
+            { "Mama", mamaList },
+            { "I1", i1List },
+            { "Q1", q1List },
+            { "SmoothPeriod", sPrdList },
+            { "Smooth", smoothList },
+            { "Real", reList },
+            { "Imag", imList }
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = mamaList;
