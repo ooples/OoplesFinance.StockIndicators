@@ -326,9 +326,9 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     EhlersAdaptiveRelativeStrengthIndexV2,
     [Category(IndicatorType.Momentum)]
-    EhlersAdaptiveRsiV1FisherTransform,
+    EhlersAdaptiveRsiFisherTransformV1,
     [Category(IndicatorType.Momentum)]
-    EhlersAdaptiveRsiV2FisherTransform,
+    EhlersAdaptiveRsiFisherTransformV2,
     [Category(IndicatorType.Momentum)]
     EhlersAdaptiveStochasticIndicatorV1,
     [Category(IndicatorType.Momentum)]
@@ -365,6 +365,8 @@ public enum IndicatorName
     EhlersClassicHilbertTransformer,
     [Category(IndicatorType.Cycle)]
     EhlersCombFilterSpectralEstimate,
+    [Category(IndicatorType.Momentum)]
+    EhlersCommodityChannelIndexInverseFisherTransform,
     [Category(IndicatorType.Momentum)]
     EhlersConvolutionIndicator,
     [Category(IndicatorType.Momentum)]
@@ -460,15 +462,11 @@ public enum IndicatorName
     [Category(IndicatorType.Cycle)]
     EhlersInstantaneousPhaseIndicator,
     [Category(IndicatorType.Trend)]
-    EhlersInstantaneousTrendline,
+    EhlersInstantaneousTrendlineV1,
     [Category(IndicatorType.Trend)]
     EhlersInstantaneousTrendlineV2,
     [Category(IndicatorType.Momentum)]
     EhlersInverseFisherTransform,
-    [Category(IndicatorType.Momentum)]
-    EhlersInverseFisherTransformCommodityChannelIndex,
-    [Category(IndicatorType.Momentum)]
-    EhlersInverseFisherTransformRelativeStrengthIndex,
     [Category(IndicatorType.Trend)]
     EhlersKaufmanAdaptiveMovingAverage,
     [Category(IndicatorType.Trend)]
@@ -511,6 +509,8 @@ public enum IndicatorName
     EhlersRecursiveMedianOscillator,
     [Category(IndicatorType.Momentum)]
     EhlersReflexIndicator,
+    [Category(IndicatorType.Momentum)]
+    EhlersRelativeStrengthIndexInverseFisherTransform,
     [Category(IndicatorType.Momentum)]
     EhlersRelativeVigorIndex,
     [Category(IndicatorType.Volume)]
