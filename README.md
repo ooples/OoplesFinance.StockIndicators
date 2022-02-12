@@ -1,6 +1,6 @@
 ## .Net Stock Indicator Library
 
-This is a stock indicator library that is completely open source and very easy to use. Current version contains [651 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) with over 700 planned for final release.
+This is a stock indicator library that is completely open source and very easy to use. Current version contains [762 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) and I will add more as I get requests for them!
 
 ### How to use this library
 
