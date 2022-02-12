@@ -3,6 +3,46 @@
 ## Cycle
 [Ehlers Adaptive Cyber Cycle](https://www.tradingview.com/script/6gycpjtF-Ehlers-Adaptive-Cyber-Cycle-CC/)
 
+[Ehlers Auto Correlation Periodogram](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersAutocorrelationPeriodogram)
+
+Ehlers Comb Filter Spectral Estimate
+
+[Ehlers Cyber Cycle](https://www.tradingview.com/script/50V0qZ7g-Ehlers-Cyber-Cycle-CC/)
+
+[Ehlers Cycle Amplitude](https://www.tradingview.com/script/L6ylhtqe-Ehlers-Cycle-Amplitude-CC/)
+
+[Ehlers Cycle Band Pass Filter](https://www.tradingview.com/script/vtywoKo1-Ehlers-Cycle-BandPass-Filter-CC/)
+
+[Ehlers Discrete Fourier Transform](https://www.tradingview.com/script/SSYnvs8d-Ehlers-Discrete-Fourier-Transform/)
+
+Ehlers Discrete Fourier Transform Spectral Estimate
+
+Ehlers Dual Differentiator Dominant Cycle
+
+[Ehlers Even Better Sine Wave Indicator](https://www.tradingview.com/script/a1AeExr4-Ehlers-Even-Better-Sinewave-Indicator-CC/)
+
+Ehlers Fourier Series Analysis
+
+Ehlers Homodyne Dominant Cycle
+
+[Ehlers Instantaneous Phase Indicator](https://www.tradingview.com/script/aITuFHdu-Ehlers-Instantaneous-Phase-Dominant-Cycle-CC/)
+
+Ehlers Phase Accumulation Dominant Cycle
+
+[Ehlers Simple Cycle Indicator](https://www.tradingview.com/script/xQ4mP4kc-Ehlers-Simple-Cycle-Indicator-LazyBear/)
+
+[Ehlers Sine Wave Indicator V1](https://www.tradingview.com/script/bMR0ZDMy-Ehlers-Sinewave-Indicator-CC/)
+
+[Ehlers Sine Wave Indicator V2](https://www.tradingview.com/script/z46ko6yt-Ehlers-Sinewave-Indicator-V2-CC/)
+
+[Ehlers Spectrum Derived Filter Bank](https://www.tradingview.com/script/zLkvtbDt-Ehlers-Spectrum-Derived-Filter-Bank-CC/)
+
+[Ehlers Squelch Indicator](https://www.tradingview.com/script/UBUyo1Ts-Ehlers-Squelch-Indicator-CC/)
+
+[Ehlers Stochastic Cyber Cycle](https://www.tradingview.com/script/CPLfkmht-Ehlers-Stochastic-Cyber-Cycle/)
+
+Ehlers Zero Crossings Dominant Cycle
+
 [Grover Llorens Cycle Oscillator](https://www.tradingview.com/script/zZCpzplM-Grover-Llorens-Cycle-Oscillator-alexgrover-Luc%C3%ADa-Llorens/)
 
 [Hurst Cycle Channel](https://www.tradingview.com/script/QmgtSIj5-Hurst-Cycle-Channel-Clone-LazyBear/)
@@ -146,9 +186,149 @@
 
 [Dynamic Momentum Oscillator](https://www.tradingview.com/script/Lgi8r9GG-Dynamic-Momentum-Oscillator-Dynamo/)
 
+[Ehlers Adaptive Band Pass Filter](https://www.tradingview.com/script/z7L91tHp-Ehlers-Adaptive-Bandpass-Filter-CC/)
+
+[Ehlers Adaptive Center Of Gravity Oscillator](https://www.tradingview.com/script/UgonDu3J-Ehlers-Adaptive-Center-Of-Gravity-CC/)
+
+[Ehlers Adaptive Commodity Channel Index V1](https://www.tradingview.com/script/1TIs3KgT-Ehlers-Adaptive-Commodity-Channel-Index-V1-CC/)
+
+Ehlers Adaptive Commodity Channel Index V2
+
+[Ehlers Adaptive Relative Strength Index V1](https://www.tradingview.com/script/r7at5V3c-Ehlers-Adaptive-Relative-Strength-Index-V1-CC/)
+
+Ehlers Adaptive Relative Strength Index V2
+
+[Ehlers Adaptive Rsi Fisher Transform V1](https://www.tradingview.com/script/8OxW1SF4-3-more-indicators-Inverse-Fisher-on-RSI-MFI-and-CyberCycle/)
+
+Ehlers Adaptive Rsi Fisher Transform V2
+
+[Ehlers Adaptive Stochastic Indicator V1](https://www.tradingview.com/script/NhB1HRnP-Ehlers-Adaptive-Stochastic-Indicator-V1-CC/)
+
+Ehlers Adaptive Stochastic Indicator V2
+
+Ehlers Adaptive Stochastic Inverse Fisher Transform
+
+[Ehlers Auto Correlation Indicator](https://www.tradingview.com/script/utqNgI0d-Ehlers-AutoCorrelation-Indicator-CC)
+
+[Ehlers Band Pass Filter V1](https://www.tradingview.com/script/EImb6DTO-Ehlers-BandPass-Filter-CC/)
+
+[Ehlers Band Pass Filter V2](https://www.tradingview.com/script/u8LauExX-Ehlers-BandPass-Filter-V2-CC/)
+
+[Ehlers Center Of Gravity Oscillator](https://www.tradingview.com/script/thsL7j1b-Ehlers-Center-Of-Gravity-Oscillator-CC/)
+
+[Ehlers Commodity Channel Index Inverse Fisher Transform](https://www.tradingview.com/script/oyfd86j2-Indicators-Three-included-IFT-on-CCI-Z-Score-and-R-Squared/)
+
+[Ehlers Convolution Indicator](https://www.tradingview.com/script/RPkdjGSG-Ehlers-Convolution-Indicator-CC/)
+
+[Ehlers Correlation Angle Indicator](https://www.tradingview.com/script/SXGY6fDx-Ehlers-Correlation-Angle-Indicator/)
+
+[Ehlers Correlation Cycle Indicator](https://www.tradingview.com/script/ccoCnfPT-Ehlers-Correlation-Cycle-Indicator/)
+
+[Ehlers Correlation Trend Indicator](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/C-D/CorrelationTrendIndicator)
+
+[Ehlers Decycler Oscillator V1](https://www.tradingview.com/script/5xelSGhd-Ehlers-Decycler-Oscillator/)
+
+[Ehlers Decycler Oscillator V2](https://www.tradingview.com/script/a1JcLPES-Ehlers-Decycler-Oscillator-CC/)
+
+[Ehlers Detrended Leading Indicator](https://www.tradingview.com/script/XPZfVBWs-Detrended-Ehlers-Leading-Indicator-CC/)
+
+[Ehlers Dominant Cycle Tuned Bypass Filter](https://www.tradingview.com/script/45VDlpb0-Ehlers-Dominant-Cycle-Tuned-Bypass-Filter-CC/)
+
+[Ehlers Early Onset Trend Indicator](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/O-Q/OnsetTrendDetector)
+
+[Ehlers Fisher Transform](https://www.tradingview.com/script/lbCrnfnp-Ehlers-Fisher-Transform-Indicator-CC/)
+
+[Ehlers Fisherized Deviation Scaled Oscillator](https://www.tradingview.com/script/DdLQBt87-Ehlers-Fisherized-Deviation-Scaled-Oscillator/)
+
+[Ehlers FM Demodulator Indicator](https://www.tradingview.com/script/lHs05HwP-Ehlers-FM-Demodulator-Indicator-CC/)
+
+[Ehlers Hamming Window Indicator](https://www.tradingview.com/script/3vgGb4Ya-Ehlers-Hamming-Window-Indicator-CC/)
+
+[Ehlers Hann Window Indicator](https://www.tradingview.com/script/CQZfLqGi-Ehlers-Hann-Window-Indicator-CC/)
+
 [Ehlers High Pass Filter V1](https://www.tradingview.com/script/ZuIZPR4q-Ehlers-Simple-Decycler/)
 
-[Ehlers Roofing Filter](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersRoofingFilter)
+[Ehlers High Pass Filter V2](https://www.tradingview.com/script/2D2oovch-Ehlers-High-Pass-Filter-CC/)
+
+[Ehlers Hilbert Oscillator](https://www.tradingview.com/script/BfmZvVJz-Ehlers-Hilbert-Oscillator-CC/)
+
+[Ehlers Hilbert Transform Indicator](https://www.tradingview.com/script/mt8sB60e-Ehlers-Hilbert-Transform-CC/)
+
+Ehlers Hp Lp Roofing Filter
+
+[Ehlers Hurst Coefficient](https://www.tradingview.com/script/isdHhWfF-Ehlers-Hurst-Coefficient-CC)
+
+Ehlers Impulse Reaction
+
+Ehlers Impulse Response
+
+[Ehlers Inverse Fisher Transform](https://www.motivewave.com/studies/inverse_fisher_transform.htm)
+
+[Ehlers Laguerre Relative Strength Index](https://www.tradingview.com/script/iUl3zTql-Ehlers-Laguerre-Relative-Strength-Index-CC/)
+
+[Ehlers Laguerre RSI With Self Adjusting Alpha](https://www.tradingview.com/script/ekefK3OV-Laguerre-RSI-Self-Adjusting-Alpha-with-Fractals-Energy/)
+
+[Ehlers Market State Indicator](https://www.tradingview.com/script/r2qIxy0l-Ehlers-Market-State-Indicator-CC/)
+
+Ehlers Mesa Predict Indicator V1
+
+Ehlers Mesa Predict Indicator V2
+
+[Ehlers Modified Relative Strength Index](https://www.tradingview.com/script/deekAweM-Ehlers-Modified-Relative-Strength-Index-CC/)
+
+Ehlers Modified Stochastic Indicator
+
+[Ehlers Moving Average Difference Indicator](https://www.tradingview.com/script/AlBNizZC-Ehlers-Moving-Average-Difference-Indicator-CC/)
+
+[Ehlers Noise Elimination Technology](https://www.tradingview.com/script/nAg9w6za-Ehlers-Noise-Elimination-Technology-CC/)
+
+[Ehlers Recursive Median Oscillator](https://www.prorealcode.com/prorealtime-indicators/recursive-median-oscillator-john-ehlers/)
+
+[Ehlers Reflex Indicator](https://www.prorealcode.com/prorealtime-indicators/reflex-and-trendflex-indicators-john-f-ehlers/)
+
+[Ehlers Relative Strength Index Inverse Fisher Transform](https://www.tradingview.com/script/8OxW1SF4-3-more-indicators-Inverse-Fisher-on-RSI-MFI-and-CyberCycle/)
+
+[Ehlers Relative Vigor Index](https://www.investopedia.com/terms/r/relative_vigor_index.asp)
+
+[Ehlers Rocket Relative Strength Index](https://www.tradingview.com/script/VXOLWM61-Rocket-RSI/)
+
+[Ehlers Roofing Filter V1](https://www.tradingview.com/script/rVixuZKT-Ehlers-Roofing-Filter/)
+
+[Ehlers Roofing Filter V2](https://tlc.thinkorswim.com/center/reference/Tech-Indicators/studies-library/E-F/EhlersRoofingFilter)
+
+[Ehlers Roofing Filter Indicator](https://www.tradingview.com/script/g0Eah38G-Ehlers-Roofing-Filter-CC/)
+
+[Ehlers Simple Deriv Indicator](https://www.tradingview.com/script/7icplRII-Ehlers-Simple-Deriv-Indicator-CC/)
+
+[Ehlers Simple Window Indicator](https://www.tradingview.com/script/2SOKTOzo-Ehlers-Simple-Window-Indicator-CC/)
+
+[Ehlers Smoothed Adaptive Momentum Indicator](https://www.tradingview.com/script/yf0J5c8l-Ehlers-Smoothed-Adaptive-Momentum-CC/)
+
+Ehlers Snake Universal Trading Filter
+
+[Ehlers Spearman Rank Indicator](https://www.tradingview.com/script/rpKPpW51-Ehlers-Spearman-Rank-Indicator-CC/)
+
+[Ehlers Stochastic](https://www.tradingview.com/script/iNw44glL-Ehlers-Stochastic/)
+
+[Ehlers Stochastic Center Of Gravity Oscillator](https://www.tradingview.com/script/aX0yTFaA-Ehlers-Stochastic-CG-Oscillator-LazyBear/)
+
+Ehlers Trend Extraction
+
+[Ehlers Trendflex Indicator](https://www.prorealcode.com/prorealtime-indicators/reflex-and-trendflex-indicators-john-f-ehlers/)
+
+[Ehlers Triangle Window Indicator](https://www.tradingview.com/script/aSK8wT0o-Ehlers-Triangle-Window-Indicator-CC/)
+
+[Ehlers Triple Delay Line Detrender](https://www.tradingview.com/script/VHnzoA0W-Ehlers-Triple-Delay-Line-Detrender/)
+
+[Ehlers Truncated Band Pass Filter](https://www.tradingview.com/script/dr7dvRd0-Ehlers-Truncated-BandPass-Filter-CC/)
+
+[Ehlers Universal Oscillator](https://www.tradingview.com/script/ieFYbVdC-Ehlers-Universal-Oscillator-LazyBear/)
+
+Ehlers Universal Trading Filter
+
+[Ehlers Voss Predictive Filter](https://www.tradingview.com/script/KtJSvu2V-Ehlers-Voss-Predictive-Filter-CC/)
+
+[Ehlers Zero Mean Roofing Filter](https://www.tradingview.com/script/7p3VqCXG-Ehlers-Zero-Mean-Roofing-Filter-CC/)
 
 [Elliott Wave Oscillator](https://www.motivewave.com/studies/elliott_wave_oscillator.htm)
 
@@ -692,11 +872,17 @@ Atr Filtered Exponential Moving Average
 
 Ehlers All Pass Phase Shifter
 
+Ehlers Auto Correlation Reversals
+
 [Ehlers Average Error Filter](https://www.tradingview.com/script/keu8LfCM-Ehlers-Average-Error-Filter-CC/)
 
 Ehlers Better Exponential Moving Average
 
 Ehlers Chebyshev Low Pass Filter
+
+Ehlers Classic Hilbert Transformer
+
+[Ehlers Decycler](https://www.tradingview.com/script/A4CNndoC-Ehlers-Decycler-CC/)
 
 [Ehlers Deviation Scaled Moving Average](https://www.tradingview.com/script/Vsa2HTzq-Ehlers-Deviation-Scaled-Moving-Average-DSMA/)
 
@@ -712,9 +898,19 @@ Ehlers Chebyshev Low Pass Filter
 
 [Ehlers Gaussian Filter](https://www.tradingview.com/script/rbAqS8EX-Gaussian-Filter/)
 
+[Ehlers Hamming Moving Average](https://www.tradingview.com/script/WrVpFdl5-Ehlers-Hamming-Moving-Average-CC/)
+
 [Ehlers Hann Moving Average](https://tr.tradingview.com/script/fM45ewpp-Ehlers-Hann-Moving-Average-CC/)
 
+Ehlers Hilbert Transformer
+
+Ehlers Hilbert Transformer Indicator
+
 [Ehlers Infinite Impulse Response Filter](https://www.tradingview.com/script/WF4SheKj-Infinite-Impulse-Response-IIR-Filter/)
+
+[Ehlers Instantaneous Trendline V1](https://www.tradingview.com/script/d0l755bG-Ehlers-Instantaneous-Trendline-V1-CC/)
+
+[Ehlers Instantaneous Trendline V2](https://www.tradingview.com/script/ptcuAPkA-Ehlers-Instantaneous-Trendline-V2-CC/)
 
 [Ehlers Kaufman Adaptive Moving Average](https://www.tradingview.com/script/52f7Z7fN-Ehlers-Kaufman-Adaptive-Moving-Average-CC/)
 
@@ -732,9 +928,19 @@ Ehlers Chebyshev Low Pass Filter
 
 [Ehlers Recursive Median Filter](https://www.tradingview.com/script/rjXrLov2-Recursive-Median-Filter/)
 
+[Ehlers Reverse Exponential Moving Average Indicator V1](https://www.prorealcode.com/prorealtime-indicators/john-ehlers-forward-reverse-ema/)
+
+[Ehlers Reverse Exponential Moving Average Indicator V2](https://www.tradingview.com/script/9BtJglWU-Ehlers-Reverse-Exponential-Moving-Average/)
+
+[Ehlers Simple Clip Indicator](https://www.tradingview.com/script/AN8mOwr6-Ehlers-Simple-Clip-Indicator-CC/)
+
 [Ehlers Simple Decycler](https://www.tradingview.com/script/ZuIZPR4q-Ehlers-Simple-Decycler/)
 
 [Ehlers Super Smoother Filter](https://www.tradingview.com/script/VdJy0yBJ-Ehlers-Super-Smoother-Filter/)
+
+[Ehlers Swiss Army Knife Indicator](https://www.motivewave.com/studies/swiss_army_knife_indicator.htm)
+
+[Ehlers Triangle Moving Average](https://www.tradingview.com/script/DG9SIozf-Ehlers-Triangle-Moving-Average-CC/)
 
 [Ehlers Variable Index Dynamic Average](https://www.tradingview.com/script/rUu1lfnZ-Ehlers-Variable-Index-Dynamic-Average-CC/)
 
@@ -1109,6 +1315,22 @@ Ehlers Chebyshev Low Pass Filter
 
 [Drunkard Walk](https://www.motivewave.com/studies/drunkard_walk.htm)
 
+[Ehlers Alternate Signal To Noise Ratio](https://www.tradingview.com/script/GVCNmuK0-Ehlers-Alternate-Signal-To-Noise-Ratio-CC/)
+
+[Ehlers AM Detector](https://www.tradingview.com/script/cTiVXfwC-Ehlers-AM-Detector-CC/)
+
+Ehlers Anticipate Indicator
+
+[Ehlers Empirical Mode Decomposition](https://www.tradingview.com/script/HS9YMv7g-Empirical-Mode-Decomposition-Strategy/)
+
+[Ehlers Enhanced Signal To Noise Ratio](https://www.tradingview.com/script/qhoxppjx-Ehlers-Enhanced-Signal-To-Noise-Ratio-CC/)
+
+[Ehlers Signal To Noise Ratio V1](https://www.motivewave.com/studies/signal_to_noise_ratio.htm)
+
+[Ehlers Signal To Noise Ratio V2](https://www.tradingview.com/script/PM0Z6giH-Ehlers-Signal-To-Noise-Ratio-CC/)
+
+[Ehlers Super Passband Filter](https://www.tradingview.com/script/DQ5SXLGW-Ehlers-Super-Passband-Filter/)
+
 [Elder Market Thermometer](https://www.motivewave.com/studies/elders_thermometer.htm)
 
 [Ergodic Commodity Selection Index](https://www.tradingview.com/script/EjMPMY95-Ergodic-CSI/)
@@ -1261,6 +1483,8 @@ Ehlers Chebyshev Low Pass Filter
 [Chaikin Oscillator](https://www.investopedia.com/terms/c/chaikinoscillator.asp)
 
 [Ease Of Movement](https://www.tradingview.com/script/Y9Eykm1v-Ease-of-Movement-EOM/)
+
+[Ehlers Restoring Pull Indicator](https://www.tradingview.com/script/zqMh2nq2-Ehlers-Restoring-Pull-Indicator-CC/)
 
 [Finite Volume Elements](https://www.tradingview.com/script/XrBPKrWL-Finite-Volume-Elements-FVE/)
 
