@@ -13,19 +13,21 @@ public class StockData : IStockData
     public List<decimal> LowPrices { get; set; }
     public List<decimal> ClosePrices { get; set; }
     public List<decimal> Volumes { get; set; }
+    public List<DateTime> Dates { get; set; }
     public List<decimal> CustomValuesList { get; set; }
     public Dictionary<string, List<decimal>> OutputValues { get; set; }
     public List<Signal> SignalsList { get; set; }
     public int Count { get; set; }
 
     public StockData(IEnumerable<decimal> openPrices, IEnumerable<decimal> highPrices, IEnumerable<decimal> lowPrices, IEnumerable<decimal> closePrices,
-        IEnumerable<decimal> volumes)
+        IEnumerable<decimal> volumes, IEnumerable<DateTime> dates)
     {
         OpenPrices = new List<decimal>(openPrices);
         HighPrices = new List<decimal>(highPrices);
         LowPrices = new List<decimal>(lowPrices);
         ClosePrices = new List<decimal>(closePrices);
         Volumes = new List<decimal>(volumes);
+        Dates = new List<DateTime>(dates);
         InputValues = new List<decimal>(closePrices);
         CustomValuesList = new List<decimal>();
         OutputValues = new Dictionary<string, List<decimal>>();
