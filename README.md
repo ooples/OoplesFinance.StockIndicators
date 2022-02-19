@@ -1,6 +1,6 @@
 ## .Net Stock Indicator Library
 
-This is a stock indicator library that is completely open source and very easy to use. Current version contains [762 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) with over 700 planned for future releases.
+This is a stock indicator library that is completely open source and very easy to use. Current version contains [762 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) and I will add more as I get requests for them!
 
 ### How to use this library
 
@@ -21,19 +21,18 @@ using static OoplesFinance.StockIndicators.Calculations;
 const string paperApiKey = "REPLACEME";
 const string paperApiSecret = "REPLACEME";
 const string symbol = "AAPL";
-var secretKey = new SecretKey(paperApiKey, paperApiSecret);
-var alpacaDataClient = Environments.Paper.GetAlpacaDataClient(secretKey);
-var bars = (await alpacaDataClient.GetHistoricalBarsAsync(new HistoricalBarsRequest(symbol, new DateTime(2021, 1, 1), 
-    new DateTime(2021, 12, 15), BarTimeFrame.Day)).ConfigureAwait(false)).Items.SelectMany(x => x.Value);
+var startDate = new DateTime(2021, 01, 01);
+var endDate = new DateTime(2021, 12, 31);
 
-var closePrices = bars.Select(x => x.Close);
-var openPrices = bars.Select(x => x.Open);
-var highPrices = bars.Select(x => x.High);
-var lowPrices = bars.Select(x => x.Low);
-var volumes = bars.Select(x => x.Volume);
+var client = Environments.Paper.GetAlpacaDataClient(new SecretKey(paperApiKey, paperApiSecret));
+var bars = (await client.ListHistoricalBarsAsync(new HistoricalBarsRequest(symbol, startDate, endDate, BarTimeFrame.Day)).ConfigureAwait(false)).Items;
+var stockData = new StockData(bars.Select(x => x.Open), bars.Select(x => x.High), bars.Select(x => x.Low), bars.Select(x => x.Close), bars.Select(x => x.Volume), bars.Select(x => x.TimeUtc));
 
-var stockData = new StockData(openPrices, highPrices, lowPrices, closePrices, volumes);
 var results = stockData.CalculateBollingerBands();
+var upperBandList = results.OutputValues["UpperBand"];
+var middleBandList = results.OutputValues["MiddleBand"];
+var lowerBandList = results.OutputValues["LowerBand"];
+
 ```
 
 ### Support This Project

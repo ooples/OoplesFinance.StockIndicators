@@ -10,6 +10,7 @@ public interface IStockData
     List<decimal> LowPrices { get; }
     List<decimal> ClosePrices { get; }
     List<decimal> Volumes { get; }
+    List<DateTime> Dates { get; }
     List<decimal> CustomValuesList { get; }
     Dictionary<string, List<decimal>> OutputValues { get; }
     List<Signal> SignalsList { get; }
