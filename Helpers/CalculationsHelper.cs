@@ -747,7 +747,7 @@ public static class CalculationsHelper
     /// <param name="value">The value.</param>
     public static void AddRounded(this List<decimal> list, decimal value)
     {
-        list.AddRounded(Math.Round(value, 4));
+        list.Add(Math.Round(value, 4));
     }
 
     /// <summary>
