@@ -15,11 +15,11 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentHigh = highList.ElementAtOrDefault(i);
-            decimal currentLow = lowList.ElementAtOrDefault(i);
-            decimal currentClose = inputList.ElementAtOrDefault(i);
-            decimal prevTypicalPrice1 = i >= 1 ? tpList.ElementAtOrDefault(i - 1) : 0;
-            decimal prevTypicalPrice2 = i >= 2 ? tpList.ElementAtOrDefault(i - 2) : 0;
+            decimal currentHigh = highList[i];
+            decimal currentLow = lowList[i];
+            decimal currentClose = inputList[i];
+            decimal prevTypicalPrice1 = i >= 1 ? tpList[i - 1] : 0;
+            decimal prevTypicalPrice2 = i >= 2 ? tpList[i - 2] : 0;
 
             decimal typicalPrice = (currentHigh + currentLow + currentClose) / 3;
             tpList.AddRounded(typicalPrice);
@@ -52,10 +52,10 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentLow = lowList.ElementAtOrDefault(i);
-            decimal currentHigh = highList.ElementAtOrDefault(i);
-            decimal prevMedianPrice1 = i >= 1 ? medianPriceList.ElementAtOrDefault(i - 1) : 0;
-            decimal prevMedianPrice2 = i >= 2 ? medianPriceList.ElementAtOrDefault(i - 2) : 0;
+            decimal currentLow = lowList[i];
+            decimal currentHigh = highList[i];
+            decimal prevMedianPrice1 = i >= 1 ? medianPriceList[i - 1] : 0;
+            decimal prevMedianPrice2 = i >= 2 ? medianPriceList[i - 2] : 0;
 
             decimal medianPrice = (currentHigh + currentLow) / 2;
             medianPriceList.AddRounded(medianPrice);
@@ -88,12 +88,12 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentHigh = highList.ElementAtOrDefault(i);
-            decimal currentLow = lowList.ElementAtOrDefault(i);
-            decimal currentClose = inputList.ElementAtOrDefault(i);
-            decimal currentOpen = openList.ElementAtOrDefault(i);
-            decimal prevTypicalPrice1 = i >= 1 ? fullTpList.ElementAtOrDefault(i - 1) : 0;
-            decimal prevTypicalPrice2 = i >= 2 ? fullTpList.ElementAtOrDefault(i - 2) : 0;
+            decimal currentHigh = highList[i];
+            decimal currentLow = lowList[i];
+            decimal currentClose = inputList[i];
+            decimal currentOpen = openList[i];
+            decimal prevTypicalPrice1 = i >= 1 ? fullTpList[i - 1] : 0;
+            decimal prevTypicalPrice2 = i >= 2 ? fullTpList[i - 2] : 0;
 
             decimal typicalPrice = (currentHigh + currentLow + currentClose + currentOpen) / 4;
             fullTpList.AddRounded(typicalPrice);
@@ -126,10 +126,10 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentHigh = highList.ElementAtOrDefault(i);
-            decimal currentLow = lowList.ElementAtOrDefault(i);
-            decimal currentClose = inputList.ElementAtOrDefault(i);
-            decimal prevClose = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
+            decimal currentHigh = highList[i];
+            decimal currentLow = lowList[i];
+            decimal currentClose = inputList[i];
+            decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
 
             decimal prevWeightedClose = weightedCloseList.LastOrDefault();
             decimal weightedClose = (currentHigh + currentLow + (currentClose * 2)) / 4;
@@ -165,14 +165,14 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList.ElementAtOrDefault(i);
-            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
-            decimal highest = highestList.ElementAtOrDefault(i);
-            decimal lowest = lowestList.ElementAtOrDefault(i);
+            decimal currentValue = inputList[i];
+            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
+            decimal highest = highestList[i];
+            decimal lowest = lowestList[i];
 
             decimal prevMidPoint = midpointList.LastOrDefault();
             decimal midpoint = (highest + lowest) / 2;
-            midpointList.Add(midpoint);
+            midpointList.AddRounded(midpoint);
 
             var signal = GetCompareSignal(currentValue - midpoint, prevValue - prevMidPoint);
             signalsList.Add(signal);
@@ -204,14 +204,14 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList.ElementAtOrDefault(i);
-            decimal prevValue = i >= 1 ? inputList.ElementAtOrDefault(i - 1) : 0;
-            decimal highest = highestList.ElementAtOrDefault(i);
-            decimal lowest = lowestList.ElementAtOrDefault(i);
+            decimal currentValue = inputList[i];
+            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
+            decimal highest = highestList[i];
+            decimal lowest = lowestList[i];
 
             decimal prevMidPrice = midpriceList.LastOrDefault();
             decimal midPrice = (highest + lowest) / 2;
-            midpriceList.Add(midPrice);
+            midpriceList.AddRounded(midPrice);
 
             var signal = GetCompareSignal(currentValue - midPrice, prevValue - prevMidPrice);
             signalsList.Add(signal);

@@ -24,8 +24,8 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal fastEma = fastEmaList.ElementAtOrDefault(i);
-            decimal slowEma = slowEmaList.ElementAtOrDefault(i);
+            decimal fastEma = fastEmaList[i];
+            decimal slowEma = slowEmaList[i];
 
             decimal macd = fastEma - slowEma;
             macdList.AddRounded(macd);
@@ -34,8 +34,8 @@ public static partial class Calculations
         var macdSignalLineList = GetMovingAverageList(stockData, movingAvgType, signalLength, macdList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal macd = macdList.ElementAtOrDefault(i);
-            decimal macdSignalLine = macdSignalLineList.ElementAtOrDefault(i);
+            decimal macd = macdList[i];
+            decimal macdSignalLine = macdSignalLineList[i];
 
             decimal prevMacdHistogram = macdHistogramList.LastOrDefault();
             decimal macdHistogram = macd - macdSignalLine;
@@ -94,24 +94,24 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ema5 = ema5List.ElementAtOrDefault(i);
-            decimal ema8 = ema8List.ElementAtOrDefault(i);
-            decimal ema10 = ema10List.ElementAtOrDefault(i);
-            decimal ema14 = ema14List.ElementAtOrDefault(i);
-            decimal ema16 = ema16List.ElementAtOrDefault(i);
-            decimal ema17 = ema17List.ElementAtOrDefault(i);
+            decimal ema5 = ema5List[i];
+            decimal ema8 = ema8List[i];
+            decimal ema10 = ema10List[i];
+            decimal ema14 = ema14List[i];
+            decimal ema16 = ema16List[i];
+            decimal ema17 = ema17List[i];
 
             decimal macd1 = ema17 - ema14;
-            macd1List.Add(macd1);
+            macd1List.AddRounded(macd1);
 
             decimal macd2 = ema17 - ema8;
-            macd2List.Add(macd2);
+            macd2List.AddRounded(macd2);
 
             decimal macd3 = ema10 - ema16;
-            macd3List.Add(macd3);
+            macd3List.AddRounded(macd3);
 
             decimal macd4 = ema5 - ema10;
-            macd4List.Add(macd4);
+            macd4List.AddRounded(macd4);
         }
 
         var macd1SignalLineList = GetMovingAverageList(stockData, maType, length1, macd1List);
@@ -120,27 +120,27 @@ public static partial class Calculations
         var macd4SignalLineList = GetMovingAverageList(stockData, maType, length1, macd4List);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal macd1 = macd1List.ElementAtOrDefault(i);
-            decimal macd1SignalLine = macd1SignalLineList.ElementAtOrDefault(i);
-            decimal macd2 = macd2List.ElementAtOrDefault(i);
-            decimal macd2SignalLine = macd2SignalLineList.ElementAtOrDefault(i);
-            decimal macd3 = macd3List.ElementAtOrDefault(i);
-            decimal macd3SignalLine = macd3SignalLineList.ElementAtOrDefault(i);
-            decimal macd4 = macd4List.ElementAtOrDefault(i);
-            decimal macd4SignalLine = macd4SignalLineList.ElementAtOrDefault(i);
+            decimal macd1 = macd1List[i];
+            decimal macd1SignalLine = macd1SignalLineList[i];
+            decimal macd2 = macd2List[i];
+            decimal macd2SignalLine = macd2SignalLineList[i];
+            decimal macd3 = macd3List[i];
+            decimal macd3SignalLine = macd3SignalLineList[i];
+            decimal macd4 = macd4List[i];
+            decimal macd4SignalLine = macd4SignalLineList[i];
             decimal macd1Histogram = macd1 - macd1SignalLine;
             decimal macdBlue = blueMult * macd1Histogram;
 
             decimal prevMacd2Histogram = macd2HistogramList.LastOrDefault();
             decimal macd2Histogram = macd2 - macd2SignalLine;
-            macd2HistogramList.Add(macd2Histogram);
+            macd2HistogramList.AddRounded(macd2Histogram);
 
             decimal macd3Histogram = macd3 - macd3SignalLine;
             decimal macdYellow = yellowMult * macd3Histogram;
 
             decimal prevMacd4Histogram = macd4HistogramList.LastOrDefault();
             decimal macd4Histogram = macd4 - macd4SignalLine;
-            macd4HistogramList.Add(macd4Histogram);
+            macd4HistogramList.AddRounded(macd4Histogram);
 
             var signal = GetCompareSignal(macd4Histogram - macd2Histogram, prevMacd4Histogram - prevMacd2Histogram);
             signalsList.Add(signal);
@@ -186,19 +186,19 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal hi = wellesWilderHighMovingAvgList.ElementAtOrDefault(i);
-            decimal lo = wellesWilderLowMovingAvgList.ElementAtOrDefault(i);
-            decimal mi = typicalPriceZeroLagEmaList.ElementAtOrDefault(i);
+            decimal hi = wellesWilderHighMovingAvgList[i];
+            decimal lo = wellesWilderLowMovingAvgList[i];
+            decimal mi = typicalPriceZeroLagEmaList[i];
 
             decimal macd = mi > hi ? mi - hi : mi < lo ? mi - lo : 0;
-            macdList.Add(macd);
+            macdList.AddRounded(macd);
 
             decimal macdSignalLine = macdList.TakeLastExt(signalLength).Average();
-            macdSignalLineList.Add(macdSignalLine);
+            macdSignalLineList.AddRounded(macdSignalLine);
 
             decimal prevMacdHistogram = macdHistogramList.LastOrDefault();
             decimal macdHistogram = macd - macdSignalLine;
-            macdHistogramList.Add(macdHistogram);
+            macdHistogramList.AddRounded(macdHistogram);
 
             var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
             signalsList.Add(signal);
@@ -237,12 +237,12 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal pk = pkList.ElementAtOrDefault(i);
-            decimal pkSma = pkSignalList.ElementAtOrDefault(i);
+            decimal pk = pkList[i];
+            decimal pkSma = pkSignalList[i];
 
             decimal prevKcd = kcdList.LastOrDefault();
             decimal kcd = pk - pkSma;
-            kcdList.Add(kcd);
+            kcdList.AddRounded(kcd);
 
             var signal = GetCompareSignal(kcd, prevKcd);
             signalsList.Add(signal);
@@ -285,45 +285,45 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList.ElementAtOrDefault(i);
-            decimal ema12 = emaList.ElementAtOrDefault(i);
-            decimal ema26 = ema26List.ElementAtOrDefault(i);
+            decimal currentValue = inputList[i];
+            decimal ema12 = emaList[i];
+            decimal ema26 = ema26List[i];
 
             decimal diff12 = currentValue - ema12;
-            diff12List.Add(diff12);
+            diff12List.AddRounded(diff12);
 
             decimal diff26 = currentValue - ema26;
-            diff26List.Add(diff26);
+            diff26List.AddRounded(diff26);
         }
 
         var diff12EmaList = GetMovingAverageList(stockData, maType, fastLength, diff12List);
         var diff26EmaList = GetMovingAverageList(stockData, maType, slowLength, diff26List);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ema12 = emaList.ElementAtOrDefault(i);
-            decimal ema26 = ema26List.ElementAtOrDefault(i);
-            decimal diff12Ema = diff12EmaList.ElementAtOrDefault(i);
-            decimal diff26Ema = diff26EmaList.ElementAtOrDefault(i);
+            decimal ema12 = emaList[i];
+            decimal ema26 = ema26List[i];
+            decimal diff12Ema = diff12EmaList[i];
+            decimal diff26Ema = diff26EmaList[i];
 
             decimal i1 = ema12 + diff12Ema;
-            i1List.Add(i1);
+            i1List.AddRounded(i1);
 
             decimal i2 = ema26 + diff26Ema;
-            i2List.Add(i2);
+            i2List.AddRounded(i2);
 
             decimal macd = i1 - i2;
-            macdList.Add(macd);
+            macdList.AddRounded(macd);
         }
 
         var macdSignalLineList = GetMovingAverageList(stockData, maType, signalLength, macdList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal macd = macdList.ElementAtOrDefault(i);
-            decimal macdSignalLine = macdSignalLineList.ElementAtOrDefault(i);
+            decimal macd = macdList[i];
+            decimal macdSignalLine = macdSignalLineList[i];
 
             decimal prevMacdHistogram = macdHistogramList.LastOrDefault();
             decimal macdHistogram = macd - macdSignalLine;
-            macdHistogramList.Add(macdHistogram);
+            macdHistogramList.AddRounded(macdHistogram);
 
             var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
             signalsList.Add(signal);
@@ -364,22 +364,22 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal mob1 = mob1List.ElementAtOrDefault(i);
-            decimal mob2 = mob2List.ElementAtOrDefault(i);
+            decimal mob1 = mob1List[i];
+            decimal mob2 = mob2List[i];
 
             decimal tfsMob = mob1 - mob2;
-            tfsMobList.Add(tfsMob);
+            tfsMobList.AddRounded(tfsMob);
         }
 
         var tfsMobSignalLineList = GetMovingAverageList(stockData, maType, signalLength, tfsMobList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal tfsMob = tfsMobList.ElementAtOrDefault(i);
-            decimal tfsMobSignalLine = tfsMobSignalLineList.ElementAtOrDefault(i);
+            decimal tfsMob = tfsMobList[i];
+            decimal tfsMobSignalLine = tfsMobSignalLineList[i];
 
             decimal prevTfsMobHistogram = tfsMobHistogramList.LastOrDefault();
             decimal tfsMobHistogram = tfsMob - tfsMobSignalLine;
-            tfsMobHistogramList.Add(tfsMobHistogram);
+            tfsMobHistogramList.AddRounded(tfsMobHistogram);
 
             var signal = GetCompareSignal(tfsMobHistogram, prevTfsMobHistogram);
             signalsList.Add(signal);
@@ -430,44 +430,44 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal stdev = stdDevList.ElementAtOrDefault(i);
-            decimal fastMa = fastSmaList.ElementAtOrDefault(i);
-            decimal slowMa = slowSmaList.ElementAtOrDefault(i);
-            decimal zscore = zScoreList.ElementAtOrDefault(i);
+            decimal stdev = stdDevList[i];
+            decimal fastMa = fastSmaList[i];
+            decimal slowMa = slowSmaList[i];
+            decimal zscore = zScoreList[i];
 
             decimal macd = fastMa - slowMa;
             decimal maczt = stdev != 0 ? zscore + (macd / stdev) : zscore;
-            macztList.Add(maczt);
+            macztList.AddRounded(maczt);
 
             decimal prevL0 = i >= 1 ? l0List.LastOrDefault() : maczt;
             decimal l0 = ((1 - gamma) * maczt) + (gamma * prevL0);
-            l0List.Add(l0);
+            l0List.AddRounded(l0);
 
             decimal prevL1 = i >= 1 ? l1List.LastOrDefault() : maczt;
             decimal l1 = (-1 * gamma * l0) + prevL0 + (gamma * prevL1);
-            l1List.Add(l1);
+            l1List.AddRounded(l1);
 
             decimal prevL2 = i >= 1 ? l2List.LastOrDefault() : maczt;
             decimal l2 = (-1 * gamma * l1) + prevL1 + (gamma * prevL2);
-            l2List.Add(l2);
+            l2List.AddRounded(l2);
 
             decimal prevL3 = i >= 1 ? l3List.LastOrDefault() : maczt;
             decimal l3 = (-1 * gamma * l2) + prevL2 + (gamma * prevL3);
-            l3List.Add(l3);
+            l3List.AddRounded(l3);
 
             decimal macz = (l0 + (2 * l1) + (2 * l2) + l3) / 6;
-            maczList.Add(macz);
+            maczList.AddRounded(macz);
         }
 
         var maczSignalList = GetMovingAverageList(stockData, maType, signalLength, maczList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal macz = maczList.ElementAtOrDefault(i);
-            decimal maczSignal = maczSignalList.ElementAtOrDefault(i);
+            decimal macz = maczList[i];
+            decimal maczSignal = maczSignalList[i];
 
             decimal prevHist = histList.LastOrDefault();
             decimal hist = macz - maczSignal;
-            histList.Add(hist);
+            histList.AddRounded(hist);
 
             var signal = GetCompareSignal(hist, prevHist);
             signalsList.Add(signal);
@@ -513,27 +513,27 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList.ElementAtOrDefault(i);
-            decimal stdev = stdDevList.ElementAtOrDefault(i);
-            decimal wima = wilderMovingAvgList.ElementAtOrDefault(i);
-            decimal fastMa = fastSmaList.ElementAtOrDefault(i);
-            decimal slowMa = slowSmaList.ElementAtOrDefault(i);
+            decimal currentValue = inputList[i];
+            decimal stdev = stdDevList[i];
+            decimal wima = wilderMovingAvgList[i];
+            decimal fastMa = fastSmaList[i];
+            decimal slowMa = slowSmaList[i];
             decimal zscore = stdev != 0 ? (currentValue - wima) / stdev : 0;
 
             decimal macd = fastMa - slowMa;
             decimal macz = stdev != 0 ? (zscore * mult) + (mult * macd / stdev) : zscore;
-            maczList.Add(macz);
+            maczList.AddRounded(macz);
         }
 
         var maczSignalList = GetMovingAverageList(stockData, maType, signalLength, maczList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal macz = maczList.ElementAtOrDefault(i);
-            decimal maczSignal = maczSignalList.ElementAtOrDefault(i);
+            decimal macz = maczList[i];
+            decimal maczSignal = maczSignalList[i];
 
             decimal prevHist = histList.LastOrDefault();
             decimal hist = macz - maczSignal;
-            histList.Add(hist);
+            histList.AddRounded(hist);
 
             var signal = GetCompareSignal(hist, prevHist);
             signalsList.Add(signal);
@@ -575,31 +575,31 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal mao = emaOpenList.ElementAtOrDefault(i);
-            decimal mac = emaCloseList.ElementAtOrDefault(i);
+            decimal mao = emaOpenList[i];
+            decimal mac = emaCloseList[i];
 
             decimal macd = mac - mao;
-            macdList.Add(macd);
+            macdList.AddRounded(macd);
 
             decimal macdMirror = mao - mac;
-            macdMirrorList.Add(macdMirror);
+            macdMirrorList.AddRounded(macdMirror);
         }
 
         var macdSignalLineList = GetMovingAverageList(stockData, maType, signalLength, macdList);
         var macdMirrorSignalLineList = GetMovingAverageList(stockData, maType, signalLength, macdMirrorList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal macd = macdList.ElementAtOrDefault(i);
-            decimal macdMirror = macdMirrorList.ElementAtOrDefault(i);
-            decimal macdSignalLine = macdSignalLineList.ElementAtOrDefault(i);
-            decimal macdMirrorSignalLine = macdMirrorSignalLineList.ElementAtOrDefault(i);
+            decimal macd = macdList[i];
+            decimal macdMirror = macdMirrorList[i];
+            decimal macdSignalLine = macdSignalLineList[i];
+            decimal macdMirrorSignalLine = macdMirrorSignalLineList[i];
 
             decimal prevMacdHistogram = macdHistogramList.LastOrDefault();
             decimal macdHistogram = macd - macdSignalLine;
-            macdHistogramList.Add(macdHistogram);
+            macdHistogramList.AddRounded(macdHistogram);
 
             decimal macdMirrorHistogram = macdMirror - macdMirrorSignalLine;
-            macdMirrorHistogramList.Add(macdMirrorHistogram);
+            macdMirrorHistogramList.AddRounded(macdMirrorHistogram);
 
             var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
             signalsList.Add(signal);
@@ -646,26 +646,26 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList.ElementAtOrDefault(i);
+            decimal currentValue = inputList[i];
 
             decimal prevFs = fsList.LastOrDefault();
             decimal fs = prevFs + (scAlpha * (currentValue - prevFs));
-            fsList.Add(fs);
+            fsList.AddRounded(fs);
 
             decimal prevSs = ssList.LastOrDefault();
             decimal ss = prevSs + (lcAlpha * (currentValue - prevSs));
-            ssList.Add(ss);
+            ssList.AddRounded(ss);
 
             decimal r = fs - ss;
-            rList.Add(r);
+            rList.AddRounded(r);
 
             decimal prevS = sList.LastOrDefault();
             decimal s = prevS + (spAlpha * (r - prevS));
-            sList.Add(s);
+            sList.AddRounded(s);
 
             decimal prevH = hList.LastOrDefault();
             decimal h = r - s;
-            hList.Add(h);
+            hList.AddRounded(h);
 
             var signal = GetCompareSignal(h, prevH);
             signalsList.Add(signal);
@@ -712,31 +712,31 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal fastEma = fastEmaList.ElementAtOrDefault(i);
-            decimal slowEma = slowEmaList.ElementAtOrDefault(i);
-            decimal hh = highestList.ElementAtOrDefault(i);
-            decimal ll = lowestList.ElementAtOrDefault(i);
+            decimal fastEma = fastEmaList[i];
+            decimal slowEma = slowEmaList[i];
+            decimal hh = highestList[i];
+            decimal ll = lowestList[i];
             decimal range = hh - ll;
 
             decimal fastStochastic = range != 0 ? (fastEma - ll) / range : 0;
-            fastStochasticList.Add(fastStochastic);
+            fastStochasticList.AddRounded(fastStochastic);
 
             decimal slowStochastic = range != 0 ? (slowEma - ll) / range : 0;
-            slowStochasticList.Add(slowStochastic);
+            slowStochasticList.AddRounded(slowStochastic);
 
             decimal macdStochastic = 10 * (fastStochastic - slowStochastic);
-            macdStochasticList.Add(macdStochastic);
+            macdStochasticList.AddRounded(macdStochastic);
         }
 
         var macdStochasticSignalLineList = GetMovingAverageList(stockData, maType, signalLength, macdStochasticList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal macdStochastic = macdStochasticList.ElementAtOrDefault(i);
-            decimal macdStochasticSignalLine = macdStochasticSignalLineList.ElementAtOrDefault(i);
+            decimal macdStochastic = macdStochasticList[i];
+            decimal macdStochasticSignalLine = macdStochasticSignalLineList[i];
 
             decimal prevMacdHistogram = macdStochasticHistogramList.LastOrDefault();
             decimal macdHistogram = macdStochastic - macdStochasticSignalLine;
-            macdStochasticHistogramList.Add(macdHistogram);
+            macdStochasticHistogramList.AddRounded(macdHistogram);
 
             var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
             signalsList.Add(signal);
@@ -777,22 +777,22 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ema1 = period1EmaList.ElementAtOrDefault(i);
-            decimal ema2 = period2EmaList.ElementAtOrDefault(i);
+            decimal ema1 = period1EmaList[i];
+            decimal ema2 = period2EmaList[i];
 
             decimal macd = ema1 - ema2;
-            macdList.Add(macd);
+            macdList.AddRounded(macd);
         }
 
         var macdSignalLineList = GetMovingAverageList(stockData, maType, length3, macdList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal macd = macdList.ElementAtOrDefault(i);
-            decimal macdSignalLine = macdSignalLineList.ElementAtOrDefault(i);
+            decimal macd = macdList[i];
+            decimal macdSignalLine = macdSignalLineList[i];
 
             decimal prevMacdHistogram = macdHistogramList.LastOrDefault();
             decimal macdHistogram = macd - macdSignalLine;
-            macdHistogramList.Add(macdHistogram);
+            macdHistogramList.AddRounded(macdHistogram);
 
             var signal = GetCompareSignal(macdHistogram, prevMacdHistogram);
             signalsList.Add(signal);

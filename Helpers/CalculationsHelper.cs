@@ -692,16 +692,16 @@ public static class CalculationsHelper
 
         for (int i = 0; i < inputs.Count; i++)
         {
-            decimal input = inputs.ElementAt(i);
-            inputList.Add(input);
+            decimal input = inputs[i];
+            inputList.AddRounded(input);
 
             var list = inputList.TakeLastExt(Math.Max(length, 2)).ToList();
 
             decimal highestValue = list.Max();
-            highestValuesList.Add(highestValue);
+            highestValuesList.AddRounded(highestValue);
 
             decimal lowestValue = list.Min();
-            lowestValuesList.Add(lowestValue);
+            lowestValuesList.AddRounded(lowestValue);
         }
 
         return (highestValuesList, lowestValuesList);
@@ -724,11 +724,11 @@ public static class CalculationsHelper
 
         for (int i = 0; i < count; i++)
         {
-            decimal high = highList.ElementAt(i);
-            tempHighList.Add(high);
+            decimal high = highList[i];
+            tempHighList.AddRounded(high);
 
-            decimal low = lowList.ElementAt(i);
-            tempLowList.Add(low);
+            decimal low = lowList[i];
+            tempLowList.AddRounded(low);
 
             decimal highest = tempHighList.TakeLastExt(length).Max();
             highestList.AddRounded(highest);
@@ -747,7 +747,7 @@ public static class CalculationsHelper
     /// <param name="value">The value.</param>
     public static void AddRounded(this List<decimal> list, decimal value)
     {
-        list.Add(Math.Round(value, 4));
+        list.AddRounded(Math.Round(value, 4));
     }
 
     /// <summary>
@@ -809,7 +809,7 @@ public static class CalculationsHelper
         var n = list.Count;
         int rank = n > 0 ? (int)Math.Ceiling(percentile / 100 * n) : 0;
 
-        return list.ElementAtOrDefault(Math.Max(rank - 1, 0));
+        return list[Math.Max(rank - 1, 0)];
     }
 
     /// <summary>

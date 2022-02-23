@@ -24,22 +24,22 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal fastEma = fastEmaList.ElementAtOrDefault(i);
-            decimal slowEma = slowEmaList.ElementAtOrDefault(i);
+            decimal fastEma = fastEmaList[i];
+            decimal slowEma = slowEmaList[i];
 
             decimal ppo = slowEma != 0 ? 100 * (fastEma - slowEma) / slowEma : 0;
-            ppoList.Add(ppo);
+            ppoList.AddRounded(ppo);
         }
 
         var ppoSignalList = GetMovingAverageList(stockData, maType, signalLength, ppoList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ppo = ppoList.ElementAtOrDefault(i);
-            decimal ppoSignalLine = ppoSignalList.ElementAtOrDefault(i);
+            decimal ppo = ppoList[i];
+            decimal ppoSignalLine = ppoSignalList[i];
 
             decimal prevPpoHistogram = ppoHistogramList.LastOrDefault();
             decimal ppoHistogram = ppo - ppoSignalLine;
-            ppoHistogramList.Add(ppoHistogram);
+            ppoHistogramList.AddRounded(ppoHistogram);
 
             var signal = GetCompareSignal(ppoHistogram, prevPpoHistogram);
             signalsList.Add(signal);
@@ -80,22 +80,22 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal fastEma = fastEmaList.ElementAtOrDefault(i);
-            decimal slowEma = slowEmaList.ElementAtOrDefault(i);
+            decimal fastEma = fastEmaList[i];
+            decimal slowEma = slowEmaList[i];
 
             decimal pvo = slowEma != 0 ? 100 * (fastEma - slowEma) / slowEma : 0;
-            pvoList.Add(pvo);
+            pvoList.AddRounded(pvo);
         }
 
         var pvoSignalList = GetMovingAverageList(stockData, maType, signalLength, pvoList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal pvo = pvoList.ElementAtOrDefault(i);
-            decimal pvoSignalLine = pvoSignalList.ElementAtOrDefault(i);
+            decimal pvo = pvoList[i];
+            decimal pvoSignalLine = pvoSignalList[i];
 
             decimal prevPvoHistogram = pvoHistogramList.LastOrDefault();
             decimal pvoHistogram = pvo - pvoSignalLine;
-            pvoHistogramList.Add(pvoHistogram);
+            pvoHistogramList.AddRounded(pvoHistogram);
 
             var signal = GetCompareSignal(pvoHistogram, prevPvoHistogram);
             signalsList.Add(signal);
@@ -150,28 +150,28 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ema5 = ema5List.ElementAtOrDefault(i);
-            decimal ema8 = ema8List.ElementAtOrDefault(i);
-            decimal ema10 = ema10List.ElementAtOrDefault(i);
-            decimal ema14 = ema14List.ElementAtOrDefault(i);
-            decimal ema16 = ema16List.ElementAtOrDefault(i);
-            decimal ema17 = ema17List.ElementAtOrDefault(i);
+            decimal ema5 = ema5List[i];
+            decimal ema8 = ema8List[i];
+            decimal ema10 = ema10List[i];
+            decimal ema14 = ema14List[i];
+            decimal ema16 = ema16List[i];
+            decimal ema17 = ema17List[i];
             decimal macd1 = ema17 - ema14;
             decimal macd2 = ema17 - ema8;
             decimal macd3 = ema10 - ema16;
             decimal macd4 = ema5 - ema10;
 
             decimal ppo1 = ema14 != 0 ? macd1 / ema14 * 100 : 0;
-            ppo1List.Add(ppo1);
+            ppo1List.AddRounded(ppo1);
 
             decimal ppo2 = ema8 != 0 ? macd2 / ema8 * 100 : 0;
-            ppo2List.Add(ppo2);
+            ppo2List.AddRounded(ppo2);
 
             decimal ppo3 = ema16 != 0 ? macd3 / ema16 * 100 : 0;
-            ppo3List.Add(ppo3);
+            ppo3List.AddRounded(ppo3);
 
             decimal ppo4 = ema10 != 0 ? macd4 / ema10 * 100 : 0;
-            ppo4List.Add(ppo4);
+            ppo4List.AddRounded(ppo4);
         }
 
         var ppo1SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo1List);
@@ -180,27 +180,27 @@ public static partial class Calculations
         var ppo4SignalLineList = GetMovingAverageList(stockData, maType, length1, ppo4List);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ppo1 = ppo1List.ElementAtOrDefault(i);
-            decimal ppo1SignalLine = ppo1SignalLineList.ElementAtOrDefault(i);
-            decimal ppo2 = ppo2List.ElementAtOrDefault(i);
-            decimal ppo2SignalLine = ppo2SignalLineList.ElementAtOrDefault(i);
-            decimal ppo3 = ppo3List.ElementAtOrDefault(i);
-            decimal ppo3SignalLine = ppo3SignalLineList.ElementAtOrDefault(i);
-            decimal ppo4 = ppo4List.ElementAtOrDefault(i);
-            decimal ppo4SignalLine = ppo4SignalLineList.ElementAtOrDefault(i);
+            decimal ppo1 = ppo1List[i];
+            decimal ppo1SignalLine = ppo1SignalLineList[i];
+            decimal ppo2 = ppo2List[i];
+            decimal ppo2SignalLine = ppo2SignalLineList[i];
+            decimal ppo3 = ppo3List[i];
+            decimal ppo3SignalLine = ppo3SignalLineList[i];
+            decimal ppo4 = ppo4List[i];
+            decimal ppo4SignalLine = ppo4SignalLineList[i];
             decimal ppo1Histogram = ppo1 - ppo1SignalLine;
             decimal ppoBlue = blueMult * ppo1Histogram;
 
             decimal prevPpo2Histogram = ppo2HistogramList.LastOrDefault();
             decimal ppo2Histogram = ppo2 - ppo2SignalLine;
-            ppo2HistogramList.Add(ppo2Histogram);
+            ppo2HistogramList.AddRounded(ppo2Histogram);
 
             decimal ppo3Histogram = ppo3 - ppo3SignalLine;
             decimal ppoYellow = yellowMult * ppo3Histogram;
 
             decimal prevPpo4Histogram = ppo4HistogramList.LastOrDefault();
             decimal ppo4Histogram = ppo4 - ppo4SignalLine;
-            ppo4HistogramList.Add(ppo4Histogram);
+            ppo4HistogramList.AddRounded(ppo4Histogram);
 
             decimal maxPpo = Math.Max(ppoBlue, Math.Max(ppoYellow, Math.Max(ppo2Histogram, ppo4Histogram)));
             decimal minPpo = Math.Min(ppoBlue, Math.Min(ppoYellow, Math.Min(ppo2Histogram, ppo4Histogram)));
@@ -251,20 +251,20 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal hi = wellesWilderHighMovingAvgList.ElementAtOrDefault(i);
-            decimal lo = wellesWilderLowMovingAvgList.ElementAtOrDefault(i);
-            decimal mi = typicalPriceZeroLagEmaList.ElementAtOrDefault(i);
+            decimal hi = wellesWilderHighMovingAvgList[i];
+            decimal lo = wellesWilderLowMovingAvgList[i];
+            decimal mi = typicalPriceZeroLagEmaList[i];
             decimal macd = mi > hi ? mi - hi : mi < lo ? mi - lo : 0;
 
             decimal ppo = mi > hi && hi != 0 ? macd / hi * 100 : mi < lo && lo != 0 ? macd / lo * 100 : 0;
-            ppoList.Add(ppo);
+            ppoList.AddRounded(ppo);
 
             decimal ppoSignalLine = ppoList.TakeLastExt(signalLength).Average();
-            ppoSignalLineList.Add(ppoSignalLine);
+            ppoSignalLineList.AddRounded(ppoSignalLine);
 
             decimal prevPpoHistogram = ppoHistogramList.LastOrDefault();
             decimal ppoHistogram = ppo - ppoSignalLine;
-            ppoHistogramList.Add(ppoHistogram);
+            ppoHistogramList.AddRounded(ppoHistogram);
 
             var signal = GetCompareSignal(ppoHistogram, prevPpoHistogram);
             signalsList.Add(signal);
@@ -305,23 +305,23 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal i1 = i1List.ElementAtOrDefault(i);
-            decimal i2 = i2List.ElementAtOrDefault(i);
+            decimal i1 = i1List[i];
+            decimal i2 = i2List[i];
             decimal macd = i1 - i2;
 
             decimal ppo = i2 != 0 ? macd / i2 * 100 : 0;
-            ppoList.Add(ppo);
+            ppoList.AddRounded(ppo);
         }
 
         var ppoSignalLineList = GetMovingAverageList(stockData, maType, signalLength, ppoList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ppo = ppoList.ElementAtOrDefault(i);
-            decimal ppoSignalLine = ppoSignalLineList.ElementAtOrDefault(i);
+            decimal ppo = ppoList[i];
+            decimal ppoSignalLine = ppoSignalLineList[i];
 
             decimal prevPpoHistogram = ppoHistogramList.LastOrDefault();
             decimal ppoHistogram = ppo - ppoSignalLine;
-            ppoHistogramList.Add(ppoHistogram);
+            ppoHistogramList.AddRounded(ppoHistogram);
 
             var signal = GetCompareSignal(ppoHistogram, prevPpoHistogram);
             signalsList.Add(signal);
@@ -362,23 +362,23 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal mob1 = mob1List.ElementAtOrDefault(i);
-            decimal mob2 = mob2List.ElementAtOrDefault(i);
+            decimal mob1 = mob1List[i];
+            decimal mob2 = mob2List[i];
             decimal tfsMob = mob1 - mob2;
 
             decimal ppo = mob2 != 0 ? tfsMob / mob2 * 100 : 0;
-            ppoList.Add(ppo);
+            ppoList.AddRounded(ppo);
         }
 
         var ppoSignalLineList = GetMovingAverageList(stockData, maType, signalLength, ppoList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ppo = ppoList.ElementAtOrDefault(i);
-            decimal ppoSignalLine = ppoSignalLineList.ElementAtOrDefault(i);
+            decimal ppo = ppoList[i];
+            decimal ppoSignalLine = ppoSignalLineList[i];
 
             decimal prevPpoHistogram = ppoHistogramList.LastOrDefault();
             decimal ppoHistogram = ppo - ppoSignalLine;
-            ppoHistogramList.Add(ppoHistogram);
+            ppoHistogramList.AddRounded(ppoHistogram);
 
             var signal = GetCompareSignal(ppoHistogram, prevPpoHistogram);
             signalsList.Add(signal);
@@ -420,33 +420,33 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal mao = emaOpenList.ElementAtOrDefault(i);
-            decimal mac = emaCloseList.ElementAtOrDefault(i);
+            decimal mao = emaOpenList[i];
+            decimal mac = emaCloseList[i];
             decimal macd = mac - mao;
             decimal macdMirror = mao - mac;
 
             decimal ppo = mao != 0 ? macd / mao * 100 : 0;
-            ppoList.Add(ppo);
+            ppoList.AddRounded(ppo);
 
             decimal ppoMirror = mac != 0 ? macdMirror / mac * 100 : 0;
-            ppoMirrorList.Add(ppoMirror);
+            ppoMirrorList.AddRounded(ppoMirror);
         }
 
         var ppoSignalLineList = GetMovingAverageList(stockData, maType, signalLength, ppoList);
         var ppoMirrorSignalLineList = GetMovingAverageList(stockData, maType, signalLength, ppoMirrorList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ppo = ppoList.ElementAtOrDefault(i);
-            decimal ppoSignalLine = ppoSignalLineList.ElementAtOrDefault(i);
-            decimal ppoMirror = ppoMirrorList.ElementAtOrDefault(i);
-            decimal ppoMirrorSignalLine = ppoMirrorSignalLineList.ElementAtOrDefault(i);
+            decimal ppo = ppoList[i];
+            decimal ppoSignalLine = ppoSignalLineList[i];
+            decimal ppoMirror = ppoMirrorList[i];
+            decimal ppoMirrorSignalLine = ppoMirrorSignalLineList[i];
 
             decimal prevPpoHistogram = ppoHistogramList.LastOrDefault();
             decimal ppoHistogram = ppo - ppoSignalLine;
-            ppoHistogramList.Add(ppoHistogram);
+            ppoHistogramList.AddRounded(ppoHistogram);
 
             decimal ppoMirrorHistogram = ppoMirror - ppoMirrorSignalLine;
-            ppoMirrorHistogramList.Add(ppoMirrorHistogram);
+            ppoMirrorHistogramList.AddRounded(ppoMirrorHistogram);
 
             var signal = GetCompareSignal(ppoHistogram, prevPpoHistogram);
             signalsList.Add(signal);
@@ -492,19 +492,19 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ss = ssList.ElementAtOrDefault(i);
-            decimal r = rList.ElementAtOrDefault(i);
+            decimal ss = ssList[i];
+            decimal r = rList[i];
 
             decimal ppo = ss != 0 ? 100 * r / ss : 0;
-            ppoList.Add(ppo);
+            ppoList.AddRounded(ppo);
 
             decimal prevS = sList.LastOrDefault();
             decimal s = prevS + (spAlpha * (ppo - prevS));
-            sList.Add(s);
+            sList.AddRounded(s);
 
             decimal prevH = hList.LastOrDefault();
             decimal h = ppo - s;
-            hList.Add(h);
+            hList.AddRounded(h);
 
             var signal = GetCompareSignal(h, prevH);
             signalsList.Add(signal);
@@ -545,23 +545,23 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ema1 = period1EmaList.ElementAtOrDefault(i);
-            decimal ema2 = period2EmaList.ElementAtOrDefault(i);
+            decimal ema1 = period1EmaList[i];
+            decimal ema2 = period2EmaList[i];
             decimal macd = ema1 - ema2;
 
             decimal ppo = ema2 != 0 ? macd / ema2 * 100 : 0;
-            ppoList.Add(ppo);
+            ppoList.AddRounded(ppo);
         }
 
         var ppoSignalLineList = GetMovingAverageList(stockData, maType, length3, ppoList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ppo = ppoList.ElementAtOrDefault(i);
-            decimal ppoSignalLine = ppoSignalLineList.ElementAtOrDefault(i);
+            decimal ppo = ppoList[i];
+            decimal ppoSignalLine = ppoSignalLineList[i];
 
             decimal prevPpoHistogram = ppoHistogramList.LastOrDefault();
             decimal ppoHistogram = ppo - ppoSignalLine;
-            ppoHistogramList.Add(ppoHistogram);
+            ppoHistogramList.AddRounded(ppoHistogram);
 
             var signal = GetCompareSignal(ppoHistogram, prevPpoHistogram);
             signalsList.Add(signal);
