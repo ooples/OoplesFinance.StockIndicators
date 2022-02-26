@@ -741,7 +741,7 @@ public static class CalculationsHelper
     }
 
     /// <summary>
-    /// Adds the rounded.
+    /// Rounds the incoming value to a default of 4 decimal points
     /// </summary>
     /// <param name="list">The list.</param>
     /// <param name="value">The value.</param>
@@ -767,17 +767,17 @@ public static class CalculationsHelper
         if (0 == count)
             yield break;
 
-        if (source is ICollection<T>)
+        if (source is ICollection<T> collection)
         {
-            foreach (T item in source.Skip(Math.Max(0, ((ICollection<T>)source).Count - count)))
+            foreach (T item in source.Skip(Math.Max(0, collection.Count - count)))
                 yield return item;
 
             yield break;
         }
 
-        if (source is IReadOnlyCollection<T>)
+        if (source is IReadOnlyCollection<T> collection1)
         {
-            foreach (T item in source.Skip(Math.Max(0, ((IReadOnlyCollection<T>)source).Count - count)))
+            foreach (T item in source.Skip(Math.Max(0, collection1.Count - count)))
                 yield return item;
 
             yield break;
