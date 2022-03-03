@@ -58,7 +58,6 @@ public class StockData : IStockData
         ClosePrices = new List<decimal>();
         Volumes = new List<decimal>();
         Dates = new List<DateTime>();
-        InputValues = new List<decimal>();
         CustomValuesList = new List<decimal>();
         OutputValues = new Dictionary<string, List<decimal>>();
         SignalsList = new List<Signal>();
@@ -87,6 +86,7 @@ public class StockData : IStockData
             Volumes.AddRounded(volume);
         }
 
+        InputValues = new List<decimal>(ClosePrices);
         Count = (OpenPrices.Count + HighPrices.Count + LowPrices.Count + ClosePrices.Count + Volumes.Count + Dates.Count) / 6 == ClosePrices.Count ? ClosePrices.Count : 0;
     }
 }

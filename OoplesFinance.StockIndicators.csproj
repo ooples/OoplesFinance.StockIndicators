@@ -8,7 +8,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>Largest C# stock indicator library with over 750 to choose from and easiest to use with abilities such as making an indicator out of any other indicator or using any moving average with any indicator. </Description>
-    <Version>1.0.39</Version>
+    <Version>1.0.40</Version>
     <Authors>ooples</Authors>
     <Company>Ooples Finance</Company>
     <RepositoryUrl>https://github.com/ooples/OoplesFinance.StockIndicators</RepositoryUrl>
@@ -141,5 +141,77 @@
       <PackagePath>\</PackagePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Include="Alpaca.Markets">
+      <Version>5.2.9</Version>
+    </PackageReference>
   </ItemGroup>
 </Project>
