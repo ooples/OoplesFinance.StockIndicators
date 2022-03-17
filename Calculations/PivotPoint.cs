@@ -3,11 +3,12 @@
 public static partial class Calculations
 {
     /// <summary>
-    /// Calculates the standard pivot points.
+    /// Calculates the Standard Pivot Points
     /// </summary>
-    /// <param name="stockData">The stock data.</param>
+    /// <param name="stockData"></param>
+    /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateStandardPivotPoints(this StockData stockData)
+    public static StockData CalculateStandardPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<decimal> pivotList = new();
         List<decimal> resistanceLevel3List = new();
@@ -23,9 +24,9 @@ public static partial class Calculations
         List<decimal> midpoint5List = new();
         List<decimal> midpoint6List = new();
         List<Signal> signalsList = new();
-        var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData);
+        var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData, inputLength);
 
-        for (int i = 0; i < stockData.Count; i++)
+        for (int i = 0; i < inputList.Count; i++)
         {
             decimal currentClose = inputList[i];
             decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
@@ -106,8 +107,9 @@ public static partial class Calculations
     /// Calculates the Woodie Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
+    /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateWoodiePivotPoints(this StockData stockData)
+    public static StockData CalculateWoodiePivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<decimal> pivotList = new();
         List<decimal> resistanceLevel1List = new();
@@ -123,9 +125,9 @@ public static partial class Calculations
         List<decimal> midpoint3List = new();
         List<decimal> midpoint4List = new();
         List<Signal> signalsList = new();
-        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
-        for (int i = 0; i < stockData.Count; i++)
+        for (int i = 0; i < inputList.Count; i++)
         {
             decimal currentClose = inputList[i];
             decimal prevHigh = i >= 1 ? highList[i - 1] : 0;
@@ -204,8 +206,9 @@ public static partial class Calculations
     /// Calculates the Floor Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
+    /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateFloorPivotPoints(this StockData stockData)
+    public static StockData CalculateFloorPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<decimal> pivotList = new();
         List<decimal> resistanceLevel3List = new();
@@ -221,9 +224,9 @@ public static partial class Calculations
         List<decimal> midpoint5List = new();
         List<decimal> midpoint6List = new();
         List<Signal> signalsList = new();
-        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
-        for (int i = 0; i < stockData.Count; i++)
+        for (int i = 0; i < inputList.Count; i++)
         {
             decimal currentClose = inputList[i];
             decimal prevHigh = i >= 1 ? highList[i] : 0;
@@ -304,8 +307,9 @@ public static partial class Calculations
     /// Calculates the Fibonacci Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
+    /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateFibonacciPivotPoints(this StockData stockData)
+    public static StockData CalculateFibonacciPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<decimal> pivotList = new();
         List<decimal> resistanceLevel3List = new();
@@ -321,9 +325,9 @@ public static partial class Calculations
         List<decimal> midpoint5List = new();
         List<decimal> midpoint6List = new();
         List<Signal> signalsList = new();
-        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
-        for (int i = 0; i < stockData.Count; i++)
+        for (int i = 0; i < inputList.Count; i++)
         {
             decimal currentClose = inputList[i];
             decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
@@ -402,8 +406,9 @@ public static partial class Calculations
     /// Calculates the Camarilla Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
+    /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateCamarillaPivotPoints(this StockData stockData)
+    public static StockData CalculateCamarillaPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<decimal> resistanceLevel5List = new();
         List<decimal> resistanceLevel4List = new();
@@ -423,9 +428,9 @@ public static partial class Calculations
         List<decimal> midpoint6List = new();
         List<decimal> pivotList = new();
         List<Signal> signalsList = new();
-        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
-        for (int i = 0; i < stockData.Count; i++)
+        for (int i = 0; i < inputList.Count; i++)
         {
             decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
             decimal currentClose = i >= 1 ? prevClose : inputList[i];
@@ -526,16 +531,17 @@ public static partial class Calculations
     /// <param name="stockData"></param>
     /// <param name="maType"></param>
     /// <param name="length"></param>
+    /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculatePivotPointAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 3)
+    public static StockData CalculatePivotPointAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 3, InputLength inputLength = InputLength.Day)
     {
         List<decimal> pp1List = new();
         List<decimal> pp2List = new();
         List<decimal> pp3List = new();
         List<Signal> signalsList = new();
-        var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData);
+        var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData, inputLength);
 
-        for (int i = 0; i < stockData.Count; i++)
+        for (int i = 0; i < inputList.Count; i++)
         {
             decimal currentOpen = openList[i];
             decimal prevHigh = i >= 1 ? highList[i - 1] : 0;
@@ -586,16 +592,17 @@ public static partial class Calculations
     /// Calculates the Demark Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
+    /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateDemarkPivotPoints(this StockData stockData)
+    public static StockData CalculateDemarkPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<decimal> pivotList = new();
         List<decimal> resistanceLevel1List = new();
         List<decimal> supportLevel1List = new();
         List<Signal> signalsList = new();
-        var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData);
+        var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData, inputLength);
 
-        for (int i = 0; i < stockData.Count; i++)
+        for (int i = 0; i < inputList.Count; i++)
         {
             decimal currentClose = inputList[i];
             decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
@@ -637,16 +644,17 @@ public static partial class Calculations
     /// Calculates the Dynamic Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
+    /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateDynamicPivotPoints(this StockData stockData)
+    public static StockData CalculateDynamicPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<decimal> resistanceLevel1List = new();
         List<decimal> supportLevel1List = new();
         List<decimal> pivotList = new();
         List<Signal> signalsList = new();
-        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
+        var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
-        for (int i = 0; i < stockData.Count; i++)
+        for (int i = 0; i < inputList.Count; i++)
         {
             decimal currentClose = inputList[i];
             decimal prevHigh = i >= 1 ? highList[i - 1] : 0;

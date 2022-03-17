@@ -7,6 +7,7 @@ global using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
 global using MathNet.Numerics;
 global using MathNet.Numerics.Statistics;
 global using Nessos.LinqOptimizer.CSharp;
+global using System.Globalization;
 
 namespace OoplesFinance.StockIndicators.Helpers;
 
@@ -636,6 +637,65 @@ public static class CalculationsHelper
 
         openList = stockData.OpenPrices;
         volumeList = stockData.Volumes;
+
+        return (inputList, highList, lowList, openList, volumeList);
+    }
+
+    /// <summary>
+    /// Gets input values using a fixed length according to the input length to be used with indicators such as Pivot Points or similar indicators
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="inputLength"></param>
+    /// <returns></returns>
+    /// <exception cref="CalculationException"></exception>
+    public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> volumeList)
+        GetInputValuesList(StockData stockData, InputLength inputLength)
+    {
+        List<decimal> inputList = new();
+        List<decimal> highList = new();
+        List<decimal> lowList = new();
+        List<decimal> openList = new();
+        List<decimal> volumeList = new();
+
+        var groupedDatesParent = stockData.TickerDataList.GroupBy(x => x.Date.Date);
+        for (int i = 0; i < groupedDatesParent.Count(); i++)
+        {
+            var parent = groupedDatesParent.ElementAt(i);
+
+            IEnumerable<IGrouping<int, TickerData>> groupedDatesChild = inputLength switch
+            {
+                InputLength.Minute => parent.GroupBy(x => x.Date.Minute),
+                InputLength.Hour => parent.GroupBy(x => x.Date.Hour),
+                InputLength.Day => parent.GroupBy(x => x.Date.Day),
+                InputLength.Week => parent.GroupBy(x => CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(x.Date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)),
+                InputLength.Month => parent.GroupBy(x => x.Date.Month),
+                InputLength.Year => parent.GroupBy(x => x.Date.Year),
+                _ => parent.GroupBy(x => x.Date.Day),
+            };
+
+            for (int j = 0; j < groupedDatesChild.Count(); j++)
+            {
+                var groupedDates = groupedDatesChild.ElementAt(j);
+
+                if (groupedDates.Any())
+                {
+                    var high = groupedDates.Max(x => x.High);
+                    highList.Add(high);
+
+                    var low = groupedDates.Min(x => x.Low);
+                    lowList.Add(low);
+
+                    var volume = groupedDates.Sum(x => x.Volume);
+                    volumeList.Add(volume);
+
+                    var open = groupedDates.First().Open;
+                    openList.Add(open);
+
+                    var close = groupedDates.Last().Close;
+                    inputList.Add(close);
+                }
+            }
+        }
 
         return (inputList, highList, lowList, openList, volumeList);
     }

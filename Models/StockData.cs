@@ -14,6 +14,7 @@ public class StockData : IStockData
     public List<decimal> ClosePrices { get; set; }
     public List<decimal> Volumes { get; set; }
     public List<DateTime> Dates { get; set; }
+    public List<TickerData> TickerDataList { get; set; }
     public List<decimal> CustomValuesList { get; set; }
     public Dictionary<string, List<decimal>> OutputValues { get; set; }
     public List<Signal> SignalsList { get; set; }
@@ -44,6 +45,28 @@ public class StockData : IStockData
         InputName = InputName.Close;
         IndicatorName = IndicatorName.None;
         Count = (OpenPrices.Count + HighPrices.Count + LowPrices.Count + ClosePrices.Count + Volumes.Count + Dates.Count) / 6 == ClosePrices.Count ? ClosePrices.Count : 0;
+
+        TickerDataList = new List<TickerData>();
+        for (int i = 0; i < Count; i++)
+        {
+            var open = OpenPrices[i];
+            var high = HighPrices[i];
+            var low = LowPrices[i];
+            var close = ClosePrices[i];
+            var volume = Volumes[i];
+            var date = Dates[i];
+
+            var ticker = new TickerData()
+            {
+                Date = date,
+                Open = open,
+                High = high,
+                Low = low,
+                Close = close,
+                Volume = volume
+            };
+            TickerDataList.Add(ticker);
+        }
     }
 
     /// <summary>
@@ -85,7 +108,8 @@ public class StockData : IStockData
             var volume = ticker.Volume;
             Volumes.AddRounded(volume);
         }
-
+        
+        TickerDataList = tickerDataList.ToList();
         InputValues = new List<decimal>(ClosePrices);
         Count = (OpenPrices.Count + HighPrices.Count + LowPrices.Count + ClosePrices.Count + Volumes.Count + Dates.Count) / 6 == ClosePrices.Count ? ClosePrices.Count : 0;
     }
