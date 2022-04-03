@@ -11,7 +11,7 @@ var stockData = new StockData(openPrices, highPrices, lowPrices, closePrices, vo
 var results = stockData.CalculateRelativeStrengthIndex().CalculateMovingAverageConvergenceDivergence();
 ```
 
-Here is an example to get you started using the [Alpaca C# Api](https://github.com/alpacahq/alpaca-trade-api-csharp)
+Here is a simple example calculating default bollinger bands to get you started using the [Alpaca C# Api](https://github.com/alpacahq/alpaca-trade-api-csharp)
 
 ```cs
 using Alpaca.Markets;
@@ -32,8 +32,20 @@ var results = stockData.CalculateBollingerBands();
 var upperBandList = results.OutputValues["UpperBand"];
 var middleBandList = results.OutputValues["MiddleBand"];
 var lowerBandList = results.OutputValues["LowerBand"];
-
 ```
+
+Here is a more advanced example showing how to calculate bollinger bands with full customization and using a custom input of high rather than the default close
+```cs
+var stockData = new StockData(bars.Select(x => x.Open), bars.Select(x => x.High), bars.Select(x => x.Low), 
+bars.Select(x => x.Close), bars.Select(x => x.Volume), bars.Select(x => x.TimeUtc), InputName.High);
+
+var results = stockData.CalculateBollingerBands(MovingAvgType.EhlersMesaAdaptiveMovingAverage, 15, 2.5m);
+var upperBandList = results.OutputValues["UpperBand"];
+var middleBandList = results.OutputValues["MiddleBand"];
+var lowerBandList = results.OutputValues["LowerBand"];
+```
+
+For more detailed Alpaca examples then check out my more advanced [Alpaca example code](https://github.com/alpacahq/alpaca-trade-api-csharp/blob/develop/UsageExamples/IndicatorLibraryExample.cs)
 
 ### Support This Project
 
@@ -52,4 +64,4 @@ Patreon: [https://patreon.com/cheatcountry](https://patreon.com/cheatcountry)
 
 ### Support or Contact
 
-Email me at cheatcountry@gmail.com for any help or support.
+Email me at cheatcountry@gmail.com for any help or support or to let me know of ways to further improve this library.
