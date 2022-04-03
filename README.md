@@ -28,12 +28,25 @@ var client = Environments.Paper.GetAlpacaDataClient(new SecretKey(paperApiKey, p
 var bars = (await client.ListHistoricalBarsAsync(new HistoricalBarsRequest(symbol, startDate, endDate, BarTimeFrame.Day)).ConfigureAwait(false)).Items;
 var stockData = new StockData(bars.Select(x => x.Open), bars.Select(x => x.High), bars.Select(x => x.Low), bars.Select(x => x.Close), bars.Select(x => x.Volume), bars.Select(x => x.TimeUtc));
 
+// simple example showing default bollinger bands
 var results = stockData.CalculateBollingerBands();
 var upperBandList = results.OutputValues["UpperBand"];
 var middleBandList = results.OutputValues["MiddleBand"];
 var lowerBandList = results.OutputValues["LowerBand"];
-
 ```
+
+```cs
+// more advanced example showing bollinger bands with full customization and using a custom input of high rather than the default close
+var stockData = new StockData(bars.Select(x => x.Open), bars.Select(x => x.High), bars.Select(x => x.Low), 
+bars.Select(x => x.Close), bars.Select(x => x.Volume), bars.Select(x => x.TimeUtc), InputName.High);
+
+var results = stockData.CalculateBollingerBands(MovingAvgType.EhlersMesaAdaptiveMovingAverage, 15, 2.5m);
+var upperBandList = results.OutputValues["UpperBand"];
+var middleBandList = results.OutputValues["MiddleBand"];
+var lowerBandList = results.OutputValues["LowerBand"];
+```
+
+For more detailed Alpaca examples then check out my more advanced [Alpaca example code](https://github.com/alpacahq/alpaca-trade-api-csharp/blob/develop/UsageExamples/IndicatorLibraryExample.cs)
 
 ### Support This Project
 

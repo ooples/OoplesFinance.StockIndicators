@@ -30,7 +30,7 @@ public class StockData : IStockData
     /// <param name="volumes"></param>
     /// <param name="dates"></param>
     public StockData(IEnumerable<decimal> openPrices, IEnumerable<decimal> highPrices, IEnumerable<decimal> lowPrices, IEnumerable<decimal> closePrices,
-        IEnumerable<decimal> volumes, IEnumerable<DateTime> dates)
+        IEnumerable<decimal> volumes, IEnumerable<DateTime> dates, InputName inputName = InputName.Close)
     {
         OpenPrices = new List<decimal>(openPrices);
         HighPrices = new List<decimal>(highPrices);
@@ -42,7 +42,7 @@ public class StockData : IStockData
         CustomValuesList = new List<decimal>();
         OutputValues = new Dictionary<string, List<decimal>>();
         SignalsList = new List<Signal>();
-        InputName = InputName.Close;
+        InputName = inputName;
         IndicatorName = IndicatorName.None;
         Count = (OpenPrices.Count + HighPrices.Count + LowPrices.Count + ClosePrices.Count + Volumes.Count + Dates.Count) / 6 == ClosePrices.Count ? ClosePrices.Count : 0;
 
@@ -73,7 +73,7 @@ public class StockData : IStockData
     /// Initializes the StockData Class using classic list of ticker information
     /// </summary>
     /// <param name="tickerDataList"></param>
-    public StockData(IEnumerable<TickerData> tickerDataList)
+    public StockData(IEnumerable<TickerData> tickerDataList, InputName inputName = InputName.Close)
     {
         OpenPrices = new List<decimal>();
         HighPrices = new List<decimal>();
@@ -84,7 +84,7 @@ public class StockData : IStockData
         CustomValuesList = new List<decimal>();
         OutputValues = new Dictionary<string, List<decimal>>();
         SignalsList = new List<Signal>();
-        InputName = InputName.Close;
+        InputName = inputName;
 
         for (int i = 0; i < tickerDataList.Count(); i++)
         {
