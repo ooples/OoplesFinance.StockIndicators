@@ -2,6 +2,7 @@
 
 This is a stock indicator library that is completely open source and very easy to use. Current version contains [762 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) and I will add more as I get requests for them!
 
+
 ### How to use this library
 
 Here is an example to show how easy it is to create indicators using other indicators
@@ -45,7 +46,22 @@ var middleBandList = results.OutputValues["MiddleBand"];
 var lowerBandList = results.OutputValues["LowerBand"];
 ```
 
+It is extremely important to remember that if you use the same data source to calculate different indicators without using the chaining method then you need to clear the data in between each call. We have a great example for this below:
+```cs
+var stockData = new StockData(bars.Select(x => x.Open), bars.Select(x => x.High), bars.Select(x => x.Low), 
+bars.Select(x => x.Close), bars.Select(x => x.Volume), bars.Select(x => x.TimeUtc), InputName.High);
+
+var sma = stockData.CalculateSimpleMovingAverage(14);
+
+// if you don't perform these clear methods in between then your ema result will be calculated using the sma results
+stockData.SignalsList.Clear();
+stockData.CustomValuesList.Clear();
+
+var ema = stockData.CalculateExponentialMovingAverage(14);
+```
+
 For more detailed Alpaca examples then check out my more advanced [Alpaca example code](https://github.com/alpacahq/alpaca-trade-api-csharp/blob/develop/UsageExamples/IndicatorLibraryExample.cs)
+
 
 ### Support This Project
 
