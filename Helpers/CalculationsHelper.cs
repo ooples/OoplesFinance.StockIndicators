@@ -1,3 +1,13 @@
+//     Ooples Finance Stock Indicator Library
+//     https://ooples.github.io/OoplesFinance.StockIndicators/
+//
+//     Copyright © Franklin Moormann, 2020-2022
+//     cheatcountry@gmail.com
+//
+//     This library is free software and it uses the Apache 2.0 license
+//     so if you are going to re-use or modify my code then I just ask
+//     that you include my copyright info and my contact info in a comment
+
 global using OoplesFinance.StockIndicators.Enums;
 global using OoplesFinance.StockIndicators.Exceptions;
 global using OoplesFinance.StockIndicators.Models;
@@ -853,7 +863,7 @@ public static class CalculationsHelper
             result.Enqueue(item);
         }
 
-        foreach (var item in result)
+        foreach (var _ in result)
             yield return result.Dequeue();
     }
 
@@ -974,5 +984,22 @@ public static class CalculationsHelper
         decimal dRatio = oldMax - oldMin != 0 ? d / (oldMax - oldMin) : 0;
 
         return (dRatio * (newMax - newMin)) + newMin;
+    }
+
+    /// <summary>
+    /// This needs to be called after you calculate an indicator if you are re-using the same input data to calculate a second indicator on a separate line
+    /// </summary>
+    /// <param name="stockData"></param>
+    public static void Clear(this StockData stockData)
+    {
+        if (stockData.SignalsList != null)
+        {
+            stockData.SignalsList.Clear();
+        }
+        
+        if (stockData.CustomValuesList != null)
+        {
+            stockData.CustomValuesList.Clear();
+        }
     }
 }
