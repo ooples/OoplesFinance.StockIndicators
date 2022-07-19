@@ -2,6 +2,7 @@
 
 This is a stock indicator library that is completely open source (Apache 2.0 license) and very easy to use. Current version contains [762 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) and I will add more as I get requests for them!
 
+
 ### How to use this library
 
 Here is an example to show how easy it is to create indicators using other indicators
@@ -59,6 +60,7 @@ var ema = stockData.CalculateExponentialMovingAverage(14);
 ```
 
 For more detailed Alpaca examples then check out my more advanced [Alpaca example code](https://github.com/alpacahq/alpaca-trade-api-csharp/blob/develop/UsageExamples/IndicatorLibraryExample.cs)
+
 
 ### Support This Project
 
