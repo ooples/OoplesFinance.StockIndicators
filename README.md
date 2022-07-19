@@ -1,6 +1,6 @@
 ## .Net Stock Indicator Library
 
-This is a stock indicator library that is completely open source and very easy to use. Current version contains [762 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) and I will add more as I get requests for them!
+This is a stock indicator library that is completely open source (Apache 2.0 license) and very easy to use. Current version contains [762 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) and I will add more as I get requests for them!
 
 
 ### How to use this library
@@ -53,9 +53,8 @@ bars.Select(x => x.Close), bars.Select(x => x.Volume), bars.Select(x => x.TimeUt
 
 var sma = stockData.CalculateSimpleMovingAverage(14);
 
-// if you don't perform these clear methods in between then your ema result will be calculated using the sma results
-stockData.SignalsList.Clear();
-stockData.CustomValuesList.Clear();
+// if you don't perform this clear method in between then your ema result will be calculated using the sma results
+stockData.Clear();
 
 var ema = stockData.CalculateExponentialMovingAverage(14);
 ```
