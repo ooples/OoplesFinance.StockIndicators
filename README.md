@@ -1,5 +1,7 @@
 ## .Net Stock Indicator Library
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d88c9d8e7d2c4fbb8530d9aaae0efb36)](https://app.codacy.com/gh/ooples/OoplesFinance.StockIndicators?utm_source=github.com&utm_medium=referral&utm_content=ooples/OoplesFinance.StockIndicators&utm_campaign=Badge_Grade_Settings)
+
 This is a stock indicator library that is completely open source (Apache 2.0 license) and very easy to use. Current version contains [762 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) and I will add more as I get requests for them!
 
 
