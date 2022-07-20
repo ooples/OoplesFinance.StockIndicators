@@ -26,6 +26,7 @@
     <UseWPF>False</UseWPF>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <SignAssembly>True</SignAssembly>
+    <Title>Ooples Finance Stock Indicators</Title>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
