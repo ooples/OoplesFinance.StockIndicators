@@ -1,3 +1,8 @@
+
+![Nuget](https://img.shields.io/nuget/dt/OoplesFinance.StockIndicators?style=plastic)
+![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/OoplesFinance.StockIndicators?style=plastic)
+![GitHub](https://img.shields.io/github/license/ooples/OoplesFinance.StockIndicators?style=plastic)
+
 ## .Net Stock Indicator Library
 
 This is a stock indicator library that is completely open source (Apache 2.0 license) and very easy to use. Current version contains [762 stock indicators](https://ooples.github.io/OoplesFinance.StockIndicators/indicators) and I will add more as I get requests for them!
