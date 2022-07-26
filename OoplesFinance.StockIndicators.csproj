@@ -8,14 +8,13 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>Largest C# stock indicator library with over 750 to choose from and easiest to use with abilities such as making an indicator out of any other indicator or using any moving average with any indicator. </Description>
-    <Version>1.0.45</Version>
+    <Version>1.0.46</Version>
     <Authors>ooples</Authors>
     <Company>Ooples Finance</Company>
     <RepositoryUrl>https://github.com/ooples/OoplesFinance.StockIndicators</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageLicenseFile></PackageLicenseFile>
     <PackageReleaseNotes>https://github.com/ooples/OoplesFinance.StockIndicators/releases</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/ooples/OoplesFinance.StockIndicators</PackageProjectUrl>
     <PackageTags>stock; stocks; technical; indicators; market; markets; analysis; library; finance; financial; indicator; moving average; algorithm; algorithms; trading; trades; algorithmic; ai; trade; indicators; technical indicators; technical analysis; stock indicators; crypto; bitcoin, cryptocurrency; forex; adaptive; kaufman; rsi; simple; weighted; exponential; moving; average; equity; strategy; chart; charting; mfi; cmf; relative; strength; index; volume; open; high; low; close; typical price; stochastic; adx; directional; reverse; trailing stop; pivot points; pivot; points; ultimate; ulcer; correlation; slope; cycle; standard; macd; schaff; ehlers; john ehlers; package; library; .net; c#; obv; nvi; pvi; beta; standard; deviation; bull; bear; smoothed; smooth; smoothing; chandelier; exit; atr; aroon; bollinger; bollinger bands; bands; price channels; hilbert; transform; chaikin; wilder; welles wilder; williams; larry williams; money; flow; parabolic; donchian; keltner; channel; alligator; gator; supertrend; fractal; chaos; oscillators; choppiness</PackageTags>
@@ -27,6 +26,7 @@
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <SignAssembly>True</SignAssembly>
     <Title>Ooples Finance Stock Indicators</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -157,6 +157,15 @@
 
   <ItemGroup>
     <None Remove="Calculations\eladq3fp.fhq~" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

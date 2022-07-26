@@ -9040,7 +9040,7 @@ public static partial class Calculations
 
         var swingTrd2List = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, length3, swingTrd1List);
         var swingTrd3List = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, length3, swingTrd2List);
-        var rmoList = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, length4, swingTrd3List);
+        var rmoList = GetMovingAverageList(stockData, MovingAvgType.ExponentialMovingAverage, length4, swingTrd1List);
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal rmo = rmoList[i];
@@ -9052,7 +9052,10 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "Rmo", rmoList }
+            { "Rmo", rmoList },
+            { "SwingTrade1", swingTrd1List },
+            { "SwingTrade2", swingTrd2List },
+            { "SwingTrade3", swingTrd3List }
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = rmoList;
