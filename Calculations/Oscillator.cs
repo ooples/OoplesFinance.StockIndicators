@@ -264,7 +264,7 @@ public static partial class Calculations
             decimal prevRoc1 = i >= 1 ? rocList[i - 1] : 0;
             decimal prevRoc2 = i >= 2 ? rocList[i - 2] : 0;
 
-            decimal roc = prevValue != 0 ? (currentValue - prevValue) / prevValue * 100 : 0;
+            decimal roc = prevValue != 0 ? MinPastValues(i, length, currentValue - prevValue) / prevValue * 100 : 0;
             rocList.AddRounded(roc);
 
             var signal = GetCompareSignal(roc - prevRoc1, prevRoc1 - prevRoc2);
@@ -736,7 +736,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal pc = currentValue - prevValue;
+            decimal pc = MinPastValues(i, 1, currentValue - prevValue);
             pcList.AddRounded(pc);
 
             decimal absPC = Math.Abs(pc);
@@ -2352,7 +2352,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal diff = currentValue - prevValue;
+            decimal diff = MinPastValues(i, 1, currentValue - prevValue);
             diffList.AddRounded(diff);
         }
 
@@ -4495,7 +4495,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal gainLoss = currentValue + prevValue != 0 ? (currentValue - prevValue) / ((currentValue + prevValue) / 2) * 100 : 0;
+            decimal gainLoss = currentValue + prevValue != 0 ? MinPastValues(i, 1, currentValue - prevValue) / ((currentValue + prevValue) / 2) * 100 : 0;
             gainLossList.AddRounded(gainLoss);
         }
 
@@ -4602,7 +4602,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal pf = currentValue != 0 ? 100 * (currentValue - prevValue) / currentValue : 0;
+            decimal pf = currentValue != 0 ? 100 * MinPastValues(i, 1, currentValue - prevValue) / currentValue : 0;
             pfList.AddRounded(pf);
         }
 
@@ -4650,7 +4650,7 @@ public static partial class Calculations
             decimal prevValue = i >= length ? inputList[i - length] : 0;
 
             decimal prevMomentum = momentumList.LastOrDefault();
-            decimal momentum = currentValue - prevValue;
+            decimal momentum = MinPastValues(i, length, currentValue - prevValue);
             momentumList.AddRounded(momentum);
 
             decimal prevFsk = fskList.LastOrDefault();
@@ -5599,10 +5599,10 @@ public static partial class Calculations
             decimal prevValue = i >= length1 ? inputList[i - length1] : 0;
             decimal prevDiff = i >= length2 ? diffList[i - length2] : 0;
 
-            decimal diff = currentValue - prevValue;
+            decimal diff = MinPastValues(i, length1, currentValue - prevValue);
             diffList.AddRounded(diff);
 
-            decimal k = diff - prevDiff;
+            decimal k = MinPastValues(i, length2, diff - prevDiff);
             kList.AddRounded(k);
         }
 
@@ -7610,7 +7610,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal dvol = Math.Sign(currentValue - prevValue) * currentValue;
+            decimal dvol = Math.Sign(MinPastValues(i, 1, currentValue - prevValue)) * currentValue;
             dvolList.AddRounded(dvol);
         }
 
@@ -7658,7 +7658,7 @@ public static partial class Calculations
             decimal prevValue = i >= length ? inputList[i - length] : 0;
 
             decimal prevKpi = kpiList.LastOrDefault();
-            decimal kpi = prevValue != 0 ? (currentValue - prevValue) * 100 / prevValue : 0;
+            decimal kpi = prevValue != 0 ? MinPastValues(i, length, currentValue - prevValue) * 100 / prevValue : 0;
             kpiList.AddRounded(kpi);
 
             var signal = GetCompareSignal(kpi, prevKpi);
@@ -7697,15 +7697,15 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
             decimal priorValue = i >= length ? inputList[i - length] : 0;
-            decimal pfe = Sqrt(Pow(currentValue - priorValue, 2) + 100);
+            decimal pfe = Sqrt(Pow(MinPastValues(i, length, currentValue - priorValue), 2) + 100);
 
-            decimal c2c = Sqrt(Pow(currentValue - prevValue, 2) + 1);
+            decimal c2c = Sqrt(Pow(MinPastValues(i, 1, currentValue - prevValue), 2) + 1);
             c2cList.AddRounded(c2c);
 
             decimal c2cSum = c2cList.TakeLastExt(length).Sum();
             decimal efRatio = c2cSum != 0 ? pfe / c2cSum * 100 : 0;
 
-            decimal fracEff = currentValue - priorValue > 0 ? efRatio : -efRatio;
+            decimal fracEff = i >= length && currentValue - priorValue > 0 ? efRatio : -efRatio;
             fracEffList.AddRounded(fracEff);
         }
 
@@ -7843,7 +7843,7 @@ public static partial class Calculations
         {
             decimal currentValue = inputList[i];
             decimal prevValue = i >= length ? inputList[i - length] : 0;
-            decimal mom = currentValue - prevValue;
+            decimal mom = MinPastValues(i, length, currentValue - prevValue);
 
             decimal positiveSum = 0, negativeSum = 0;
             for (int j = 0; j <= length - 1; j++)
@@ -8263,7 +8263,7 @@ public static partial class Calculations
             decimal mtRoc = 0.15m * 100 * currentRoc20;
             decimal currentValue = currentPpoHistogram;
             decimal prevValue = i >= length8 ? ppoHistList[i - length8] : 0;
-            decimal slope = length8 != 0 ? (currentValue - prevValue) / length8 : 0;
+            decimal slope = length8 != 0 ? MinPastValues(i, length8, currentValue - prevValue) / length8 : 0;
             decimal stPpo = 0.05m * 100 * slope;
             decimal stRsi = 0.05m * currentRsi;
 
@@ -8900,7 +8900,7 @@ public static partial class Calculations
             decimal currentLow = lowList[i];
             decimal tr = CalculateTrueRange(currentHigh, currentLow, prevValue);
 
-            decimal v1 = currentValue > prevValue ? tr / (currentValue - prevValue) : tr;
+            decimal v1 = i >= 1 && currentValue > prevValue ? tr / MinPastValues(i, 1, currentValue - prevValue) : tr;
             v1List.AddRounded(v1);
 
             var lbList = v1List.TakeLastExt(length).ToList();
@@ -9943,7 +9943,7 @@ public static partial class Calculations
             decimal dnCount = isEq ? 0 : isDn ? (prevDnCount <= 0 ? 1 : prevDnCount + 1) : (prevDnCount >= 0 ? -1 : prevDnCount - 1);
             dnList.AddRounded(dnCount);
 
-            decimal pmo = currentValue - prevValue;
+            decimal pmo = MinPastValues(i, length, currentValue - prevValue);
             decimal rsing = vwr * blr * pmo;
             rsingList.AddRounded(rsing);
         }
@@ -10057,7 +10057,7 @@ public static partial class Calculations
             decimal x = Math.Sign(currentValue - sma);
             xList.AddRounded(x);
 
-            decimal chgX = (currentValue - prevValue) * prevX;
+            decimal chgX = MinPastValues(i, 1, currentValue - prevValue) * prevX;
             chgXList.AddRounded(chgX);
 
             decimal prevReq = reqList.LastOrDefault();
@@ -10171,10 +10171,10 @@ public static partial class Calculations
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
             decimal currentVolume = volumeList[i];
 
-            decimal adv = currentValue > prevValue ? currentValue - prevValue : 0;
+            decimal adv = i >= 1 && currentValue > prevValue ? MinPastValues(i, 1, currentValue - prevValue) : 0;
             advList.AddRounded(adv);
 
-            decimal dec = currentValue < prevValue ? prevValue - currentValue : 0;
+            decimal dec = i >= 1 && currentValue < prevValue ? MinPastValues(i, 1, prevValue - currentValue) : 0;
             decList.AddRounded(dec);
 
             decimal advSum = advList.TakeLastExt(length).Sum();
@@ -10331,7 +10331,7 @@ public static partial class Calculations
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
             decimal prevMt = mtList.LastOrDefault();
-            decimal mt = currentValue - prevValue;
+            decimal mt = MinPastValues(i, 1, currentValue - prevValue);
             mtList.AddRounded(mt);
 
             decimal prevMtSignal = mtSignalList.LastOrDefault();
@@ -10649,10 +10649,10 @@ public static partial class Calculations
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
             decimal currentVolume = volumeList[i];
 
-            decimal adv = currentValue > prevValue ? currentValue - prevValue : 0;
+            decimal adv = i >= 1 && currentValue > prevValue ? MinPastValues(i, 1, currentValue - prevValue) : 0;
             advList.AddRounded(adv);
 
-            decimal dec = currentValue < prevValue ? prevValue - currentValue : 0;
+            decimal dec = i >= 1 && currentValue < prevValue ? MinPastValues(i, 1, prevValue - currentValue) : 0;
             decList.AddRounded(dec);
 
             decimal advSum = advList.TakeLastExt(length).Sum();
@@ -10932,7 +10932,7 @@ public static partial class Calculations
             decimal va = vaList[i];
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal pctChg = prevValue != 0 ? (currentValue - prevValue) / Math.Abs(prevValue) * 100 : 0;
+            decimal pctChg = prevValue != 0 ? MinPastValues(i, 1, currentValue - prevValue) / Math.Abs(prevValue) * 100 : 0;
             decimal currentVolume = stockData.Volumes[i];
             decimal k = va != 0 ? (3 * currentValue) / va : 0;
             decimal pctK = pctChg * k;
@@ -11400,10 +11400,10 @@ public static partial class Calculations
             decimal sma = smaList[i];
             decimal prevSma = i >= length ? smaList[i - length] : 0;
 
-            decimal absChg = Math.Abs(currentValue - prevValue);
+            decimal absChg = Math.Abs(MinPastValues(i, length, currentValue - prevValue));
             absChgList.AddRounded(absChg);
 
-            decimal b = sma - prevSma;
+            decimal b = MinPastValues(i, length, sma - prevSma);
             bList.AddRounded(b);
         }
 
@@ -11599,7 +11599,7 @@ public static partial class Calculations
         {
             decimal currentValue = inputList[i];
             decimal prevValue = i >= length2 - 1 ? inputList[i - (length2 - 1)] : 0;
-            decimal moveSe = currentValue - prevValue;
+            decimal moveSe = MinPastValues(i, length2 - 1, currentValue - prevValue);
             decimal avgMoveSe = moveSe / (length2 - 1);
 
             decimal aaSe = prevValue != 0 ? avgMoveSe / prevValue : 0;
@@ -12029,10 +12029,10 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal pc = currentValue - prevValue;
+            decimal pc = MinPastValues(i, 1, currentValue - prevValue);
             pcList.AddRounded(pc);
 
-            decimal absPC = Math.Abs(currentValue - prevValue);
+            decimal absPC = Math.Abs(pc);
             absPCList.AddRounded(absPC);
         }
 
@@ -12209,7 +12209,7 @@ public static partial class Calculations
             decimal volume = volumeList[i];
             decimal volWr = maxVol - minVol != 0 ? 2 * ((volume - volSma) / (maxVol - minVol)) : 0;
             decimal srcWr = maxSrc - minSrc != 0 ? 2 * ((currentValue - srcSma) / (maxSrc - minSrc)) : 0;
-            decimal srcSwr = maxSrc - minSrc != 0 ? 2 * ((currentValue - prevValue) / (maxSrc - minSrc)) : 0;
+            decimal srcSwr = maxSrc - minSrc != 0 ? 2 * (MinPastValues(i, 1, currentValue - prevValue) / (maxSrc - minSrc)) : 0;
 
             decimal ewr = ((volWr > 0 && srcWr > 0 && currentValue > prevValue) || (volWr > 0 && srcWr < 0 && currentValue < prevValue)) && srcSwr + af != 0 ?
                 ((50 * (srcWr * (srcSwr + af) * volWr)) + srcSwr + af) / (srcSwr + af) : 25 * ((srcWr * (volWr + 1)) + 2);
@@ -12486,7 +12486,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal priceDiff = currentValue - prevValue;
+            decimal priceDiff = MinPastValues(i, 1, currentValue - prevValue);
             priceDiffList.AddRounded(priceDiff);
 
             decimal absPriceDiff = Math.Abs(priceDiff);
@@ -12560,10 +12560,10 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal priceDiff = currentValue - prevValue;
+            decimal priceDiff = MinPastValues(i, 1, currentValue - prevValue);
             priceDiffList.AddRounded(priceDiff);
 
-            decimal absPriceDiff = Math.Abs(currentValue - prevValue);
+            decimal absPriceDiff = Math.Abs(priceDiff);
             absPriceDiffList.AddRounded(absPriceDiff);
         }
 
@@ -12874,7 +12874,7 @@ public static partial class Calculations
             decimal prevEp1 = i >= 1 ? epList[i - 1] : 0;
             decimal prevEp2 = i >= 2 ? epList[i - 2] : 0;
 
-            decimal chgEr = (currentValue - prevValue) * er;
+            decimal chgEr = MinPastValues(i, length, currentValue - prevValue) * er;
             chgErList.AddRounded(chgEr);
 
             decimal ep = chgErList.Sum();

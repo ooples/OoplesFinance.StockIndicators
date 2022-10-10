@@ -90,7 +90,7 @@ public static partial class Calculations
         {
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal roc = prevValue != 0 ? (currentValue - prevValue) / prevValue * 100 : 0;
+            decimal roc = prevValue != 0 ? MinPastValues(i, 1, currentValue - prevValue) / prevValue * 100 : 0;
 
             decimal prevRocMa1 = rocMaList.LastOrDefault();
             decimal rocMa = prevRocMa1 + ((roc - prevRocMa1) * sc1);
@@ -415,12 +415,12 @@ public static partial class Calculations
         {
             decimal currentValue = inputList[i];
             decimal prevValue = i >= length2 ? inputList[i - length2] : 0;
-            decimal priceChg = currentValue - prevValue;
+            decimal priceChg = MinPastValues(i, length2, currentValue - prevValue);
 
-            decimal loss = priceChg < 0 ? Math.Abs(priceChg) : 0;
+            decimal loss = i >= length2 && priceChg < 0 ? Math.Abs(priceChg) : 0;
             lossList.AddRounded(loss);
 
-            decimal gain = priceChg > 0 ? priceChg : 0;
+            decimal gain = i >= length2 && priceChg > 0 ? priceChg : 0;
             gainList.AddRounded(gain);
         }
 
@@ -569,12 +569,12 @@ public static partial class Calculations
             }
 
             int dmiLength = Math.Max(Math.Min(dTime, upLimit), dnLimit);
-            decimal priceChg = currentValue - prevValue;
+            decimal priceChg = MinPastValues(i, 1, currentValue - prevValue);
 
-            decimal loss = priceChg < 0 ? Math.Abs(priceChg) : 0;
+            decimal loss = i >= 1 && priceChg < 0 ? Math.Abs(priceChg) : 0;
             lossList.AddRounded(loss);
 
-            decimal gain = priceChg > 0 ? priceChg : 0;
+            decimal gain = i >= 1 && priceChg > 0 ? priceChg : 0;
             gainList.AddRounded(gain);
 
             decimal avgGainSma = gainList.TakeLastExt(dmiLength).Average();

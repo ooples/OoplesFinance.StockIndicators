@@ -158,7 +158,7 @@ public static partial class Calculations
         {
             decimal currentValue = inputList[i];
             decimal prevValue = i >= length ? inputList[i - length] : 0;
-            decimal x = currentValue - prevValue;
+            decimal x = MinPastValues(i, length, currentValue - prevValue);
 
             decimal x2 = x * x;
             x2List.AddRounded(x2);

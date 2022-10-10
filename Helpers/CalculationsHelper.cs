@@ -821,6 +821,18 @@ public static class CalculationsHelper
     }
 
     /// <summary>
+    /// Ensures that there are enough past values to be able to perform calculations on the data
+    /// </summary>
+    /// <param name="currentIndex"></param>
+    /// <param name="minIndex"></param>
+    /// <param name="currentValue"></param>
+    /// <returns></returns>
+    public static decimal MinPastValues(int currentIndex, int minIndex, decimal currentValue)
+    {
+        return currentIndex >= minIndex ? currentValue : 0;
+    }
+
+    /// <summary>
     /// Extension for the default TakeLast method that works for older versions of .Net
     /// </summary>
     /// <typeparam name="TSource"></typeparam>

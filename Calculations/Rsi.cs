@@ -8,6 +8,8 @@
 //     so if you are going to re-use or modify my code then I just ask
 //     that you include my copyright info and my contact info in a comment
 
+using Nessos.LinqOptimizer.Core;
+
 namespace OoplesFinance.StockIndicators;
 
 public static partial class Calculations
@@ -24,7 +26,6 @@ public static partial class Calculations
         int length = 14, int signalLength = 3)
     {
         List<decimal> rsiList = new();
-        List<decimal> rsList = new();
         List<decimal> lossList = new();
         List<decimal> gainList = new();
         List<decimal> rsiHistogramList = new();
@@ -35,7 +36,7 @@ public static partial class Calculations
         {
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal priceChg = currentValue - prevValue;
+            decimal priceChg = MinPastValues(i, 1, currentValue - prevValue);
 
             decimal loss = priceChg < 0 ? Math.Abs(priceChg) : 0;
             lossList.AddRounded(loss);
@@ -50,9 +51,7 @@ public static partial class Calculations
         {
             decimal avgGain = avgGainList[i];
             decimal avgLoss = avgLossList[i];
-
-            decimal rs = avgLoss != 0 ? MinOrMax(avgGain / avgLoss, 1, 0) : 0;
-            rsList.AddRounded(rs);
+            decimal rs = avgLoss != 0 ? avgGain / avgLoss : 0;
 
             decimal rsi = avgLoss == 0 ? 100 : avgGain == 0 ? 0 : MinOrMax(100 - (100 / (1 + rs)), 100, 0);
             rsiList.AddRounded(rsi);
@@ -180,7 +179,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal roc = prevValue != 0 ? (currentValue - prevValue) / prevValue * 100 : 0;
+            decimal roc = prevValue != 0 ? MinPastValues(i, 1, currentValue - prevValue) / prevValue * 100 : 0;
             rocList.AddRounded(roc);
 
             decimal upCount = rocList.TakeLastExt(length).Where(x => x >= 0).Count();
@@ -460,8 +459,8 @@ public static partial class Calculations
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
             decimal currentVolume = volumeList[i];
             decimal prevVolume = i >= 1 ? volumeList[i - 1] : 0;
-            decimal a = currentValue - prevValue;
-            decimal b = currentVolume - prevVolume;
+            decimal a = MinPastValues(i, 1, currentValue - prevValue);
+            decimal b = MinPastValues(i, 1, currentVolume - prevVolume);
             decimal prevC1 = i >= 1 ? cList[i - 1] : 0;
             decimal prevC2 = i >= 2 ? cList[i - 2] : 0;
             decimal num = Math.Max(a, 0) * Math.Max(b, 0);
@@ -567,10 +566,10 @@ public static partial class Calculations
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
             decimal volume = volumeList[i];
 
-            decimal max = Math.Max((currentValue - prevValue) * volume, 0);
+            decimal max = Math.Max(MinPastValues(i, 1, currentValue - prevValue) * volume, 0);
             maxList.AddRounded(max);
 
-            decimal min = -Math.Min((currentValue - prevValue) * volume, 0);
+            decimal min = -Math.Min(MinPastValues(i, 1, currentValue - prevValue) * volume, 0);
             minList.AddRounded(min);
         }
 
@@ -628,12 +627,12 @@ public static partial class Calculations
         {
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal chg = currentValue - prevValue;
+            decimal chg = MinPastValues(i, 1, currentValue - prevValue);
 
-            decimal upChg = chg > 0 ? chg : 0;
+            decimal upChg = i >= 1 && chg > 0 ? chg : 0;
             upChgList.AddRounded(upChg);
 
-            decimal downChg = chg < 0 ? Math.Abs(chg) : 0;
+            decimal downChg = i >= 1 && chg < 0 ? Math.Abs(chg) : 0;
             downChgList.AddRounded(downChg);
 
             decimal upChgSum = upChgList.TakeLastExt(length).Sum();
@@ -691,7 +690,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= length ? inputList[i - length] : 0;
 
-            decimal chg = currentValue - prevValue;
+            decimal chg = MinPastValues(i, length, currentValue - prevValue);
             chgList.AddRounded(chg);
         }
 
@@ -713,7 +712,7 @@ public static partial class Calculations
                 decimal prevGain = i >= j ? gainList[i - j] : 0;
                 decimal prevLoss = i >= j ? lossList[i - j] : 0;
                 decimal k = (decimal)j / length;
-                decimal a = rsi * (decimal)length / j;
+                decimal a = rsi * ((decimal)length / j);
                 avg = (a + prevB) / 2;
                 decimal avgChg = avg - prevAvg;
                 gain = avgChg > 0 ? avgChg : 0;

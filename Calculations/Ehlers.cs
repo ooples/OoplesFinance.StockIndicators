@@ -342,7 +342,7 @@ public static partial class Calculations
             decimal prevValue = i >= length1 - 1 ? inputList[i - (length1 - 1)] : 0;
 
             decimal prevMom = momList.LastOrDefault();
-            decimal mom = currentValue - prevValue;
+            decimal mom = MinPastValues(i, length1 - 1, currentValue - prevValue);
             momList.AddRounded(mom);
 
             decimal arg = (mom + prevMom) / 2;
@@ -614,7 +614,7 @@ public static partial class Calculations
             decimal prevF3_3 = i >= 3 ? f3List[i - 3] : 0;
             int pr = (int)Math.Ceiling(Math.Abs(p - 1));
             decimal prevValue = i >= pr ? inputList[i - pr] : 0;
-            decimal v1 = currentValue - prevValue;
+            decimal v1 = MinPastValues(i, pr, currentValue - prevValue);
 
             decimal f3 = (coef1 * v1) + (coef2 * prevF3_1) + (coef3 * prevF3_2) + (coef4 * prevF3_3);
             f3List.AddRounded(f3);
@@ -1047,12 +1047,12 @@ public static partial class Calculations
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentValue = inputList[i];
-            decimal prevValue1 = i >= 1 ? inputList[i - 1] : 0;
+            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
             decimal prevFilter1 = i >= 1 ? roofingFilterList[i - 1] : 0;
             decimal prevFilter2 = i >= 2 ? roofingFilterList[i - 2] : 0;
             decimal prevHp1 = i >= 1 ? highPassList[i - 1] : 0;
 
-            decimal hp = ((1 - (alpha1 / 2)) * (currentValue - prevValue1)) + ((1 - alpha1) * prevHp1);
+            decimal hp = ((1 - (alpha1 / 2)) * MinPastValues(i, 1, currentValue - prevValue)) + ((1 - alpha1) * prevHp1);
             highPassList.AddRounded(hp);
 
             decimal filter = (c1 * ((hp + prevHp1) / 2)) + (c2 * prevFilter1) + (c3 * prevFilter2);
@@ -1779,11 +1779,11 @@ public static partial class Calculations
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentValue = inputList[i];
-            decimal prevValue2 = i >= 2 ? inputList[i - 2] : 0;
+            decimal prevValue = i >= 2 ? inputList[i - 2] : 0;
             decimal prevBp1 = i >= 1 ? bpList[i - 1] : 0;
             decimal prevBp2 = i >= 2 ? bpList[i - 2] : 0;
 
-            decimal bp = (0.5m * (1 - alpha) * (currentValue - prevValue2)) + (beta * (1 + alpha) * prevBp1) - (alpha * prevBp2);
+            decimal bp = (0.5m * (1 - alpha) * MinPastValues(i, 2, currentValue - prevValue)) + (beta * (1 + alpha) * prevBp1) - (alpha * prevBp2);
             bpList.AddRounded(bp);
         }
 
@@ -2000,11 +2000,11 @@ public static partial class Calculations
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentValue = inputList[i];
-            decimal prevValue2 = i >= 2 ? inputList[i - 2] : 0;
+            decimal prevValue = i >= 2 ? inputList[i - 2] : 0;
             decimal prevBp1 = i >= 1 ? bpList[i - 1] : 0;
             decimal prevBp2 = i >= 2 ? bpList[i - 2] : 0;
 
-            decimal bp = i < 3 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue2)) + (l1 * (1 + s1) * prevBp1) - (s1 * prevBp2);
+            decimal bp = i < 3 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue)) + (l1 * (1 + s1) * prevBp1) - (s1 * prevBp2);
             bpList.AddRounded(bp);
         }
 
@@ -2065,11 +2065,11 @@ public static partial class Calculations
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentValue = inputList[i];
-            decimal prevValue2 = i >= 2 ? inputList[i - 2] : 0;
+            decimal prevValue = i >= 2 ? inputList[i - 2] : 0;
             decimal prevBp1 = i >= 1 ? bpList[i - 1] : 0;
             decimal prevBp2 = i >= 2 ? bpList[i - 2] : 0;
 
-            decimal bp = i < 3 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue2)) + (l1 * (1 + s1) * prevBp1) - (s1 * prevBp2);
+            decimal bp = i < 3 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue)) + (l1 * (1 + s1) * prevBp1) - (s1 * prevBp2);
             bpList.AddRounded(bp);
         }
 
@@ -2684,7 +2684,7 @@ public static partial class Calculations
             decimal prevDeriv2 = i >= 2 ? derivList[i - 2] : 0;
             decimal prevDeriv3 = i >= 3 ? derivList[i - 3] : 0;
 
-            decimal deriv = currentValue - prevValue;
+            decimal deriv = MinPastValues(i, length, currentValue - prevValue);
             derivList.AddRounded(deriv);
 
             decimal z3 = deriv + prevDeriv1 + prevDeriv2 + prevDeriv3;
@@ -2740,7 +2740,7 @@ public static partial class Calculations
             decimal prevClip2 = i >= 2 ? clipList[i - 2] : 0;
             decimal prevClip3 = i >= 3 ? clipList[i - 3] : 0;
 
-            decimal deriv = currentValue - prevValue;
+            decimal deriv = MinPastValues(i, length1, currentValue - prevValue);
             derivList.AddRounded(deriv);
 
             decimal rms = 0;
@@ -3795,7 +3795,7 @@ public static partial class Calculations
             decimal inPhase3 = i >= 3 ? inPhaseList[i - 3] : 0;
             decimal quad2 = i >= 2 ? quadList[i - 2] : 0;
 
-            decimal v1 = currentValue - prevValue;
+            decimal v1 = MinPastValues(i, length, currentValue - prevValue);
             v1List.AddRounded(v1);
 
             decimal prevInPhase = inPhaseList.LastOrDefault();
@@ -3914,7 +3914,7 @@ public static partial class Calculations
             decimal prevV12 = i >= 2 ? v1List[i - 2] : 0;
             decimal prevV14 = i >= 4 ? v1List[i - 4] : 0;
 
-            decimal v1 = currentValue - prevValue;
+            decimal v1 = MinPastValues(i, length1, currentValue - prevValue);
             v1List.AddRounded(v1);
 
             decimal v2 = i >= 3 ? v1List[i - 3] : 0;
@@ -4954,25 +4954,25 @@ public static partial class Calculations
             decimal prevBp1_1 = bp1List.LastOrDefault();
             decimal prevBp2_1 = bp2List.LastOrDefault();
             decimal prevBp3_1 = bp3List.LastOrDefault();
-            decimal prevValue2 = i >= 2 ? inputList[i - 2] : 0;
+            decimal prevValue = i >= 2 ? inputList[i - 2] : 0;
             decimal prevBp1_2 = i >= 2 ? bp1List[i - 2] : 0;
             decimal prevBp2_2 = i >= 2 ? bp2List[i - 2] : 0;
             decimal prevBp3_2 = i >= 2 ? bp3List[i - 2] : 0;
             decimal prevWave2 = i >= 2 ? waveList[i - 2] : 0;
 
-            decimal bp1 = i <= 3 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue2)) + (l1 * (1 + s1) * prevBp1_1) - (s1 * prevBp1_2);
+            decimal bp1 = i <= 3 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue)) + (l1 * (1 + s1) * prevBp1_1) - (s1 * prevBp1_2);
             bp1List.AddRounded(bp1);
 
             decimal q1 = i <= 4 ? 0 : length / 2 * Pi * (bp1 - prevBp1_1);
             q1List.AddRounded(q1);
 
-            decimal bp2 = i <= 3 ? 0 : (0.5m * (1 - s2) * (currentValue - prevValue2)) + (l2 * (1 + s2) * prevBp2_1) - (s2 * prevBp2_2);
+            decimal bp2 = i <= 3 ? 0 : (0.5m * (1 - s2) * (currentValue - prevValue)) + (l2 * (1 + s2) * prevBp2_1) - (s2 * prevBp2_2);
             bp2List.AddRounded(bp2);
 
             decimal q2 = i <= 4 ? 0 : length / 2 * Pi * (bp2 - prevBp2_1);
             q2List.AddRounded(q2);
 
-            decimal bp3 = i <= 3 ? 0 : (0.5m * (1 - s3) * (currentValue - prevValue2)) + (l3 * (1 + s3) * prevBp3_1) - (s3 * prevBp3_2);
+            decimal bp3 = i <= 3 ? 0 : (0.5m * (1 - s3) * (currentValue - prevValue)) + (l3 * (1 + s3) * prevBp3_1) - (s3 * prevBp3_2);
             bp3List.AddRounded(bp3);
 
             decimal q3 = i <= 4 ? 0 : length / 2 * Pi * (bp3 - prevBp3_1);
@@ -5041,9 +5041,9 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevFilt1 = i >= 1 ? filtList[i - 1] : 0;
             decimal prevFilt2 = i >= 2 ? filtList[i - 2] : 0;
-            decimal prevValue2 = i >= 2 ? inputList[i - 2] : 0;
+            decimal prevValue = i >= 2 ? inputList[i - 2] : 0;
 
-            decimal filt = i <= 5 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue2)) + (f1 * (1 + s1) * prevFilt1) - (s1 * prevFilt2);
+            decimal filt = i <= 5 ? 0 : (0.5m * (1 - s1) * (currentValue - prevValue)) + (f1 * (1 + s1) * prevFilt1) - (s1 * prevFilt2);
             filtList.AddRounded(filt);
 
             decimal sumC = 0;
@@ -5223,11 +5223,11 @@ public static partial class Calculations
         for (int i = 0; i < stockData.Count; i++)
         {
             decimal currentValue = inputList[i];
-            decimal prevValue2 = i >= 2 ? inputList[i - 2] : 0;
+            decimal prevValue = i >= 2 ? inputList[i - 2] : 0;
             decimal prevFilt2 = i >= 2 ? filtList[i - 2] : 0;
 
             decimal prevWhitenoise = whitenoiseList.LastOrDefault();
-            decimal whitenoise = (currentValue - prevValue2) / 2;
+            decimal whitenoise = MinPastValues(i, 2, currentValue - prevValue) / 2;
             whitenoiseList.AddRounded(whitenoise);
 
             decimal prevFilt1 = filtList.LastOrDefault();
@@ -5364,7 +5364,7 @@ public static partial class Calculations
             decimal prevBp1 = i >= 1 ? bpList[i - 1] : 0;
             decimal prevBp2 = i >= 2 ? bpList[i - 2] : 0;
 
-            decimal hp = ((1 + (alpha2 / 2)) * (currentValue - prevValue)) + ((1 - alpha2) * prevHp1);
+            decimal hp = ((1 + (alpha2 / 2)) * MinPastValues(i, 1, currentValue - prevValue)) + ((1 - alpha2) * prevHp1);
             hpList.AddRounded(hp);
 
             decimal bp = i > 2 ? (0.5m * (1 - alpha1) * (hp - prevHp2)) + (beta * (1 + alpha1) * prevBp1) - (alpha1 * prevBp2) : 0;
@@ -5464,7 +5464,7 @@ public static partial class Calculations
             decimal prevBp1 = i >= 1 ? bpList[i - 1] : 0;
             decimal prevBp2 = i >= 2 ? bpList[i - 2] : 0;
 
-            decimal bp = (0.5m * (1 - alpha) * (currentValue - prevValue)) + (beta * (1 + alpha) * prevBp1) - (alpha * prevBp2);
+            decimal bp = (0.5m * (1 - alpha) * MinPastValues(i, 2, currentValue - prevValue)) + (beta * (1 + alpha) * prevBp1) - (alpha * prevBp2);
             bpList.AddRounded(bp);
 
             var signal = GetCompareSignal(bp - prevBp1, prevBp1 - prevBp2);
@@ -6120,7 +6120,7 @@ public static partial class Calculations
             decimal prevFilt2 = i >= 2 ? filtList[i - 2] : 0;
 
             decimal prevHp = hpList.LastOrDefault();
-            decimal hp = ((0.5m * (1 + a1)) * (currentValue - prevValue)) + (a1 * prevHp);
+            decimal hp = ((0.5m * (1 + a1)) * MinPastValues(i, 1, currentValue - prevValue)) + (a1 * prevHp);
             hpList.AddRounded(hp);
 
             decimal filt = (c1 * ((hp + prevHp) / 2)) + (c2 * prevFilt1) + (c3 * prevFilt2);

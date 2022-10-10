@@ -77,8 +77,8 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal diff = currentValue - prevValue;
-            decimal absDiff = Math.Abs(currentValue - prevValue);
+            decimal diff = MinPastValues(i, 1, currentValue - prevValue);
+            decimal absDiff = Math.Abs(diff);
             if (absDiff > filter)
             {
                 diff = 0; absDiff = 0;
@@ -138,10 +138,10 @@ public static partial class Calculations
             decimal prevCmoAbs1 = i >= 1 ? cmoAbsList[i - 1] : 0;
             decimal prevCmoAbs2 = i >= 2 ? cmoAbsList[i - 2] : 0;
 
-            decimal absDiff = Math.Abs(currentValue - prevValue);
+            decimal absDiff = Math.Abs(MinPastValues(i, 1, currentValue - prevValue));
             absDiffList.AddRounded(absDiff);
 
-            decimal num = Math.Abs(100 * (currentValue - priorValue));
+            decimal num = Math.Abs(100 * MinPastValues(i, length, currentValue - priorValue));
             decimal denom = absDiffList.TakeLastExt(length).Sum();
 
             decimal cmoAbs = denom != 0 ? MinOrMax(num / denom, 100, 0) : 0;
@@ -309,10 +309,10 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal valueDiff1 = currentValue > prevValue ? currentValue - prevValue : 0;
+            decimal valueDiff1 = currentValue > prevValue ? MinPastValues(i, 1, currentValue - prevValue) : 0;
             valueDiff1List.AddRounded(valueDiff1);
 
-            decimal valueDiff2 = currentValue < prevValue ? prevValue - currentValue : 0;
+            decimal valueDiff2 = currentValue < prevValue ? MinPastValues(i, 1, prevValue - currentValue) : 0;
             valueDiff2List.AddRounded(valueDiff2);
 
             decimal cmo51 = valueDiff1List.TakeLastExt(length1).Sum();
@@ -677,12 +677,12 @@ public static partial class Calculations
         {
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal diff = currentValue - prevValue;
+            decimal diff = MinPastValues(i, 1, currentValue - prevValue);
 
-            decimal negChg = diff < 0 ? Math.Abs(diff) : 0;
+            decimal negChg = i >= 1 && diff < 0 ? Math.Abs(diff) : 0;
             cmoNegChgList.AddRounded(negChg);
 
-            decimal posChg = diff > 0 ? diff : 0;
+            decimal posChg = i >= 1 && diff > 0 ? diff : 0;
             cmoPosChgList.AddRounded(posChg);
 
             decimal negSum = cmoNegChgList.TakeLastExt(length).Sum();

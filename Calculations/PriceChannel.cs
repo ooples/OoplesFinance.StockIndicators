@@ -3363,7 +3363,7 @@ public static partial class Calculations
             decimal prevB = i >= 1 ? bList[i - 1] : currentValue;
             decimal prevASignal = aSignalList.LastOrDefault();
             decimal prevBSignal = bSignalList.LastOrDefault();
-            decimal diff = Math.Abs(currentValue - prevValue);
+            decimal diff = Math.Abs(MinPastValues(i, 1, currentValue - prevValue));
 
             decimal a = Math.Max(currentValue, prevA) - (Math.Min(Math.Abs(currentValue - prevA), diff) / length * prevASignal);
             aList.AddRounded(a);

@@ -278,7 +278,7 @@ public static partial class Calculations
                 decimal prevSpValue = i >= 1 ? spInputList[i - 1] : 0;
                 decimal stdDev = stdDevList[i];
                 decimal spStdDev = spStdDevList[i];
-                decimal d = currentValue - prevValue;
+                decimal d = MinPastValues(i, 1, currentValue - prevValue);
                 decimal sp = spValue - prevSpValue;
                 decimal zsrc = stdDev != 0 ? d / stdDev : 0;
                 decimal zsp = spStdDev != 0 ? sp / spStdDev : 0;
@@ -447,7 +447,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal chg = currentValue - prevValue;
+            decimal chg = MinPastValues(i, 1, currentValue - prevValue);
             chgList.AddRounded(chg);
         }
 
@@ -883,7 +883,7 @@ public static partial class Calculations
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
             decimal rocSma = (currentValue + prevValue) / 2;
-            decimal dr = rocSma != 0 ? (currentValue - prevValue) / rocSma : 0;
+            decimal dr = rocSma != 0 ? MinPastValues(i, 1, currentValue - prevValue) / rocSma : 0;
             drList.AddRounded(dr);
         }
 
@@ -941,7 +941,7 @@ public static partial class Calculations
             decimal lowestPrice = lowestList[i];
             decimal numerator = Math.Abs(highestPrice - lowestPrice);
 
-            decimal priceChange = Math.Abs(currentValue - prevValue);
+            decimal priceChange = Math.Abs(MinPastValues(i, 1, currentValue - prevValue));
             changeList.AddRounded(priceChange);
 
             decimal denominator = changeList.TakeLastExt(length).Sum();
@@ -1342,7 +1342,7 @@ public static partial class Calculations
             decimal currentAtr = atrList[i];
             decimal currentValue = inputList[i];
             decimal prevValue = i >= length1 ? inputList[i - length1] : 0;
-            decimal rateOfChange = currentValue - prevValue;
+            decimal rateOfChange = MinPastValues(i, length1, currentValue - prevValue);
 
             decimal vbm = currentAtr != 0 ? rateOfChange / currentAtr : 0;
             vbmList.AddRounded(vbm);

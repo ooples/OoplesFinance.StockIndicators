@@ -662,7 +662,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= length1 ? inputList[i - length1] : 0;
 
-            decimal mom = currentValue - prevValue;
+            decimal mom = MinPastValues(i, length1, currentValue - prevValue);
             momList.AddRounded(mom);
 
             decimal momAbs = Math.Abs(mom);
@@ -716,7 +716,7 @@ public static partial class Calculations
         {
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal priceChg = currentValue - prevValue;
+            decimal priceChg = MinPastValues(i, 1, currentValue - prevValue);
             decimal chgPlus = priceChg > 0 ? priceChg : 0;
             decimal chgMinus = priceChg < 0 ? Math.Abs(priceChg) : 0;
 
@@ -893,19 +893,19 @@ public static partial class Calculations
             decimal prevUti1 = i >= 1 ? utiList[i - 1] : 0;
             decimal prevUti2 = i >= 2 ? utiList[i - 2] : 0;
 
-            decimal adv = currentValue > prevValue ? currentValue - prevValue : 0;
+            decimal adv = i >= 1 && currentValue > prevValue ? MinPastValues(i, 1, currentValue - prevValue) : 0;
             advList.AddRounded(adv);
 
-            decimal dec = currentValue < prevValue ? prevValue - currentValue : 0;
+            decimal dec = i >= 1 && currentValue < prevValue ? MinPastValues(i, 1, prevValue - currentValue) : 0;
             decList.AddRounded(dec);
 
             decimal advSum = advList.TakeLastExt(length).Sum();
             decimal decSum = decList.TakeLastExt(length).Sum();
 
-            decimal advVol = currentValue > prevValue && advSum != 0 ? currentVolume / advSum : 0;
+            decimal advVol = i >= 1 && currentValue > prevValue && advSum != 0 ? currentVolume / advSum : 0;
             advVolList.AddRounded(advVol);
 
-            decimal decVol = currentValue < prevValue && decSum != 0 ? currentVolume / decSum : 0;
+            decimal decVol = i >= 1 && currentValue < prevValue && decSum != 0 ? currentVolume / decSum : 0;
             decVolList.AddRounded(decVol);
 
             decimal advVolSum = advVolList.TakeLastExt(length).Sum();
@@ -1268,7 +1268,7 @@ public static partial class Calculations
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
             decimal prevPvt = priceVolumeTrendList.LastOrDefault();
-            decimal pvt = prevValue != 0 ? prevPvt + (currentVolume * ((currentValue - prevValue) / prevValue)) : prevPvt;
+            decimal pvt = prevValue != 0 ? prevPvt + (currentVolume * (MinPastValues(i, 1, currentValue - prevValue) / prevValue)) : prevPvt;
             priceVolumeTrendList.AddRounded(pvt);
         }
 
@@ -1388,7 +1388,7 @@ public static partial class Calculations
             decimal rv = currentVolume / 50000;
 
             decimal prevMpvt = mpvtList.LastOrDefault();
-            decimal mpvt = prevValue != 0 ? prevMpvt + (rv * (currentValue - prevValue) / prevValue) : 0;
+            decimal mpvt = prevValue != 0 ? prevMpvt + (rv * MinPastValues(i, 1, currentValue - prevValue) / prevValue) : 0;
             mpvtList.AddRounded(mpvt);
         }
 

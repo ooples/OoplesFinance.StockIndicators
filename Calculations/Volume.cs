@@ -31,7 +31,7 @@ public static partial class Calculations
             decimal currentVolume = volumeList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal rawForce = (currentValue - prevValue) * currentVolume;
+            decimal rawForce = MinPastValues(i, 1, currentValue - prevValue) * currentVolume;
             rawForceList.AddRounded(rawForce);
         }
 
@@ -81,15 +81,15 @@ public static partial class Calculations
             decimal prevMfi2 = i >= 2 ? mfiList[i - 2] : 0;
             decimal rawMoneyFlow = typicalPrice * currentVolume;
 
-            decimal posMoneyFlow = typicalPrice > prevTypicalPrice ? rawMoneyFlow : 0;
+            decimal posMoneyFlow = i >= 1 && typicalPrice > prevTypicalPrice ? rawMoneyFlow : 0;
             posMoneyFlowList.AddRounded(posMoneyFlow);
 
-            decimal negMoneyFlow = typicalPrice < prevTypicalPrice ? rawMoneyFlow : 0;
+            decimal negMoneyFlow = i >= 1 && typicalPrice < prevTypicalPrice ? rawMoneyFlow : 0;
             negMoneyFlowList.AddRounded(negMoneyFlow);
 
             decimal posMoneyFlowTotal = posMoneyFlowList.TakeLastExt(length).Sum();
             decimal negMoneyFlowTotal = negMoneyFlowList.TakeLastExt(length).Sum();
-            decimal mfiRatio = negMoneyFlowTotal != 0 ? MinOrMax(posMoneyFlowTotal / negMoneyFlowTotal, 1, 0) : 0;
+            decimal mfiRatio = negMoneyFlowTotal != 0 ? posMoneyFlowTotal / negMoneyFlowTotal : 0;
 
             decimal mfi = negMoneyFlowTotal == 0 ? 100 : posMoneyFlowTotal == 0 ? 0 : MinOrMax(100 - (100 / (1 + mfiRatio)), 100, 0);
             mfiList.AddRounded(mfi);
@@ -137,7 +137,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal currentVolume = volumeList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal mom = currentValue - prevValue;
+            decimal mom = MinPastValues(i, 1, currentValue - prevValue);
 
             decimal prevTrend = trendList.LastOrDefault();
             decimal trend = mom > 0 ? 1 : mom < 0 ? -1 : prevTrend;
@@ -470,7 +470,7 @@ public static partial class Calculations
             decimal currentValue = inputList[i];
             decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal chg = currentValue - prevValue;
+            decimal chg = MinPastValues(i, 1, currentValue - prevValue);
             chgList.AddRounded(chg);
         }
 
@@ -1169,7 +1169,7 @@ public static partial class Calculations
             decimal prevK = kList.LastOrDefault();
             decimal absDiff = Math.Abs(currentClose - prevClose);
             decimal g = Math.Min(currentOpen, prevOpen);
-            decimal k = (currentValue - prevValue) * pointValue * currentVolume;
+            decimal k = MinPastValues(i, 1, currentValue - prevValue) * pointValue * currentVolume;
             decimal temp = g != 0 ? currentValue < prevValue ? 1 - (absDiff / 2 / g) : 1 + (absDiff / 2 / g) : 1;
 
             k *= temp;
@@ -1333,7 +1333,7 @@ public static partial class Calculations
             decimal currentRelVol = relVolList[i];
             tempList.AddRounded(currentRelVol);
 
-            decimal aMove = prevValue != 0 ? Math.Abs((currentValue - prevValue) / prevValue) : 0;
+            decimal aMove = prevValue != 0 ? Math.Abs(MinPastValues(i, 1, currentValue - prevValue) / prevValue) : 0;
             aMoveList.AddRounded(aMove);
 
             var list = aMoveList.TakeLastExt(length).ToList();
@@ -1661,7 +1661,7 @@ public static partial class Calculations
             decimal cutoff = currentClose * vinter * coef;
             decimal vmax = prevVave * vcoef;
             decimal vc = Math.Min(currentVolume, vmax);
-            decimal mf = currentValue - prevValue;
+            decimal mf = MinPastValues(i, 1, currentValue - prevValue);
 
             decimal vcp = mf > cutoff ? vc : mf < cutoff * -1 ? vc * -1 : mf > 0 ? vc : mf < 0 ? vc * -1 : 0;
             vcpList.AddRounded(vcp);
@@ -1724,10 +1724,10 @@ public static partial class Calculations
             decimal prevValue = i >= length1 ? inputList[i - length1] : 0;
             decimal prevVolume = i >= length2 ? volumeList[i - length2] : 0;
 
-            decimal a = currentValue - prevValue;
+            decimal a = MinPastValues(i, length1, currentValue - prevValue);
             aList.AddRounded(a);
 
-            decimal b = currentVolume - prevVolume;
+            decimal b = MinPastValues(i, length2, currentVolume - prevVolume);
             bList.AddRounded(b);
 
             decimal absA = Math.Abs(a);
