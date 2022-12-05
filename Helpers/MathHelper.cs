@@ -17,9 +17,9 @@ public static class MathHelper
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns></returns>
-    public static double Math.Log(double value)
+    public static double Log(double value)
     {
-        return value > 0 ? Math.Math.Log(value) : 0;
+        return value > 0 ? Math.Log(value) : 0;
     }
 
     /// <summary>

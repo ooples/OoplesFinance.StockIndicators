@@ -225,7 +225,7 @@ public static partial class Calculations
     /// <param name="fibRatio3"></param>
     /// <returns></returns>
     public static StockData CalculateBollingerBandsFibonacciRatios(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
-        int length = 20, double fibRatio1 = 1.618m, double fibRatio2 = 2.618m, double fibRatio3 = 4.236m)
+        int length = 20, double fibRatio1 = 1.618, double fibRatio2 = 2.618, double fibRatio3 = 4.236)
     {
         List<double> fibTop3List = new();
         List<double> fibBottom3List = new();
@@ -501,7 +501,7 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateVervoortModifiedBollingerBandIndicator(this StockData stockData,
         MovingAvgType maType = MovingAvgType.TripleExponentialMovingAverage, InputName inputName = InputName.FullTypicalPrice, int length1 = 18,
-        int length2 = 200, int smoothLength = 8, double stdDevMult = 1.6m)
+        int length2 = 200, int smoothLength = 8, double stdDevMult = 1.6)
     {
         List<double> haOpenList = new();
         List<double> hacList = new();

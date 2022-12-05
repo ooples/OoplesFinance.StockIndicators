@@ -509,7 +509,7 @@ public static partial class Calculations
     /// <param name="mult"></param>
     /// <returns></returns>
     public static StockData CalculateMacZIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
-        int fastLength = 12, int slowLength = 25, int signalLength = 9, int length = 25, double gamma = 0.02m, double mult = 1)
+        int fastLength = 12, int slowLength = 25, int signalLength = 9, int length = 25, double gamma = 0.02, double mult = 1)
     {
         List<double> maczList = new();
         List<double> histList = new();
@@ -639,8 +639,8 @@ public static partial class Calculations
     /// <param name="sc"></param>
     /// <param name="sp"></param>
     /// <returns></returns>
-    public static StockData CalculateDiNapoliMovingAverageConvergenceDivergence(this StockData stockData, double lc = 17.5185m, double sc = 8.3896m, 
-        double sp = 9.0503m)
+    public static StockData CalculateDiNapoliMovingAverageConvergenceDivergence(this StockData stockData, double lc = 17.5185, double sc = 8.3896, 
+        double sp = 9.0503)
     {
         List<double> fsList = new();
         List<double> ssList = new();

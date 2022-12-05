@@ -13,12 +13,12 @@ namespace OoplesFinance.StockIndicators;
 public static partial class Calculations
 {
     /// <summary>
-    /// Calculates the Standard Math.PIvot Points
+    /// Calculates the Standard Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateStandardMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateStandardPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<double> pivotList = new();
         List<double> resistanceLevel3List = new();
@@ -44,7 +44,7 @@ public static partial class Calculations
             double prevHigh = i >= 1 ? highList[i - 1] : 0;
             double prevOpen = i >= 1 ? openList[i - 1] : 0;
 
-            double prevMath.PIvot = pivotList.LastOrDefault();
+            double prevPivot = pivotList.LastOrDefault();
             double range = prevHigh - prevLow;
             double pivot = (prevHigh + prevLow + prevClose + prevOpen) / 4;
             pivotList.AddRounded(pivot);
@@ -86,13 +86,13 @@ public static partial class Calculations
             double midpoint6 = (resistanceLevel3 + resistanceLevel2) / 2;
             midpoint6List.AddRounded(midpoint6);
 
-            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevMath.PIvot);
+            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevPivot);
             signalsList.Add(signal);
         }
 
         stockData.OutputValues = new()
         {
-            { "Math.PIvot", pivotList },
+            { "Pivot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -108,18 +108,18 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.StandardMath.PIvotPoints;
+        stockData.IndicatorName = IndicatorName.StandardPivotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Woodie Math.PIvot Points
+    /// Calculates the Woodie Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateWoodieMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateWoodiePivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<double> pivotList = new();
         List<double> resistanceLevel1List = new();
@@ -144,7 +144,7 @@ public static partial class Calculations
             double prevLow = i >= 1 ? lowList[i - 1] : 0;
             double prevClose = i >= 1 ? inputList[i - 1] : 0;
 
-            double prevMath.PIvot = pivotList.LastOrDefault();
+            double prevPivot = pivotList.LastOrDefault();
             double range = prevHigh - prevLow;
             double pivot = (prevHigh + prevLow + (prevClose * 2)) / 4;
             pivotList.AddRounded(pivot);
@@ -185,13 +185,13 @@ public static partial class Calculations
             double midpoint4 = (resistanceLevel1 + resistanceLevel2) / 2;
             midpoint4List.AddRounded(midpoint4);
 
-            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevMath.PIvot);
+            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevPivot);
             signalsList.Add(signal);
         }
 
         stockData.OutputValues = new()
         {
-            { "Math.PIvot", pivotList },
+            { "Pivot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -207,18 +207,18 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.WoodieMath.PIvotPoints;
+        stockData.IndicatorName = IndicatorName.WoodiePivotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Floor Math.PIvot Points
+    /// Calculates the Floor Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateFloorMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateFloorPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<double> pivotList = new();
         List<double> resistanceLevel3List = new();
@@ -292,7 +292,7 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "Math.PIvot", pivotList },
+            { "Pivot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -308,18 +308,18 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.FloorMath.PIvotPoints;
+        stockData.IndicatorName = IndicatorName.FloorPivotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Fibonacci Math.PIvot Points
+    /// Calculates the Fibonacci Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateFibonacciMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateFibonacciPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<double> pivotList = new();
         List<double> resistanceLevel3List = new();
@@ -344,24 +344,24 @@ public static partial class Calculations
             double prevLow = i >= 1 ? lowList[i - 1] : 0;
             double prevHigh = i >= 1 ? highList[i - 1] : 0;
 
-            double prevMath.PIvot = pivotList.LastOrDefault();
+            double prevPivot = pivotList.LastOrDefault();
             double range = prevHigh - prevLow;
             double pivot = (prevHigh + prevLow + prevClose) / 3;
             pivotList.AddRounded(pivot);
 
-            double supportLevel1 = pivot - (range * 0.382m);
+            double supportLevel1 = pivot - (range * 0.382);
             supportLevel1List.AddRounded(supportLevel1);
 
-            double supportLevel2 = pivot - (range * 0.618m);
+            double supportLevel2 = pivot - (range * 0.618);
             supportLevel2List.AddRounded(supportLevel2);
 
             double supportLevel3 = pivot - (range * 1);
             supportLevel3List.AddRounded(supportLevel3);
 
-            double resistanceLevel1 = pivot + (range * 0.382m);
+            double resistanceLevel1 = pivot + (range * 0.382);
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
-            double resistanceLevel2 = pivot + (range * 0.618m);
+            double resistanceLevel2 = pivot + (range * 0.618);
             resistanceLevel2List.AddRounded(resistanceLevel2);
 
             double resistanceLevel3 = pivot + (range * 1);
@@ -385,13 +385,13 @@ public static partial class Calculations
             double midpoint6 = (resistanceLevel3 + resistanceLevel2) / 2;
             midpoint6List.AddRounded(midpoint6);
 
-            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevMath.PIvot);
+            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevPivot);
             signalsList.Add(signal);
         }
 
         stockData.OutputValues = new()
         {
-            { "Math.PIvot", pivotList },
+            { "Pivot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -407,18 +407,18 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.FibonacciMath.PIvotPoints;
+        stockData.IndicatorName = IndicatorName.FibonacciPivotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Camarilla Math.PIvot Points
+    /// Calculates the Camarilla Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateCamarillaMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateCamarillaPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<double> resistanceLevel5List = new();
         List<double> resistanceLevel4List = new();
@@ -454,29 +454,29 @@ public static partial class Calculations
             pivotList.AddRounded(pivot);
 
             double prevSupportLevel1 = supportLevel1List.LastOrDefault();
-            double supportLevel1 = currentClose - (0.0916m * range);
+            double supportLevel1 = currentClose - (0.0916 * range);
             supportLevel1List.AddRounded(supportLevel1);
 
-            double supportLevel2 = currentClose - (0.183m * range);
+            double supportLevel2 = currentClose - (0.183 * range);
             supportLevel2List.AddRounded(supportLevel2);
 
-            double supportLevel3 = currentClose - (0.275m * range);
+            double supportLevel3 = currentClose - (0.275 * range);
             supportLevel3List.AddRounded(supportLevel3);
 
-            double supportLevel4 = currentClose - (0.55m * range);
+            double supportLevel4 = currentClose - (0.55 * range);
             supportLevel4List.AddRounded(supportLevel4);
 
             double prevResistanceLevel1 = resistanceLevel1List.LastOrDefault();
-            double resistanceLevel1 = currentClose + (0.0916m * range);
+            double resistanceLevel1 = currentClose + (0.0916 * range);
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
-            double resistanceLevel2 = currentClose + (0.183m * range);
+            double resistanceLevel2 = currentClose + (0.183 * range);
             resistanceLevel2List.AddRounded(resistanceLevel2);
 
-            double resistanceLevel3 = currentClose + (0.275m * range);
+            double resistanceLevel3 = currentClose + (0.275 * range);
             resistanceLevel3List.AddRounded(resistanceLevel3);
 
-            double resistanceLevel4 = currentClose + (0.55m * range);
+            double resistanceLevel4 = currentClose + (0.55 * range);
             resistanceLevel4List.AddRounded(resistanceLevel4);
 
             double resistanceLevel5 = currentLow != 0 ? currentHigh / currentLow * currentClose : 0;
@@ -510,7 +510,7 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "Math.PIvot", pivotList },
+            { "Pivot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -530,20 +530,20 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.CamarillaMath.PIvotPoints;
+        stockData.IndicatorName = IndicatorName.CamarillaPivotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Math.PIvot Point Average
+    /// Calculates the Pivot Point Average
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="maType"></param>
     /// <param name="length"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateMath.PIvotPointAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 3, InputLength inputLength = InputLength.Day)
+    public static StockData CalculatePivotPointAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 3, InputLength inputLength = InputLength.Day)
     {
         List<double> pp1List = new();
         List<double> pp2List = new();
@@ -584,27 +584,27 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "Math.PIvot1", pp1List },
+            { "Pivot1", pp1List },
             { "Signal1", ppav1List },
-            { "Math.PIvot2", pp2List },
+            { "Pivot2", pp2List },
             { "Signal2", ppav2List },
-            { "Math.PIvot3", pp3List },
+            { "Pivot3", pp3List },
             { "Signal3", ppav3List }
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pp1List;
-        stockData.IndicatorName = IndicatorName.Math.PIvotPointAverage;
+        stockData.IndicatorName = IndicatorName.PivotPointAverage;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Demark Math.PIvot Points
+    /// Calculates the Demark Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateDemarkMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateDemarkPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<double> pivotList = new();
         List<double> resistanceLevel1List = new();
@@ -622,7 +622,7 @@ public static partial class Calculations
             double x = prevClose < prevOpen ? prevHigh + (2 * prevLow) + prevClose : prevClose > prevOpen ? (2 * prevHigh) + prevLow + prevClose :
                 prevClose == prevOpen ? prevHigh + prevLow + (2 * prevClose) : prevClose;
 
-            double prevMath.PIvot = pivotList.LastOrDefault();
+            double prevPivot = pivotList.LastOrDefault();
             double pivot = x / 4;
             pivotList.AddRounded(pivot);
 
@@ -633,30 +633,30 @@ public static partial class Calculations
             double resistanceLevel1 = ratio - prevLow;
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
-            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevMath.PIvot);
+            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevPivot);
             signalsList.Add(signal);
         }
 
         stockData.OutputValues = new()
         {
-            { "Math.PIvot", pivotList },
+            { "Pivot", pivotList },
             { "S1", supportLevel1List },
             { "R1", resistanceLevel1List }
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.DemarkMath.PIvotPoints;
+        stockData.IndicatorName = IndicatorName.DemarkPivotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Dynamic Math.PIvot Points
+    /// Calculates the Dynamic Pivot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateDynamicMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateDynamicPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
         List<double> resistanceLevel1List = new();
         List<double> supportLevel1List = new();
@@ -689,13 +689,13 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "Math.PIvot", pivotList },
+            { "Pivot", pivotList },
             { "S1", supportLevel1List },
             { "R1", resistanceLevel1List }
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.DynamicMath.PIvotPoints;
+        stockData.IndicatorName = IndicatorName.DynamicPivotPoints;
 
         return stockData;
     }

@@ -140,7 +140,7 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData Calculate4PercentagePriceOscillator(this StockData stockData,
         MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 5, int length2 = 8, int length3 = 10, int length4 = 17,
-        int length5 = 14, int length6 = 16, double blueMult = 4.3m, double yellowMult = 1.4m)
+        int length5 = 14, int length6 = 16, double blueMult = 4.3, double yellowMult = 1.4)
     {
         List<double> ppo1List = new();
         List<double> ppo2List = new();

@@ -21,7 +21,7 @@ public static partial class Calculations
     /// <param name="bmk"></param>
     /// <returns></returns>
     public static StockData CalculateMartinRatio(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
-        int length = 30, double bmk = 0.02m)
+        int length = 30, double bmk = 0.02)
     {
         List<double> martinList = new();
         List<double> benchList = new();
@@ -80,7 +80,7 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="bmk"></param>
     /// <returns></returns>
-    public static StockData CalculateUpsidePotentialRatio(this StockData stockData, int length = 30, double bmk = 0.05m)
+    public static StockData CalculateUpsidePotentialRatio(this StockData stockData, int length = 30, double bmk = 0.05)
     {
         List<double> retList = new();
         List<double> upsidePotentialList = new();
@@ -136,7 +136,7 @@ public static partial class Calculations
     /// <param name="bmk"></param>
     /// <returns></returns>
     public static StockData CalculateInformationRatio(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
-        int length = 30, double bmk = 0.05m)
+        int length = 30, double bmk = 0.05)
     {
         List<double> infoList = new();
         List<double> retList = new();
@@ -191,7 +191,7 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="bmk"></param>
     /// <returns></returns>
-    public static StockData CalculateOmegaRatio(this StockData stockData, int length = 30, double bmk = 0.05m)
+    public static StockData CalculateOmegaRatio(this StockData stockData, int length = 30, double bmk = 0.05)
     {
         List<double> omegaList = new();
         List<double> retList = new();
@@ -247,7 +247,7 @@ public static partial class Calculations
     /// <param name="breakoutLevel"></param>
     /// <returns></returns>
     public static StockData CalculateVolatilityRatio(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
-        int length = 14, double breakoutLevel = 0.5m)
+        int length = 14, double breakoutLevel = 0.5)
     {
         List<double> vrList = new();
         List<Signal> signalsList = new();
@@ -348,7 +348,7 @@ public static partial class Calculations
     /// <param name="beta"></param>
     /// <param name="bmk"></param>
     /// <returns></returns>
-    public static StockData CalculateTreynorRatio(this StockData stockData, int length = 30, double beta = 1, double bmk = 0.02m)
+    public static StockData CalculateTreynorRatio(this StockData stockData, int length = 30, double beta = 1, double bmk = 0.02)
     {
         List<double> treynorList = new();
         List<double> retList = new();
@@ -395,7 +395,7 @@ public static partial class Calculations
     /// <param name="bmk"></param>
     /// <returns></returns>
     public static StockData CalculateSortinoRatio(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 30, 
-        double bmk = 0.02m)
+        double bmk = 0.02)
     {
         List<double> sortinoList = new();
         List<double> retList = new();
@@ -461,7 +461,7 @@ public static partial class Calculations
     /// <param name="bmk"></param>
     /// <returns></returns>
     public static StockData CalculateSharpeRatio(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 30, 
-        double bmk = 0.02m)
+        double bmk = 0.02)
     {
         List<double> sharpeList = new();
         List<double> retList = new();

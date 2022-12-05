@@ -936,7 +936,7 @@ public static partial class Calculations
     /// <param name="bottom"></param>
     /// <returns></returns>
     public static StockData CalculateOnBalanceVolumeDisparityIndicator(this StockData stockData,
-        MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 33, int signalLength = 4, double top = 1.1m, double bottom = 0.9m)
+        MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 33, int signalLength = 4, double top = 1.1, double bottom = 0.9)
     {
         List<double> obvdiList = new();
         List<double> bscList = new();
@@ -1078,7 +1078,7 @@ public static partial class Calculations
     /// <param name="divisor"></param>
     /// <returns></returns>
     public static StockData CalculateHawkeyeVolumeIndicator(this StockData stockData, InputName inputName = InputName.MedianPrice, int length = 200,
-        double divisor = 3.6m)
+        double divisor = 3.6)
     {
         List<double> tempRangeList = new();
         List<double> tempVolumeList = new();
@@ -1623,7 +1623,7 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateVolumeFlowIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
         InputName inputName = InputName.TypicalPrice, int length1 = 130, int length2 = 30, int signalLength = 5, int smoothLength = 3,
-        double coef = 0.2m, double vcoef = 2.5m)
+        double coef = 0.2, double vcoef = 2.5)
     {
         List<double> interList = new();
         List<double> tempList = new();
@@ -1882,7 +1882,7 @@ public static partial class Calculations
     /// <param name="minTickValue"></param>
     /// <returns></returns>
     public static StockData CalculateTradeVolumeIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
-        int length = 14, double minTickValue = 0.5m)
+        int length = 14, double minTickValue = 0.5)
     {
         List<double> tviList = new();
         List<Signal> signalsList = new();

@@ -539,7 +539,7 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="alpha"></param>
     /// <returns></returns>
-    public static StockData CalculateRecursiveStochastic(this StockData stockData, int length = 200, double alpha = 0.1m)
+    public static StockData CalculateRecursiveStochastic(this StockData stockData, int length = 200, double alpha = 0.1)
     {
         List<double> kList = new();
         List<double> maList = new();

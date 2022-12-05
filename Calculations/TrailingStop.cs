@@ -611,7 +611,7 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateKaseDevStopV1(this StockData stockData, InputName inputName = InputName.TypicalPrice,
         MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int fastLength = 5, int slowLength = 21, int length = 20, double stdDev1 = 0,
-        double stdDev2 = 1, double stdDev3 = 2.2m, double stdDev4 = 3.6m)
+        double stdDev2 = 1, double stdDev3 = 2.2, double stdDev4 = 3.6)
     {
         List<double> warningLineList = new();
         List<double> dev1List = new();
@@ -692,8 +692,8 @@ public static partial class Calculations
     /// <param name="stdDev4"></param>
     /// <returns></returns>
     public static StockData CalculateKaseDevStopV2(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
-        int fastLength = 10, int slowLength = 21, int length = 20, double stdDev1 = 0, double stdDev2 = 1, double stdDev3 = 2.2m,
-        double stdDev4 = 3.6m)
+        int fastLength = 10, int slowLength = 21, int length = 20, double stdDev1 = 0, double stdDev2 = 1, double stdDev3 = 2.2,
+        double stdDev4 = 3.6)
     {
         List<double> valList = new();
         List<double> val1List = new();

@@ -191,8 +191,8 @@ public static partial class Calculations
     /// <param name="fastAlpha"></param>
     /// <param name="slowAlpha"></param>
     /// <returns></returns>
-    public static StockData CalculateMovingAverageAdaptiveFilter(this StockData stockData, int length = 10, double filter = 0.15m, 
-        double fastAlpha = 0.667m, double slowAlpha = 0.0645m)
+    public static StockData CalculateMovingAverageAdaptiveFilter(this StockData stockData, int length = 10, double filter = 0.15, 
+        double fastAlpha = 0.667, double slowAlpha = 0.0645)
     {
         List<double> amaList = new();
         List<double> amaDiffList = new();

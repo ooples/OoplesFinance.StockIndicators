@@ -484,7 +484,7 @@ public static partial class Calculations
     /// <param name="alpha2"></param>
     /// <returns></returns>
     public static StockData CalculateChandeVolatilityIndexDynamicAverageIndicator(this StockData stockData,
-        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20, double alpha1 = 0.2m, double alpha2 = 0.04m)
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20, double alpha1 = 0.2, double alpha2 = 0.04)
     {
         List<double> vidya1List = new();
         List<double> vidya2List = new();

@@ -266,7 +266,7 @@ public static partial class Calculations
     /// <param name="mult">The mult.</param>
     /// <returns></returns>
     public static StockData CalculateMovingAverageEnvelope(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
-        int length = 20, double mult = 0.025m)
+        int length = 20, double mult = 0.025)
     {
         List<double> upperEnvelopeList = new();
         List<double> lowerEnvelopeList = new();
@@ -372,7 +372,7 @@ public static partial class Calculations
     /// <param name="mult">The mult.</param>
     /// <returns></returns>
     public static StockData CalculateAverageTrueRangeChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
-        int length = 14, double mult = 2.5m)
+        int length = 14, double mult = 2.5)
     {
         List<double> innerTopAtrChannelList = new();
         List<double> innerBottomAtrChannelList = new();
@@ -481,7 +481,7 @@ public static partial class Calculations
     /// <param name="type1"></param>
     /// <returns></returns>
     public static StockData CalculateUniChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
-        int length = 10, double ubFac = 0.02m, double lbFac = 0.02m, bool type1 = false)
+        int length = 10, double ubFac = 0.02, double lbFac = 0.02, bool type1 = false)
     {
         List<double> upperBandList = new();
         List<double> lowerBandList = new();
@@ -677,7 +677,7 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="mult"></param>
     /// <returns></returns>
-    public static StockData CalculateInterquartileRangeBands(this StockData stockData, int length = 14, double mult = 1.5m)
+    public static StockData CalculateInterquartileRangeBands(this StockData stockData, int length = 14, double mult = 1.5)
     {
         List<double> upperBandList = new();
         List<double> lowerBandList = new();
@@ -1003,8 +1003,8 @@ public static partial class Calculations
     /// <param name="outerMult"></param>
     /// <param name="extremeMult"></param>
     /// <returns></returns>
-    public static StockData CalculateHurstBands(this StockData stockData, int length = 10, double innerMult = 1.6m, double outerMult = 2.6m,
-        double extremeMult = 4.2m)
+    public static StockData CalculateHurstBands(this StockData stockData, int length = 10, double innerMult = 1.6, double outerMult = 2.6,
+        double extremeMult = 4.2)
     {
         List<double> cmaList = new();
         List<double> upperExtremeBandList = new();
@@ -1544,7 +1544,7 @@ public static partial class Calculations
     /// <param name="mult"></param>
     /// <returns></returns>
     public static StockData CalculateVariableMovingAverageBands(this StockData stockData, MovingAvgType maType = MovingAvgType.VariableMovingAverage,
-        int length = 6, double mult = 1.5m)
+        int length = 6, double mult = 1.5)
     {
         List<double> ubandList = new();
         List<double> lbandList = new();
@@ -1599,7 +1599,7 @@ public static partial class Calculations
     /// <param name="lowBandMult"></param>
     /// <returns></returns>
     public static StockData CalculateVervoortVolatilityBands(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
-        int length1 = 8, int length2 = 13, double devMult = 3.55m, double lowBandMult = 0.9m)
+        int length1 = 8, int length2 = 13, double devMult = 3.55, double lowBandMult = 0.9)
     {
         List<double> typicalList = new();
         List<double> deviationList = new();
@@ -1679,7 +1679,7 @@ public static partial class Calculations
     /// <param name="factor"></param>
     /// <returns></returns>
     public static StockData CalculatePriceHeadleyAccelerationBands(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
-        int length = 20, double factor = 0.001m)
+        int length = 20, double factor = 0.001)
     {
         List<double> ubList = new();
         List<double> lbList = new();
@@ -1741,7 +1741,7 @@ public static partial class Calculations
     /// <param name="morph"></param>
     /// <returns></returns>
     public static StockData CalculatePseudoPolynomialChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
-        int length = 14, double morph = 0.9m)
+        int length = 14, double morph = 0.9)
     {
         List<double> kList = new();
         List<double> yK1List = new();
@@ -3073,7 +3073,7 @@ public static partial class Calculations
     /// <param name="pct"></param>
     /// <returns></returns>
     public static StockData CalculateMovingAverageDisplacedEnvelope(this StockData stockData, 
-        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 9, int length2 = 13, double pct = 0.5m)
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 9, int length2 = 13, double pct = 0.5)
     {
         List<double> upperEnvelopeList = new();
         List<double> lowerEnvelopeList = new();
@@ -3569,7 +3569,7 @@ public static partial class Calculations
     /// <param name="bandAdjust"></param>
     /// <returns></returns>
     public static StockData CalculateSmoothedVolatilityBands(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
-        int length1 = 20, int length2 = 21, double deviation = 2.4m, double bandAdjust = 0.9m)
+        int length1 = 20, int length2 = 21, double deviation = 2.4, double bandAdjust = 0.9)
     {
         List<double> upperBandList = new();
         List<double> lowerBandList = new();

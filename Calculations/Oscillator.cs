@@ -22,7 +22,7 @@ public static partial class Calculations
     /// <param name="constant">The constant.</param>
     /// <returns></returns>
     public static StockData CalculateCommodityChannelIndex(this StockData stockData, InputName inputName = InputName.TypicalPrice,
-        MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 20, double constant = 0.015m)
+        MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 20, double constant = 0.015)
     {
         List<double> cciList = new();
         List<double> tpDevDiffList = new();
@@ -2480,8 +2480,8 @@ public static partial class Calculations
     /// <param name="slowFactor"></param>
     /// <returns></returns>
     public static StockData CalculateQuantitativeQualitativeEstimation(this StockData stockData,
-        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14, int smoothLength = 5, double fastFactor = 2.618m,
-        double slowFactor = 4.236m)
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14, int smoothLength = 5, double fastFactor = 2.618,
+        double slowFactor = 4.236)
     {
         List<double> atrRsiList = new();
         List<double> fastAtrRsiList = new();
@@ -2599,7 +2599,7 @@ public static partial class Calculations
     /// <param name="atrMult"></param>
     /// <returns></returns>
     public static StockData CalculateLBRPaintBars(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 9,
-        int lbLength = 16, double atrMult = 2.5m)
+        int lbLength = 16, double atrMult = 2.5)
     {
         List<double> upperBandList = new();
         List<double> lowerBandList = new();
@@ -5512,7 +5512,7 @@ public static partial class Calculations
     /// <param name="slowSc"></param>
     /// <param name="filterPct"></param>
     /// <returns></returns>
-    public static StockData CalculateKaufmanBinaryWave(this StockData stockData, int length = 20, double fastSc = 0.6022m, double slowSc = 0.0645m,
+    public static StockData CalculateKaufmanBinaryWave(this StockData stockData, int length = 20, double fastSc = 0.6022, double slowSc = 0.0645,
         double filterPct = 10)
     {
         List<double> amaList = new();
@@ -6309,7 +6309,7 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateVervoortHeikenAshiLongTermCandlestickOscillator(this StockData stockData,
         MovingAvgType maType = MovingAvgType.TripleExponentialMovingAverage, InputName inputName = InputName.FullTypicalPrice, int length = 55,
-        double factor = 1.1m)
+        double factor = 1.1)
     {
         List<double> haoList = new();
         List<double> hacList = new();
@@ -11137,7 +11137,7 @@ public static partial class Calculations
     /// <param name="threshold"></param>
     /// <returns></returns>
     public static StockData CalculateDampingIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 5, 
-        double threshold = 1.5m)
+        double threshold = 1.5)
     {
         List<double> rangeList = new();
         List<double> diList = new();
@@ -11781,7 +11781,7 @@ public static partial class Calculations
     /// <param name="factor"></param>
     /// <returns></returns>
     public static StockData CalculateSentimentZoneOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.TripleExponentialMovingAverage,
-        int fastLength = 14, int slowLength = 30, double factor = 0.95m)
+        int fastLength = 14, int slowLength = 30, double factor = 0.95)
     {
         List<double> rList = new();
         List<double> szoList = new();
@@ -12903,7 +12903,7 @@ public static partial class Calculations
     /// <param name="fastAlpha"></param>
     /// <param name="slowAlpha"></param>
     /// <returns></returns>
-    public static StockData CalculateEfficientAutoLine(this StockData stockData, int length = 19, double fastAlpha = 0.0001m, double slowAlpha = 0.005m)
+    public static StockData CalculateEfficientAutoLine(this StockData stockData, int length = 19, double fastAlpha = 0.0001, double slowAlpha = 0.005)
     {
         List<double> aList = new();
         List<Signal> signalsList = new();
