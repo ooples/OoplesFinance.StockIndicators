@@ -20,23 +20,23 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateTrendTriggerFactor(this StockData stockData, int length = 15)
     {
-        List<decimal> ttfList = new();
+        List<double> ttfList = new();
         List<Signal> signalsList = new();
         var (_, highList, lowList, _, _) = GetInputValuesList(stockData);
         var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal highest = highestList[i];
-            decimal lowest = lowestList[i];
-            decimal prevHighest = i >= length ? highestList[i - length] : 0;
-            decimal prevLowest = i >= length ? lowestList[i - length] : 0;
-            decimal buyPower = highest - prevLowest;
-            decimal sellPower = prevHighest - lowest;
-            decimal prevTtf1 = i >= 1 ? ttfList[i - 1] : 0;
-            decimal prevTtf2 = i >= 2 ? ttfList[i - 2] : 0;
+            double highest = highestList[i];
+            double lowest = lowestList[i];
+            double prevHighest = i >= length ? highestList[i - length] : 0;
+            double prevLowest = i >= length ? lowestList[i - length] : 0;
+            double buyPower = highest - prevLowest;
+            double sellPower = prevHighest - lowest;
+            double prevTtf1 = i >= 1 ? ttfList[i - 1] : 0;
+            double prevTtf2 = i >= 2 ? ttfList[i - 2] : 0;
 
-            decimal ttf = buyPower + sellPower != 0 ? 200 * (buyPower - sellPower) / (buyPower + sellPower) : 0;
+            double ttf = buyPower + sellPower != 0 ? 200 * (buyPower - sellPower) / (buyPower + sellPower) : 0;
             ttfList.AddRounded(ttf);
 
             var signal = GetRsiSignal(ttf - prevTtf1, prevTtf1 - prevTtf2, ttf, prevTtf1, 100, -100);
@@ -65,11 +65,11 @@ public static partial class Calculations
     /// <param name="threshold"></param>
     /// <returns></returns>
     public static StockData CalculateTrendPersistenceRate(this StockData stockData,
-        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20, int smoothLength = 5, decimal mult = 0.01m, decimal threshold = 1)
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20, int smoothLength = 5, double mult = 0.01m, double threshold = 1)
     {
-        List<decimal> ctrPList = new();
-        List<decimal> ctrMList = new();
-        List<decimal> tprList = new();
+        List<double> ctrPList = new();
+        List<double> ctrMList = new();
+        List<double> tprList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
@@ -77,30 +77,30 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal prevMa1 = i >= 1 ? maList[i - 1] : 0;
-            decimal prevMa2 = i >= 2 ? maList[i - 2] : 0;
-            decimal diff = (prevMa1 - prevMa2) / mult;
+            double prevMa1 = i >= 1 ? maList[i - 1] : 0;
+            double prevMa2 = i >= 2 ? maList[i - 2] : 0;
+            double diff = (prevMa1 - prevMa2) / mult;
 
-            decimal ctrP = diff > threshold ? 1 : 0;
+            double ctrP = diff > threshold ? 1 : 0;
             ctrPList.AddRounded(ctrP);
 
-            decimal ctrM = diff < -threshold ? 1 : 0;
+            double ctrM = diff < -threshold ? 1 : 0;
             ctrMList.AddRounded(ctrM);
 
-            decimal ctrPSum = ctrPList.TakeLastExt(length).Sum();
-            decimal ctrMSum = ctrMList.TakeLastExt(length).Sum();
+            double ctrPSum = ctrPList.TakeLastExt(length).Sum();
+            double ctrMSum = ctrMList.TakeLastExt(length).Sum();
 
-            decimal tpr = length != 0 ? Math.Abs(100 * (ctrPSum - ctrMSum) / length) : 0;
+            double tpr = length != 0 ? Math.Abs(100 * (ctrPSum - ctrMSum) / length) : 0;
             tprList.AddRounded(tpr);
         }
 
         var tprMaList = GetMovingAverageList(stockData, maType, smoothLength, tprList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal tpr = tprList[i];
-            decimal tprMa = tprMaList[i];
-            decimal prevTpr = i >= 1 ? tprList[i - 1] : 0;
-            decimal prevTprMa = i >= 1 ? tprMaList[i - 1] : 0;
+            double tpr = tprList[i];
+            double tprMa = tprMaList[i];
+            double prevTpr = i >= 1 ? tprList[i - 1] : 0;
+            double prevTprMa = i >= 1 ? tprMaList[i - 1] : 0;
 
             var signal = GetCompareSignal(tpr - tprMa, prevTpr - prevTprMa);
             signalsList.Add(signal);
@@ -125,7 +125,7 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateTrendStep(this StockData stockData, int length = 50)
     {
-        List<decimal> aList = new();
+        List<double> aList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
@@ -133,12 +133,12 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal dev = stdDevList[i] * 2;
+            double currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double dev = stdDevList[i] * 2;
 
-            decimal prevA = i >= 1 ? aList[i - 1] : currentValue;
-            decimal a = i < length ? currentValue : currentValue > prevA + dev ? currentValue : currentValue < prevA - dev ? currentValue : prevA;
+            double prevA = i >= 1 ? aList[i - 1] : currentValue;
+            double a = i < length ? currentValue : currentValue > prevA + dev ? currentValue : currentValue < prevA - dev ? currentValue : prevA;
             aList.AddRounded(a);
 
             var signal = GetCompareSignal(currentValue - a, prevValue - prevA);
@@ -166,49 +166,49 @@ public static partial class Calculations
     public static StockData CalculateTrendExhaustionIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
         int length = 10)
     {
-        List<decimal> teiList = new();
-        List<decimal> aCountList = new();
-        List<decimal> hCountList = new();
-        List<decimal> aList = new();
-        List<decimal> hList = new();
+        List<double> teiList = new();
+        List<double> aCountList = new();
+        List<double> hCountList = new();
+        List<double> aList = new();
+        List<double> hList = new();
         List<Signal> signalsList = new();
         var (inputList, highList, _, _, _) = GetInputValuesList(stockData);
         var (highestList, _) = GetMaxAndMinValuesList(highList, length);
 
-        decimal sc = (decimal)2 / (length + 1);
+        double sc = (double)2 / (length + 1);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal prevHighest = i >= 1 ? highestList[i - 1] : 0;
-            decimal currentHigh = highList[i];
+            double currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double prevHighest = i >= 1 ? highestList[i - 1] : 0;
+            double currentHigh = highList[i];
 
-            decimal a = currentValue > prevValue ? 1 : 0;
+            double a = currentValue > prevValue ? 1 : 0;
             aList.AddRounded(a);
 
-            decimal h = currentHigh > prevHighest ? 1 : 0;
+            double h = currentHigh > prevHighest ? 1 : 0;
             hList.AddRounded(h);
 
-            decimal aCount = aList.Sum();
+            double aCount = aList.Sum();
             aCountList.AddRounded(aCount);
 
-            decimal hCount = hList.Sum();
+            double hCount = hList.Sum();
             hCountList.AddRounded(hCount);
 
-            decimal haRatio = aCount != 0 ? hCount / aCount : 0;
-            decimal prevTei = teiList.LastOrDefault();
-            decimal tei = prevTei + (sc * (haRatio - prevTei));
+            double haRatio = aCount != 0 ? hCount / aCount : 0;
+            double prevTei = teiList.LastOrDefault();
+            double tei = prevTei + (sc * (haRatio - prevTei));
             teiList.AddRounded(tei);
         }
 
         var teiSignalList = GetMovingAverageList(stockData, maType, length, teiList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal tei = teiList[i];
-            decimal teiSignal = teiSignalList[i];
-            decimal prevTei = i >= 1 ? teiList[i - 1] : 0;
-            decimal prevTeiSignal = i >= 1 ? teiSignalList[i - 1] : 0;
+            double tei = teiList[i];
+            double teiSignal = teiSignalList[i];
+            double prevTei = i >= 1 ? teiList[i - 1] : 0;
+            double prevTeiSignal = i >= 1 ? teiSignalList[i - 1] : 0;
 
             var signal = GetCompareSignal(tei - teiSignal, prevTei - prevTeiSignal);
             signalsList.Add(signal);
@@ -237,30 +237,30 @@ public static partial class Calculations
     public static StockData CalculateTrendImpulseFilter(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
         int length1 = 100, int length2 = 10)
     {
-        List<decimal> bList = new();
+        List<double> bList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
         var (highestList, lowestList) = GetMaxAndMinValuesList(inputList, length1);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevB = i >= 1 ? bList[i - 1] : currentValue;
-            decimal highest = i >= 1 ? highestList[i - 1] : 0;
-            decimal lowest = i >= 1 ? lowestList[i - 1] : 0;
-            decimal a = currentValue > highest || currentValue < lowest ? 1 : 0;
+            double currentValue = inputList[i];
+            double prevB = i >= 1 ? bList[i - 1] : currentValue;
+            double highest = i >= 1 ? highestList[i - 1] : 0;
+            double lowest = i >= 1 ? lowestList[i - 1] : 0;
+            double a = currentValue > highest || currentValue < lowest ? 1 : 0;
 
-            decimal b = (a * currentValue) + ((1 - a) * prevB);
+            double b = (a * currentValue) + ((1 - a) * prevB);
             bList.AddRounded(b);
         }
 
         var bEmaList = GetMovingAverageList(stockData, maType, length2, bList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal bEma = bEmaList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal prevBEma = i >= 1 ? bEmaList[i - 1] : 0;
+            double currentValue = inputList[i];
+            double bEma = bEmaList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double prevBEma = i >= 1 ? bEmaList[i - 1] : 0;
 
             var signal = GetCompareSignal(currentValue - bEma, prevValue - prevBEma);
             signalsList.Add(signal);
@@ -288,7 +288,7 @@ public static partial class Calculations
     public static StockData CalculateTrendAnalysisIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
         int length1 = 28, int length2 = 5)
     {
-        List<decimal> taiList = new();
+        List<double> taiList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
@@ -297,23 +297,23 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal highest = highestList[i];
-            decimal lowest = lowestList[i];
+            double currentValue = inputList[i];
+            double highest = highestList[i];
+            double lowest = lowestList[i];
 
-            decimal tai = currentValue != 0 ? (highest - lowest) * 100 / currentValue : 0;
+            double tai = currentValue != 0 ? (highest - lowest) * 100 / currentValue : 0;
             taiList.AddRounded(tai);
         }
 
         var taiMaList = GetMovingAverageList(stockData, maType, length2, taiList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal currentSma = smaList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal prevSma = i >= 1 ? smaList[i - 1] : 0;
-            decimal tai = taiList[i];
-            decimal taiSma = taiMaList[i];
+            double currentValue = inputList[i];
+            double currentSma = smaList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double prevSma = i >= 1 ? smaList[i - 1] : 0;
+            double tai = taiList[i];
+            double taiSma = taiMaList[i];
 
             var signal = GetVolatilitySignal(currentValue - currentSma, prevValue - prevSma, tai, taiSma);
             signalsList.Add(signal);
@@ -353,12 +353,12 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal tai = taiList[i];
-            decimal fastMa = fastMaList[i];
-            decimal slowMa = slowMaList[i];
-            decimal taiMa = taiSmaList[i];
-            decimal prevFastMa = i >= 1 ? fastMaList[i - 1] : 0;
-            decimal prevSlowMa = i >= 1 ? slowMaList[i - 1] : 0;
+            double tai = taiList[i];
+            double fastMa = fastMaList[i];
+            double slowMa = slowMaList[i];
+            double taiMa = taiSmaList[i];
+            double prevFastMa = i >= 1 ? fastMaList[i - 1] : 0;
+            double prevSlowMa = i >= 1 ? slowMaList[i - 1] : 0;
 
             var signal = GetVolatilitySignal(fastMa - slowMa, prevFastMa - prevSlowMa, tai, taiMa);
             signalsList.Add(signal);
@@ -385,12 +385,12 @@ public static partial class Calculations
     /// <param name="atrMult"></param>
     /// <returns></returns>
     public static StockData CalculateTrender(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 14,
-        decimal atrMult = 2)
+        double atrMult = 2)
     {
-        List<decimal> adList = new();
-        List<decimal> trndDnList = new();
-        List<decimal> trndUpList = new();
-        List<decimal> trndrList = new();
+        List<double> adList = new();
+        List<double> trndDnList = new();
+        List<double> trndUpList = new();
+        List<double> trndrList = new();
         List<Signal> signalsList = new();
         var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
 
@@ -401,38 +401,38 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal mpEma = emaList[i];
-            decimal trEma = atrList[i];
+            double currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double mpEma = emaList[i];
+            double trEma = atrList[i];
 
-            decimal ad = currentValue > prevValue ? mpEma + (trEma / 2) : currentValue < prevValue ? mpEma - (trEma / 2) : mpEma;
+            double ad = currentValue > prevValue ? mpEma + (trEma / 2) : currentValue < prevValue ? mpEma - (trEma / 2) : mpEma;
             adList.AddRounded(ad);
         }
 
         var admList = GetMovingAverageList(stockData, maType, length, adList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal adm = admList[i];
-            decimal prevAdm = i >= 1 ? admList[i - 1] : 0;
-            decimal mpEma = emaList[i];
-            decimal prevMpEma = i >= 1 ? emaList[i - 1] : 0;
-            decimal prevHigh = i >= 2 ? highList[i - 2] : 0;
-            decimal prevLow = i >= 2 ? lowList[i - 2] : 0;
-            decimal stdDev = stdDevList[i];
+            double currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double adm = admList[i];
+            double prevAdm = i >= 1 ? admList[i - 1] : 0;
+            double mpEma = emaList[i];
+            double prevMpEma = i >= 1 ? emaList[i - 1] : 0;
+            double prevHigh = i >= 2 ? highList[i - 2] : 0;
+            double prevLow = i >= 2 ? lowList[i - 2] : 0;
+            double stdDev = stdDevList[i];
 
-            decimal prevTrndDn = trndDnList.LastOrDefault();
-            decimal trndDn = adm < mpEma && prevAdm > prevMpEma ? prevHigh : currentValue < prevValue ? currentValue + (stdDev * atrMult) : prevTrndDn;
+            double prevTrndDn = trndDnList.LastOrDefault();
+            double trndDn = adm < mpEma && prevAdm > prevMpEma ? prevHigh : currentValue < prevValue ? currentValue + (stdDev * atrMult) : prevTrndDn;
             trndDnList.AddRounded(trndDn);
 
-            decimal prevTrndUp = trndUpList.LastOrDefault();
-            decimal trndUp = adm > mpEma && prevAdm < prevMpEma ? prevLow : currentValue > prevValue ? currentValue - (stdDev * atrMult) : prevTrndUp;
+            double prevTrndUp = trndUpList.LastOrDefault();
+            double trndUp = adm > mpEma && prevAdm < prevMpEma ? prevLow : currentValue > prevValue ? currentValue - (stdDev * atrMult) : prevTrndUp;
             trndUpList.AddRounded(trndUp);
 
-            decimal prevTrndr = trndrList.LastOrDefault();
-            decimal trndr = adm < mpEma ? trndDn : adm > mpEma ? trndUp : prevTrndr;
+            double prevTrndr = trndrList.LastOrDefault();
+            double trndr = adm < mpEma ? trndDn : adm > mpEma ? trndUp : prevTrndr;
             trndrList.AddRounded(trndr);
 
             var signal = GetCompareSignal(currentValue - trndr, prevValue - prevTrndr);
@@ -463,17 +463,17 @@ public static partial class Calculations
     public static StockData CalculateTrendDirectionForceIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
         int length1 = 10, int length2 = 30)
     {
-        List<decimal> srcList = new();
-        List<decimal> absTdfList = new();
-        List<decimal> tdfiList = new();
+        List<double> srcList = new();
+        List<double> absTdfList = new();
+        List<double> tdfiList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        int halfLength = MinOrMax((int)Math.Ceiling((decimal)length1 / 2));
+        int halfLength = MinOrMax((int)Math.Ceiling((double)length1 / 2));
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i] * 1000;
+            double currentValue = inputList[i] * 1000;
             srcList.AddRounded(currentValue);
         }
 
@@ -481,30 +481,30 @@ public static partial class Calculations
         var ema2List = GetMovingAverageList(stockData, maType, halfLength, ema1List);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ema1 = ema1List[i];
-            decimal ema2 = ema2List[i];
-            decimal prevEma1 = i >= 1 ? ema1List[i - 1] : 0;
-            decimal prevEma2 = i >= 1 ? ema2List[i - 1] : 0;
-            decimal ema1Diff = ema1 - prevEma1;
-            decimal ema2Diff = ema2 - prevEma2;
-            decimal emaDiffAvg = (ema1Diff + ema2Diff) / 2;
+            double ema1 = ema1List[i];
+            double ema2 = ema2List[i];
+            double prevEma1 = i >= 1 ? ema1List[i - 1] : 0;
+            double prevEma2 = i >= 1 ? ema2List[i - 1] : 0;
+            double ema1Diff = ema1 - prevEma1;
+            double ema2Diff = ema2 - prevEma2;
+            double emaDiffAvg = (ema1Diff + ema2Diff) / 2;
 
-            decimal tdf;
+            double tdf;
             try
             {
                 tdf = Math.Abs(ema1 - ema2) * Pow(emaDiffAvg, 3);
             }
             catch (OverflowException)
             {
-                tdf = decimal.MaxValue;
+                tdf = double.MaxValue;
             }
 
-            decimal absTdf = Math.Abs(tdf);
+            double absTdf = Math.Abs(tdf);
             absTdfList.AddRounded(absTdf);
 
-            decimal tdfh = absTdfList.TakeLastExt(length2).Max();
-            decimal prevTdfi = tdfiList.LastOrDefault();
-            decimal tdfi = tdfh != 0 ? tdf / tdfh : 0;
+            double tdfh = absTdfList.TakeLastExt(length2).Max();
+            double prevTdfi = tdfiList.LastOrDefault();
+            double tdfi = tdfh != 0 ? tdf / tdfh : 0;
             tdfiList.AddRounded(tdfi);
 
             var signal = GetCompareSignal(tdfi, prevTdfi);
@@ -533,9 +533,9 @@ public static partial class Calculations
     public static StockData CalculateTrendIntensityIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
         int fastLength = 30, int slowLength = 60)
     {
-        List<decimal> tiiList = new();
-        List<decimal> deviationUpList = new();
-        List<decimal> deviationDownList = new();
+        List<double> tiiList = new();
+        List<double> deviationUpList = new();
+        List<double> deviationDownList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
@@ -543,20 +543,20 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal currentSma = smaList[i];
-            decimal prevTii1 = i >= 1 ? tiiList[i - 1] : 0;
-            decimal prevTii2 = i >= 2 ? tiiList[i - 2] : 0;
+            double currentValue = inputList[i];
+            double currentSma = smaList[i];
+            double prevTii1 = i >= 1 ? tiiList[i - 1] : 0;
+            double prevTii2 = i >= 2 ? tiiList[i - 2] : 0;
 
-            decimal deviationUp = currentValue > currentSma ? currentValue - currentSma : 0;
+            double deviationUp = currentValue > currentSma ? currentValue - currentSma : 0;
             deviationUpList.AddRounded(deviationUp);
 
-            decimal deviationDown = currentValue < currentSma ? currentSma - currentValue : 0;
+            double deviationDown = currentValue < currentSma ? currentSma - currentValue : 0;
             deviationDownList.AddRounded(deviationDown);
 
-            decimal sdPlus = deviationUpList.TakeLastExt(fastLength).Sum();
-            decimal sdMinus = deviationDownList.TakeLastExt(fastLength).Sum();
-            decimal tii = sdPlus + sdMinus != 0 ? sdPlus / (sdPlus + sdMinus) * 100 : 0;
+            double sdPlus = deviationUpList.TakeLastExt(fastLength).Sum();
+            double sdMinus = deviationDownList.TakeLastExt(fastLength).Sum();
+            double tii = sdPlus + sdMinus != 0 ? sdPlus / (sdPlus + sdMinus) * 100 : 0;
             tiiList.AddRounded(tii);
 
             var signal = GetRsiSignal(tii - prevTii1, prevTii1 - prevTii2, tii, prevTii1, 80, 20);
@@ -582,12 +582,12 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateTrendForceHistogram(this StockData stockData, int length = 14)
     {
-        List<decimal> aList = new();
-        List<decimal> bList = new();
-        List<decimal> cList = new();
-        List<decimal> dList = new();
-        List<decimal> avgList = new();
-        List<decimal> oscList = new();
+        List<double> aList = new();
+        List<double> bList = new();
+        List<double> cList = new();
+        List<double> dList = new();
+        List<double> avgList = new();
+        List<double> oscList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
@@ -596,34 +596,34 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal ema = emaList[i];
-            decimal prevEma = i >= 1 ? emaList[i - 1] : 0;
-            decimal highest = i >= 1 ? highestList[i - 1] : 0;
-            decimal lowest = i >= 1 ? lowestList[i - 1] : 0;
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double currentValue = inputList[i];
+            double ema = emaList[i];
+            double prevEma = i >= 1 ? emaList[i - 1] : 0;
+            double highest = i >= 1 ? highestList[i - 1] : 0;
+            double lowest = i >= 1 ? lowestList[i - 1] : 0;
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal prevA = aList.LastOrDefault();
-            decimal a = currentValue > highest ? 1 : 0;
+            double prevA = aList.LastOrDefault();
+            double a = currentValue > highest ? 1 : 0;
             aList.AddRounded(a);
 
-            decimal prevB = bList.LastOrDefault();
-            decimal b = currentValue < lowest ? 1 : 0;
+            double prevB = bList.LastOrDefault();
+            double b = currentValue < lowest ? 1 : 0;
             bList.AddRounded(b);
 
-            decimal prevC = cList.LastOrDefault();
-            decimal c = a == 1 ? prevC + 1 : b - prevB == 1 ? 0 : prevC;
+            double prevC = cList.LastOrDefault();
+            double c = a == 1 ? prevC + 1 : b - prevB == 1 ? 0 : prevC;
             cList.AddRounded(c);
 
-            decimal prevD = dList.LastOrDefault();
-            decimal d = b == 1 ? prevD + 1 : a - prevA == 1 ? 0 : prevD;
+            double prevD = dList.LastOrDefault();
+            double d = b == 1 ? prevD + 1 : a - prevA == 1 ? 0 : prevD;
             dList.AddRounded(d);
 
-            decimal avg = (c + d) / 2;
+            double avg = (c + d) / 2;
             avgList.AddRounded(avg);
 
-            decimal rmean = i != 0 ? avgList.Sum() / i : 0;
-            decimal osc = avg - rmean;
+            double rmean = i != 0 ? avgList.Sum() / i : 0;
+            double osc = avg - rmean;
             oscList.AddRounded(osc);
 
             var signal = GetVolatilitySignal(currentValue - ema, prevValue - prevEma, osc, 0);
@@ -650,33 +650,33 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateTrendDetectionIndex(this StockData stockData, int length1 = 20, int length2 = 40)
     {
-        List<decimal> tdiList = new();
-        List<decimal> momList = new();
-        List<decimal> tdiDirectionList = new();
-        List<decimal> momAbsList = new();
+        List<double> tdiList = new();
+        List<double> momList = new();
+        List<double> tdiDirectionList = new();
+        List<double> momAbsList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= length1 ? inputList[i - length1] : 0;
+            double currentValue = inputList[i];
+            double prevValue = i >= length1 ? inputList[i - length1] : 0;
 
-            decimal mom = MinPastValues(i, length1, currentValue - prevValue);
+            double mom = MinPastValues(i, length1, currentValue - prevValue);
             momList.AddRounded(mom);
 
-            decimal momAbs = Math.Abs(mom);
+            double momAbs = Math.Abs(mom);
             momAbsList.AddRounded(momAbs);
 
-            decimal prevTdiDirection = tdiDirectionList.LastOrDefault();
-            decimal tdiDirection = momList.TakeLastExt(length1).Sum();
+            double prevTdiDirection = tdiDirectionList.LastOrDefault();
+            double tdiDirection = momList.TakeLastExt(length1).Sum();
             tdiDirectionList.AddRounded(tdiDirection);
 
-            decimal momAbsSum1 = momAbsList.TakeLastExt(length1).Sum();
-            decimal momAbsSum2 = momAbsList.TakeLastExt(length2).Sum();
+            double momAbsSum1 = momAbsList.TakeLastExt(length1).Sum();
+            double momAbsSum2 = momAbsList.TakeLastExt(length2).Sum();
 
-            decimal prevTdi = tdiList.LastOrDefault();
-            decimal tdi = Math.Abs(tdiDirection) - momAbsSum2 + momAbsSum1;
+            double prevTdi = tdiList.LastOrDefault();
+            double tdi = Math.Abs(tdiDirection) - momAbsSum2 + momAbsSum1;
             tdiList.AddRounded(tdi);
 
             var signal = GetCompareSignal(tdiDirection - tdi, prevTdiDirection - prevTdi);
@@ -703,43 +703,43 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateTrendContinuationFactor(this StockData stockData, int length = 35)
     {
-        List<decimal> tcfPlusList = new();
-        List<decimal> tcfMinusList = new();
-        List<decimal> cfPlusList = new();
-        List<decimal> cfMinusList = new();
-        List<decimal> diffPlusList = new();
-        List<decimal> diffMinusList = new();
+        List<double> tcfPlusList = new();
+        List<double> tcfMinusList = new();
+        List<double> cfPlusList = new();
+        List<double> cfMinusList = new();
+        List<double> diffPlusList = new();
+        List<double> diffMinusList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal priceChg = MinPastValues(i, 1, currentValue - prevValue);
-            decimal chgPlus = priceChg > 0 ? priceChg : 0;
-            decimal chgMinus = priceChg < 0 ? Math.Abs(priceChg) : 0;
+            double currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double priceChg = MinPastValues(i, 1, currentValue - prevValue);
+            double chgPlus = priceChg > 0 ? priceChg : 0;
+            double chgMinus = priceChg < 0 ? Math.Abs(priceChg) : 0;
 
-            decimal prevCfPlus = cfPlusList.LastOrDefault();
-            decimal cfPlus = chgPlus == 0 ? 0 : chgPlus + prevCfPlus;
+            double prevCfPlus = cfPlusList.LastOrDefault();
+            double cfPlus = chgPlus == 0 ? 0 : chgPlus + prevCfPlus;
             cfPlusList.AddRounded(cfPlus);
 
-            decimal prevCfMinus = cfMinusList.LastOrDefault();
-            decimal cfMinus = chgMinus == 0 ? 0 : chgMinus + prevCfMinus;
+            double prevCfMinus = cfMinusList.LastOrDefault();
+            double cfMinus = chgMinus == 0 ? 0 : chgMinus + prevCfMinus;
             cfMinusList.AddRounded(cfMinus);
 
-            decimal diffPlus = chgPlus - cfMinus;
+            double diffPlus = chgPlus - cfMinus;
             diffPlusList.AddRounded(diffPlus);
 
-            decimal diffMinus = chgMinus - cfPlus;
+            double diffMinus = chgMinus - cfPlus;
             diffMinusList.AddRounded(diffMinus);
 
-            decimal prevTcfPlus = tcfPlusList.LastOrDefault();
-            decimal tcfPlus = diffPlusList.TakeLastExt(length).Sum();
+            double prevTcfPlus = tcfPlusList.LastOrDefault();
+            double tcfPlus = diffPlusList.TakeLastExt(length).Sum();
             tcfPlusList.AddRounded(tcfPlus);
 
-            decimal prevTcfMinus = tcfMinusList.LastOrDefault();
-            decimal tcfMinus = diffMinusList.TakeLastExt(length).Sum();
+            double prevTcfMinus = tcfMinusList.LastOrDefault();
+            double tcfMinus = diffMinusList.TakeLastExt(length).Sum();
             tcfMinusList.AddRounded(tcfMinus);
 
             var signal = GetCompareSignal(tcfPlus - tcfMinus, prevTcfPlus - prevTcfMinus);
@@ -752,7 +752,7 @@ public static partial class Calculations
             { "TcfMinus", tcfMinusList }
         };
         stockData.SignalsList = signalsList;
-        stockData.CustomValuesList = new List<decimal>();
+        stockData.CustomValuesList = new List<double>();
         stockData.IndicatorName = IndicatorName.TrendContinuationFactor;
 
         return stockData;
@@ -767,12 +767,12 @@ public static partial class Calculations
     /// <param name="atrMult">The atr mult.</param>
     /// <returns></returns>
     public static StockData CalculateSuperTrend(this StockData stockData, MovingAvgType maType = MovingAvgType.WildersSmoothingMethod, 
-        int length = 22, decimal atrMult = 3)
+        int length = 22, double atrMult = 3)
     {
-        List<decimal> longStopList = new();
-        List<decimal> shortStopList = new();
-        List<decimal> dirList = new();
-        List<decimal> trendList = new();
+        List<double> longStopList = new();
+        List<double> shortStopList = new();
+        List<double> dirList = new();
+        List<double> trendList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
@@ -780,27 +780,27 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal currentAtr = atrList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal atrValue = atrMult * currentAtr;
-            decimal tempLongStop = currentValue - atrValue;
-            decimal tempShortStop = currentValue + atrValue;
+            double currentValue = inputList[i];
+            double currentAtr = atrList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double atrValue = atrMult * currentAtr;
+            double tempLongStop = currentValue - atrValue;
+            double tempShortStop = currentValue + atrValue;
 
-            decimal prevLongStop = longStopList.LastOrDefault();
-            decimal longStop = prevValue > prevLongStop ? Math.Max(tempLongStop, prevLongStop) : tempLongStop;
+            double prevLongStop = longStopList.LastOrDefault();
+            double longStop = prevValue > prevLongStop ? Math.Max(tempLongStop, prevLongStop) : tempLongStop;
             longStopList.AddRounded(longStop);
 
-            decimal prevShortStop = shortStopList.LastOrDefault();
-            decimal shortStop = prevValue < prevShortStop ? Math.Max(tempShortStop, prevShortStop) : tempShortStop;
+            double prevShortStop = shortStopList.LastOrDefault();
+            double shortStop = prevValue < prevShortStop ? Math.Max(tempShortStop, prevShortStop) : tempShortStop;
             shortStopList.AddRounded(shortStop);
 
-            decimal prevDir = dirList.LastOrDefault();
-            decimal dir = prevDir == -1 && currentValue > prevShortStop ? 1 : prevDir == 1 && currentValue < prevLongStop ? -1 : prevDir;
+            double prevDir = dirList.LastOrDefault();
+            double dir = prevDir == -1 && currentValue > prevShortStop ? 1 : prevDir == 1 && currentValue < prevLongStop ? -1 : prevDir;
             dirList.AddRounded(dir);
 
-            decimal prevTrend = trendList.LastOrDefault();
-            decimal trend = dir > 0 ? longStop : shortStop;
+            double prevTrend = trendList.LastOrDefault();
+            double trend = dir > 0 ? longStop : shortStop;
             trendList.AddRounded(trend);
 
             var signal = GetCompareSignal(currentValue - trend, prevValue - prevTrend);
@@ -830,7 +830,7 @@ public static partial class Calculations
     public static StockData CalculateSchaffTrendCycle(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
         int fastLength = 23, int slowLength = 50, int cycleLength = 10)
     {
-        List<decimal> macdList = new();
+        List<double> macdList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
@@ -839,10 +839,10 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentEma23 = ema23List[i];
-            decimal currentEma50 = ema50List[i];
+            double currentEma23 = ema23List[i];
+            double currentEma50 = ema50List[i];
 
-            decimal macd = currentEma23 - currentEma50;
+            double macd = currentEma23 - currentEma50;
             macdList.AddRounded(macd);
         }
 
@@ -850,9 +850,9 @@ public static partial class Calculations
         var stcList = CalculateStochasticOscillator(stockData, maType, length: cycleLength).CustomValuesList;
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal stc = stcList[i];
-            decimal prevStc1 = i >= 1 ? stcList[i - 1] : 0;
-            decimal prevStc2 = i >= 2 ? stcList[i - 2] : 0;
+            double stc = stcList[i];
+            double prevStc1 = i >= 1 ? stcList[i - 1] : 0;
+            double prevStc2 = i >= 2 ? stcList[i - 2] : 0;
 
             var signal = GetRsiSignal(stc - prevStc1, prevStc1 - prevStc2, stc, prevStc1, 75, 25);
             signalsList.Add(signal);
@@ -877,44 +877,44 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateUberTrendIndicator(this StockData stockData, int length = 14)
     {
-        List<decimal> advList = new();
-        List<decimal> decList = new();
-        List<decimal> advVolList = new();
-        List<decimal> decVolList = new();
-        List<decimal> utiList = new();
+        List<double> advList = new();
+        List<double> decList = new();
+        List<double> advVolList = new();
+        List<double> decVolList = new();
+        List<double> utiList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal currentVolume = volumeList[i];
-            decimal prevUti1 = i >= 1 ? utiList[i - 1] : 0;
-            decimal prevUti2 = i >= 2 ? utiList[i - 2] : 0;
+            double currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double currentVolume = volumeList[i];
+            double prevUti1 = i >= 1 ? utiList[i - 1] : 0;
+            double prevUti2 = i >= 2 ? utiList[i - 2] : 0;
 
-            decimal adv = i >= 1 && currentValue > prevValue ? MinPastValues(i, 1, currentValue - prevValue) : 0;
+            double adv = i >= 1 && currentValue > prevValue ? MinPastValues(i, 1, currentValue - prevValue) : 0;
             advList.AddRounded(adv);
 
-            decimal dec = i >= 1 && currentValue < prevValue ? MinPastValues(i, 1, prevValue - currentValue) : 0;
+            double dec = i >= 1 && currentValue < prevValue ? MinPastValues(i, 1, prevValue - currentValue) : 0;
             decList.AddRounded(dec);
 
-            decimal advSum = advList.TakeLastExt(length).Sum();
-            decimal decSum = decList.TakeLastExt(length).Sum();
+            double advSum = advList.TakeLastExt(length).Sum();
+            double decSum = decList.TakeLastExt(length).Sum();
 
-            decimal advVol = i >= 1 && currentValue > prevValue && advSum != 0 ? currentVolume / advSum : 0;
+            double advVol = i >= 1 && currentValue > prevValue && advSum != 0 ? currentVolume / advSum : 0;
             advVolList.AddRounded(advVol);
 
-            decimal decVol = i >= 1 && currentValue < prevValue && decSum != 0 ? currentVolume / decSum : 0;
+            double decVol = i >= 1 && currentValue < prevValue && decSum != 0 ? currentVolume / decSum : 0;
             decVolList.AddRounded(decVol);
 
-            decimal advVolSum = advVolList.TakeLastExt(length).Sum();
-            decimal decVolSum = decVolList.TakeLastExt(length).Sum();
-            decimal top = decSum != 0 ? advSum / decSum : 0;
-            decimal bot = decVolSum != 0 ? advVolSum / decVolSum : 0;
-            decimal ut = bot != 0 ? top / bot : 0;
+            double advVolSum = advVolList.TakeLastExt(length).Sum();
+            double decVolSum = decVolList.TakeLastExt(length).Sum();
+            double top = decSum != 0 ? advSum / decSum : 0;
+            double bot = decVolSum != 0 ? advVolSum / decVolSum : 0;
+            double ut = bot != 0 ? top / bot : 0;
 
-            decimal uti = ut + 1 != 0 ? (ut - 1) / (ut + 1) : 0;
+            double uti = ut + 1 != 0 ? (ut - 1) / (ut + 1) : 0;
             utiList.AddRounded(uti);
 
             var signal = GetCompareSignal(uti - prevUti1, prevUti1 - prevUti2);
@@ -945,8 +945,8 @@ public static partial class Calculations
     public static StockData CalculateWaveTrendOscillator(this StockData stockData, InputName inputName = InputName.FullTypicalPrice,
         MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 10, int length2 = 21, int smoothLength = 4)
     {
-        List<decimal> absApEsaList = new();
-        List<decimal> ciList = new();
+        List<double> absApEsaList = new();
+        List<double> ciList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _, _) = GetInputValuesList(inputName, stockData);
 
@@ -954,21 +954,21 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ap = inputList[i];
-            decimal esa = emaList[i];
+            double ap = inputList[i];
+            double esa = emaList[i];
 
-            decimal absApEsa = Math.Abs(ap - esa);
+            double absApEsa = Math.Abs(ap - esa);
             absApEsaList.AddRounded(absApEsa);
         }
 
         var dList = GetMovingAverageList(stockData, maType, length1, absApEsaList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal ap = inputList[i];
-            decimal esa = emaList[i];
-            decimal d = dList[i];
+            double ap = inputList[i];
+            double esa = emaList[i];
+            double d = dList[i];
 
-            decimal ci = d != 0 ? (ap - esa) / (0.015m * d) : 0;
+            double ci = d != 0 ? (ap - esa) / (0.015m * d) : 0;
             ciList.AddRounded(ci);
         }
 
@@ -976,10 +976,10 @@ public static partial class Calculations
         var wt2List = GetMovingAverageList(stockData, maType, smoothLength, tciList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal tci = tciList[i];
-            decimal wt2 = wt2List[i];
-            decimal prevTci = i >= 1 ? tciList[i - 1] : 0;
-            decimal prevWt2 = i >= 1 ? wt2List[i - 1] : 0;
+            double tci = tciList[i];
+            double wt2 = wt2List[i];
+            double prevTci = i >= 1 ? tciList[i - 1] : 0;
+            double prevWt2 = i >= 1 ? wt2List[i - 1] : 0;
 
             var signal = GetRsiSignal(tci - wt2, prevTci - prevWt2, tci, prevTci, 53, -53);
             signalsList.Add(signal);
@@ -1006,11 +1006,11 @@ public static partial class Calculations
     /// <param name="percent"></param>
     /// <returns></returns>
     public static StockData CalculateOptimizedTrendTracker(this StockData stockData, MovingAvgType maType = MovingAvgType.VariableIndexDynamicAverage,
-        int length = 2, decimal percent = 1.4m)
+        int length = 2, double percent = 1.4m)
     {
-        List<decimal> longStopList = new();
-        List<decimal> shortStopList = new();
-        List<decimal> ottList = new();
+        List<double> longStopList = new();
+        List<double> shortStopList = new();
+        List<double> ottList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
@@ -1018,23 +1018,23 @@ public static partial class Calculations
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal ma = maList[i];
-            decimal fark = ma * percent * 0.01m;
+            double currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double ma = maList[i];
+            double fark = ma * percent * 0.01m;
 
-            decimal prevLongStop = longStopList.LastOrDefault();
-            decimal longStop = ma - fark;
+            double prevLongStop = longStopList.LastOrDefault();
+            double longStop = ma - fark;
             longStop = ma > prevLongStop ? Math.Max(longStop, prevLongStop) : longStop;
             longStopList.AddRounded(longStop);
 
-            decimal prevShortStop = shortStopList.LastOrDefault();
-            decimal shortStop = ma + fark;
+            double prevShortStop = shortStopList.LastOrDefault();
+            double shortStop = ma + fark;
             shortStopList.AddRounded(shortStop);
 
-            decimal prevOtt = ottList.LastOrDefault();
-            decimal mt = ma > prevShortStop ? longStop : ma < prevLongStop ? shortStop : 0;
-            decimal ott = ma > mt ? mt * (200 + percent) / 200 : mt * (200 - percent) / 200;
+            double prevOtt = ottList.LastOrDefault();
+            double mt = ma > prevShortStop ? longStop : ma < prevLongStop ? shortStop : 0;
+            double ott = ma > mt ? mt * (200 + percent) / 200 : mt * (200 - percent) / 200;
             ottList.AddRounded(ott);
 
             var signal = GetCompareSignal(currentValue - ott, prevValue - prevOtt);
@@ -1060,22 +1060,22 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateGannTrendOscillator(this StockData stockData, int length = 3)
     {
-        List<decimal> gannTrendOscillatorList = new();
+        List<double> gannTrendOscillatorList = new();
         List<Signal> signalsList = new();
         var (_, highList, lowList, _, _) = GetInputValuesList(stockData);
         var (highestList, lowestList) = GetMaxAndMinValuesList(highList, lowList, length);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal highestHigh = highestList[i];
-            decimal lowestLow = lowestList[i];
-            decimal prevHighest1 = i >= 1 ? highestList[i - 1] : 0;
-            decimal prevLowest1 = i >= 1 ? lowestList[i - 1] : 0;
-            decimal prevHighest2 = i >= 2 ? highestList[i - 2] : 0;
-            decimal prevLowest2 = i >= 2 ? lowestList[i - 2] : 0;
+            double highestHigh = highestList[i];
+            double lowestLow = lowestList[i];
+            double prevHighest1 = i >= 1 ? highestList[i - 1] : 0;
+            double prevLowest1 = i >= 1 ? lowestList[i - 1] : 0;
+            double prevHighest2 = i >= 2 ? highestList[i - 2] : 0;
+            double prevLowest2 = i >= 2 ? lowestList[i - 2] : 0;
 
-            decimal prevGto = gannTrendOscillatorList.LastOrDefault();
-            decimal gto = prevHighest2 > prevHighest1 && highestHigh > prevHighest1 ? 1 : prevLowest2 < prevLowest1 && lowestLow < prevLowest1 ? -1 : prevGto;
+            double prevGto = gannTrendOscillatorList.LastOrDefault();
+            double gto = prevHighest2 > prevHighest1 && highestHigh > prevHighest1 ? 1 : prevLowest2 < prevLowest1 && lowestLow < prevLowest1 ? -1 : prevGto;
             gannTrendOscillatorList.AddRounded(gto);
 
             var signal = GetCompareSignal(gto, prevGto);
@@ -1101,58 +1101,58 @@ public static partial class Calculations
     /// <param name="forecastLength"></param>
     /// <param name="mult"></param>
     /// <returns></returns>
-    public static StockData CalculateGrandTrendForecasting(this StockData stockData, int length = 100, int forecastLength = 200, decimal mult = 2)
+    public static StockData CalculateGrandTrendForecasting(this StockData stockData, int length = 100, int forecastLength = 200, double mult = 2)
     {
-        List<decimal> upperList = new();
-        List<decimal> lowerList = new();
-        List<decimal> tList = new();
-        List<decimal> trendList = new();
-        List<decimal> chgList = new();
-        List<decimal> fcastList = new();
-        List<decimal> diffList = new();
-        List<decimal> bullSlopeList = new();
-        List<decimal> bearSlopeList = new();
+        List<double> upperList = new();
+        List<double> lowerList = new();
+        List<double> tList = new();
+        List<double> trendList = new();
+        List<double> chgList = new();
+        List<double> fcastList = new();
+        List<double> diffList = new();
+        List<double> bullSlopeList = new();
+        List<double> bearSlopeList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevT = i >= length ? tList[i - length] : currentValue;
-            decimal priorT = i >= forecastLength ? tList[i - forecastLength] : 0;
-            decimal prevFcast = i >= forecastLength ? fcastList[i - forecastLength] : 0;
-            decimal prevChg = i >= length ? chgList[i - length] : currentValue;
+            double currentValue = inputList[i];
+            double prevT = i >= length ? tList[i - length] : currentValue;
+            double priorT = i >= forecastLength ? tList[i - forecastLength] : 0;
+            double prevFcast = i >= forecastLength ? fcastList[i - forecastLength] : 0;
+            double prevChg = i >= length ? chgList[i - length] : currentValue;
 
-            decimal chg = 0.9m * prevT;
+            double chg = 0.9m * prevT;
             chgList.AddRounded(chg);
 
-            decimal t = (0.9m * prevT) + (0.1m * currentValue) + (chg - prevChg);
+            double t = (0.9m * prevT) + (0.1m * currentValue) + (chg - prevChg);
             tList.AddRounded(t);
 
-            decimal trend = tList.TakeLastExt(length).Average();
+            double trend = tList.TakeLastExt(length).Average();
             trendList.AddRounded(trend);
 
-            decimal fcast = t + (t - priorT);
+            double fcast = t + (t - priorT);
             fcastList.AddRounded(fcast);
 
-            decimal diff = Math.Abs(currentValue - prevFcast);
+            double diff = Math.Abs(currentValue - prevFcast);
             diffList.AddRounded(diff);
 
-            decimal diffSma = diffList.TakeLastExt(forecastLength).Average();
-            decimal dev = diffSma * mult;
+            double diffSma = diffList.TakeLastExt(forecastLength).Average();
+            double dev = diffSma * mult;
 
-            decimal upper = fcast + dev;
+            double upper = fcast + dev;
             upperList.AddRounded(upper);
 
-            decimal lower = fcast - dev;
+            double lower = fcast - dev;
             lowerList.AddRounded(lower);
 
-            decimal prevBullSlope = bullSlopeList.LastOrDefault();
-            decimal bullSlope = currentValue - Math.Max(fcast, Math.Max(t, trend));
+            double prevBullSlope = bullSlopeList.LastOrDefault();
+            double bullSlope = currentValue - Math.Max(fcast, Math.Max(t, trend));
             bullSlopeList.AddRounded(bullSlope);
 
-            decimal prevBearSlope = bearSlopeList.LastOrDefault();
-            decimal bearSlope = currentValue - Math.Min(fcast, Math.Min(t, trend));
+            double prevBearSlope = bearSlopeList.LastOrDefault();
+            double bearSlope = currentValue - Math.Min(fcast, Math.Min(t, trend));
             bearSlopeList.AddRounded(bearSlope);
 
             var signal = GetBullishBearishSignal(bullSlope, prevBullSlope, bearSlope, prevBearSlope);
@@ -1180,56 +1180,56 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="cd"></param>
     /// <returns></returns>
-    public static StockData CalculateCoralTrendIndicator(this StockData stockData, int length = 21, decimal cd = 0.4m)
+    public static StockData CalculateCoralTrendIndicator(this StockData stockData, int length = 21, double cd = 0.4m)
     {
-        List<decimal> i1List = new();
-        List<decimal> i2List = new();
-        List<decimal> i3List = new();
-        List<decimal> i4List = new();
-        List<decimal> i5List = new();
-        List<decimal> i6List = new();
-        List<decimal> bfrList = new();
+        List<double> i1List = new();
+        List<double> i2List = new();
+        List<double> i3List = new();
+        List<double> i4List = new();
+        List<double> i5List = new();
+        List<double> i6List = new();
+        List<double> bfrList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        decimal di = ((decimal)(length - 1) / 2) + 1;
-        decimal c1 = 2 / (di + 1);
-        decimal c2 = 1 - c1;
-        decimal c3 = 3 * ((cd * cd) + (cd * cd * cd));
-        decimal c4 = -3 * ((2 * cd * cd) + cd + (cd * cd * cd));
-        decimal c5 = (3 * cd) + 1 + (cd * cd * cd) + (3 * cd * cd);
+        double di = ((double)(length - 1) / 2) + 1;
+        double c1 = 2 / (di + 1);
+        double c2 = 1 - c1;
+        double c3 = 3 * ((cd * cd) + (cd * cd * cd));
+        double c4 = -3 * ((2 * cd * cd) + cd + (cd * cd * cd));
+        double c5 = (3 * cd) + 1 + (cd * cd * cd) + (3 * cd * cd);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal prevI1 = i1List.LastOrDefault();
-            decimal i1 = (c1 * currentValue) + (c2 * prevI1);
+            double prevI1 = i1List.LastOrDefault();
+            double i1 = (c1 * currentValue) + (c2 * prevI1);
             i1List.AddRounded(i1);
 
-            decimal prevI2 = i2List.LastOrDefault();
-            decimal i2 = (c1 * i1) + (c2 * prevI2);
+            double prevI2 = i2List.LastOrDefault();
+            double i2 = (c1 * i1) + (c2 * prevI2);
             i2List.AddRounded(i2);
 
-            decimal prevI3 = i3List.LastOrDefault();
-            decimal i3 = (c1 * i2) + (c2 * prevI3);
+            double prevI3 = i3List.LastOrDefault();
+            double i3 = (c1 * i2) + (c2 * prevI3);
             i3List.AddRounded(i3);
 
-            decimal prevI4 = i4List.LastOrDefault();
-            decimal i4 = (c1 * i3) + (c2 * prevI4);
+            double prevI4 = i4List.LastOrDefault();
+            double i4 = (c1 * i3) + (c2 * prevI4);
             i4List.AddRounded(i4);
 
-            decimal prevI5 = i5List.LastOrDefault();
-            decimal i5 = (c1 * i4) + (c2 * prevI5);
+            double prevI5 = i5List.LastOrDefault();
+            double i5 = (c1 * i4) + (c2 * prevI5);
             i5List.AddRounded(i5);
 
-            decimal prevI6 = i6List.LastOrDefault();
-            decimal i6 = (c1 * i5) + (c2 * prevI6);
+            double prevI6 = i6List.LastOrDefault();
+            double i6 = (c1 * i5) + (c2 * prevI6);
             i6List.AddRounded(i6);
 
-            decimal prevBfr = bfrList.LastOrDefault();
-            decimal bfr = (-1 * cd * cd * cd * i6) + (c3 * i5) + (c4 * i4) + (c5 * i3);
+            double prevBfr = bfrList.LastOrDefault();
+            double bfr = (-1 * cd * cd * cd * i6) + (c3 * i5) + (c4 * i4) + (c5 * i3);
             bfrList.AddRounded(bfr);
 
             var signal = GetCompareSignal(currentValue - bfr, prevValue - prevBfr);
@@ -1257,28 +1257,28 @@ public static partial class Calculations
     public static StockData CalculatePriceVolumeTrend(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
         int length = 14)
     {
-        List<decimal> priceVolumeTrendList = new();
+        List<double> priceVolumeTrendList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal currentVolume = volumeList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double currentValue = inputList[i];
+            double currentVolume = volumeList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal prevPvt = priceVolumeTrendList.LastOrDefault();
-            decimal pvt = prevValue != 0 ? prevPvt + (currentVolume * (MinPastValues(i, 1, currentValue - prevValue) / prevValue)) : prevPvt;
+            double prevPvt = priceVolumeTrendList.LastOrDefault();
+            double pvt = prevValue != 0 ? prevPvt + (currentVolume * (MinPastValues(i, 1, currentValue - prevValue) / prevValue)) : prevPvt;
             priceVolumeTrendList.AddRounded(pvt);
         }
 
         var pvtEmaList = GetMovingAverageList(stockData, maType, length, priceVolumeTrendList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal pvt = priceVolumeTrendList[i];
-            decimal pvtEma = pvtEmaList[i];
-            decimal prevPvt = i >= 1 ? priceVolumeTrendList[i - 1] : 0;
-            decimal prevPvtEma = i >= 1 ? pvtEmaList[i - 1] : 0;
+            double pvt = priceVolumeTrendList[i];
+            double pvtEma = pvtEmaList[i];
+            double prevPvt = i >= 1 ? priceVolumeTrendList[i - 1] : 0;
+            double prevPvtEma = i >= 1 ? pvtEmaList[i - 1] : 0;
 
             var signal = GetCompareSignal(pvt - pvtEma, prevPvt - prevPvtEma);
             signalsList.Add(signal);
@@ -1303,38 +1303,38 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="pct"></param>
     /// <returns></returns>
-    public static StockData CalculatePercentageTrend(this StockData stockData, int length = 20, decimal pct = 0.15m)
+    public static StockData CalculatePercentageTrend(this StockData stockData, int length = 20, double pct = 0.15)
     {
-        List<decimal> trendList = new();
+        List<double> trendList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double currentValue = inputList[i];
 
             int period = 0;
-            decimal prevTrend = trendList.LastOrDefault();
-            decimal trend = currentValue;
+            double prevTrend = trendList.LastOrDefault();
+            double trend = currentValue;
             for (int j = 1; j <= length; j++)
             {
-                decimal prevC = i >= j - 1 ? inputList[i - (j - 1)] : 0;
-                decimal currC = i >= j ? inputList[i - j] : 0;
+                double prevC = i >= j - 1 ? inputList[i - (j - 1)] : 0;
+                double currC = i >= j ? inputList[i - j] : 0;
                 period = (prevC <= trend && currC > trend) || (prevC >= trend && currC < trend) ? 0 : period;
 
-                decimal highest1 = currC, lowest1 = currC;
+                double highest1 = currC, lowest1 = currC;
                 for (int k = j - period; k <= j; k++)
                 {
-                    decimal c = i >= j - k ? inputList[i - (j - k)] : 0;
+                    double c = i >= j - k ? inputList[i - (j - k)] : 0;
                     highest1 = Math.Max(highest1, c);
                     lowest1 = Math.Min(lowest1, c);
                 }
 
-                decimal highest2 = currC, lowest2 = currC;
+                double highest2 = currC, lowest2 = currC;
                 for (int k = i - length; k <= j; k++)
                 {
-                    decimal c = i >= j - k ? inputList[i - (j - k)] : 0;
+                    double c = i >= j - k ? inputList[i - (j - k)] : 0;
                     highest2 = Math.Max(highest2, c);
                     lowest2 = Math.Min(lowest2, c);
                 }
@@ -1376,29 +1376,29 @@ public static partial class Calculations
     public static StockData CalculateModifiedPriceVolumeTrend(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
         int length = 23)
     {
-        List<decimal> mpvtList = new();
+        List<double> mpvtList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
 
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal currentValue = inputList[i];
-            decimal prevValue = i >= 1 ? inputList[i - 1] : 0;
-            decimal currentVolume = volumeList[i];
-            decimal rv = currentVolume / 50000;
+            double currentValue = inputList[i];
+            double prevValue = i >= 1 ? inputList[i - 1] : 0;
+            double currentVolume = volumeList[i];
+            double rv = currentVolume / 50000;
 
-            decimal prevMpvt = mpvtList.LastOrDefault();
-            decimal mpvt = prevValue != 0 ? prevMpvt + (rv * MinPastValues(i, 1, currentValue - prevValue) / prevValue) : 0;
+            double prevMpvt = mpvtList.LastOrDefault();
+            double mpvt = prevValue != 0 ? prevMpvt + (rv * MinPastValues(i, 1, currentValue - prevValue) / prevValue) : 0;
             mpvtList.AddRounded(mpvt);
         }
 
         var mpvtSignalList = GetMovingAverageList(stockData, maType, length, mpvtList);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal mpvt = mpvtList[i];
-            decimal mpvtSignal = mpvtSignalList[i];
-            decimal prevMpvt = i >= 1 ? mpvtList[i - 1] : 0;
-            decimal prevMpvtSignal = i >= 1 ? mpvtSignalList[i - 1] : 0;
+            double mpvt = mpvtList[i];
+            double mpvtSignal = mpvtSignalList[i];
+            double prevMpvt = i >= 1 ? mpvtList[i - 1] : 0;
+            double prevMpvtSignal = i >= 1 ? mpvtSignalList[i - 1] : 0;
 
             var signal = GetCompareSignal(mpvt - mpvtSignal, prevMpvt - prevMpvtSignal);
             signalsList.Add(signal);

@@ -13,9 +13,9 @@ namespace OoplesFinance.StockIndicators.Interfaces;
 public interface ITickerData
 {
     public DateTime Date { get; }
-    public decimal Open { get; }
-    public decimal High { get; }
-    public decimal Low { get; }
-    public decimal Close { get; }
-    public decimal Volume { get; }
+    public double Open { get; }
+    public double High { get; }
+    public double Low { get; }
+    public double Close { get; }
+    public double Volume { get; }
 }

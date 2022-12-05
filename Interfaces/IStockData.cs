@@ -14,15 +14,15 @@ public interface IStockData
 {
     InputName InputName { get; }
     IndicatorName IndicatorName { get; }
-    List<decimal> InputValues { get; }
-    List<decimal> OpenPrices { get; }
-    List<decimal> HighPrices { get; }
-    List<decimal> LowPrices { get; }
-    List<decimal> ClosePrices { get; }
-    List<decimal> Volumes { get; }
+    List<double> InputValues { get; }
+    List<double> OpenPrices { get; }
+    List<double> HighPrices { get; }
+    List<double> LowPrices { get; }
+    List<double> ClosePrices { get; }
+    List<double> Volumes { get; }
     List<DateTime> Dates { get; }
-    List<decimal> CustomValuesList { get; }
-    Dictionary<string, List<decimal>> OutputValues { get; }
+    List<double> CustomValuesList { get; }
+    Dictionary<string, List<double>> OutputValues { get; }
     List<Signal> SignalsList { get; }
     int Count { get; }
 }

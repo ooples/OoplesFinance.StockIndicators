@@ -13,86 +13,86 @@ namespace OoplesFinance.StockIndicators;
 public static partial class Calculations
 {
     /// <summary>
-    /// Calculates the Standard Pivot Points
+    /// Calculates the Standard Math.PIvot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateStandardPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateStandardMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
-        List<decimal> pivotList = new();
-        List<decimal> resistanceLevel3List = new();
-        List<decimal> resistanceLevel2List = new();
-        List<decimal> resistanceLevel1List = new();
-        List<decimal> supportLevel1List = new();
-        List<decimal> supportLevel2List = new();
-        List<decimal> supportLevel3List = new();
-        List<decimal> midpoint1List = new();
-        List<decimal> midpoint2List = new();
-        List<decimal> midpoint3List = new();
-        List<decimal> midpoint4List = new();
-        List<decimal> midpoint5List = new();
-        List<decimal> midpoint6List = new();
+        List<double> pivotList = new();
+        List<double> resistanceLevel3List = new();
+        List<double> resistanceLevel2List = new();
+        List<double> resistanceLevel1List = new();
+        List<double> supportLevel1List = new();
+        List<double> supportLevel2List = new();
+        List<double> supportLevel3List = new();
+        List<double> midpoint1List = new();
+        List<double> midpoint2List = new();
+        List<double> midpoint3List = new();
+        List<double> midpoint4List = new();
+        List<double> midpoint5List = new();
+        List<double> midpoint6List = new();
         List<Signal> signalsList = new();
         var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData, inputLength);
 
         for (int i = 0; i < inputList.Count; i++)
         {
-            decimal currentClose = inputList[i];
-            decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
-            decimal prevLow = i >= 1 ? lowList[i - 1] : 0;
-            decimal prevHigh = i >= 1 ? highList[i - 1] : 0;
-            decimal prevOpen = i >= 1 ? openList[i - 1] : 0;
+            double currentClose = inputList[i];
+            double prevClose = i >= 1 ? inputList[i - 1] : 0;
+            double prevLow = i >= 1 ? lowList[i - 1] : 0;
+            double prevHigh = i >= 1 ? highList[i - 1] : 0;
+            double prevOpen = i >= 1 ? openList[i - 1] : 0;
 
-            decimal prevPivot = pivotList.LastOrDefault();
-            decimal range = prevHigh - prevLow;
-            decimal pivot = (prevHigh + prevLow + prevClose + prevOpen) / 4;
+            double prevMath.PIvot = pivotList.LastOrDefault();
+            double range = prevHigh - prevLow;
+            double pivot = (prevHigh + prevLow + prevClose + prevOpen) / 4;
             pivotList.AddRounded(pivot);
 
-            decimal supportLevel1 = (pivot * 2) - prevHigh;
+            double supportLevel1 = (pivot * 2) - prevHigh;
             supportLevel1List.AddRounded(supportLevel1);
 
-            decimal resistanceLevel1 = (pivot * 2) - prevLow;
+            double resistanceLevel1 = (pivot * 2) - prevLow;
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
-            decimal range2 = resistanceLevel1 - supportLevel1;
-            decimal supportLevel2 = pivot - range;
+            double range2 = resistanceLevel1 - supportLevel1;
+            double supportLevel2 = pivot - range;
             supportLevel2List.AddRounded(supportLevel2);
 
-            decimal resistanceLevel2 = pivot + range;
+            double resistanceLevel2 = pivot + range;
             resistanceLevel2List.AddRounded(resistanceLevel2);
 
-            decimal supportLevel3 = pivot - range2;
+            double supportLevel3 = pivot - range2;
             supportLevel3List.AddRounded(supportLevel3);
 
-            decimal resistanceLevel3 = pivot + range2;
+            double resistanceLevel3 = pivot + range2;
             resistanceLevel3List.AddRounded(resistanceLevel3);
 
-            decimal midpoint1 = (supportLevel3 + supportLevel2) / 2;
+            double midpoint1 = (supportLevel3 + supportLevel2) / 2;
             midpoint1List.AddRounded(midpoint1);
 
-            decimal midpoint2 = (supportLevel2 + supportLevel1) / 2;
+            double midpoint2 = (supportLevel2 + supportLevel1) / 2;
             midpoint2List.AddRounded(midpoint2);
 
-            decimal midpoint3 = (supportLevel1 + pivot) / 2;
+            double midpoint3 = (supportLevel1 + pivot) / 2;
             midpoint3List.AddRounded(midpoint3);
 
-            decimal midpoint4 = (resistanceLevel1 + pivot) / 2;
+            double midpoint4 = (resistanceLevel1 + pivot) / 2;
             midpoint4List.AddRounded(midpoint4);
 
-            decimal midpoint5 = (resistanceLevel2 + resistanceLevel1) / 2;
+            double midpoint5 = (resistanceLevel2 + resistanceLevel1) / 2;
             midpoint5List.AddRounded(midpoint5);
 
-            decimal midpoint6 = (resistanceLevel3 + resistanceLevel2) / 2;
+            double midpoint6 = (resistanceLevel3 + resistanceLevel2) / 2;
             midpoint6List.AddRounded(midpoint6);
 
-            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevPivot);
+            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevMath.PIvot);
             signalsList.Add(signal);
         }
 
         stockData.OutputValues = new()
         {
-            { "Pivot", pivotList },
+            { "Math.PIvot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -108,90 +108,90 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.StandardPivotPoints;
+        stockData.IndicatorName = IndicatorName.StandardMath.PIvotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Woodie Pivot Points
+    /// Calculates the Woodie Math.PIvot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateWoodiePivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateWoodieMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
-        List<decimal> pivotList = new();
-        List<decimal> resistanceLevel1List = new();
-        List<decimal> resistanceLevel2List = new();
-        List<decimal> resistanceLevel3List = new();
-        List<decimal> resistanceLevel4List = new();
-        List<decimal> supportLevel1List = new();
-        List<decimal> supportLevel2List = new();
-        List<decimal> supportLevel3List = new();
-        List<decimal> supportLevel4List = new();
-        List<decimal> midpoint1List = new();
-        List<decimal> midpoint2List = new();
-        List<decimal> midpoint3List = new();
-        List<decimal> midpoint4List = new();
+        List<double> pivotList = new();
+        List<double> resistanceLevel1List = new();
+        List<double> resistanceLevel2List = new();
+        List<double> resistanceLevel3List = new();
+        List<double> resistanceLevel4List = new();
+        List<double> supportLevel1List = new();
+        List<double> supportLevel2List = new();
+        List<double> supportLevel3List = new();
+        List<double> supportLevel4List = new();
+        List<double> midpoint1List = new();
+        List<double> midpoint2List = new();
+        List<double> midpoint3List = new();
+        List<double> midpoint4List = new();
         List<Signal> signalsList = new();
         var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
         for (int i = 0; i < inputList.Count; i++)
         {
-            decimal currentClose = inputList[i];
-            decimal prevHigh = i >= 1 ? highList[i - 1] : 0;
-            decimal prevLow = i >= 1 ? lowList[i - 1] : 0;
-            decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
+            double currentClose = inputList[i];
+            double prevHigh = i >= 1 ? highList[i - 1] : 0;
+            double prevLow = i >= 1 ? lowList[i - 1] : 0;
+            double prevClose = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal prevPivot = pivotList.LastOrDefault();
-            decimal range = prevHigh - prevLow;
-            decimal pivot = (prevHigh + prevLow + (prevClose * 2)) / 4;
+            double prevMath.PIvot = pivotList.LastOrDefault();
+            double range = prevHigh - prevLow;
+            double pivot = (prevHigh + prevLow + (prevClose * 2)) / 4;
             pivotList.AddRounded(pivot);
 
-            decimal supportLevel1 = (pivot * 2) - prevHigh;
+            double supportLevel1 = (pivot * 2) - prevHigh;
             supportLevel1List.AddRounded(supportLevel1);
 
-            decimal resistanceLevel1 = (pivot * 2) - prevLow;
+            double resistanceLevel1 = (pivot * 2) - prevLow;
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
-            decimal supportLevel2 = pivot - range;
+            double supportLevel2 = pivot - range;
             supportLevel2List.AddRounded(supportLevel2);
 
-            decimal resistanceLevel2 = pivot + range;
+            double resistanceLevel2 = pivot + range;
             resistanceLevel2List.AddRounded(resistanceLevel2);
 
-            decimal supportLevel3 = prevLow - (2 * (prevHigh - pivot));
+            double supportLevel3 = prevLow - (2 * (prevHigh - pivot));
             supportLevel3List.AddRounded(supportLevel3);
 
-            decimal resistanceLevel3 = prevHigh + (2 * (pivot - prevLow));
+            double resistanceLevel3 = prevHigh + (2 * (pivot - prevLow));
             resistanceLevel3List.AddRounded(resistanceLevel3);
 
-            decimal supportLevel4 = supportLevel3 - range;
+            double supportLevel4 = supportLevel3 - range;
             supportLevel4List.AddRounded(supportLevel4);
 
-            decimal resistanceLevel4 = resistanceLevel3 + range;
+            double resistanceLevel4 = resistanceLevel3 + range;
             resistanceLevel4List.AddRounded(resistanceLevel4);
 
-            decimal midpoint1 = (supportLevel1 + supportLevel2) / 2;
+            double midpoint1 = (supportLevel1 + supportLevel2) / 2;
             midpoint1List.AddRounded(midpoint1);
 
-            decimal midpoint2 = (pivot + supportLevel1) / 2;
+            double midpoint2 = (pivot + supportLevel1) / 2;
             midpoint2List.AddRounded(midpoint2);
 
-            decimal midpoint3 = (resistanceLevel1 + pivot) / 2;
+            double midpoint3 = (resistanceLevel1 + pivot) / 2;
             midpoint3List.AddRounded(midpoint3);
 
-            decimal midpoint4 = (resistanceLevel1 + resistanceLevel2) / 2;
+            double midpoint4 = (resistanceLevel1 + resistanceLevel2) / 2;
             midpoint4List.AddRounded(midpoint4);
 
-            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevPivot);
+            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevMath.PIvot);
             signalsList.Add(signal);
         }
 
         stockData.OutputValues = new()
         {
-            { "Pivot", pivotList },
+            { "Math.PIvot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -207,82 +207,82 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.WoodiePivotPoints;
+        stockData.IndicatorName = IndicatorName.WoodieMath.PIvotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Floor Pivot Points
+    /// Calculates the Floor Math.PIvot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateFloorPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateFloorMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
-        List<decimal> pivotList = new();
-        List<decimal> resistanceLevel3List = new();
-        List<decimal> resistanceLevel2List = new();
-        List<decimal> resistanceLevel1List = new();
-        List<decimal> supportLevel1List = new();
-        List<decimal> supportLevel2List = new();
-        List<decimal> supportLevel3List = new();
-        List<decimal> midpoint1List = new();
-        List<decimal> midpoint2List = new();
-        List<decimal> midpoint3List = new();
-        List<decimal> midpoint4List = new();
-        List<decimal> midpoint5List = new();
-        List<decimal> midpoint6List = new();
+        List<double> pivotList = new();
+        List<double> resistanceLevel3List = new();
+        List<double> resistanceLevel2List = new();
+        List<double> resistanceLevel1List = new();
+        List<double> supportLevel1List = new();
+        List<double> supportLevel2List = new();
+        List<double> supportLevel3List = new();
+        List<double> midpoint1List = new();
+        List<double> midpoint2List = new();
+        List<double> midpoint3List = new();
+        List<double> midpoint4List = new();
+        List<double> midpoint5List = new();
+        List<double> midpoint6List = new();
         List<Signal> signalsList = new();
         var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
         for (int i = 0; i < inputList.Count; i++)
         {
-            decimal currentClose = inputList[i];
-            decimal prevHigh = i >= 1 ? highList[i] : 0;
-            decimal prevLow = i >= 1 ? lowList[i] : 0;
-            decimal prevClose = i >= 1 ? inputList[i] : 0;
+            double currentClose = inputList[i];
+            double prevHigh = i >= 1 ? highList[i] : 0;
+            double prevLow = i >= 1 ? lowList[i] : 0;
+            double prevClose = i >= 1 ? inputList[i] : 0;
 
-            decimal range = prevHigh - prevLow;
-            decimal pivot = (prevHigh + prevLow + prevClose) / 3;
+            double range = prevHigh - prevLow;
+            double pivot = (prevHigh + prevLow + prevClose) / 3;
             pivotList.AddRounded(pivot);
 
-            decimal prevSupportLevel1 = supportLevel1List.LastOrDefault();
-            decimal supportLevel1 = (pivot * 2) - prevHigh;
+            double prevSupportLevel1 = supportLevel1List.LastOrDefault();
+            double supportLevel1 = (pivot * 2) - prevHigh;
             supportLevel1List.AddRounded(supportLevel1);
 
-            decimal prevResistanceLevel1 = resistanceLevel1List.LastOrDefault();
-            decimal resistanceLevel1 = (pivot * 2) - prevLow;
+            double prevResistanceLevel1 = resistanceLevel1List.LastOrDefault();
+            double resistanceLevel1 = (pivot * 2) - prevLow;
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
-            decimal supportLevel2 = pivot - range;
+            double supportLevel2 = pivot - range;
             supportLevel2List.AddRounded(supportLevel2);
 
-            decimal resistanceLevel2 = pivot + range;
+            double resistanceLevel2 = pivot + range;
             resistanceLevel2List.AddRounded(resistanceLevel2);
 
-            decimal supportLevel3 = supportLevel1 - range;
+            double supportLevel3 = supportLevel1 - range;
             supportLevel3List.AddRounded(supportLevel3);
 
-            decimal resistanceLevel3 = resistanceLevel1 + range;
+            double resistanceLevel3 = resistanceLevel1 + range;
             resistanceLevel3List.AddRounded(resistanceLevel3);
 
-            decimal midpoint1 = (supportLevel3 + supportLevel2) / 2;
+            double midpoint1 = (supportLevel3 + supportLevel2) / 2;
             midpoint1List.AddRounded(midpoint1);
 
-            decimal midpoint2 = (supportLevel2 + supportLevel1) / 2;
+            double midpoint2 = (supportLevel2 + supportLevel1) / 2;
             midpoint2List.AddRounded(midpoint2);
 
-            decimal midpoint3 = (supportLevel1 + pivot) / 2;
+            double midpoint3 = (supportLevel1 + pivot) / 2;
             midpoint3List.AddRounded(midpoint3);
 
-            decimal midpoint4 = (resistanceLevel1 + pivot) / 2;
+            double midpoint4 = (resistanceLevel1 + pivot) / 2;
             midpoint4List.AddRounded(midpoint4);
 
-            decimal midpoint5 = (resistanceLevel2 + resistanceLevel1) / 2;
+            double midpoint5 = (resistanceLevel2 + resistanceLevel1) / 2;
             midpoint5List.AddRounded(midpoint5);
 
-            decimal midpoint6 = (resistanceLevel3 + resistanceLevel2) / 2;
+            double midpoint6 = (resistanceLevel3 + resistanceLevel2) / 2;
             midpoint6List.AddRounded(midpoint6);
 
             var signal = GetBullishBearishSignal(currentClose - resistanceLevel1, prevClose - prevResistanceLevel1,
@@ -292,7 +292,7 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "Pivot", pivotList },
+            { "Math.PIvot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -308,90 +308,90 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.FloorPivotPoints;
+        stockData.IndicatorName = IndicatorName.FloorMath.PIvotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Fibonacci Pivot Points
+    /// Calculates the Fibonacci Math.PIvot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateFibonacciPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateFibonacciMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
-        List<decimal> pivotList = new();
-        List<decimal> resistanceLevel3List = new();
-        List<decimal> resistanceLevel2List = new();
-        List<decimal> resistanceLevel1List = new();
-        List<decimal> supportLevel1List = new();
-        List<decimal> supportLevel2List = new();
-        List<decimal> supportLevel3List = new();
-        List<decimal> midpoint1List = new();
-        List<decimal> midpoint2List = new();
-        List<decimal> midpoint3List = new();
-        List<decimal> midpoint4List = new();
-        List<decimal> midpoint5List = new();
-        List<decimal> midpoint6List = new();
+        List<double> pivotList = new();
+        List<double> resistanceLevel3List = new();
+        List<double> resistanceLevel2List = new();
+        List<double> resistanceLevel1List = new();
+        List<double> supportLevel1List = new();
+        List<double> supportLevel2List = new();
+        List<double> supportLevel3List = new();
+        List<double> midpoint1List = new();
+        List<double> midpoint2List = new();
+        List<double> midpoint3List = new();
+        List<double> midpoint4List = new();
+        List<double> midpoint5List = new();
+        List<double> midpoint6List = new();
         List<Signal> signalsList = new();
         var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
         for (int i = 0; i < inputList.Count; i++)
         {
-            decimal currentClose = inputList[i];
-            decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
-            decimal prevLow = i >= 1 ? lowList[i - 1] : 0;
-            decimal prevHigh = i >= 1 ? highList[i - 1] : 0;
+            double currentClose = inputList[i];
+            double prevClose = i >= 1 ? inputList[i - 1] : 0;
+            double prevLow = i >= 1 ? lowList[i - 1] : 0;
+            double prevHigh = i >= 1 ? highList[i - 1] : 0;
 
-            decimal prevPivot = pivotList.LastOrDefault();
-            decimal range = prevHigh - prevLow;
-            decimal pivot = (prevHigh + prevLow + prevClose) / 3;
+            double prevMath.PIvot = pivotList.LastOrDefault();
+            double range = prevHigh - prevLow;
+            double pivot = (prevHigh + prevLow + prevClose) / 3;
             pivotList.AddRounded(pivot);
 
-            decimal supportLevel1 = pivot - (range * 0.382m);
+            double supportLevel1 = pivot - (range * 0.382m);
             supportLevel1List.AddRounded(supportLevel1);
 
-            decimal supportLevel2 = pivot - (range * 0.618m);
+            double supportLevel2 = pivot - (range * 0.618m);
             supportLevel2List.AddRounded(supportLevel2);
 
-            decimal supportLevel3 = pivot - (range * 1);
+            double supportLevel3 = pivot - (range * 1);
             supportLevel3List.AddRounded(supportLevel3);
 
-            decimal resistanceLevel1 = pivot + (range * 0.382m);
+            double resistanceLevel1 = pivot + (range * 0.382m);
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
-            decimal resistanceLevel2 = pivot + (range * 0.618m);
+            double resistanceLevel2 = pivot + (range * 0.618m);
             resistanceLevel2List.AddRounded(resistanceLevel2);
 
-            decimal resistanceLevel3 = pivot + (range * 1);
+            double resistanceLevel3 = pivot + (range * 1);
             resistanceLevel3List.AddRounded(resistanceLevel3);
 
-            decimal midpoint1 = (supportLevel3 + supportLevel2) / 2;
+            double midpoint1 = (supportLevel3 + supportLevel2) / 2;
             midpoint1List.AddRounded(midpoint1);
 
-            decimal midpoint2 = (supportLevel2 + supportLevel1) / 2;
+            double midpoint2 = (supportLevel2 + supportLevel1) / 2;
             midpoint2List.AddRounded(midpoint2);
 
-            decimal midpoint3 = (supportLevel1 + pivot) / 2;
+            double midpoint3 = (supportLevel1 + pivot) / 2;
             midpoint3List.AddRounded(midpoint3);
 
-            decimal midpoint4 = (resistanceLevel1 + pivot) / 2;
+            double midpoint4 = (resistanceLevel1 + pivot) / 2;
             midpoint4List.AddRounded(midpoint4);
 
-            decimal midpoint5 = (resistanceLevel2 + resistanceLevel1) / 2;
+            double midpoint5 = (resistanceLevel2 + resistanceLevel1) / 2;
             midpoint5List.AddRounded(midpoint5);
 
-            decimal midpoint6 = (resistanceLevel3 + resistanceLevel2) / 2;
+            double midpoint6 = (resistanceLevel3 + resistanceLevel2) / 2;
             midpoint6List.AddRounded(midpoint6);
 
-            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevPivot);
+            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevMath.PIvot);
             signalsList.Add(signal);
         }
 
         stockData.OutputValues = new()
         {
-            { "Pivot", pivotList },
+            { "Math.PIvot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -407,100 +407,100 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.FibonacciPivotPoints;
+        stockData.IndicatorName = IndicatorName.FibonacciMath.PIvotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Camarilla Pivot Points
+    /// Calculates the Camarilla Math.PIvot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateCamarillaPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateCamarillaMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
-        List<decimal> resistanceLevel5List = new();
-        List<decimal> resistanceLevel4List = new();
-        List<decimal> resistanceLevel3List = new();
-        List<decimal> resistanceLevel2List = new();
-        List<decimal> resistanceLevel1List = new();
-        List<decimal> supportLevel1List = new();
-        List<decimal> supportLevel2List = new();
-        List<decimal> supportLevel3List = new();
-        List<decimal> supportLevel4List = new();
-        List<decimal> supportLevel5List = new();
-        List<decimal> midpoint1List = new();
-        List<decimal> midpoint2List = new();
-        List<decimal> midpoint3List = new();
-        List<decimal> midpoint4List = new();
-        List<decimal> midpoint5List = new();
-        List<decimal> midpoint6List = new();
-        List<decimal> pivotList = new();
+        List<double> resistanceLevel5List = new();
+        List<double> resistanceLevel4List = new();
+        List<double> resistanceLevel3List = new();
+        List<double> resistanceLevel2List = new();
+        List<double> resistanceLevel1List = new();
+        List<double> supportLevel1List = new();
+        List<double> supportLevel2List = new();
+        List<double> supportLevel3List = new();
+        List<double> supportLevel4List = new();
+        List<double> supportLevel5List = new();
+        List<double> midpoint1List = new();
+        List<double> midpoint2List = new();
+        List<double> midpoint3List = new();
+        List<double> midpoint4List = new();
+        List<double> midpoint5List = new();
+        List<double> midpoint6List = new();
+        List<double> pivotList = new();
         List<Signal> signalsList = new();
         var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
         for (int i = 0; i < inputList.Count; i++)
         {
-            decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
-            decimal currentClose = i >= 1 ? prevClose : inputList[i];
-            decimal prevHigh = i >= 1 ? highList[i - 1] : 0;
-            decimal currentHigh = i >= 1 ? prevHigh : highList[i];
-            decimal prevLow = i >= 1 ? lowList[i - 1] : 0;
-            decimal currentLow = i >= 1 ? prevLow : lowList[i];
-            decimal range = currentHigh - currentLow;
+            double prevClose = i >= 1 ? inputList[i - 1] : 0;
+            double currentClose = i >= 1 ? prevClose : inputList[i];
+            double prevHigh = i >= 1 ? highList[i - 1] : 0;
+            double currentHigh = i >= 1 ? prevHigh : highList[i];
+            double prevLow = i >= 1 ? lowList[i - 1] : 0;
+            double currentLow = i >= 1 ? prevLow : lowList[i];
+            double range = currentHigh - currentLow;
 
-            decimal pivot = (prevHigh + prevLow + prevClose) / 3;
+            double pivot = (prevHigh + prevLow + prevClose) / 3;
             pivotList.AddRounded(pivot);
 
-            decimal prevSupportLevel1 = supportLevel1List.LastOrDefault();
-            decimal supportLevel1 = currentClose - (0.0916m * range);
+            double prevSupportLevel1 = supportLevel1List.LastOrDefault();
+            double supportLevel1 = currentClose - (0.0916m * range);
             supportLevel1List.AddRounded(supportLevel1);
 
-            decimal supportLevel2 = currentClose - (0.183m * range);
+            double supportLevel2 = currentClose - (0.183m * range);
             supportLevel2List.AddRounded(supportLevel2);
 
-            decimal supportLevel3 = currentClose - (0.275m * range);
+            double supportLevel3 = currentClose - (0.275m * range);
             supportLevel3List.AddRounded(supportLevel3);
 
-            decimal supportLevel4 = currentClose - (0.55m * range);
+            double supportLevel4 = currentClose - (0.55m * range);
             supportLevel4List.AddRounded(supportLevel4);
 
-            decimal prevResistanceLevel1 = resistanceLevel1List.LastOrDefault();
-            decimal resistanceLevel1 = currentClose + (0.0916m * range);
+            double prevResistanceLevel1 = resistanceLevel1List.LastOrDefault();
+            double resistanceLevel1 = currentClose + (0.0916m * range);
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
-            decimal resistanceLevel2 = currentClose + (0.183m * range);
+            double resistanceLevel2 = currentClose + (0.183m * range);
             resistanceLevel2List.AddRounded(resistanceLevel2);
 
-            decimal resistanceLevel3 = currentClose + (0.275m * range);
+            double resistanceLevel3 = currentClose + (0.275m * range);
             resistanceLevel3List.AddRounded(resistanceLevel3);
 
-            decimal resistanceLevel4 = currentClose + (0.55m * range);
+            double resistanceLevel4 = currentClose + (0.55m * range);
             resistanceLevel4List.AddRounded(resistanceLevel4);
 
-            decimal resistanceLevel5 = currentLow != 0 ? currentHigh / currentLow * currentClose : 0;
+            double resistanceLevel5 = currentLow != 0 ? currentHigh / currentLow * currentClose : 0;
             resistanceLevel5List.AddRounded(resistanceLevel5);
 
-            decimal supportLevel5 = currentClose - (resistanceLevel5 - currentClose);
+            double supportLevel5 = currentClose - (resistanceLevel5 - currentClose);
             supportLevel5List.AddRounded(supportLevel5);
 
-            decimal midpoint1 = (supportLevel3 + supportLevel2) / 2;
+            double midpoint1 = (supportLevel3 + supportLevel2) / 2;
             midpoint1List.AddRounded(midpoint1);
 
-            decimal midpoint2 = (supportLevel2 + supportLevel1) / 2;
+            double midpoint2 = (supportLevel2 + supportLevel1) / 2;
             midpoint2List.AddRounded(midpoint2);
 
-            decimal midpoint3 = (resistanceLevel2 + resistanceLevel1) / 2;
+            double midpoint3 = (resistanceLevel2 + resistanceLevel1) / 2;
             midpoint3List.AddRounded(midpoint3);
 
-            decimal midpoint4 = (resistanceLevel3 + resistanceLevel2) / 2;
+            double midpoint4 = (resistanceLevel3 + resistanceLevel2) / 2;
             midpoint4List.AddRounded(midpoint4);
 
-            decimal midpoint5 = (resistanceLevel3 + resistanceLevel4) / 2;
+            double midpoint5 = (resistanceLevel3 + resistanceLevel4) / 2;
             midpoint5List.AddRounded(midpoint5);
 
-            decimal midpoint6 = (supportLevel4 + supportLevel3) / 2;
+            double midpoint6 = (supportLevel4 + supportLevel3) / 2;
             midpoint6List.AddRounded(midpoint6);
 
             var signal = GetBullishBearishSignal(currentClose - resistanceLevel1, prevClose - prevResistanceLevel1, currentClose - supportLevel1, 
@@ -510,7 +510,7 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "Pivot", pivotList },
+            { "Math.PIvot", pivotList },
             { "S1", supportLevel1List },
             { "S2", supportLevel2List },
             { "S3", supportLevel3List },
@@ -530,41 +530,41 @@ public static partial class Calculations
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.CamarillaPivotPoints;
+        stockData.IndicatorName = IndicatorName.CamarillaMath.PIvotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Pivot Point Average
+    /// Calculates the Math.PIvot Point Average
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="maType"></param>
     /// <param name="length"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculatePivotPointAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 3, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateMath.PIvotPointAverage(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 3, InputLength inputLength = InputLength.Day)
     {
-        List<decimal> pp1List = new();
-        List<decimal> pp2List = new();
-        List<decimal> pp3List = new();
+        List<double> pp1List = new();
+        List<double> pp2List = new();
+        List<double> pp3List = new();
         List<Signal> signalsList = new();
         var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData, inputLength);
 
         for (int i = 0; i < inputList.Count; i++)
         {
-            decimal currentOpen = openList[i];
-            decimal prevHigh = i >= 1 ? highList[i - 1] : 0;
-            decimal prevLow = i >= 1 ? lowList[i - 1] : 0;
-            decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
+            double currentOpen = openList[i];
+            double prevHigh = i >= 1 ? highList[i - 1] : 0;
+            double prevLow = i >= 1 ? lowList[i - 1] : 0;
+            double prevClose = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal pp1 = (prevHigh + prevLow + prevClose) / 3;
+            double pp1 = (prevHigh + prevLow + prevClose) / 3;
             pp1List.AddRounded(pp1);
 
-            decimal pp2 = (prevHigh + prevLow + prevClose + currentOpen) / 4;
+            double pp2 = (prevHigh + prevLow + prevClose + currentOpen) / 4;
             pp2List.AddRounded(pp2);
 
-            decimal pp3 = (prevHigh + prevLow + currentOpen) / 3;
+            double pp3 = (prevHigh + prevLow + currentOpen) / 3;
             pp3List.AddRounded(pp3);
         }
 
@@ -573,10 +573,10 @@ public static partial class Calculations
         var ppav3List = GetMovingAverageList(stockData, maType, length, pp3List);
         for (int i = 0; i < stockData.Count; i++)
         {
-            decimal pp1 = pp1List[i];
-            decimal ppav1 = ppav1List[i];
-            decimal prevPp1 = i >= 1 ? pp1List[i - 1] : 0;
-            decimal prevPpav1 = i >= 1 ? ppav1List[i - 1] : 0;
+            double pp1 = pp1List[i];
+            double ppav1 = ppav1List[i];
+            double prevPp1 = i >= 1 ? pp1List[i - 1] : 0;
+            double prevPpav1 = i >= 1 ? ppav1List[i - 1] : 0;
 
             var signal = GetCompareSignal(pp1 - ppav1, prevPp1 - prevPpav1);
             signalsList.Add(signal);
@@ -584,102 +584,102 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "Pivot1", pp1List },
+            { "Math.PIvot1", pp1List },
             { "Signal1", ppav1List },
-            { "Pivot2", pp2List },
+            { "Math.PIvot2", pp2List },
             { "Signal2", ppav2List },
-            { "Pivot3", pp3List },
+            { "Math.PIvot3", pp3List },
             { "Signal3", ppav3List }
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pp1List;
-        stockData.IndicatorName = IndicatorName.PivotPointAverage;
+        stockData.IndicatorName = IndicatorName.Math.PIvotPointAverage;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Demark Pivot Points
+    /// Calculates the Demark Math.PIvot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateDemarkPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateDemarkMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
-        List<decimal> pivotList = new();
-        List<decimal> resistanceLevel1List = new();
-        List<decimal> supportLevel1List = new();
+        List<double> pivotList = new();
+        List<double> resistanceLevel1List = new();
+        List<double> supportLevel1List = new();
         List<Signal> signalsList = new();
         var (inputList, highList, lowList, openList, _) = GetInputValuesList(stockData, inputLength);
 
         for (int i = 0; i < inputList.Count; i++)
         {
-            decimal currentClose = inputList[i];
-            decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
-            decimal prevOpen = i >= 1 ? openList[i - 1] : 0;
-            decimal prevLow = i >= 1 ? lowList[i - 1] : 0;
-            decimal prevHigh = i >= 1 ? highList[i - 1] : 0;
-            decimal x = prevClose < prevOpen ? prevHigh + (2 * prevLow) + prevClose : prevClose > prevOpen ? (2 * prevHigh) + prevLow + prevClose :
+            double currentClose = inputList[i];
+            double prevClose = i >= 1 ? inputList[i - 1] : 0;
+            double prevOpen = i >= 1 ? openList[i - 1] : 0;
+            double prevLow = i >= 1 ? lowList[i - 1] : 0;
+            double prevHigh = i >= 1 ? highList[i - 1] : 0;
+            double x = prevClose < prevOpen ? prevHigh + (2 * prevLow) + prevClose : prevClose > prevOpen ? (2 * prevHigh) + prevLow + prevClose :
                 prevClose == prevOpen ? prevHigh + prevLow + (2 * prevClose) : prevClose;
 
-            decimal prevPivot = pivotList.LastOrDefault();
-            decimal pivot = x / 4;
+            double prevMath.PIvot = pivotList.LastOrDefault();
+            double pivot = x / 4;
             pivotList.AddRounded(pivot);
 
-            decimal ratio = x / 2;
-            decimal supportLevel1 = ratio - prevHigh;
+            double ratio = x / 2;
+            double supportLevel1 = ratio - prevHigh;
             supportLevel1List.AddRounded(supportLevel1);
 
-            decimal resistanceLevel1 = ratio - prevLow;
+            double resistanceLevel1 = ratio - prevLow;
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
-            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevPivot);
+            var signal = GetCompareSignal(currentClose - pivot, prevClose - prevMath.PIvot);
             signalsList.Add(signal);
         }
 
         stockData.OutputValues = new()
         {
-            { "Pivot", pivotList },
+            { "Math.PIvot", pivotList },
             { "S1", supportLevel1List },
             { "R1", resistanceLevel1List }
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.DemarkPivotPoints;
+        stockData.IndicatorName = IndicatorName.DemarkMath.PIvotPoints;
 
         return stockData;
     }
 
     /// <summary>
-    /// Calculates the Dynamic Pivot Points
+    /// Calculates the Dynamic Math.PIvot Points
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
-    public static StockData CalculateDynamicPivotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
+    public static StockData CalculateDynamicMath.PIvotPoints(this StockData stockData, InputLength inputLength = InputLength.Day)
     {
-        List<decimal> resistanceLevel1List = new();
-        List<decimal> supportLevel1List = new();
-        List<decimal> pivotList = new();
+        List<double> resistanceLevel1List = new();
+        List<double> supportLevel1List = new();
+        List<double> pivotList = new();
         List<Signal> signalsList = new();
         var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData, inputLength);
 
         for (int i = 0; i < inputList.Count; i++)
         {
-            decimal currentClose = inputList[i];
-            decimal prevHigh = i >= 1 ? highList[i - 1] : 0;
-            decimal prevLow = i >= 1 ? lowList[i - 1] : 0;
-            decimal prevClose = i >= 1 ? inputList[i - 1] : 0;
+            double currentClose = inputList[i];
+            double prevHigh = i >= 1 ? highList[i - 1] : 0;
+            double prevLow = i >= 1 ? lowList[i - 1] : 0;
+            double prevClose = i >= 1 ? inputList[i - 1] : 0;
 
-            decimal pivot = (prevHigh + prevLow + prevClose) / 3;
+            double pivot = (prevHigh + prevLow + prevClose) / 3;
             pivotList.AddRounded(pivot);
 
-            decimal prevSupportLevel1 = supportLevel1List.LastOrDefault();
-            decimal supportLevel1 = pivot - (prevHigh - pivot);
+            double prevSupportLevel1 = supportLevel1List.LastOrDefault();
+            double supportLevel1 = pivot - (prevHigh - pivot);
             supportLevel1List.AddRounded(supportLevel1);
 
-            decimal prevResistanceLevel1 = resistanceLevel1List.LastOrDefault();
-            decimal resistanceLevel1 = pivot + (pivot - prevLow);
+            double prevResistanceLevel1 = resistanceLevel1List.LastOrDefault();
+            double resistanceLevel1 = pivot + (pivot - prevLow);
             resistanceLevel1List.AddRounded(resistanceLevel1);
 
             var signal = GetBullishBearishSignal(currentClose - resistanceLevel1, prevClose - prevResistanceLevel1, 
@@ -689,13 +689,13 @@ public static partial class Calculations
 
         stockData.OutputValues = new()
         {
-            { "Pivot", pivotList },
+            { "Math.PIvot", pivotList },
             { "S1", supportLevel1List },
             { "R1", resistanceLevel1List }
         };
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = pivotList;
-        stockData.IndicatorName = IndicatorName.DynamicPivotPoints;
+        stockData.IndicatorName = IndicatorName.DynamicMath.PIvotPoints;
 
         return stockData;
     }

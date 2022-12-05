@@ -132,7 +132,7 @@ public enum IndicatorName
     [Category(IndicatorType.Volatility)]
     CalmarRatio,
     [Category(IndicatorType.SupportAndResistance)]
-    CamarillaPivotPoints,
+    CamarillaMath.PIvotPoints,
     [Category(IndicatorType.Momentum)]
     CCTStochRelativeStrengthIndex,
     [Category(IndicatorType.Momentum)]
@@ -224,7 +224,7 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     DemandOscillator,
     [Category(IndicatorType.SupportAndResistance)]
-    DemarkPivotPoints,
+    DemarkMath.PIvotPoints,
     [Category(IndicatorType.Momentum)]
     DemarkPressureRatioV1,
     [Category(IndicatorType.Momentum)]
@@ -286,7 +286,7 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     DynamicMomentumOscillator,
     [Category(IndicatorType.SupportAndResistance)]
-    DynamicPivotPoints,
+    DynamicMath.PIvotPoints,
     [Category(IndicatorType.SupportAndResistance)]
     DynamicSupportAndResistance,
     [Category(IndicatorType.Trend)]
@@ -660,7 +660,7 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     FearAndGreedIndicator,
     [Category(IndicatorType.SupportAndResistance)]
-    FibonacciPivotPoints,
+    FibonacciMath.PIvotPoints,
     [Category(IndicatorType.SupportAndResistance)]
     FibonacciRetrace,
     [Category(IndicatorType.Trend)]
@@ -676,7 +676,7 @@ public enum IndicatorName
     [Category(IndicatorType.SupportAndResistance)]
     FlaggingBands,
     [Category(IndicatorType.SupportAndResistance)]
-    FloorPivotPoints,
+    FloorMath.PIvotPoints,
     [Category(IndicatorType.Momentum)]
     FoldedRelativeStrengthIndex,
     [Category(IndicatorType.Volume)]
@@ -1048,9 +1048,9 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     PhaseChangeIndex,
     [Category(IndicatorType.Momentum)]
-    PivotDetectorOscillator,
+    Math.PIvotDetectorOscillator,
     [Category(IndicatorType.Trend)]
-    PivotPointAverage,
+    Math.PIvotPointAverage,
     [Category(IndicatorType.Momentum)]
     PolarizedFractalEfficiency,
     [Category(IndicatorType.Trend)]
@@ -1274,7 +1274,7 @@ public enum IndicatorName
     [Category(IndicatorType.Volatility)]
     StandardDeviationVolatility,
     [Category(IndicatorType.SupportAndResistance)]
-    StandardPivotPoints,
+    StandardMath.PIvotPoints,
     [Category(IndicatorType.Trend)]
     StationaryExtrapolatedLevels,
     [Category(IndicatorType.Momentum)]
@@ -1544,7 +1544,7 @@ public enum IndicatorName
     [Category(IndicatorType.Momentum)]
     WoodieCommodityChannelIndex,
     [Category(IndicatorType.SupportAndResistance)]
-    WoodiePivotPoints,
+    WoodieMath.PIvotPoints,
     [Category(IndicatorType.Volume)]
     ZDistanceFromVwap,
     [Category(IndicatorType.Momentum)]

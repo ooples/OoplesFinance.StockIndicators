@@ -33,10 +33,10 @@ public static class CalculationsHelper
     /// <param name="fastLength"></param>
     /// <param name="slowLength"></param>
     /// <returns></returns>
-    public static List<decimal> GetMovingAverageList(StockData stockData, MovingAvgType movingAvgType, int length, List<decimal>? customValuesList = null, 
+    public static List<double> GetMovingAverageList(StockData stockData, MovingAvgType movingAvgType, int length, List<double>? customValuesList = null, 
         int? fastLength = null, int? slowLength = null)
     {
-        List<decimal> movingAvgList = new();
+        List<double> movingAvgList = new();
 
         if (customValuesList != null)
         {
@@ -539,15 +539,15 @@ public static class CalculationsHelper
     /// <param name="inputName">Name of the input.</param>
     /// <param name="stockData">The stock data.</param>
     /// <returns></returns>
-    public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> closeList,
-        List<decimal> volumeList) GetInputValuesList(InputName inputName, StockData stockData)
+    public static (List<double> inputList, List<double> highList, List<double> lowList, List<double> openList, List<double> closeList,
+        List<double> volumeList) GetInputValuesList(InputName inputName, StockData stockData)
     {
-        List<decimal> highList;
-        List<decimal> lowList;
-        List<decimal> openList;
-        List<decimal> closeList;
-        List<decimal> volumeList;
-        List<decimal> inputList = inputName switch
+        List<double> highList;
+        List<double> lowList;
+        List<double> openList;
+        List<double> closeList;
+        List<double> volumeList;
+        List<double> inputList = inputName switch
         {
             InputName.Close => stockData.ClosePrices,
             InputName.Low => stockData.LowPrices,
@@ -566,7 +566,7 @@ public static class CalculationsHelper
 
         if (inputList.Count > 0)
         {
-            decimal sum = inputList.Sum();
+            double sum = inputList.Sum();
 
             if (inputList.SequenceEqual(stockData.Volumes) || sum < stockData.LowPrices.Sum() || sum > stockData.HighPrices.Sum())
             {
@@ -600,14 +600,14 @@ public static class CalculationsHelper
     /// <returns></returns>
     /// <exception cref="OoplesFinance.StockIndicators.Exceptions.CalculationException">Calculations based off of 
     /// {stockData.IndicatorName} can't be completed because this indicator doesn't have a single output.</exception>
-    public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> volumeList) 
+    public static (List<double> inputList, List<double> highList, List<double> lowList, List<double> openList, List<double> volumeList) 
         GetInputValuesList(StockData stockData)
     {
-        List<decimal> inputList;
-        List<decimal> highList;
-        List<decimal> lowList;
-        List<decimal> openList;
-        List<decimal> volumeList;
+        List<double> inputList;
+        List<double> highList;
+        List<double> lowList;
+        List<double> openList;
+        List<double> volumeList;
 
         if (stockData.CustomValuesList != null && stockData.CustomValuesList.Count > 0)
         {
@@ -625,7 +625,7 @@ public static class CalculationsHelper
 
         if (inputList.Count > 0)
         {
-            decimal sum = inputList.Sum();
+            double sum = inputList.Sum();
 
             if (inputList.SequenceEqual(stockData.Volumes) || sum < stockData.LowPrices.Sum() || sum > stockData.HighPrices.Sum())
             {
@@ -652,20 +652,20 @@ public static class CalculationsHelper
     }
 
     /// <summary>
-    /// Gets input values using a fixed length according to the input length to be used with indicators such as Pivot Points or similar indicators
+    /// Gets input values using a fixed length according to the input length to be used with indicators such as Math.PIvot Points or similar indicators
     /// </summary>
     /// <param name="stockData"></param>
     /// <param name="inputLength"></param>
     /// <returns></returns>
     /// <exception cref="CalculationException"></exception>
-    public static (List<decimal> inputList, List<decimal> highList, List<decimal> lowList, List<decimal> openList, List<decimal> volumeList)
+    public static (List<double> inputList, List<double> highList, List<double> lowList, List<double> openList, List<double> volumeList)
         GetInputValuesList(StockData stockData, InputLength inputLength)
     {
-        List<decimal> inputList = new();
-        List<decimal> highList = new();
-        List<decimal> lowList = new();
-        List<decimal> openList = new();
-        List<decimal> volumeList = new();
+        List<double> inputList = new();
+        List<double> highList = new();
+        List<double> lowList = new();
+        List<double> openList = new();
+        List<double> volumeList = new();
 
         var groupedDatesParent = stockData.TickerDataList.GroupBy(x => x.Date.Date);
         for (int i = 0; i < groupedDatesParent.Count(); i++)
@@ -717,10 +717,10 @@ public static class CalculationsHelper
     /// <param name="prevEma">The previous ema.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static decimal CalculateEMA(decimal currentValue, decimal prevEma, int length = 14)
+    public static double CalculateEMA(double currentValue, double prevEma, int length = 14)
     {
-        decimal k = MinOrMax((decimal)2 / (length + 1), 0.99m, 0.01m);
-        decimal ema = (currentValue * k) + (prevEma * (1 - k));
+        double k = MinOrMax((double)2 / (length + 1), 0.99m, 0.01m);
+        double ema = (currentValue * k) + (prevEma * (1 - k));
 
         return ema;
     }
@@ -732,7 +732,7 @@ public static class CalculationsHelper
     /// <param name="currentLow">The current low.</param>
     /// <param name="prevClose">The previous close.</param>
     /// <returns></returns>
-    public static decimal CalculateTrueRange(decimal currentHigh, decimal currentLow, decimal prevClose)
+    public static double CalculateTrueRange(double currentHigh, double currentLow, double prevClose)
     {
         return Math.Max(currentHigh - currentLow, Math.Max(Math.Abs(currentHigh - prevClose), Math.Abs(currentLow - prevClose)));
     }
@@ -743,7 +743,7 @@ public static class CalculationsHelper
     /// <param name="currentValue">The current value.</param>
     /// <param name="previousValue">The previous value.</param>
     /// <returns></returns>
-    public static decimal CalculatePercentChange(decimal currentValue, decimal previousValue)
+    public static double CalculatePercentChange(double currentValue, double previousValue)
     {
         return previousValue != 0 ? (currentValue - previousValue) / Math.Abs(previousValue) * 100 : 0;
     }
@@ -754,23 +754,23 @@ public static class CalculationsHelper
     /// <param name="inputs">The inputs.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static (List<decimal>, List<decimal>) GetMaxAndMinValuesList(List<decimal> inputs, int length)
+    public static (List<double>, List<double>) GetMaxAndMinValuesList(List<double> inputs, int length)
     {
-        List<decimal> highestValuesList = new();
-        List<decimal> lowestValuesList = new();
-        List<decimal> inputList = new();
+        List<double> highestValuesList = new();
+        List<double> lowestValuesList = new();
+        List<double> inputList = new();
 
         for (int i = 0; i < inputs.Count; i++)
         {
-            decimal input = inputs[i];
+            double input = inputs[i];
             inputList.AddRounded(input);
 
             var list = inputList.TakeLastExt(Math.Max(length, 2)).ToList();
 
-            decimal highestValue = list.Max();
+            double highestValue = list.Max();
             highestValuesList.AddRounded(highestValue);
 
-            decimal lowestValue = list.Min();
+            double lowestValue = list.Min();
             lowestValuesList.AddRounded(lowestValue);
         }
 
@@ -784,26 +784,26 @@ public static class CalculationsHelper
     /// <param name="lowList">The low list.</param>
     /// <param name="length">The length.</param>
     /// <returns></returns>
-    public static (List<decimal>, List<decimal>) GetMaxAndMinValuesList(List<decimal> highList, List<decimal> lowList, int length)
+    public static (List<double>, List<double>) GetMaxAndMinValuesList(List<double> highList, List<double> lowList, int length)
     {
-        List<decimal> highestList = new();
-        List<decimal> lowestList = new();
-        List<decimal> tempHighList = new();
-        List<decimal> tempLowList = new();
+        List<double> highestList = new();
+        List<double> lowestList = new();
+        List<double> tempHighList = new();
+        List<double> tempLowList = new();
         var count = highList.Count == lowList.Count ? highList.Count : 0;
 
         for (int i = 0; i < count; i++)
         {
-            decimal high = highList[i];
+            double high = highList[i];
             tempHighList.AddRounded(high);
 
-            decimal low = lowList[i];
+            double low = lowList[i];
             tempLowList.AddRounded(low);
 
-            decimal highest = tempHighList.TakeLastExt(length).Max();
+            double highest = tempHighList.TakeLastExt(length).Max();
             highestList.AddRounded(highest);
 
-            decimal lowest = tempLowList.TakeLastExt(length).Min();
+            double lowest = tempLowList.TakeLastExt(length).Min();
             lowestList.AddRounded(lowest);
         }
 
@@ -811,11 +811,11 @@ public static class CalculationsHelper
     }
 
     /// <summary>
-    /// Rounds the incoming value to a default of 4 decimal points
+    /// Rounds the incoming value to a default of 4 double points
     /// </summary>
     /// <param name="list">The list.</param>
     /// <param name="value">The value.</param>
-    public static void AddRounded(this List<decimal> list, decimal value)
+    public static void AddRounded(this List<double> list, double value)
     {
         list.Add(Math.Round(value, 4));
     }
@@ -827,7 +827,7 @@ public static class CalculationsHelper
     /// <param name="minIndex"></param>
     /// <param name="currentValue"></param>
     /// <returns></returns>
-    public static decimal MinPastValues(int currentIndex, int minIndex, decimal currentValue)
+    public static double MinPastValues(int currentIndex, int minIndex, double currentValue)
     {
         return currentIndex >= minIndex ? currentValue : 0;
     }
@@ -885,99 +885,13 @@ public static class CalculationsHelper
     /// <param name="sequence"></param>
     /// <param name="percentile"></param>
     /// <returns></returns>
-    public static decimal PercentileNearestRank(this IEnumerable<decimal> sequence, decimal percentile)
+    public static double PercentileNearestRank(this IEnumerable<double> sequence, double percentile)
     {
         var list = sequence.OrderBy(i => i).ToList();
         var n = list.Count;
         int rank = n > 0 ? (int)Math.Ceiling(percentile / 100 * n) : 0;
 
         return list[Math.Max(rank - 1, 0)];
-    }
-
-    /// <summary>
-    /// Calculates the median of a sequence of doubles.
-    /// </summary>
-    /// <param name="sequence">The sequence to operate on.</param>
-    /// <returns>The median of the sequence.</returns>
-    public static decimal Median(this IEnumerable<decimal> sequence)
-    {
-        var list = sequence.ToList();
-        var mid = (list.Count - 1) / 2;
-        return list.NthOrderStatistic(mid);
-    }
-
-    /// <summary>
-    /// Calculates the median of a sequence of elements.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in sequence.</typeparam>
-    /// <param name="sequence">The sequence to operate on.</param>
-    /// <param name="getValue">Logic to get a double from each element.</param>
-    /// <returns>The median of the sequence.</returns>
-    public static decimal Median<T>(this IEnumerable<T> sequence, Func<T, decimal> getValue) => Median(sequence.Select(getValue));
-
-    /// <summary>
-    /// Gets the median member of a list of elements.
-    /// </summary>
-    /// <typeparam name="T">Type of elements in the list.</typeparam>
-    /// <param name="list">The list to operate on.</param>
-    /// <returns>The median of the list.</returns>
-    public static T Median<T>(this IList<T> list) where T : IComparable<T> => list.NthOrderStatistic((list.Count - 1) / 2);
-
-    /// <summary>
-    /// Partitions the given list around a pivot element such that all elements on left of pivot are less than or equal to pivot
-    /// Elements to right of the pivot are guaranteed greater than the pivot. Can be used for sorting N-order statistics such
-    /// as median finding algorithms.
-    /// Pivot is selected randomly if random number generator is supplied else its selected as last element in the list.
-    /// </summary>
-    private static int Partition<T>(this IList<T> list, int start, int end, Random? rnd = null) where T : IComparable<T>
-    {
-        if (rnd != null) list.Swap(end, rnd.Next(start, end));
-        var pivot = list[end];
-        var lastLow = start - 1;
-        for (var i = start; i < end; i++)
-            if (list[i].CompareTo(pivot) <= 0) list.Swap(i, ++lastLow);
-        list.Swap(end, ++lastLow);
-        return lastLow;
-    }
-
-    /// <summary>
-    /// Returns Nth smallest element from the list. Here n starts from 0 so that n=0 returns minimum, n=1 returns 2nd smallest element etc.
-    /// Note: specified list would be mutated in the process.
-    /// </summary>
-    public static T NthOrderStatistic<T>(this IList<T> list, int n, Random? rnd = null) where T : IComparable<T> =>
-        NthOrderStatistic(list, n, 0, list.Count - 1, rnd); //-V3106
-    /// <summary>
-    /// Gets Nth smallest element from a list
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
-    /// <param name="n"></param>
-    /// <param name="start"></param>
-    /// <param name="end"></param>
-    /// <param name="rnd"></param>
-    /// <returns></returns>
-    private static T NthOrderStatistic<T>(this IList<T> list, int n, int start, int end, Random? rnd) where T : IComparable<T>
-    {
-        while (true)
-        {
-            var pivotIndex = list.Partition(start, end, rnd);
-            if (pivotIndex == n) return list[pivotIndex];
-            if (n < pivotIndex) end = pivotIndex - 1;
-            else start = pivotIndex + 1;
-        }
-    }
-
-    /// <summary>
-    /// Swap two elements positions in a list.
-    /// </summary>
-    /// <typeparam name="T">Type of elements.</typeparam>
-    /// <param name="list">The list to swap on.</param>
-    /// <param name="i">The first element position to swap.</param>
-    /// <param name="j">The second element position to swap.</param>
-    public static void Swap<T>(this IList<T> list, int i, int j)
-    {
-        if (i == j) return;
-        (list[j], list[i]) = (list[i], list[j]);
     }
 
     /// <summary>
@@ -990,10 +904,10 @@ public static class CalculationsHelper
     /// <param name="newMin"></param>
     /// <param name="isReversed"></param>
     /// <returns></returns>
-    public static decimal RescaleValue(decimal value, decimal oldMax, decimal oldMin, decimal newMax, decimal newMin, bool isReversed = false)
+    public static double RescaleValue(double value, double oldMax, double oldMin, double newMax, double newMin, bool isReversed = false)
     {
-        decimal d = isReversed ? (oldMax - value) : (value - oldMin);
-        decimal dRatio = oldMax - oldMin != 0 ? d / (oldMax - oldMin) : 0;
+        double d = isReversed ? (oldMax - value) : (value - oldMin);
+        double dRatio = oldMax - oldMin != 0 ? d / (oldMax - oldMin) : 0;
 
         return (dRatio * (newMax - newMin)) + newMin;
     }
@@ -1004,14 +918,7 @@ public static class CalculationsHelper
     /// <param name="stockData"></param>
     public static void Clear(this StockData stockData)
     {
-        if (stockData.SignalsList != null)
-        {
-            stockData.SignalsList.Clear();
-        }
-        
-        if (stockData.CustomValuesList != null)
-        {
-            stockData.CustomValuesList.Clear();
-        }
+        stockData.SignalsList?.Clear();
+        stockData.CustomValuesList?.Clear();
     }
 }

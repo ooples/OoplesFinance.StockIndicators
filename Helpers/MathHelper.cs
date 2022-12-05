@@ -12,33 +12,14 @@ namespace OoplesFinance.StockIndicators.Helpers;
 
 public static class MathHelper
 {
-    public const decimal Pi = 3.1415926535897931m;
-
     /// <summary>
     /// Logs the specified value.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns></returns>
-    public static decimal Log(decimal value)
+    public static double Math.Log(double value)
     {
-        if (value > 0)
-        {
-            return (decimal)Math.Log((double)value);
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    /// <summary>
-    /// Log10s the specified value.
-    /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public static decimal Log10(decimal value)
-    {
-        return (decimal)Math.Log10((double)value);
+        return value > 0 ? Math.Math.Log(value) : 0;
     }
 
     /// <summary>
@@ -46,66 +27,9 @@ public static class MathHelper
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns></returns>
-    public static decimal Sqrt(decimal value)
+    public static double Sqrt(double value)
     {
-        if (value < 0)
-        {
-            return 0;
-        }
-        else
-        {
-            return (decimal)Math.Sqrt((double)value);
-        }
-    }
-
-    /// <summary>
-    /// Calculates the Sine of a given value
-    /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public static decimal Sin(decimal value)
-    {
-        return (decimal)Math.Sin((double)value);
-    }
-
-    /// <summary>
-    /// Calculates the Cosine for a given value
-    /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public static decimal Cos(decimal value)
-    {
-        return (decimal)Math.Cos((double)value);
-    }
-
-    /// <summary>
-    /// Calculates the Arc Tangent for a given value
-    /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public static decimal Atan(decimal value)
-    {
-        return (decimal)Math.Atan((double)value);
-    }
-
-    /// <summary>
-    /// Calculates the Arc Sine for a given value
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static decimal Asin(decimal value)
-    {
-        return (decimal)Math.Asin((double)value);
-    }
-
-    /// <summary>
-    /// Calculates the Arc Cosine for a given value
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static decimal Acos(decimal value)
-    {
-        return (decimal)Math.Acos((double)value);
+        return value < 0 ? 0 : Math.Sqrt(value);
     }
 
     /// <summary>
@@ -113,9 +37,9 @@ public static class MathHelper
     /// </summary>
     /// <param name="val">The value to convert to degrees</param>
     /// <returns>The value in degrees</returns>
-    public static decimal ToDegrees(this decimal radianValue)
+    public static double ToDegrees(this double radianValue)
     {
-        return 180 / Pi * radianValue;
+        return 180 / Math.PI * radianValue;
     }
 
     /// <summary>
@@ -123,9 +47,9 @@ public static class MathHelper
     /// </summary>
     /// <param name="val">The value to convert to radians</param>
     /// <returns>The value in radians</returns>
-    public static decimal ToRadians(this decimal degreeValue)
+    public static double ToRadians(this double degreeValue)
     {
-        return Pi / 180 * degreeValue;
+        return Math.PI / 180 * degreeValue;
     }
 
     /// <summary>
@@ -134,17 +58,17 @@ public static class MathHelper
     /// <param name="value">The value.</param>
     /// <param name="power">The power.</param>
     /// <returns></returns>
-    public static decimal Pow(decimal value, decimal power)
+    public static double Pow(double value, double power)
     {
-        decimal result;
+        double result;
 
         try
         {
-            result = (decimal)Math.Pow((double)value, (double)power);
+            result = Math.Pow(value, power);
         }
         catch (OverflowException)
         {
-            result = decimal.MaxValue;
+            result = double.MaxValue;
         }
 
         return result;
@@ -155,17 +79,17 @@ public static class MathHelper
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns></returns>
-    public static decimal Exp(decimal value)
+    public static double Exp(double value)
     {
-        decimal result;
+        double result;
 
         try
         {
-            result = (decimal)Math.Exp((double)Math.Min(100, value));
+            result = Math.Exp(Math.Min(100, value));
         }
         catch (OverflowException)
         {
-            result = decimal.MaxValue - 1;
+            result = double.MaxValue - 1;
         }
         catch (Exception)
         {
@@ -194,7 +118,7 @@ public static class MathHelper
     /// <param name="maxValue">The maximum value.</param>
     /// <param name="minValue">The minimum value.</param>
     /// <returns></returns>
-    public static decimal MinOrMax(decimal value, decimal maxValue, decimal minValue)
+    public static double MinOrMax(double value, double maxValue, double minValue)
     {
         return Math.Min(Math.Max(value, minValue), maxValue);
     }

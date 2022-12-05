@@ -23,7 +23,7 @@ public static class SignalHelper
     /// <param name="overSoldNumber">The over sold number.</param>
     /// <param name="isReversed">if set to <c>true</c> [is reversed].</param>
     /// <returns></returns>
-    public static Signal GetRsiSignal(decimal currentSlope, decimal prevSlope, decimal currentRsi, decimal prevRsi, decimal overBoughtNumber, decimal overSoldNumber, bool isReversed = false)
+    public static Signal GetRsiSignal(double currentSlope, double prevSlope, double currentRsi, double prevRsi, double overBoughtNumber, double overSoldNumber, bool isReversed = false)
     {
         Signal signal;
 
@@ -60,7 +60,7 @@ public static class SignalHelper
     /// <param name="prevBearishSlope">The previous bearish slope.</param>
     /// <param name="isReversed">if set to <c>true</c> [is reversed].</param>
     /// <returns></returns>
-    public static Signal GetBullishBearishSignal(decimal bullishSlope, decimal prevBullishSlope, decimal bearishSlope, decimal prevBearishSlope, bool isReversed = false)
+    public static Signal GetBullishBearishSignal(double bullishSlope, double prevBullishSlope, double bearishSlope, double prevBearishSlope, bool isReversed = false)
     {
         Signal signal;
 
@@ -121,7 +121,7 @@ public static class SignalHelper
     /// <param name="prevSlope">The previous slope.</param>
     /// <param name="isReversed">if set to <c>true</c> [is reversed].</param>
     /// <returns></returns>
-    public static Signal GetCompareSignal(decimal currentSlope, decimal prevSlope, bool isReversed = false)
+    public static Signal GetCompareSignal(double currentSlope, double prevSlope, bool isReversed = false)
     {
         Signal signal;
 
@@ -161,7 +161,7 @@ public static class SignalHelper
     /// <param name="lowerBand">The lower band.</param>
     /// <param name="prevLowerBand">The previous lower band.</param>
     /// <returns></returns>
-    public static Signal GetBollingerBandsSignal(decimal currentSlope, decimal prevSlope, decimal currentValue, decimal prevValue, decimal upperBand, decimal prevUpperBand, decimal lowerBand, decimal prevLowerBand)
+    public static Signal GetBollingerBandsSignal(double currentSlope, double prevSlope, double currentValue, double prevValue, double upperBand, double prevUpperBand, double lowerBand, double prevLowerBand)
     {
         Signal signal;
 
@@ -197,7 +197,7 @@ public static class SignalHelper
     /// <param name="currentVolatility">The current volatility.</param>
     /// <param name="thresholdValue">The threshold value.</param>
     /// <returns></returns>
-    public static Signal GetVolatilitySignal(decimal currentSlope, decimal prevSlope, decimal currentVolatility, decimal thresholdValue)
+    public static Signal GetVolatilitySignal(double currentSlope, double prevSlope, double currentVolatility, double thresholdValue)
     {
         Signal signal;
 
