@@ -65,7 +65,7 @@ public static partial class Calculations
     /// <param name="threshold"></param>
     /// <returns></returns>
     public static StockData CalculateTrendPersistenceRate(this StockData stockData,
-        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20, int smoothLength = 5, double mult = 0.01m, double threshold = 1)
+        MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 20, int smoothLength = 5, double mult = 0.01, double threshold = 1)
     {
         List<double> ctrPList = new();
         List<double> ctrMList = new();
@@ -968,7 +968,7 @@ public static partial class Calculations
             double esa = emaList[i];
             double d = dList[i];
 
-            double ci = d != 0 ? (ap - esa) / (0.015m * d) : 0;
+            double ci = d != 0 ? (ap - esa) / (0.015 * d) : 0;
             ciList.AddRounded(ci);
         }
 
@@ -1006,7 +1006,7 @@ public static partial class Calculations
     /// <param name="percent"></param>
     /// <returns></returns>
     public static StockData CalculateOptimizedTrendTracker(this StockData stockData, MovingAvgType maType = MovingAvgType.VariableIndexDynamicAverage,
-        int length = 2, double percent = 1.4m)
+        int length = 2, double percent = 1.4)
     {
         List<double> longStopList = new();
         List<double> shortStopList = new();
@@ -1021,7 +1021,7 @@ public static partial class Calculations
             double currentValue = inputList[i];
             double prevValue = i >= 1 ? inputList[i - 1] : 0;
             double ma = maList[i];
-            double fark = ma * percent * 0.01m;
+            double fark = ma * percent * 0.01;
 
             double prevLongStop = longStopList.LastOrDefault();
             double longStop = ma - fark;
@@ -1180,7 +1180,7 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="cd"></param>
     /// <returns></returns>
-    public static StockData CalculateCoralTrendIndicator(this StockData stockData, int length = 21, double cd = 0.4m)
+    public static StockData CalculateCoralTrendIndicator(this StockData stockData, int length = 21, double cd = 0.4)
     {
         List<double> i1List = new();
         List<double> i2List = new();

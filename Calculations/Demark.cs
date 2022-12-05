@@ -98,11 +98,11 @@ public static partial class Calculations
             double gapup = prevClose != 0 ? (currentOpen - prevClose) / prevClose : 0;
             double gapdown = currentOpen != 0 ? (prevClose - currentOpen) / currentOpen : 0;
 
-            double bp = gapup > 0.15m ? (currentHigh - prevClose + currentClose - currentLow) * currentVolume :
+            double bp = gapup > 0.15 ? (currentHigh - prevClose + currentClose - currentLow) * currentVolume :
                 currentClose > currentOpen ? (currentClose - currentOpen) * currentVolume : 0;
             bpList.AddRounded(bp);
 
-            double sp = gapdown > 0.15m ? (prevClose - currentLow + currentHigh - currentClose) * currentVolume :
+            double sp = gapdown > 0.15 ? (prevClose - currentLow + currentHigh - currentClose) * currentVolume :
                 currentClose < currentOpen ? (currentClose - currentOpen) * currentVolume : 0;
             spList.AddRounded(sp);
 

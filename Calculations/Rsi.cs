@@ -238,7 +238,7 @@ public static partial class Calculations
             double rsi = rsiList[i];
             double currentValue = inputList[i];
             double prevValue = i >= 1 ? inputList[i - 1] : 0;
-            double alpha = 2 * Math.Abs((rsi / 100) - 0.5m);
+            double alpha = 2 * Math.Abs((rsi / 100) - 0.5);
 
             double prevArsi = arsiList.LastOrDefault();
             double arsi = (alpha * currentValue) + ((1 - alpha) * prevArsi);
@@ -296,7 +296,7 @@ public static partial class Calculations
             double y = currentValue + (a * eAbsSma);
             yList.AddRounded(y);
 
-            var signal = GetRsiSignal(a - prevA1, prevA1 - prevA2, a, prevA1, 0.8m, -0.8m);
+            var signal = GetRsiSignal(a - prevA1, prevA1 - prevA2, a, prevA1, 0.8, -0.8);
             signalsList.Add(signal);
         }
 
@@ -729,7 +729,7 @@ public static partial class Calculations
             lossList.AddRounded(loss);
             avgRsiList.AddRounded(avgRsi);
 
-            var signal = GetRsiSignal(b - prevB1, prevB1 - prevB2, b, prevB1, 0.8m, 0.2m);
+            var signal = GetRsiSignal(b - prevB1, prevB1 - prevB2, b, prevB1, 0.8, 0.2);
             signalsList.Add(signal);
         }
 
@@ -900,7 +900,7 @@ public static partial class Calculations
         for (int i = 0; i < stockData.Count; i++)
         {
             double v1 = v1List[i];
-            double p = v1 != 0 ? 1 / v1 : 0.07m;
+            double p = v1 != 0 ? 1 / v1 : 0.07;
             double price = inputList[i];
             double prevPrice = i >= 1 ? inputList[i - 1] : 0;
             double aChg = price > prevPrice ? Math.Abs(price - prevPrice) : 0;

@@ -99,7 +99,7 @@ public static partial class Calculations
             double stc = a - b != 0 ? MinOrMax((src - b) / (a - b), 1, 0) : 0;
             stcList.AddRounded(stc);
 
-            var signal = GetRsiSignal(stc - prevStc1, prevStc1 - prevStc2, stc, prevStc1, 0.8m, 0.2m);
+            var signal = GetRsiSignal(stc - prevStc1, prevStc1 - prevStc2, stc, prevStc1, 0.8, 0.2);
             signalsList.Add(signal);
         }
 
@@ -308,7 +308,7 @@ public static partial class Calculations
 
             double numSum = numList.TakeLastExt(smoothLength).Sum();
             double denomSum = denomList.TakeLastExt(smoothLength).Sum();
-            double rbws = denomSum + 0.0001m != 0 ? MinOrMax(numSum / (denomSum + 0.0001m) * 100, 100, 0) : 0;
+            double rbws = denomSum + 0.0001 != 0 ? MinOrMax(numSum / (denomSum + 0.0001) * 100, 100, 0) : 0;
             double x = 0.1m * (rbws - 50);
 
             double ftso = MinOrMax((((Exp(2 * x) - 1) / (Exp(2 * x) + 1)) + 1) * 50, 100, 0);
@@ -406,7 +406,7 @@ public static partial class Calculations
         {
             double sk = stochasticRsiList[i];
 
-            double nsk = 0.1m * (sk - 50);
+            double nsk = 0.1 * (sk - 50);
             nskList.AddRounded(nsk);
         }
 
@@ -422,7 +422,7 @@ public static partial class Calculations
             double pso = expss + 1 != 0 ? MinOrMax((expss - 1) / (expss + 1), 1, -1) : 0;
             psoList.AddRounded(pso);
 
-            var signal = GetRsiSignal(pso - prevPso1, prevPso1 - prevPso2, pso, prevPso1, 0.9m, -0.9m);
+            var signal = GetRsiSignal(pso - prevPso1, prevPso1 - prevPso2, pso, prevPso1, 0.9, -0.9);
             signalsList.Add(signal);
         }
 
@@ -1066,10 +1066,10 @@ public static partial class Calculations
             double denom = (highest - lowest + pDenom) / 2;
             denomList.AddRounded(denom);
 
-            double stoch = denom != 0 ? MinOrMax((0.2m * num / denom) + (0.8m * prevStoch1), 1, 0) : 0;
+            double stoch = denom != 0 ? MinOrMax((0.2 * num / denom) + (0.8 * prevStoch1), 1, 0) : 0;
             stochList.AddRounded(stoch);
 
-            var signal = GetRsiSignal(stoch - prevStoch1, prevStoch1 - prevStoch2, stoch, prevStoch1, 0.8m, 0.2m);
+            var signal = GetRsiSignal(stoch - prevStoch1, prevStoch1 - prevStoch2, stoch, prevStoch1, 0.8, 0.2);
             signalsList.Add(signal);
         }
 

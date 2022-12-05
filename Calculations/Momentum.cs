@@ -195,7 +195,7 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData CalculateUltimateMomentumIndicator(this StockData stockData, InputName inputName = InputName.TypicalPrice,
         MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length1 = 13, int length2 = 19, int length3 = 21, int length4 = 39,
-        int length5 = 50, int length6 = 200, double stdDevMult = 1.5m)
+        int length5 = 50, int length6 = 200, double stdDevMult = 1.5)
     {
         List<double> utmList = new();
         List<Signal> signalsList = new();
@@ -220,7 +220,7 @@ public static partial class Calculations
             double decSum = decSumList[i];
             double ratio = decSum != 0 ? advSum / decSum : 0;
 
-            double utm = (200 * bbPct) + (100 * ratio) + (2 * mo) + (1.5m * mfi3) + (3 * mfi2) + (3 * mfi1);
+            double utm = (200 * bbPct) + (100 * ratio) + (2 * mo) + (1.5 * mfi3) + (3 * mfi2) + (3 * mfi1);
             utmList.AddRounded(utm);
         }
 

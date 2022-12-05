@@ -719,7 +719,7 @@ public static class CalculationsHelper
     /// <returns></returns>
     public static double CalculateEMA(double currentValue, double prevEma, int length = 14)
     {
-        double k = MinOrMax((double)2 / (length + 1), 0.99m, 0.01m);
+        double k = MinOrMax((double)2 / (length + 1), 0.99, 0.01);
         double ema = (currentValue * k) + (prevEma * (1 - k));
 
         return ema;

@@ -143,7 +143,7 @@ public static partial class Calculations
     /// <param name="increment">The increment.</param>
     /// <param name="maximum">The maximum.</param>
     /// <returns></returns>
-    public static StockData CalculateParabolicSAR(this StockData stockData, double start = 0.02m, double increment = 0.02m, double maximum = 0.2m)
+    public static StockData CalculateParabolicSAR(this StockData stockData, double start = 0.02, double increment = 0.02, double maximum = 0.2)
     {
         List<double> sarList = new();
         List<double> nextSarList = new();
@@ -424,7 +424,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        double pct = length * 0.01m;
+        double pct = length * 0.01;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -882,7 +882,7 @@ public static partial class Calculations
     /// <param name="factor"></param>
     /// <returns></returns>
     public static StockData CalculateElderSafeZoneStops(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage,
-        int length1 = 63, int length2 = 22, int length3 = 3, double factor = 2.5m)
+        int length1 = 63, int length2 = 22, int length3 = 3, double factor = 2.5)
     {
         List<double> safeZPlusList = new();
         List<double> safeZMinusList = new();

@@ -84,7 +84,7 @@ public static partial class Calculations
     /// <returns></returns>
     public static StockData Calculate4MovingAverageConvergenceDivergence(this StockData stockData,
         MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length1 = 5, int length2 = 8, int length3 = 10, int length4 = 17,
-        int length5 = 14, int length6 = 16, double blueMult = 4.3m, double yellowMult = 1.4m)
+        int length5 = 14, int length6 = 16, double blueMult = 4.3, double yellowMult = 1.4)
     {
         List<double> macd1List = new();
         List<double> macd2List = new();
@@ -421,7 +421,7 @@ public static partial class Calculations
     /// <param name="gamma"></param>
     /// <returns></returns>
     public static StockData CalculateMacZVwapIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, 
-        int fastLength = 12, int slowLength = 25, int signalLength = 9, int length1 = 20, int length2 = 25, double gamma = 0.02m)
+        int fastLength = 12, int slowLength = 25, int signalLength = 9, int length1 = 20, int length2 = 25, double gamma = 0.02)
     {
         List<double> macztList = new();
         List<double> l0List = new();

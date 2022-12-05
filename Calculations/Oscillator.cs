@@ -1018,11 +1018,11 @@ public static partial class Calculations
             double currentLowPrevClose = currentLow - prevClose;
             double t = currentHigh - currentLow;
             double k = Math.Max(Math.Abs(prevHighCurrentClose), Math.Abs(prevLowCurrentClose));
-            double r = currentHighPrevClose > Math.Max(currentLowPrevClose, t) ? currentHighPrevClose - (0.5m * currentLowPrevClose) + (0.25m * prevClosePrevOpen) :
-                currentLowPrevClose > Math.Max(currentHighPrevClose, t) ? currentLowPrevClose - (0.5m * currentHighPrevClose) + (0.25m * prevClosePrevOpen) :
-                t > Math.Max(currentHighPrevClose, currentLowPrevClose) ? t + (0.25m * prevClosePrevOpen) : 0;
-            double swingIndex = r != 0 && t != 0 ? 50 * ((prevClose - currentClose + (0.5m * prevClosePrevOpen) +
-                (0.25m * (currentClose - currentOpen))) / r) * (k / t) : 0;
+            double r = currentHighPrevClose > Math.Max(currentLowPrevClose, t) ? currentHighPrevClose - (0.5 * currentLowPrevClose) + (0.25 * prevClosePrevOpen) :
+                currentLowPrevClose > Math.Max(currentHighPrevClose, t) ? currentLowPrevClose - (0.5 * currentHighPrevClose) + (0.25 * prevClosePrevOpen) :
+                t > Math.Max(currentHighPrevClose, currentLowPrevClose) ? t + (0.25 * prevClosePrevOpen) : 0;
+            double swingIndex = r != 0 && t != 0 ? 50 * ((prevClose - currentClose + (0.5 * prevClosePrevOpen) +
+                (0.25 * (currentClose - currentOpen))) / r) * (k / t) : 0;
 
             double prevSwingIndex = accumulativeSwingIndexList.LastOrDefault();
             double accumulativeSwingIndex = prevSwingIndex + swingIndex;
@@ -1171,10 +1171,10 @@ public static partial class Calculations
             double prevHigh = i >= 1 ? highList[i - 1] : 0;
             double prevLow = i >= 1 ? lowList[i - 1] : 0;
 
-            double bulls0 = 0.5m * (Math.Abs(price1 - price2) + (price1 - price2));
+            double bulls0 = 0.5 * (Math.Abs(price1 - price2) + (price1 - price2));
             bulls0List.AddRounded(bulls0);
 
-            double bears0 = 0.5m * (Math.Abs(price1 - price2) - (price1 - price2));
+            double bears0 = 0.5 * (Math.Abs(price1 - price2) - (price1 - price2));
             bears0List.AddRounded(bears0);
 
             double bulls1 = price1 - lowest;
@@ -1183,10 +1183,10 @@ public static partial class Calculations
             double bears1 = highest - price1;
             bears1List.AddRounded(bears1);
 
-            double bulls2 = 0.5m * (Math.Abs(high - prevHigh) + (high - prevHigh));
+            double bulls2 = 0.5 * (Math.Abs(high - prevHigh) + (high - prevHigh));
             bulls2List.AddRounded(bulls2);
 
-            double bears2 = 0.5m * (Math.Abs(prevLow - low) + (prevLow - low));
+            double bears2 = 0.5 * (Math.Abs(prevLow - low) + (prevLow - low));
             bears2List.AddRounded(bears2);
         }
 
@@ -1506,7 +1506,7 @@ public static partial class Calculations
             double prevZmbti2 = i >= 2 ? zmbtiList[i - 2] : 0;
             double zmbti = zmbtiList[i];
 
-            var signal = GetRsiSignal(zmbti - prevZmbti1, prevZmbti1 - prevZmbti2, zmbti, prevZmbti1, 0.615m, 0.4m);
+            var signal = GetRsiSignal(zmbti - prevZmbti1, prevZmbti1 - prevZmbti2, zmbti, prevZmbti1, 0.615, 0.4);
             signalsList.Add(signal);
         }
 
@@ -1727,7 +1727,7 @@ public static partial class Calculations
     /// <param name="lowerThreshold"></param>
     /// <returns></returns>
     public static StockData CalculateBayesianOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
-        int length = 20, double stdDevMult = 2.5m, double lowerThreshold = 15)
+        int length = 20, double stdDevMult = 2.5, double lowerThreshold = 15)
     {
         List<double> probBbUpperUpSeqList = new();
         List<double> probBbUpperDownSeqList = new();
@@ -3779,7 +3779,7 @@ public static partial class Calculations
             {
                 double prevValue = i >= j ? inputList[i - j] : 0;
                 double x = j / (double)(length - 1);
-                double win = 0.42m - (0.5 * Math.Cos(2 * Math.PI * x)) + (0.08 * Math.Cos(4 * Math.PI * x));
+                double win = 0.42 - (0.5 * Math.Cos(2 * Math.PI * x)) + (0.08 * Math.Cos(4 * Math.PI * x));
                 double w = Math.Sin(2 * Math.PI * j / length) * win;
                 sum += prevValue * w;
             }
@@ -4637,7 +4637,7 @@ public static partial class Calculations
     /// <param name="ratio"></param>
     /// <returns></returns>
     public static StockData CalculateFastandSlowKurtosisOscillator(this StockData stockData, MovingAvgType maType = MovingAvgType.WeightedMovingAverage,
-        int length = 3, double ratio = 0.03m)
+        int length = 3, double ratio = 0.03)
     {
         List<double> fskList = new();
         List<double> momentumList = new();
@@ -5245,7 +5245,7 @@ public static partial class Calculations
             double d = prevEma != 0 && ema != 0 ? MinOrMax((2 * (ema / prevEma / ((ema / prevEma) + (c * a)))) - 1, 1, 0) : 0;
             dList.AddRounded(d);
 
-            var signal = GetRsiSignal(d - prevD1, prevD1 - prevD2, d, prevD1, 0.8m, 0.2m);
+            var signal = GetRsiSignal(d - prevD1, prevD1 - prevD2, d, prevD1, 0.8, 0.2);
             signalsList.Add(signal);
         }
 
@@ -5302,8 +5302,8 @@ public static partial class Calculations
             double mn = mnList[i];
             double sd = sdList[i];
             double prevPk = i >= 1 ? pkList[i - 1] : 0;
-            double v1 = mn + (1.33m * sd) > 2.08m ? mn + (1.33m * sd) : 2.08m;
-            double v2 = mn - (1.33m * sd) < -1.92m ? mn - (1.33m * sd) : -1.92m;
+            double v1 = mn + (1.33 * sd) > 2.08 ? mn + (1.33 * sd) : 2.08;
+            double v2 = mn - (1.33 * sd) < -1.92 ? mn - (1.33 * sd) : -1.92;
 
             double prevLn = lnList.LastOrDefault();
             double ln = prevPk >= 0 && pk > 0 ? v1 : prevPk <= 0 && pk < 0 ? v2 : 0;
@@ -5696,7 +5696,7 @@ public static partial class Calculations
             double r = b != 0 ? a / b : 0;
             rList.AddRounded(r);
 
-            var signal = GetRsiSignal(r - prevR1, prevR1 - prevR2, r, prevR1, 0.5m, -0.5m);
+            var signal = GetRsiSignal(r - prevR1, prevR1 - prevR2, r, prevR1, 0.5, -0.5);
             signalsList.Add(signal);
         }
 
@@ -8156,7 +8156,7 @@ public static partial class Calculations
     /// <param name="alpha"></param>
     /// <returns></returns>
     public static StockData CalculateTurboScaler(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 50, 
-        double alpha = 0.5m)
+        double alpha = 0.5)
     {
         List<double> aList = new();
         List<double> bList = new();
@@ -8423,7 +8423,7 @@ public static partial class Calculations
             double mbb = mbbList[i];
             double prevMab = i >= 1 ? mabList[i - 1] : 0;
             double prevMbb = i >= 1 ? mbbList[i - 1] : 0;
-            double offs = 1.6185m * stdDev;
+            double offs = 1.6185 * stdDev;
 
             double prevUp = upList.LastOrDefault();
             double up = rsiSma + offs;
@@ -9295,7 +9295,7 @@ public static partial class Calculations
     /// <param name="alpha"></param>
     /// <returns></returns>
     public static StockData CalculateRecursiveDifferenciator(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
-        int length = 14, double alpha = 0.6m)
+        int length = 14, double alpha = 0.6)
     {
         List<double> bList = new();
         List<double> bChgList = new();
@@ -10594,7 +10594,7 @@ public static partial class Calculations
                 pdfc = prevC > bl && prevC <= bu ? pdf : pdfc;
             }
 
-            double pmo = lMin + ((imx - 0.5m) * rx);
+            double pmo = lMin + ((imx - 0.5) * rx);
             double mo = pdfmx != 0 ? 100 * (1 - (pdfc / pdfmx)) : 0;
             mo = prevC < pmo ? -mo : mo;
             moList.AddRounded(-mo);
@@ -10810,7 +10810,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (_, highList, lowList, _, _) = GetInputValuesList(stockData);
 
-        double alpha = length > 2 ? (double)2 / (length + 1) : 0.67m;
+        double alpha = length > 2 ? (double)2 / (length + 1) : 0.67;
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -11418,7 +11418,7 @@ public static partial class Calculations
             double c = a != 0 ? MinOrMax(b / a, 1, 0) : 0;
             cList.AddRounded(c);
 
-            var signal = GetRsiSignal(c - prevC1, prevC1 - prevC2, c, prevC1, 0.8m, 0.2m);
+            var signal = GetRsiSignal(c - prevC1, prevC1 - prevC2, c, prevC1, 0.8, 0.2);
             signalsList.Add(signal);
         }
 
@@ -11458,7 +11458,7 @@ public static partial class Calculations
             double sro = tr != 0 ? MinOrMax((currentHigh - currentOpen + (currentClose - currentLow)) / (2 * tr), 1, 0) : 0;
             sroList.AddRounded(sro);
 
-            var signal = GetRsiSignal(sro - prevSro1, prevSro1 - prevSro2, sro, prevSro1, 0.7m, 0.3m);
+            var signal = GetRsiSignal(sro - prevSro1, prevSro1 - prevSro2, sro, prevSro1, 0.7, 0.3);
             signalsList.Add(signal);
         }
 
@@ -11907,7 +11907,7 @@ public static partial class Calculations
             double currentValue = inputList[i];
             double sma = smaList[i];
             double stdDev = stdDevList[i];
-            double bound = sma - (0.2m * stdDev);
+            double bound = sma - (0.2 * stdDev);
 
             double above = currentValue > bound ? 1 : 0;
             aboveList.AddRounded(above);
@@ -11945,7 +11945,7 @@ public static partial class Calculations
     /// <param name="length"></param>
     /// <param name="factor"></param>
     /// <returns></returns>
-    public static StockData CalculateSuperTrendFilter(this StockData stockData, int length = 200, double factor = 0.9m)
+    public static StockData CalculateSuperTrendFilter(this StockData stockData, int length = 200, double factor = 0.9)
     {
         List<double> tList = new();
         List<double> srcList = new();
@@ -12086,7 +12086,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
         var (inputList, _, _, _, _) = GetInputValuesList(stockData);
 
-        double s = 0.01m * 100 * ((double)1 / length);
+        double s = 0.01 * 100 * ((double)1 / length);
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -12190,7 +12190,7 @@ public static partial class Calculations
         var (highestList1, lowestList1) = GetMaxAndMinValuesList(inputList, length);
         var (highestList2, lowestList2) = GetMaxAndMinValuesList(volumeList, length);
 
-        double af = length < 10 ? 0.25m : ((double)length / 32) - 0.0625m;
+        double af = length < 10 ? 0.25 : ((double)length / 32) - 0.0625;
         int smaLength = MinOrMax((int)Math.Ceiling((double)length / 2));
 
         var srcSmaList = GetMovingAverageList(stockData, maType, smaLength, inputList);

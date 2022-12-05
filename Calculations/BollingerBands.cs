@@ -313,7 +313,7 @@ public static partial class Calculations
             double atrDev = bbDiff != 0 ? currentAtr / bbDiff : 0;
             atrDevList.AddRounded(atrDev);
 
-            var signal = GetVolatilitySignal(currentValue - currentEma, prevValue - prevEma, atrDev, 0.5m);
+            var signal = GetVolatilitySignal(currentValue - currentEma, prevValue - prevEma, atrDev, 0.5);
             signalsList.Add(signal);
         }
 

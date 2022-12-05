@@ -21,7 +21,7 @@ public static partial class Calculations
     /// <param name="pct">The PCT.</param>
     /// <returns></returns>
     public static StockData CalculatePriceChannel(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 21, 
-        double pct = 0.06m)
+        double pct = 0.06)
     {
         List<double> upperPriceChannelList = new();
         List<double> lowerPriceChannelList = new();

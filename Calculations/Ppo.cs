@@ -486,8 +486,8 @@ public static partial class Calculations
     /// <param name="sc"></param>
     /// <param name="sp"></param>
     /// <returns></returns>
-    public static StockData CalculateDiNapoliPercentagePriceOscillator(this StockData stockData, double lc = 17.5185m, double sc = 8.3896m, 
-        double sp = 9.0503m)
+    public static StockData CalculateDiNapoliPercentagePriceOscillator(this StockData stockData, double lc = 17.5185, double sc = 8.3896, 
+        double sp = 9.0503)
     {
         List<double> ppoList = new();
         List<double> sList = new();

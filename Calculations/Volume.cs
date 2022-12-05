@@ -565,7 +565,7 @@ public static partial class Calculations
             double prevV1 = v1List.LastOrDefault();
             double v1 = currentClose > currentOpen ? range / ((2 * range) + currentOpen - currentClose) * currentVolume :
                 currentClose < currentOpen ? (range + currentClose - currentOpen) / ((2 * range) + currentClose - currentOpen) * currentVolume :
-                0.5m * currentVolume;
+                0.5 * currentVolume;
             v1List.AddRounded(v1);
 
             double prevV2 = v2List.LastOrDefault();
@@ -800,7 +800,7 @@ public static partial class Calculations
             double currentLow = lowList[i];
             double currentVolume = volumeList[i];
             double prevHalfRange = halfRangeList.LastOrDefault();
-            double halfRange = (currentHigh - currentLow) * 0.5m;
+            double halfRange = (currentHigh - currentLow) * 0.5;
             double boxRatio = currentHigh - currentLow != 0 ? currentVolume / (currentHigh - currentLow) : 0;
 
             double prevMidpointMove = midpointMoveList.LastOrDefault();
@@ -1008,7 +1008,7 @@ public static partial class Calculations
     /// <param name="bottom"></param>
     /// <returns></returns>
     public static StockData CalculateNegativeVolumeDisparityIndicator(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
-        int length = 33, int signalLength = 4, double top = 1.1m, double bottom = 0.9m)
+        int length = 33, int signalLength = 4, double top = 1.1, double bottom = 0.9)
     {
         List<double> nvdiList = new();
         List<double> bscList = new();
@@ -1203,7 +1203,7 @@ public static partial class Calculations
     /// <param name="factor"></param>
     /// <returns></returns>
     public static StockData CalculateFiniteVolumeElements(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage,
-        int length = 22, double factor = 0.3m)
+        int length = 22, double factor = 0.3)
     {
         List<double> fveList = new();
         List<double> bullList = new();
@@ -1479,7 +1479,7 @@ public static partial class Calculations
             double atr = atrList[i];
             double currentVolume = volumeList[i];
             double mf = tp - prevTp;
-            double mc = 0.1m * atr;
+            double mc = 0.1 * atr;
 
             double vmp = mf > mc ? currentVolume : 0;
             vmpList.AddRounded(vmp);
@@ -1858,7 +1858,7 @@ public static partial class Calculations
             double tmf = currentEmaVolume != 0 ? MinOrMax(smoothAd / currentEmaVolume, 1, -1) : 0;
             tmfList.AddRounded(tmf);
 
-            var signal = GetRsiSignal(tmf - prevTmf1, prevTmf1 - prevTmf2, tmf, prevTmf1, 0.2m, -0.2m);
+            var signal = GetRsiSignal(tmf - prevTmf1, prevTmf1 - prevTmf2, tmf, prevTmf1, 0.2, -0.2);
             signalsList.Add(signal);
         }
 

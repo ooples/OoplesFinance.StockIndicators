@@ -393,7 +393,7 @@ public static partial class Calculations
     /// <param name="threshold"></param>
     /// <returns></returns>
     public static StockData CalculateMayerMultiple(this StockData stockData, MovingAvgType maType = MovingAvgType.SimpleMovingAverage, int length = 200,
-        double threshold = 2.4m)
+        double threshold = 2.4)
     {
         List<double> mmList = new();
         List<Signal> signalsList = new();
@@ -465,7 +465,7 @@ public static partial class Calculations
             double b = stdDev != 0 ? aChgStdDev / stdDev : 0;
             bList.AddRounded(b);
 
-            var signal = GetVolatilitySignal(currentValue - currentEma, prevValue - prevEma, b, 0.5m);
+            var signal = GetVolatilitySignal(currentValue - currentEma, prevValue - prevEma, b, 0.5);
             signalsList.Add(signal);
         }
 
@@ -899,7 +899,7 @@ public static partial class Calculations
             double prevWma = i >= 1 ? wmaList[i - 1] : 0;
             double vswitch14 = vswitchList[i];
 
-            var signal = GetVolatilitySignal(currentValue - currentWma, prevValue - prevWma, vswitch14, 0.5m);
+            var signal = GetVolatilitySignal(currentValue - currentWma, prevValue - prevWma, vswitch14, 0.5);
             signalsList.Add(signal);
         }
 
@@ -1011,7 +1011,7 @@ public static partial class Calculations
             double abAvg = (a + b) / 2;
 
             double prevHv = hvList.LastOrDefault();
-            double hv = abAvg != 0 && a != b ? Sqrt((1 - (Pow(a, 0.25m) * Pow(b, 0.25m) / Pow(abAvg, 0.5m)))) : 0;
+            double hv = abAvg != 0 && a != b ? Sqrt(1 - (Pow(a, 0.25) * Pow(b, 0.25) / Pow(abAvg, 0.5))) : 0;
             hvList.AddRounded(hv);
 
             var signal = GetVolatilitySignal(currentValue - ema, prevValue - prevEma, hv, prevHv);
