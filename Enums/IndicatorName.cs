@@ -878,6 +878,8 @@ public enum IndicatorName
     [Category(IndicatorType.Volume)]
     MarketFacilitationIndex,
     [Category(IndicatorType.Volatility)]
+    MarketMeannessIndex,
+    [Category(IndicatorType.Volatility)]
     MartinRatio,
     [Category(IndicatorType.Momentum)]
     MassIndex,

@@ -309,7 +309,7 @@ public static partial class Calculations
             double numSum = numList.TakeLastExt(smoothLength).Sum();
             double denomSum = denomList.TakeLastExt(smoothLength).Sum();
             double rbws = denomSum + 0.0001 != 0 ? MinOrMax(numSum / (denomSum + 0.0001) * 100, 100, 0) : 0;
-            double x = 0.1m * (rbws - 50);
+            double x = 0.1 * (rbws - 50);
 
             double ftso = MinOrMax((((Exp(2 * x) - 1) / (Exp(2 * x) + 1)) + 1) * 50, 100, 0);
             ftsoList.AddRounded(ftso);

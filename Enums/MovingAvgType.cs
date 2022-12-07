@@ -63,6 +63,7 @@ public enum MovingAvgType
     EhlersMedianAverageAdaptiveFilter,
     EhlersMesaAdaptiveMovingAverage,
     EhlersModifiedOptimumEllipticFilter,
+    EhlersNoiseEliminationTechnology,
     EhlersOptimumEllipticFilter,
     EhlersRecursiveMedianFilter,
     EhlersSuperSmootherFilter,

@@ -8,6 +8,8 @@
 //     so if you are going to re-use or modify my code then I just ask
 //     that you include my copyright info and my contact info in a comment
 
+using OoplesFinance.StockIndicators.Models;
+
 namespace OoplesFinance.StockIndicators;
 
 public static partial class Calculations
@@ -476,6 +478,73 @@ public static partial class Calculations
         stockData.SignalsList = signalsList;
         stockData.CustomValuesList = bList;
         stockData.IndicatorName = IndicatorName.MotionSmoothnessIndex;
+
+        return stockData;
+    }
+
+    /// <summary>
+    /// Calculates the Market Meanness Index
+    /// </summary>
+    /// <param name="stockData"></param>
+    /// <param name="maType"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static StockData CalculateMarketMeannessIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.EhlersNoiseEliminationTechnology, int length = 100)
+    {
+        List<double> mmiList = new();
+        List<double> tempList = new();
+        List<Signal> signalsList = new();
+        var (inputList, _, _, _, _) = GetInputValuesList(stockData);
+
+        var maList = GetMovingAverageList(stockData, maType, length, inputList);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            double currentValue = inputList[i];
+            tempList.AddRounded(currentValue);
+
+            double median = tempList.TakeLastExt(length).Median();
+            int nl = 0, nh = 0;
+            for (int j = 1; j < length; j++)
+            {
+                var value1 = i >= j - 1 ? tempList[i - (j - 1)] : 0;
+                var value2 = i >= j ? tempList[i - j] : 0;
+
+                if (value1 > median && value1 > value2)
+                {
+                    nl++;
+                }
+                else if (value1 < median && value1 < value2)
+                {
+                    nh++;
+                }
+            }
+
+            double mmi = length != 1 ? 100 * (nl + nh) / (length - 1) : 0;
+            mmiList.AddRounded(mmi);
+        }
+
+        var mmiFilterList = GetMovingAverageList(stockData, maType, length, mmiList);
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            var mmiFilt = mmiFilterList[i];
+            var prevMmiFilt1 = i >= 1 ? mmiFilterList[i - 1] : 0;
+            var prevMmiFilt2 = i >= 2 ? mmiFilterList[i - 2] : 0;
+            var currentValue = inputList[i];
+            var currentMa = maList[i];
+
+            Signal signal = GetConditionSignal(currentValue < currentMa && ((mmiFilt > prevMmiFilt1 && prevMmiFilt1 < prevMmiFilt2) || (mmiFilt < prevMmiFilt1 && prevMmiFilt1 > prevMmiFilt2)), currentValue < currentMa && ((mmiFilt > prevMmiFilt1 && prevMmiFilt1 < prevMmiFilt2) || (mmiFilt < prevMmiFilt1 && prevMmiFilt1 > prevMmiFilt2)));
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "Mmi", mmiList },
+            { "MmiSmoothed", mmiFilterList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = mmiList;
+        stockData.IndicatorName = IndicatorName.MarketMeannessIndex;
 
         return stockData;
     }

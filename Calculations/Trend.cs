@@ -1123,10 +1123,10 @@ public static partial class Calculations
             double prevFcast = i >= forecastLength ? fcastList[i - forecastLength] : 0;
             double prevChg = i >= length ? chgList[i - length] : currentValue;
 
-            double chg = 0.9m * prevT;
+            double chg = 0.9 * prevT;
             chgList.AddRounded(chg);
 
-            double t = (0.9m * prevT) + (0.1m * currentValue) + (chg - prevChg);
+            double t = (0.9 * prevT) + (0.1 * currentValue) + (chg - prevChg);
             tList.AddRounded(t);
 
             double trend = tList.TakeLastExt(length).Average();
