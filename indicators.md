@@ -1365,6 +1365,8 @@ Ehlers Anticipate Indicator
 
 [Kirshenbaum Bands](https://www.motivewave.com/studies/kirshenbaum_bands.htm)
 
+[Market Meanness Index](https://www.tradingview.com/script/vNPcqAF2-Market-Meanness-Index-CC/)
+
 [Martin Ratio](https://www.motivewave.com/studies/martin_ratio.htm)
 
 [Mayer Multiple](https://www.tradingview.com/script/Ru56GH03-Mayer-Multiple/)
