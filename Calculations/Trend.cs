@@ -787,15 +787,15 @@ public static partial class Calculations
             double tempLongStop = currentValue - atrValue;
             double tempShortStop = currentValue + atrValue;
 
-            double prevLongStop = longStopList.LastOrDefault();
+            double prevLongStop = i >= 1 ? longStopList.LastOrDefault() : tempLongStop;
             double longStop = prevValue > prevLongStop ? Math.Max(tempLongStop, prevLongStop) : tempLongStop;
             longStopList.AddRounded(longStop);
 
-            double prevShortStop = shortStopList.LastOrDefault();
-            double shortStop = prevValue < prevShortStop ? Math.Max(tempShortStop, prevShortStop) : tempShortStop;
+            double prevShortStop = i >= 1 ? shortStopList.LastOrDefault() : tempShortStop;
+            double shortStop = prevValue < prevShortStop ? Math.Min(tempShortStop, prevShortStop) : tempShortStop;
             shortStopList.AddRounded(shortStop);
 
-            double prevDir = dirList.LastOrDefault();
+            double prevDir = i >= 1 ? dirList.LastOrDefault() : 1;
             double dir = prevDir == -1 && currentValue > prevShortStop ? 1 : prevDir == 1 && currentValue < prevLongStop ? -1 : prevDir;
             dirList.AddRounded(dir);
 

@@ -26,7 +26,7 @@ public static partial class Calculations
         List<Signal> signalsList = new();
 
         var (inputList, highList, lowList, _, _) = GetInputValuesList(stockData);
-        var emaList = GetMovingAverageList(stockData, maType, length, inputList);
+        var maList = GetMovingAverageList(stockData, maType, length, inputList);
 
         for (int i = 0; i < stockData.Count; i++)
         {
@@ -39,17 +39,17 @@ public static partial class Calculations
         }
 
         var atrList = GetMovingAverageList(stockData, maType, length, trList);
+        var atrMaList = GetMovingAverageList(stockData, maType, length, atrList);
         for (int i = 0; i < stockData.Count; i++)
         {
             double currentValue = inputList[i];
             double atr = atrList[i];
-            double currentEma = emaList[i];
+            double currentMa = maList[i];
             double prevValue = i >= 1 ? inputList[i - 1] : 0;
-            double prevEma = i >= 1 ? emaList[i - 1] : 0;
-            double prevAtr = i >= 1 ? atrList[i - 1] : 0;
-            double atrEma = CalculateEMA(atr, prevAtr, length);
+            double prevMa = i >= 1 ? maList[i - 1] : 0;
+            double atrMa = atrMaList[i];
 
-            var signal = GetVolatilitySignal(currentValue - currentEma, prevValue - prevEma, atr, atrEma);
+            var signal = GetVolatilitySignal(currentValue - currentMa, prevValue - prevMa, atr, atrMa);
             signalsList.Add(signal);
         }
 
