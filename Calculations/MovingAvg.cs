@@ -8,8 +8,6 @@
 //     so if you are going to re-use or modify my code then I just ask
 //     that you include my copyright info and my contact info in a comment
 
-using Nessos.LinqOptimizer.Core;
-
 namespace OoplesFinance.StockIndicators;
 
 public static partial class Calculations
@@ -34,7 +32,7 @@ public static partial class Calculations
             tempList.AddRounded(currentValue);
 
             double prevSma = smaList.LastOrDefault();
-            double sma = tempList.TakeLastExt(length).Average();
+            double sma = tempList.Count >= length ? tempList.TakeLastExt(length).Average() : 0;
             smaList.AddRounded(sma);
 
             Signal signal = GetCompareSignal(currentValue - sma, prevValue - prevSma);

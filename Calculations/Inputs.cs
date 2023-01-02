@@ -86,6 +86,42 @@ public static partial class Calculations
     }
 
     /// <summary>
+    /// Calculates the average price.
+    /// </summary>
+    /// <param name="stockData">The stock data.</param>
+    /// <returns></returns>
+    public static StockData CalculateAveragePrice(this StockData stockData)
+    {
+        List<double> avgPriceList = new();
+        List<Signal> signalsList = new();
+        var (closeList, _, _, openList, _) = GetInputValuesList(stockData);
+
+        for (int i = 0; i < stockData.Count; i++)
+        {
+            double currentOpen = openList[i];
+            double currentClose = closeList[i];
+            double prevAvgPrice1 = i >= 1 ? avgPriceList[i - 1] : 0;
+            double prevAvgPrice2 = i >= 2 ? avgPriceList[i - 2] : 0;
+
+            double avgPrice = (currentOpen + currentClose) / 2;
+            avgPriceList.AddRounded(avgPrice);
+
+            Signal signal = GetCompareSignal(avgPrice - prevAvgPrice1, prevAvgPrice1 - prevAvgPrice2);
+            signalsList.Add(signal);
+        }
+
+        stockData.OutputValues = new()
+        {
+            { "AveragePrice", avgPriceList }
+        };
+        stockData.SignalsList = signalsList;
+        stockData.CustomValuesList = avgPriceList;
+        stockData.IndicatorName = IndicatorName.AveragePrice;
+
+        return stockData;
+    }
+
+    /// <summary>
     /// Calculates the full typical price.
     /// </summary>
     /// <param name="stockData">The stock data.</param>

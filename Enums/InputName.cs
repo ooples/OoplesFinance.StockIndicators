@@ -23,5 +23,6 @@ public enum InputName
     Open,
     TypicalPrice,
     Volume,
-    WeightedClose
+    WeightedClose,
+    AveragePrice
 }

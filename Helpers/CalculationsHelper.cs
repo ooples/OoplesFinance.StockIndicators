@@ -8,17 +8,6 @@
 //     so if you are going to re-use or modify my code then I just ask
 //     that you include my copyright info and my contact info in a comment
 
-global using OoplesFinance.StockIndicators.Enums;
-global using OoplesFinance.StockIndicators.Exceptions;
-global using OoplesFinance.StockIndicators.Models;
-global using static OoplesFinance.StockIndicators.Helpers.MathHelper;
-global using static OoplesFinance.StockIndicators.Helpers.SignalHelper;
-global using static OoplesFinance.StockIndicators.Helpers.CalculationsHelper;
-global using MathNet.Numerics;
-global using MathNet.Numerics.Statistics;
-global using Nessos.LinqOptimizer.CSharp;
-global using System.Globalization;
-
 namespace OoplesFinance.StockIndicators.Helpers;
 
 public static class CalculationsHelper
@@ -561,6 +550,7 @@ public static class CalculationsHelper
             InputName.AdjustedClose => stockData.ClosePrices,
             InputName.Midpoint => stockData.CalculateMidpoint().CustomValuesList,
             InputName.Midprice => stockData.CalculateMidprice().CustomValuesList,
+            InputName.AveragePrice => stockData.CalculateAveragePrice().CustomValuesList,
             _ => stockData.ClosePrices,
         };
 

@@ -8,8 +8,6 @@
 //     so if you are going to re-use or modify my code then I just ask
 //     that you include my copyright info and my contact info in a comment
 
-global using OoplesFinance.StockIndicators.Interfaces;
-
 namespace OoplesFinance.StockIndicators.Models;
 
 [Serializable]
