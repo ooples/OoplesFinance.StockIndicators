@@ -1,0 +1,69 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="TestData\MovingAvg\**" />
+    <EmbeddedResource Remove="TestData\MovingAvg\**" />
+    <None Remove="TestData\MovingAvg\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="FluentAssertions" Version="6.8.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageReference Include="NSubstitute" Version="4.4.0" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="OoplesFinance.StockIndicators" Version="1.0.50" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TestData\BollingerBands\" />
+    <Folder Include="TestData\Chande\" />
+    <Folder Include="TestData\Demark\" />
+    <Folder Include="TestData\Ehlers\" />
+    <Folder Include="TestData\Inputs\" />
+    <Folder Include="TestData\Macd\" />
+    <Folder Include="TestData\Momentum\" />
+    <Folder Include="TestData\Wilder\" />
+    <Folder Include="TestData\Volume\" />
+    <Folder Include="TestData\Volatility\" />
+    <Folder Include="TestData\Trend\" />
+    <Folder Include="TestData\TrailingStop\" />
+    <Folder Include="TestData\Stochastic\" />
+    <Folder Include="TestData\Rsi\" />
+    <Folder Include="TestData\Ratio\" />
+    <Folder Include="TestData\PriceChannel\" />
+    <Folder Include="TestData\Ppo\" />
+    <Folder Include="TestData\PivotPoint\" />
+    <Folder Include="TestData\Oscillator\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestData\AAPL.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\MovingAverage\Sma.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\SP500.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
