@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OoplesFinance.StockIndicators", "src\OoplesFinance.StockIndicators.csproj", "{C2798B13-AEF3-419D-A4A3-9B81CF46BF60}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OoplesFinance.StockIndicators.Tests.Unit", "..\OoplesFinance.StockIndicators.Tests\OoplesFinance.StockIndicators.Tests.Unit.csproj", "{8D02D6D5-E340-49E1-8A42-40EA86315CDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OoplesFinance.StockIndicators.Tests.Unit", "tests\OoplesFinance.StockIndicators.Tests.Unit.csproj", "{8D02D6D5-E340-49E1-8A42-40EA86315CDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
