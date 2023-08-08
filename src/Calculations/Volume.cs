@@ -248,13 +248,14 @@ public static partial class Calculations
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
+    /// <param name="initialValue">The initial Nvi value</param>
     /// <returns></returns>
-    public static StockData CalculateNegativeVolumeIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 255)
+    public static StockData CalculateNegativeVolumeIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length = 255, int initialValue = 1000)
     {
         List<double> nviList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
-        const int initialNvi = 1000;
 
         for (var i = 0; i < stockData.Count; i++)
         {
@@ -262,10 +263,10 @@ public static partial class Calculations
             var currentVolume = volumeList[i];
             var prevClose = i >= 1 ? inputList[i - 1] : 0;
             var prevVolume = i >= 1 ? volumeList[i - 1] : 0;
-            var prevNvi = i >= 1 ? nviList[i - 1] : initialNvi;
+            var prevNvi = i >= 1 ? nviList[i - 1] : initialValue;
             var pctChg = CalculatePercentChange(currentClose, prevClose);
 
-            var nvi = currentVolume >= prevVolume ? prevNvi : prevNvi + (prevNvi * pctChg);
+            var nvi = currentVolume >= prevVolume ? prevNvi : prevNvi + pctChg;
             nviList.AddRounded(nvi);
         }
 
@@ -299,13 +300,14 @@ public static partial class Calculations
     /// <param name="stockData">The stock data.</param>
     /// <param name="maType">Type of the ma.</param>
     /// <param name="length">The length.</param>
+    /// <param name="initialValue">The initial Pvi value</param>
     /// <returns></returns>
-    public static StockData CalculatePositiveVolumeIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, int length = 255)
+    public static StockData CalculatePositiveVolumeIndex(this StockData stockData, MovingAvgType maType = MovingAvgType.ExponentialMovingAverage, 
+        int length = 255, int initialValue = 1000)
     {
         List<double> pviList = new();
         List<Signal> signalsList = new();
         var (inputList, _, _, _, volumeList) = GetInputValuesList(stockData);
-        const int initialPvi = 1000;
 
         for (var i = 0; i < stockData.Count; i++)
         {
@@ -313,10 +315,10 @@ public static partial class Calculations
             var currentVolume = volumeList[i];
             var prevClose = i >= 1 ? inputList[i - 1] : 0;
             var prevVolume = i >= 1 ? volumeList[i - 1] : 0;
-            var prevPvi = i >= 1 ? pviList[i - 1] : initialPvi;
+            var prevPvi = i >= 1 ? pviList[i - 1] : initialValue;
             var pctChg = CalculatePercentChange(currentClose, prevClose);
 
-            var pvi = currentVolume <= prevVolume ? prevPvi : prevPvi + (prevPvi * pctChg);
+            var pvi = currentVolume <= prevVolume ? prevPvi : prevPvi + pctChg;
             pviList.AddRounded(pvi);
         }
 
