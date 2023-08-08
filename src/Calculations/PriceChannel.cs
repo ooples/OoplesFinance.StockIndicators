@@ -51,7 +51,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperChannel", upperPriceChannelList },
             { "LowerChannel", lowerPriceChannelList },
@@ -98,7 +98,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperChannel", upperChannelList },
             { "LowerChannel", lowerChannelList },
@@ -148,7 +148,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", regressionList },
@@ -200,7 +200,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", smaList },
@@ -244,7 +244,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", highMaList },
             { "MiddleBand", midChannelList },
@@ -293,7 +293,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperEnvelopeList },
             { "MiddleBand", smaList },
@@ -350,7 +350,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", middleBandList },
@@ -403,7 +403,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", innerTopAtrChannelList },
             { "MiddleBand", smaList },
@@ -457,7 +457,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", umaList },
@@ -509,7 +509,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", smaList },
@@ -601,7 +601,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "S1", s1List },
             { "S2", s2List },
@@ -658,7 +658,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperList },
             { "LowerBand", lowerList }
@@ -711,7 +711,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", middleBandList },
@@ -741,7 +741,7 @@ public static partial class Calculations
         var lowerBandList = narrowChannelList.OutputValues["LowerBand"];
         var signalsList = narrowChannelList.SignalsList;
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", middleBandList },
@@ -790,7 +790,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", aList },
             { "MiddleBand", midList },
@@ -836,7 +836,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", middleBandList },
@@ -888,7 +888,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", highBandList },
             { "MiddleBand", tmaList2 },
@@ -976,7 +976,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "FastUpperBand", sctList },
             { "SlowUpperBand", mctList },
@@ -1058,7 +1058,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperExtremeBand", upperExtremeBandList },
             { "UpperOuterBand", upperOuterBandList },
@@ -1156,7 +1156,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand1", upper1List },
             { "UpperBand2", upper2List },
@@ -1224,7 +1224,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", aList },
             { "MiddleBand", tavgList },
@@ -1288,7 +1288,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", topList },
             { "MiddleBand", emaList },
@@ -1347,7 +1347,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", middleBandList },
@@ -1402,7 +1402,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperChannelList },
             { "MiddleBand", midChannelList },
@@ -1459,7 +1459,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperList },
             { "MiddleBand", basisList },
@@ -1522,7 +1522,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upSmaList },
             { "MiddleBand", middleBandList },
@@ -1575,7 +1575,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", ubandList },
             { "MiddleBand", maList },
@@ -1657,7 +1657,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", ubList },
             { "MiddleBand", medianAvgSmaList },
@@ -1719,7 +1719,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", suList },
             { "MiddleBand", middleBandList },
@@ -1797,7 +1797,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", middleBandList },
@@ -1855,7 +1855,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Support1", support1List },
             { "Support2", support2List },
@@ -1901,7 +1901,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "LowerBand", lowerBandList }
@@ -2026,7 +2026,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "K", kList },
             { "Os", osList },
@@ -2101,7 +2101,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", aList },
             { "MiddleBand", midList },
@@ -2174,7 +2174,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", aList },
             { "MiddleBand", midList },
@@ -2238,7 +2238,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", puList },
             { "MiddleBand", middleBandList },
@@ -2307,7 +2307,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", outerUpperBandList },
             { "MiddleBand", retEmaList },
@@ -2406,7 +2406,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Ch+1", chPlus1List },
             { "Ch-1", chMinus1List },
@@ -2479,7 +2479,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Tlh", tlhList },
             { "Clh", clhList },
@@ -2536,7 +2536,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", aList },
             { "MiddleBand", tsList },
@@ -2591,7 +2591,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", smaList },
@@ -2641,7 +2641,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upList },
             { "MiddleBand", midList },
@@ -2697,7 +2697,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", middleBandList },
@@ -2761,7 +2761,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", smaList },
@@ -2820,7 +2820,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", fastMaList },
@@ -2870,7 +2870,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", topList },
             { "MiddleBand", smaList },
@@ -2941,7 +2941,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", aMaList },
             { "MiddleBand", avgMaList },
@@ -2997,7 +2997,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", smaList },
@@ -3050,7 +3050,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", smaList },
@@ -3106,7 +3106,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperEnvelopeList },
             { "MiddleBand", middleEnvelopeList },
@@ -3149,7 +3149,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Dema1", dema1List },
             { "Dema2", dema2List }
@@ -3204,7 +3204,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Support", supportList },
             { "Resistance", resistanceList },
@@ -3254,7 +3254,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", topList },
             { "LowerBand", bottomList }
@@ -3325,7 +3325,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", butList },
             { "MiddleBand", dtList },
@@ -3385,7 +3385,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", aList },
             { "MiddleBand", avgList },
@@ -3437,7 +3437,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Support", suppList },
             { "Resistance", resList }
@@ -3498,7 +3498,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", yList },
@@ -3545,7 +3545,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", highestList },
             { "MiddleBand", scalperList },
@@ -3605,7 +3605,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperBandList },
             { "MiddleBand", middleBandList },
@@ -3655,7 +3655,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", aClassicList },
             { "MiddleBand", cClassicList },
@@ -3724,7 +3724,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "UpperBand", upperList },
             { "MiddleBand", aList },

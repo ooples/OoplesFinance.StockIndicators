@@ -55,7 +55,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Ppo", ppoList },
             { "Signal", ppoSignalList },
@@ -111,7 +111,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Pvo", pvoList },
             { "Signal", pvoSignalList },
@@ -221,7 +221,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Ppo1", ppo4List },
             { "Signal1", ppo4SignalLineList },
@@ -280,7 +280,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Ppo", ppoList },
             { "Signal", ppoSignalLineList },
@@ -337,7 +337,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Ppo", ppoList },
             { "Signal", ppoSignalLineList },
@@ -394,7 +394,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Ppo", ppoList },
             { "Signal", ppoSignalLineList },
@@ -462,7 +462,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Ppo", ppoList },
             { "Signal", ppoSignalLineList },
@@ -520,7 +520,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Ppo", ppoList },
             { "Signal", sList },
@@ -577,7 +577,7 @@ public static partial class Calculations
             signalsList.Add(signal);
         }
 
-        stockData.OutputValues = new()
+        stockData.OutputValues = new Dictionary<string, List<double>>
         {
             { "Ppo", ppoList },
             { "Signal", ppoSignalLineList },
