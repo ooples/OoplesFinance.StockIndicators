@@ -336,7 +336,7 @@ public static partial class Calculations
     /// <param name="length">The length.</param>
     /// <param name="offset">The offset.</param>
     /// <returns></returns>
-    public static StockData CalculateEndPointMovingAverage(this StockData stockData, int length = 11)
+    public static StockData CalculateEndPointMovingAverage(this StockData stockData, int length = 11, int offset = 4)
     {
         List<double> epmaList = new();
         List<Signal> signalsList = new();
@@ -350,7 +350,7 @@ public static partial class Calculations
             double sum = 0, weightedSum = 0;
             for (var j = 0; j <= length - 1; j++)
             {
-                double weight = length - j - length;
+                double weight = length - j - offset;
                 var prevValue = i >= j ? inputList[i - j] : 0;
 
                 sum += prevValue * weight;
