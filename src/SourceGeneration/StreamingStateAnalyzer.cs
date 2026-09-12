@@ -91,7 +91,7 @@ public sealed class StreamingStateAnalyzer : DiagnosticAnalyzer
             }
 
             var types = new KnownTypes(state, consumer, resolver, wrapper, inputName, bar);
-            start.RegisterSyntaxNodeAction(ctx => AnalyzeClass(ctx, types), SyntaxKind.ClassDeclaration);
+            start.RegisterSymbolStartAction(symbolStart => AnalyzeState(symbolStart, types), SymbolKind.NamedType);
         });
     }
 
@@ -116,10 +116,20 @@ public sealed class StreamingStateAnalyzer : DiagnosticAnalyzer
         public INamedTypeSymbol Bar { get; }
     }
 
-    private static void AnalyzeClass(SyntaxNodeAnalysisContext context, KnownTypes types)
+    /// <summary>
+    /// One state, judged once, whichever files it is written across.
+    /// </summary>
+    /// <remarks>
+    /// A symbol action rather than a syntax one on purpose. The rules below have to read the whole class,
+    /// and a state split across files gives a syntax action one part at a time - so reading the others
+    /// meant asking the compilation for their semantic models, which an analyzer must not do (RS1030).
+    /// Registered per symbol, each node arrives with the model for its own tree, the parts accumulate, and
+    /// the symbol's end is where there is something to report.
+    /// </remarks>
+    private static void AnalyzeState(SymbolStartAnalysisContext context, KnownTypes types)
     {
-        var declaration = (ClassDeclarationSyntax)context.Node;
-        if (context.SemanticModel.GetDeclaredSymbol(declaration, context.CancellationToken) is not INamedTypeSymbol symbol
+        if (context.Symbol is not INamedTypeSymbol symbol
+            || symbol.TypeKind != TypeKind.Class
             || symbol.IsAbstract
             || symbol.DeclaredAccessibility != Accessibility.Public
             || SymbolEqualityComparer.Default.Equals(symbol, types.Wrapper)
@@ -128,8 +138,66 @@ public sealed class StreamingStateAnalyzer : DiagnosticAnalyzer
             return;
         }
 
+        var found = new Findings();
+
+        // Every part contributes, and the parts can be visited concurrently, so what they find is shared
+        // behind a lock rather than assigned from several threads at once.
+        context.RegisterSyntaxNodeAction(
+            node => Observe(node, types, found),
+            SyntaxKind.ObjectCreationExpression,
+            SyntaxKind.ImplicitObjectCreationExpression,
+            SyntaxKind.InvocationExpression);
+
+        context.RegisterSymbolEndAction(end => Report(end, types, symbol, found));
+    }
+
+    /// <summary>Records what one node in one part says about the state's input.</summary>
+    private static void Observe(SyntaxNodeAnalysisContext context, KnownTypes types, Findings found)
+    {
+        // Both the named form and the target-typed one: 'new StreamingInputResolver(...)' and '= new(...)'.
+        // They are sibling syntax kinds, so matching only the first let the shorter spelling past the rule
+        // whose whole point is that it cannot be got past.
+        var arguments = context.Node switch
+        {
+            ObjectCreationExpressionSyntax created => created.ArgumentList,
+            ImplicitObjectCreationExpressionSyntax implied => implied.ArgumentList,
+            _ => null
+        };
+
+        if (arguments is not null)
+        {
+            if (!SymbolEqualityComparer.Default.Equals(
+                    context.SemanticModel.GetTypeInfo(context.Node, context.CancellationToken).Type, types.Resolver))
+            {
+                return;
+            }
+
+            string? nonClose = null;
+            var first = arguments.Arguments.FirstOrDefault()?.Expression;
+            if (first is not null
+                && context.SemanticModel.GetSymbolInfo(first, context.CancellationToken).Symbol is IFieldSymbol field
+                && SymbolEqualityComparer.Default.Equals(field.ContainingType, types.InputName)
+                && field.Name != "Close")
+            {
+                nonClose = field.Name;
+            }
+
+            found.Built(nonClose);
+        }
+        else if (context.Node is InvocationExpressionSyntax invocation
+            && context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol is IMethodSymbol method
+            && method.Name == "GetValue"
+            && SymbolEqualityComparer.Default.Equals(method.ContainingType, types.Resolver))
+        {
+            found.Read();
+        }
+    }
+
+    /// <summary>Says what the whole state turned out to be, once every part has been seen.</summary>
+    private static void Report(SymbolAnalysisContext context, KnownTypes types, INamedTypeSymbol symbol, Findings found)
+    {
         var name = symbol.Name;
-        var at = declaration.Identifier.GetLocation();
+        var at = symbol.Locations.FirstOrDefault() ?? Location.None;
         var publicCtors = symbol.InstanceConstructors.Where(c => c.DeclaredAccessibility == Accessibility.Public).ToList();
 
         // SI0001: buildable with no arguments.
@@ -138,12 +206,13 @@ public sealed class StreamingStateAnalyzer : DiagnosticAnalyzer
             context.ReportDiagnostic(Diagnostic.Create(MustBeBuildableWithoutArguments, at, name));
         }
 
-        // SI0002: no public input-name or selector parameters.
+        // SI0002: no public selector parameter. An InputName parameter needs no rule of its own: the enum is
+        // internal, so a public constructor taking one does not compile (CS0051) before this could report it.
         foreach (var ctor in publicCtors)
         {
             foreach (var parameter in ctor.Parameters)
             {
-                if (SymbolEqualityComparer.Default.Equals(parameter.Type, types.InputName) || IsBarSelector(parameter.Type, types.Bar))
+                if (IsBarSelector(parameter.Type, types.Bar))
                 {
                     var location = parameter.Locations.FirstOrDefault() ?? at;
                     context.ReportDiagnostic(Diagnostic.Create(NoInputParameters, location, name,
@@ -152,33 +221,7 @@ public sealed class StreamingStateAnalyzer : DiagnosticAnalyzer
             }
         }
 
-        // SI0003 and SI0004 read the class body.
-        string? nonCloseDefault = null;
-        var buildsResolver = false;
-        var readsResolver = false;
-        foreach (var node in declaration.DescendantNodes())
-        {
-            if (node is ObjectCreationExpressionSyntax creation
-                && SymbolEqualityComparer.Default.Equals(context.SemanticModel.GetTypeInfo(creation, context.CancellationToken).Type, types.Resolver))
-            {
-                buildsResolver = true;
-                var first = creation.ArgumentList?.Arguments.FirstOrDefault()?.Expression;
-                if (first is not null
-                    && context.SemanticModel.GetSymbolInfo(first, context.CancellationToken).Symbol is IFieldSymbol field
-                    && SymbolEqualityComparer.Default.Equals(field.ContainingType, types.InputName)
-                    && field.Name != "Close")
-                {
-                    nonCloseDefault ??= field.Name;
-                }
-            }
-            else if (node is InvocationExpressionSyntax invocation
-                && context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol is IMethodSymbol method
-                && method.Name == "GetValue"
-                && SymbolEqualityComparer.Default.Equals(method.ContainingType, types.Resolver))
-            {
-                readsResolver = true;
-            }
-        }
+        var (buildsResolver, readsResolver, nonCloseDefault) = found.Taken();
 
         if (buildsResolver && !readsResolver)
         {
@@ -187,9 +230,55 @@ public sealed class StreamingStateAnalyzer : DiagnosticAnalyzer
 
         if (nonCloseDefault is not null
             && !symbol.AllInterfaces.Contains(types.Consumer, SymbolEqualityComparer.Default)
-            && nonCloseDefault != IndicatorNameOf(declaration))
+            && nonCloseDefault != IndicatorNameOf(symbol, context.CancellationToken))
         {
             context.ReportDiagnostic(Diagnostic.Create(NonCloseDefaultNeedsConsumer, at, name, nonCloseDefault));
+        }
+    }
+
+    /// <summary>What the parts of one state said about its input, gathered as they are visited.</summary>
+    private sealed class Findings
+    {
+        private readonly object _gate = new();
+        private bool _builds;
+        private bool _reads;
+        private string? _nonCloseDefault;
+
+        public void Built(string? nonCloseDefault)
+        {
+            lock (_gate)
+            {
+                _builds = true;
+                _nonCloseDefault ??= nonCloseDefault;
+            }
+        }
+
+        public void Read()
+        {
+            lock (_gate)
+            {
+                _reads = true;
+            }
+        }
+
+        public (bool Builds, bool Reads, string? NonCloseDefault) Taken()
+        {
+            lock (_gate)
+            {
+                return (_builds, _reads, _nonCloseDefault);
+            }
+        }
+    }
+
+    /// <summary>Every part of the class, so a partial state is judged whole rather than a piece at a time.</summary>
+    private static IEnumerable<ClassDeclarationSyntax> Parts(INamedTypeSymbol symbol, CancellationToken cancellationToken)
+    {
+        foreach (var reference in symbol.DeclaringSyntaxReferences)
+        {
+            if (reference.GetSyntax(cancellationToken) is ClassDeclarationSyntax part)
+            {
+                yield return part;
+            }
         }
     }
 
@@ -199,16 +288,19 @@ public sealed class StreamingStateAnalyzer : DiagnosticAnalyzer
         && SymbolEqualityComparer.Default.Equals(func.TypeArguments[0], bar)
         && func.TypeArguments[1].SpecialType == SpecialType.System_Double;
 
-    /// <summary>The X in <c>Name =&gt; IndicatorName.X</c>, or null.</summary>
-    private static string? IndicatorNameOf(ClassDeclarationSyntax declaration)
+    /// <summary>The X in <c>Name =&gt; IndicatorName.X</c>, from whichever part declares it, or null.</summary>
+    private static string? IndicatorNameOf(INamedTypeSymbol symbol, CancellationToken cancellationToken)
     {
-        foreach (var property in declaration.Members.OfType<PropertyDeclarationSyntax>())
+        foreach (var part in Parts(symbol, cancellationToken))
         {
-            if (property.Identifier.Text == "Name"
-                && property.ExpressionBody?.Expression is MemberAccessExpressionSyntax access
-                && access.Expression is IdentifierNameSyntax { Identifier.Text: "IndicatorName" })
+            foreach (var property in part.Members.OfType<PropertyDeclarationSyntax>())
             {
-                return access.Name.Identifier.Text;
+                if (property.Identifier.Text == "Name"
+                    && property.ExpressionBody?.Expression is MemberAccessExpressionSyntax access
+                    && access.Expression is IdentifierNameSyntax { Identifier.Text: "IndicatorName" })
+                {
+                    return access.Name.Identifier.Text;
+                }
             }
         }
 
